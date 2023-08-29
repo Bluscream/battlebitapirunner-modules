@@ -1,28 +1,12 @@
-using BattleBitAPI;
 using BattleBitAPI.Common;
-using BattleBitAPI.Server;
 using BBRAPIModules;
 using Commands;
-using Microsoft.CodeAnalysis.Operations;
-using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Reflection;
 using System.Reflection.Metadata;
-using System.Security.Cryptography;
 using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace ChatLoggerBattleBitModule {
 
@@ -38,6 +22,7 @@ namespace ChatLoggerBattleBitModule {
         [ModuleReference]
         public CommandHandler CommandHandler { get; set; }
 
+        public ChatLoggerConfiguration Configuration { get; set; }
         internal HttpClient httpClient = new HttpClient();
         internal Random random = new Random();
         internal static readonly string[] joined = { "joined", "connected", "hailed"  };
@@ -55,7 +40,11 @@ namespace ChatLoggerBattleBitModule {
             //}
         }
         internal async Task<SteamWebApi.BanResponse> GetSteamBans(ulong steamId64) {
-            var url = $"http://api.steampowered.com/ISteamUser/GetPlayerBans/v1/?steamids={steamId64}&key=6D46DA3A460BC5B096E95A4142A487CB";
+            if (string.IsNullOrWhiteSpace(Configuration.SteamWebApiKey)) {
+                Console.WriteLine("Steam Web API Key is not set up in config, can't continue!");
+                return null;
+            }
+            var url = $"http://api.steampowered.com/ISteamUser/GetPlayerBans/v1/?steamids={steamId64}&key={Configuration.SteamWebApiKey}";
             var httpResponse = await this.httpClient.GetAsync(url);
             var json = await httpResponse.Content.ReadAsStringAsync();
             var response = SteamWebApi.BanResponse.FromJson(json);
@@ -63,6 +52,7 @@ namespace ChatLoggerBattleBitModule {
         }
         internal async Task<long> GetBanCount(ulong steamId64) {
             var bans = await GetSteamBans(steamId64);
+            if (bans is null) return -1;
             var player = bans.Players.First();
             var banCount = player.NumberOfVacBans + player.NumberOfGameBans;
             if (player.CommunityBanned) banCount++;
@@ -76,6 +66,10 @@ namespace ChatLoggerBattleBitModule {
             if (!string.IsNullOrEmpty(_player.Name)) response.AppendLine($"Name: {_player.str()} ({_player.Name.Length} chars)");
             if (!string.IsNullOrEmpty(_player.SteamID.ToString())) {
                 var bans = await GetSteamBans(_player.SteamID);
+                if (bans is null) {
+                    commandSource.Message("Steam bans request failed, check connection and config!");
+                    return;
+                }
                 var player = bans.Players.First();
                 response.AppendLine($"VAC Banned: {player.VacBanned.ToYesNoString()} ({player.NumberOfVacBans} times)");
                 if (player.VacBanned) response.AppendLine($"Last VAC Ban: {player.DaysSinceLastBan} days ago");
@@ -142,6 +136,11 @@ namespace ChatLoggerBattleBitModule {
             return Task.CompletedTask;
         }
     }
+
+    public class ChatLoggerConfiguration : ModuleConfiguration {
+        public string SteamWebApiKey { get; set; } = string.Empty;
+    }
+
 }
 
 namespace IpApi {
