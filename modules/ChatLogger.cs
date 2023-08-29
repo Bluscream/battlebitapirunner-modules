@@ -55,7 +55,7 @@ namespace ChatLoggerBattleBitModule {
             //}
         }
         internal async Task<SteamWebApi.BanResponse> GetSteamBans(ulong steamId64) {
-            var url = $"http://api.steampowered.com/ISteamUser/GetPlayerBans/v1/?steamids={steamId64}&key=6D46DA3A460BC5B096E95A4142A487CB";
+            var url = $"http://api.steampowered.com/ISteamUser/GetPlayerBans/v1/?steamids={steamId64}&key=7CZDBR7E46SYE725R8D7UP4YT8QJ5T6V";
             var httpResponse = await this.httpClient.GetAsync(url);
             var json = await httpResponse.Content.ReadAsStringAsync();
             var response = SteamWebApi.BanResponse.FromJson(json);
