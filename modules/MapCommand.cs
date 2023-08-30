@@ -1,21 +1,9 @@
 using BattleBitAPI.Common;
-using BattleBitAPI.Server;
 using BBRAPIModules;
 using Commands;
-using Microsoft.CodeAnalysis.Operations;
-using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Reflection;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-using System;
 
 namespace BattleBitBaseModules;
 
