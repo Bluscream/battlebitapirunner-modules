@@ -15,11 +15,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="modules\ChatLogger.cs.disable" />
+    <Compile Remove="modules_\**" />
+    <EmbeddedResource Remove="modules_\**" />
+    <None Remove="modules_\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="modules\ChatLogger.cs.disable" />
+    <None Remove="modules\ChatLogger.cs.disable" />
   </ItemGroup>
 
   <ItemGroup>
