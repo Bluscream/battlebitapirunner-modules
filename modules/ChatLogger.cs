@@ -32,7 +32,7 @@ namespace ChatLoggerNewBattleBitModule {
         [ModuleReference]
         public CommandHandler CommandHandler { get; set; }
 
-        public ChatLoggerConfiguration Configuration { get; set; }
+        public static ChatLoggerConfiguration Configuration { get; set; }
         internal HttpClient httpClient = new HttpClient();
         internal Random random = new Random();
         internal static readonly string[] joined = { "joined", "connected", "hailed"  };
@@ -147,8 +147,8 @@ namespace ChatLoggerNewBattleBitModule {
         }
     }
 
-    public class ChatLoggerConfiguration : ModuleConfiguration {
-        public string SteamWebApiKey { get; set; } = string.Empty;
+    public static class ChatLoggerConfiguration : ModuleConfiguration {
+        public static string SteamWebApiKey { get; set; } = string.Empty;
     }
 
 }
