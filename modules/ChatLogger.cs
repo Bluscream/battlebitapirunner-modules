@@ -147,8 +147,8 @@ namespace ChatLoggerNewBattleBitModule {
         }
     }
 
-    public static class ChatLoggerConfiguration : ModuleConfiguration {
-        public static string SteamWebApiKey { get; set; } = string.Empty;
+    public class ChatLoggerConfiguration : ModuleConfiguration {
+        public string SteamWebApiKey { get; set; } = string.Empty;
     }
 
 }
