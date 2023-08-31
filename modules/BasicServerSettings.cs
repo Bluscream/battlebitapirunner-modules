@@ -8,24 +8,29 @@ namespace BattleBitBaseModules;
 
 /// <summary>
 /// Author: @RainOrigami
-/// Version: 0.4.7.2
+/// Version: 0.4.10
 /// </summary>
 /// 
-public class BasicServerSettings : BattleBitModule {
+public class BasicServerSettings : BattleBitModule
+{
     public BasicServerSettingsConfiguration Configuration { get; set; }
 
-    public override Task OnConnected() {
+    public override Task OnConnected()
+    {
         this.applyServerSettings();
 
-        foreach (RunnerPlayer player in this.Server.AllPlayers) {
+        foreach (RunnerPlayer player in this.Server.AllPlayers)
+        {
             this.applyPlayerSettings(player);
         }
 
         return Task.CompletedTask;
     }
 
-    public override Task OnGameStateChanged(GameState oldState, GameState newState) {
-        if (oldState == newState) {
+    public override Task OnGameStateChanged(GameState oldState, GameState newState)
+    {
+        if (oldState == newState)
+        {
             return Task.CompletedTask;
         }
 
@@ -34,13 +39,15 @@ public class BasicServerSettings : BattleBitModule {
         return Task.CompletedTask;
     }
 
-    public override Task OnPlayerConnected(RunnerPlayer player) {
+    public override Task OnPlayerConnected(RunnerPlayer player)
+    {
         this.applyPlayerSettings(player);
 
         return Task.CompletedTask;
     }
 
-    private void applyServerSettings() {
+    private void applyServerSettings()
+    {
         this.Server.ServerSettings.APCSpawnDelayMultipler = this.Configuration.APCSpawnDelayMultipler ?? this.Server.ServerSettings.APCSpawnDelayMultipler;
         this.Server.ServerSettings.CanVoteDay = this.Configuration.CanVoteDay ?? this.Server.ServerSettings.CanVoteDay;
         this.Server.ServerSettings.CanVoteNight = this.Configuration.CanVoteNight ?? this.Server.ServerSettings.CanVoteNight;
@@ -57,10 +64,13 @@ public class BasicServerSettings : BattleBitModule {
         this.Server.ServerSettings.TankSpawnDelayMultipler = this.Configuration.TankSpawnDelayMultipler ?? this.Server.ServerSettings.TankSpawnDelayMultipler;
         this.Server.ServerSettings.TransportSpawnDelayMultipler = this.Configuration.TransportSpawnDelayMultipler ?? this.Server.ServerSettings.TransportSpawnDelayMultipler;
         this.Server.ServerSettings.UnlockAllAttachments = this.Configuration.UnlockAllAttachments ?? this.Server.ServerSettings.UnlockAllAttachments;
+        this.Server.ServerSettings.TeamlessMode = this.Configuration.TeamlessMode ?? this.Server.ServerSettings.TeamlessMode;
     }
 
-    private void applyRoundSettings(GameState gameState) {
-        if (!this.Configuration.RoundSettings.ContainsKey(gameState)) {
+    private void applyRoundSettings(GameState gameState)
+    {
+        if (!this.Configuration.RoundSettings.ContainsKey(gameState))
+        {
             return;
         }
 
@@ -73,7 +83,8 @@ public class BasicServerSettings : BattleBitModule {
         this.Server.RoundSettings.TeamBTickets = roundSettings.TeamBTickets ?? this.Server.RoundSettings.TeamBTickets;
     }
 
-    private void applyPlayerSettings(RunnerPlayer player) {
+    private void applyPlayerSettings(RunnerPlayer player)
+    {
         player.Modifications.AirStrafe = this.Configuration.AirStrafe ?? player.Modifications.AirStrafe;
         player.Modifications.AllowedVehicles = this.Configuration.AllowedVehicles ?? player.Modifications.AllowedVehicles;
         player.Modifications.CanDeploy = this.Configuration.CanDeploy ?? player.Modifications.CanDeploy;
@@ -101,9 +112,14 @@ public class BasicServerSettings : BattleBitModule {
         player.Modifications.RunningSpeedMultiplier = this.Configuration.RunningSpeedMultiplier ?? player.Modifications.RunningSpeedMultiplier;
         player.Modifications.SpawningRule = this.Configuration.SpawningRule ?? player.Modifications.SpawningRule;
         player.Modifications.StaminaEnabled = this.Configuration.StaminaEnabled ?? player.Modifications.StaminaEnabled;
+        player.Modifications.HideOnMap = this.Configuration.HideOnMap ?? player.Modifications.HideOnMap;
+        player.Modifications.Freeze = this.Configuration.Freeze ?? player.Modifications.Freeze;
+        player.Modifications.ReviveHP = this.Configuration.ReviveHP ?? player.Modifications.ReviveHP;
     }
 }
-public class BasicServerSettingsConfiguration : ModuleConfiguration {
+public class BasicServerSettingsConfiguration : ModuleConfiguration
+{
+    // Server
     public float? APCSpawnDelayMultipler { get; set; } = null;
     public float? HelicopterSpawnDelayMultipler { get; set; } = null;
     public float? SeaVehicleSpawnDelayMultipler { get; set; } = null;
@@ -120,14 +136,9 @@ public class BasicServerSettingsConfiguration : ModuleConfiguration {
     public bool? OnlyWinnerTeamCanVote { get; set; } = null;
     public bool? PlayerCollision { get; set; } = null;
     public bool? UnlockAllAttachments { get; set; } = null;
-    public ReadOnlyDictionary<GameState, RoundSettingsConfiguration> RoundSettings = new(new Dictionary<GameState, RoundSettingsConfiguration>()
-    {
-        { GameState.WaitingForPlayers, new(){ PlayersToStart = 1} },
-        { GameState.CountingDown, new(){ SecondsLeft = 5 } },
-        { GameState.Playing, new(){ MaxTickets= 5000, SecondsLeft= 1800, TeamATickets= 3000, TeamBTickets= 3000 } },
-        { GameState.EndingGame, new() }
-    });
+    public bool? TeamlessMode { get; set; } = null;
 
+    // Player
     public bool? AirStrafe { get; set; } = null;
     public VehicleType? AllowedVehicles { get; set; } = null;
     public bool? CanDeploy { get; set; } = null;
@@ -155,9 +166,21 @@ public class BasicServerSettingsConfiguration : ModuleConfiguration {
     public float? RunningSpeedMultiplier { get; set; } = null;
     public SpawningRule? SpawningRule { get; set; } = null;
     public bool? StaminaEnabled { get; set; } = null;
+    public bool? HideOnMap { get; set; } = null;
+    public bool? Freeze { get; set; } = null;
+    public float? ReviveHP { get; set; } = null;
+
+    public ReadOnlyDictionary<GameState, RoundSettingsConfiguration> RoundSettings = new(new Dictionary<GameState, RoundSettingsConfiguration>()
+    {
+        { GameState.WaitingForPlayers, new() },
+        { GameState.CountingDown, new() },
+        { GameState.Playing, new() },
+        { GameState.EndingGame, new() }
+    });
 }
 
-public class RoundSettingsConfiguration {
+public class RoundSettingsConfiguration
+{
     public double? MaxTickets { get; set; } = null;
     public int? PlayersToStart { get; set; } = null;
     public int? SecondsLeft { get; set; } = null;
