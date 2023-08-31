@@ -17,6 +17,9 @@ using BattleBitAPI.Common;
 using BBRAPIModules;
 using Commands;
 using JsonExtensions;
+using SmartFormat;
+using IpApi;
+using System.Reactive;
 
 namespace ChatLoggerNewBattleBitModule {
 
@@ -31,11 +34,13 @@ namespace ChatLoggerNewBattleBitModule {
     public class ChatLogger : BattleBitModule {
         [ModuleReference]
         public CommandHandler CommandHandler { get; set; }
+        [ModuleReference]
+        public BattleBitModule? PlayerPermissions { get; set; }
 
         public static ChatLoggerConfiguration Configuration { get; set; }
         internal HttpClient httpClient = new HttpClient();
         internal Random random = new Random();
-        internal static readonly string[] joined = { "joined", "connected", "hailed"  };
+        internal static readonly string[] joined = { "joined", "connected", "hailed" };
 
         internal async Task<IpApi.Response> GetGeoData(IPAddress ip) {
             var url = $"http://ip-api.com/json/{ip}";
@@ -70,7 +75,7 @@ namespace ChatLoggerNewBattleBitModule {
             return banCount;
         }
 
-        [CommandCallback("playerbans", Description = "Lists bans of a player", AllowedRoles = Roles.Admin)]
+        [CommandCallback("playerbans", Description = "Lists bans of a player", AllowedRoles = (BattleBitAPI.Common.Roles)Roles.Admin)]
         public async void GetPlayerBans(RunnerPlayer commandSource, RunnerPlayer _player) {
             var response = new StringBuilder();
             if (!string.IsNullOrEmpty(_player.Name)) response.AppendLine($"Name: {_player.str()} ({_player.Name.Length} chars)");
@@ -90,7 +95,7 @@ namespace ChatLoggerNewBattleBitModule {
             commandSource.Message(response.ToString());
         }
 
-        [CommandCallback("playerinfo", Description = "Displays info about a player", AllowedRoles = Roles.Admin)]
+        [CommandCallback("playerinfo", Description = "Displays info about a player", AllowedRoles = (BattleBitAPI.Common.Roles)Roles.Admin)]
         public async void GetPlayerInfo(RunnerPlayer commandSource, RunnerPlayer player) {
             var geoResponse = await GetGeoData(player.IP);
             var response = new StringBuilder();
@@ -108,47 +113,191 @@ namespace ChatLoggerNewBattleBitModule {
             commandSource.Message(response.ToString());
         }
 
+
+        internal string FormatString(string input, params object[] parms) {
+            var now = string.IsNullOrWhiteSpace(Configuration.TimeStampFormat) ? "" : DateTime.Now.ToString(Configuration.TimeStampFormat);
+            return Smart.Format(input, now, parms);
+        }
+
+        internal void LogToConsole(string msg) {
+            Console.WriteLine(msg);
+        }
         internal void SayToAll(string msg) {
-            if (!string.IsNullOrWhiteSpace(msg))
-                this.Server.SayToAllChat(msg);
-            //foreach (RunnerPlayer player in this.Server.AllPlayers) {
-            //    player.Message(msg, this.msg.MessageToPlayerTimeout);
-            //}
+            if (this.Server is null) return;
+            if (string.IsNullOrWhiteSpace(msg)) return;
+            this.Server.SayToAllChat(msg);
+        }
+        internal void SayToPlayer(string msg, RunnerPlayer player) {
+            if (this.Server is null) return;
+            if (string.IsNullOrWhiteSpace(msg)) return;
+            Server.SayToChat(msg, player);
+        }
+        internal void ModalMessage(string msg, RunnerPlayer player) {
+            if (this.Server is null) return;
+            if (string.IsNullOrWhiteSpace(msg)) return;
+            player.Message(msg);
+        }
+        internal void UILogOnServer(string msg, Duration duration) {
+            if (this.Server is null) return;
+            var durationS = 1;
+            switch (duration) {
+                case Duration.Short:
+                    durationS = 3; break;
+                case Duration.Long:
+                    durationS = 10; break;
+            }
+            this.Server.UILogOnServer(msg, durationS);
+        }
+        internal void Announce(string msg, Duration duration) {
+            if (this.Server is null) return;
+            switch (duration) {
+                case Duration.Short:
+                    this.Server.AnnounceShort(msg); return;
+                case Duration.Long:
+                    this.Server.AnnounceLong(msg); return;
+            }
+        }
+
+        internal void HandleEvent(LogConfigurationEntry config, params object[] parms) {
+            if (config.Console.Enabled && !string.IsNullOrWhiteSpace(config.Console.Message)) {
+                LogToConsole(FormatString(config.Console.Message, parms));
+            }
+            if (this.Server is null) return;
+            if (config.Chat.Enabled && !string.IsNullOrWhiteSpace(config.Chat.Message)) {
+                var msg = FormatString(config.Chat.Message, parms);
+                if (this.PlayerPermissions is not null && config.Chat.Roles != Roles.None) {
+                    foreach (var player in this.Server.AllPlayers) {
+                        if ((this.PlayerPermissions.Call<Roles>("GetPlayerRoles", player.SteamID) & config.Chat.Roles) == 0) continue;
+                        SayToPlayer(msg, player);
+                    }
+                } else SayToAll(msg);
+            }
+            if (config.Modal.Enabled && !string.IsNullOrWhiteSpace(config.Modal.Message)) {
+                var msg = FormatString(config.Modal.Message, parms);
+                foreach (var player in this.Server.AllPlayers) {
+                    if (this.PlayerPermissions is not null && (this.PlayerPermissions.Call<Roles>("GetPlayerRoles", player.SteamID) & config.Chat.Roles) == 0) continue;
+                    ModalMessage(msg, player);
+                }
+            }
+            if (config.UILog.Enabled && !string.IsNullOrWhiteSpace(config.UILog.Message)) {
+                var msg = FormatString(config.UILog.Message, parms);
+                UILogOnServer(msg, config.UILog.Duration);
+            }
+            if (config.Announce.Enabled && !string.IsNullOrWhiteSpace(config.Announce.Message)) {
+                var msg = FormatString(config.UILog.Message, parms);
+                Announce(msg, config.UILog.Duration);
+            }
         }
 
         public override void OnModulesLoaded() {
             this.CommandHandler.Register(this);
-            try { SayToAll("[API] Modules loaded"); } catch { }
+            HandleEvent(Configuration.OnModulesLoaded, IsLoaded);
         }
 
         public override Task OnConnected() {
-            try { SayToAll("[API] Server connected"); } catch { }
+            HandleEvent(Configuration.OnConnected, IsLoaded, Server);
             return Task.CompletedTask;
         }
 
         public override Task OnDisconnected() {
-            SayToAll("[API] Server disconnected");
+            HandleEvent(Configuration.OnDisconnected, IsLoaded);
             return Task.CompletedTask;
         }
 
         public override async Task OnPlayerConnected(RunnerPlayer player) {
             var geoResponse = await GetGeoData(player.IP);
-            SayToAll($"[+] {player.Name} {joined[random.Next(joined.Length)]} from {geoResponse.Country}");
+            HandleEvent(Configuration.OnPlayerConnected, Server, player, geoResponse);
         }
 
         public override Task OnPlayerDisconnected(RunnerPlayer player) {
-            SayToAll($"[-] {player.Name} disconnected");
+            HandleEvent(Configuration.OnPlayerDisconnected, Server, player);
             return Task.CompletedTask;
         }
 
         public override Task OnPlayerReported(RunnerPlayer from, RunnerPlayer to, ReportReason reason, string additional) {
-            SayToAll($"[API] {to.fullstr()} was reported for {reason}");
+            HandleEvent(Configuration.OnPlayerReported, Server, from, to, reason, additional);
             return Task.CompletedTask;
         }
     }
 
+    public enum Roles : ulong {
+        None = BattleBitAPI.Common.Roles.None,
+        Admin = BattleBitAPI.Common.Roles.Admin,
+        Moderator = BattleBitAPI.Common.Roles.Moderator,
+        Special = BattleBitAPI.Common.Roles.Special,
+        Vip = BattleBitAPI.Common.Roles.Vip,
+        AdminMod = Admin | Moderator,
+        Member = Admin | Moderator | Vip | Special,
+        All = Admin | Moderator | Vip | Special | None
+    }
+
+    public enum Duration {
+        None,
+        Short,
+        Medium,
+        Long,
+        Infinite
+    }
+
+    public class LogConfigurationEntrySettings {
+        public bool Enabled { get; set; } = false;
+        public string Message { get; set; } = string.Empty;
+        public Roles Roles { get; set; } = Roles.None;
+        public Duration Duration { get; set; } = Duration.None;
+    }
+
+    public class LogConfigurationEntry {
+        public LogConfigurationEntrySettings Chat { get; set; }
+        public LogConfigurationEntrySettings Console { get; set; }
+        public LogConfigurationEntrySettings UILog { get; set; }
+        public LogConfigurationEntrySettings Announce { get; set; }
+        public LogConfigurationEntrySettings Modal { get; set; }
+    }
+
     public class ChatLoggerConfiguration : ModuleConfiguration {
         public string SteamWebApiKey { get; set; } = string.Empty;
+        public string TimeStampFormat { get; set; } = "HH:mm:ss";
+        public LogConfigurationEntry OnModulesLoaded { get; set; } = new LogConfigurationEntry() {
+            Chat = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] API Modules loaded", Roles = Roles.Member },
+            Console = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] API Modules loaded" },
+            Announce = new LogConfigurationEntrySettings() { Enabled = true, Message = "Modules loaded", Duration = Duration.Short },
+            Modal = new LogConfigurationEntrySettings() { Enabled = false, Message = "Modules loaded" },
+        };
+        public LogConfigurationEntry OnConnected { get; set; } = new LogConfigurationEntry() {
+            Chat = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] Server connected to API", Roles = Roles.Member },
+            Console = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] Server connected to API" },
+            UILog = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] Server connected to API" },
+            Announce = new LogConfigurationEntrySettings() { Enabled = true, Message = "Server connected to API", Duration = Duration.Short },
+            Modal = new LogConfigurationEntrySettings() { Enabled = false, Message = "Server connected to API" },
+        };
+        public LogConfigurationEntry OnDisconnected { get; set; } = new LogConfigurationEntry() {
+            Chat = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] Server disconnected from API", Roles = Roles.Member },
+            Console = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] Server disconnected from API" },
+            UILog = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] Server disconnected from API" },
+            Announce = new LogConfigurationEntrySettings() { Enabled = true, Message = "Server disconnected from API", Duration = Duration.Short },
+            Modal = new LogConfigurationEntrySettings() { Enabled = false, Message = "Server disconnected from API" },
+        };
+        public LogConfigurationEntry OnPlayerConnected { get; set; } = new LogConfigurationEntry() {
+            Chat = new LogConfigurationEntrySettings() { Enabled = true, Message = "[+] {player.Name} {joined[random.Next(joined.Length)]} from {geoResponse.Country}", Roles = Roles.All },
+            Console = new LogConfigurationEntrySettings() { Enabled = true, Message = "[+] {player.Name} ({player.SteamID)) | {geoResponse.ToJson()}" },
+            UILog = new LogConfigurationEntrySettings() { Enabled = true, Message = "[+] {player.Name}" },
+            Announce = new LogConfigurationEntrySettings() { Enabled = true, Message = "{player.Name} {joined[random.Next(joined.Length)]} from {geoResponse.Country}", Duration = Duration.Short },
+            Modal = new LogConfigurationEntrySettings() { Enabled = false, Message = "{player.Name} {joined[random.Next(joined.Length)]} from {geoResponse.Country}" },
+        };
+        public LogConfigurationEntry OnPlayerDisconnected { get; set; } = new LogConfigurationEntry() {
+            Chat = new LogConfigurationEntrySettings() { Enabled = true, Message = "[-] {player.Name} left", Roles = Roles.All },
+            Console = new LogConfigurationEntrySettings() { Enabled = true, Message = "[-] {player.Name} ({player.SteamID)) [{player.IP}]" },
+            UILog = new LogConfigurationEntrySettings() { Enabled = true, Message = "[-] {player.Name}" },
+            Announce = new LogConfigurationEntrySettings() { Enabled = true, Message = "{player.Name} left", Duration = Duration.Short },
+            Modal = new LogConfigurationEntrySettings() { Enabled = false, Message = "{player.Name} left" },
+        };
+        public LogConfigurationEntry OnPlayerReported { get; set; } = new LogConfigurationEntry() {
+            Chat = new LogConfigurationEntrySettings() { Enabled = true, Message = "{to.Name} was reported for {reason}", Roles = Roles.All },
+            Console = new LogConfigurationEntrySettings() { Enabled = true, Message = "{from.Name} reported {to.Name} for {reason}: \"{additional}\"" },
+            UILog = new LogConfigurationEntrySettings() { Enabled = true, Message = "{to.Name} was reported ({reason})" },
+            Announce = new LogConfigurationEntrySettings() { Enabled = true, Message = "{to.Name} was reported for {reason}", Duration = Duration.Long },
+            Modal = new LogConfigurationEntrySettings() { Enabled = false, Message = "{to.fullstr()}\nreported by\n{from.fullstr()}\n\nReason: {reason}\n\n\"{additional}\"", Roles = Roles.AdminMod },
+        };
     }
 
 }
