@@ -1,0 +1,17 @@
+{
+  "AnnounceLongDelay": 600,
+  "AnnounceShortDelay": 300,
+  "UILogOnServerDelay": 60,
+  "UILogOnserverTimeout": 10,
+  "MessageToPlayerDelay": 60,
+  "MessageToPlayerTimeout": 10,
+  "SayToAllChatDelay": 60,
+  "AnnounceLong": [],
+  "AnnounceShort": [],
+  "UILogOnServer": [],
+  "MessageToPlayer": [],
+  "SayToAllChat": [
+    "We hope you enjoy our server!",
+    "Feel free to write feedback in the chat!"
+  ]
+}
