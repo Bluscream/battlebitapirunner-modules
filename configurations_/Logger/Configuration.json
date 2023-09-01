@@ -1,0 +1,233 @@
+{
+  "SteamWebApiKey": "",
+  "TimeStampFormat": "HH:mm:ss",
+  "OnModulesLoaded": {
+    "Chat": {
+      "Enabled": true,
+      "Message": "[{now}] API Modules loaded",
+      "Roles": 15,
+      "Duration": 0
+    },
+    "Console": {
+      "Enabled": true,
+      "Message": "[{now}] API Modules loaded",
+      "Roles": 0,
+      "Duration": 0
+    },
+    "UILog": null,
+    "Announce": {
+      "Enabled": true,
+      "Message": "Modules loaded",
+      "Roles": 0,
+      "Duration": 1
+    },
+    "Modal": {
+      "Enabled": false,
+      "Message": "Modules loaded",
+      "Roles": 0,
+      "Duration": 0
+    },
+    "Discord": {
+      "WebhookUrl": "",
+      "Enabled": false,
+      "Message": "[{now}] API Modules loaded",
+      "Roles": 0,
+      "Duration": 0
+    }
+  },
+  "OnConnected": {
+    "Chat": {
+      "Enabled": true,
+      "Message": "[{now}] Server connected to API",
+      "Roles": 15,
+      "Duration": 0
+    },
+    "Console": {
+      "Enabled": true,
+      "Message": "[{now}] Server connected to API",
+      "Roles": 0,
+      "Duration": 0
+    },
+    "UILog": {
+      "Enabled": true,
+      "Message": "[{now}] Server connected to API",
+      "Roles": 0,
+      "Duration": 0
+    },
+    "Announce": {
+      "Enabled": true,
+      "Message": "Server connected to API",
+      "Roles": 0,
+      "Duration": 1
+    },
+    "Modal": {
+      "Enabled": false,
+      "Message": "Server connected to API",
+      "Roles": 0,
+      "Duration": 0
+    },
+    "Discord": {
+      "WebhookUrl": "",
+      "Enabled": false,
+      "Message": "[{now}] Server connected to API",
+      "Roles": 0,
+      "Duration": 0
+    }
+  },
+  "OnDisconnected": {
+    "Chat": {
+      "Enabled": true,
+      "Message": "[{now}] Server disconnected from API",
+      "Roles": 15,
+      "Duration": 0
+    },
+    "Console": {
+      "Enabled": true,
+      "Message": "[{now}] Server disconnected from API",
+      "Roles": 0,
+      "Duration": 0
+    },
+    "UILog": {
+      "Enabled": true,
+      "Message": "[{now}] Server disconnected from API",
+      "Roles": 0,
+      "Duration": 0
+    },
+    "Announce": {
+      "Enabled": true,
+      "Message": "Server disconnected from API",
+      "Roles": 0,
+      "Duration": 1
+    },
+    "Modal": {
+      "Enabled": false,
+      "Message": "Server disconnected from API",
+      "Roles": 0,
+      "Duration": 0
+    },
+    "Discord": {
+      "WebhookUrl": "",
+      "Enabled": false,
+      "Message": "[{now}] Server disconnected from API",
+      "Roles": 0,
+      "Duration": 0
+    }
+  },
+  "OnPlayerConnected": {
+    "Chat": {
+      "Enabled": true,
+      "Message": "[+] {player.Name} {joined[random.Next(joined.Length)]} from {geoResponse.Country}",
+      "Roles": 15,
+      "Duration": 0
+    },
+    "Console": {
+      "Enabled": true,
+      "Message": "[+] {player.Name} ({player.SteamID)) | {geoResponse.ToJson()}",
+      "Roles": 0,
+      "Duration": 0
+    },
+    "UILog": {
+      "Enabled": true,
+      "Message": "[+] {player.Name}",
+      "Roles": 0,
+      "Duration": 0
+    },
+    "Announce": {
+      "Enabled": true,
+      "Message": "{player.Name} {joined[random.Next(joined.Length)]} from {geoResponse.Country}",
+      "Roles": 0,
+      "Duration": 1
+    },
+    "Modal": {
+      "Enabled": false,
+      "Message": "{player.Name} {joined[random.Next(joined.Length)]} from {geoResponse.Country}",
+      "Roles": 0,
+      "Duration": 0
+    },
+    "Discord": {
+      "WebhookUrl": "",
+      "Enabled": false,
+      "Message": "[{now}] {player.Name} {joined[random.Next(joined.Length)]} from {geoResponse.Country}",
+      "Roles": 0,
+      "Duration": 0
+    }
+  },
+  "OnPlayerDisconnected": {
+    "Chat": {
+      "Enabled": true,
+      "Message": "[-] {player.Name} left",
+      "Roles": 15,
+      "Duration": 0
+    },
+    "Console": {
+      "Enabled": true,
+      "Message": "[-] {player.Name} ({player.SteamID)) [{player.IP}]",
+      "Roles": 0,
+      "Duration": 0
+    },
+    "UILog": {
+      "Enabled": true,
+      "Message": "[-] {player.Name}",
+      "Roles": 0,
+      "Duration": 0
+    },
+    "Announce": {
+      "Enabled": true,
+      "Message": "{player.Name} left",
+      "Roles": 0,
+      "Duration": 1
+    },
+    "Modal": {
+      "Enabled": false,
+      "Message": "{player.Name} left",
+      "Roles": 0,
+      "Duration": 0
+    },
+    "Discord": {
+      "WebhookUrl": "",
+      "Enabled": false,
+      "Message": "[{now}] {player.Name} ({player.SteamID)) left",
+      "Roles": 0,
+      "Duration": 0
+    }
+  },
+  "OnPlayerReported": {
+    "Chat": {
+      "Enabled": true,
+      "Message": "{to.Name} was reported for {reason}",
+      "Roles": 15,
+      "Duration": 0
+    },
+    "Console": {
+      "Enabled": true,
+      "Message": "{from.Name} reported {to.Name} for {reason}: \"{additional}\"",
+      "Roles": 0,
+      "Duration": 0
+    },
+    "UILog": {
+      "Enabled": true,
+      "Message": "{to.Name} was reported ({reason})",
+      "Roles": 0,
+      "Duration": 0
+    },
+    "Announce": {
+      "Enabled": true,
+      "Message": "{to.Name} was reported for {reason}",
+      "Roles": 0,
+      "Duration": 3
+    },
+    "Modal": {
+      "Enabled": false,
+      "Message": "{to.fullstr()}\nreported by\n{from.fullstr()}\n\nReason: {reason}\n\n\"{additional}\"",
+      "Roles": 3,
+      "Duration": 0
+    },
+    "Discord": {
+      "WebhookUrl": "",
+      "Enabled": false,
+      "Message": "[{now}] {to.Name} was reported for {reason} :warning:",
+      "Roles": 0,
+      "Duration": 0
+    }
+  }
+}
