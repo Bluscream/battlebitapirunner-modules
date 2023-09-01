@@ -206,6 +206,67 @@ namespace LoggerBattlebitModule {
                 await SendToWebhook(config.Discord.WebhookUrl, msg);
             }
         }
+        internal void SayToPlayer(string msg, RunnerPlayer player) {
+            if (this.Server is null) return;
+            if (string.IsNullOrWhiteSpace(msg)) return;
+            Server.SayToChat(msg, player);
+        }
+        internal void ModalMessage(string msg, RunnerPlayer player) {
+            if (this.Server is null) return;
+            if (string.IsNullOrWhiteSpace(msg)) return;
+            player.Message(msg);
+        }
+        internal void UILogOnServer(string msg, Duration duration) {
+            if (this.Server is null) return;
+            var durationS = 1;
+            switch (duration) {
+                case Duration.Short:
+                    durationS = 3; break;
+                case Duration.Long:
+                    durationS = 10; break;
+            }
+            this.Server.UILogOnServer(msg, durationS);
+        }
+        internal void Announce(string msg, Duration duration) {
+            if (this.Server is null) return;
+            switch (duration) {
+                case Duration.Short:
+                    this.Server.AnnounceShort(msg); return;
+                case Duration.Long:
+                    this.Server.AnnounceLong(msg); return;
+            }
+        }
+
+        internal void HandleEvent(LogConfigurationEntry config, params object[] parms) {
+            if (config.Console.Enabled && !string.IsNullOrWhiteSpace(config.Console.Message)) {
+                LogToConsole(FormatString(config.Console.Message, parms));
+            }
+            if (this.Server is null) return;
+            if (config.Chat.Enabled && !string.IsNullOrWhiteSpace(config.Chat.Message)) {
+                var msg = FormatString(config.Chat.Message, parms);
+                if (this.PlayerPermissions is not null && config.Chat.Roles != Roles.None) {
+                    foreach (var player in this.Server.AllPlayers) {
+                        if ((this.PlayerPermissions.Call<Roles>("GetPlayerRoles", player.SteamID) & config.Chat.Roles) == 0) continue;
+                        SayToPlayer(msg, player);
+                    }
+                } else SayToAll(msg);
+            }
+            if (config.Modal.Enabled && !string.IsNullOrWhiteSpace(config.Modal.Message)) {
+                var msg = FormatString(config.Modal.Message, parms);
+                foreach (var player in this.Server.AllPlayers) {
+                    if (this.PlayerPermissions is not null && (this.PlayerPermissions.Call<Roles>("GetPlayerRoles", player.SteamID) & config.Chat.Roles) == 0) continue;
+                    ModalMessage(msg, player);
+                }
+            }
+            if (config.UILog.Enabled && !string.IsNullOrWhiteSpace(config.UILog.Message)) {
+                var msg = FormatString(config.UILog.Message, parms);
+                UILogOnServer(msg, config.UILog.Duration);
+            }
+            if (config.Announce.Enabled && !string.IsNullOrWhiteSpace(config.Announce.Message)) {
+                var msg = FormatString(config.UILog.Message, parms);
+                Announce(msg, config.UILog.Duration);
+            }
+        }
 
         public override void OnModulesLoaded() {
             this.CommandHandler.Register(this);
