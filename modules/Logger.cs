@@ -30,7 +30,7 @@ namespace LoggerBattlebitModule {
     }
 
     [RequireModule(typeof(CommandHandler))]
-    public class Logger : BattleBitModule {
+    public class LoggerModule : BattleBitModule {
         [ModuleReference]
         public CommandHandler CommandHandler { get; set; }
         [ModuleReference]

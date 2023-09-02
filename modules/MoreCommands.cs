@@ -8,7 +8,7 @@ using System.Reflection;
 namespace BattleBitBaseModules;
 
 [RequireModule(typeof(CommandHandler))]
-public class MapCommand : BattleBitModule {
+public class MoreCommands : BattleBitModule {
 
     [ModuleReference]
     public CommandHandler CommandHandler { get; set; }
@@ -83,9 +83,23 @@ public class MapCommand : BattleBitModule {
     }
     [CommandCallback("exec", Description = "Executes a command on the server", AllowedRoles = Roles.Admin)]
     public void ExecServerCommand(RunnerPlayer commandSource, string command) {
-        commandSource.Message($"Executing {command}");
         this.Server.ExecuteCommand(command);
         commandSource.Message($"Executed {command}");
+    }
+    [CommandCallback("bot", Description = "Spawns bots", AllowedRoles = Roles.Admin)]
+    public void SpawnBotCommand(RunnerPlayer commandSource, int amount = 1) {
+        this.Server.ExecuteCommand($"join bot {amount}");
+        commandSource.Message($"Spawned {amount} bots, use !nobots to remove them");
+    }
+    [CommandCallback("nobots", Description = "Kicks all bots", AllowedRoles = Roles.Admin)]
+    public void KickBotsCommand(RunnerPlayer commandSource, int amount = 999) {
+        this.Server.ExecuteCommand($"remove bot {amount}");
+        commandSource.Message($"Kicked {amount} bots");
+    }
+    [CommandCallback("fire", Description = "Toggles bots firing", AllowedRoles = Roles.Admin)]
+    public void BotsFireCommand(RunnerPlayer commandSource) {
+        this.Server.ExecuteCommand($"bot fire");
+        commandSource.Message($"Toggled bots firing");
     }
 
     internal static string? ResolveNameMatch(string input, List<string> matches) {

@@ -58,31 +58,31 @@ public class ModeratorTools : BattleBitModule
         }
     }
 
-    [CommandCallback("Say", Description = "Prints a message to all players", AllowedRoles = Roles.Admin | Roles.Moderator)]
+    [CommandCallback("say", Description = "Prints a message to all players", AllowedRoles = Roles.Admin | Roles.Moderator)]
     public void Say(RunnerPlayer commandSource, string message)
     {
         this.Server.SayToAllChat(message);
     }
 
-    [CommandCallback("SayToPlayer", Description = "Prints a message to all players", AllowedRoles = Roles.Admin | Roles.Moderator)]
+    [CommandCallback("saytoplayer", Description = "Prints a message to all players", AllowedRoles = Roles.Admin | Roles.Moderator)]
     public void SayToPlayer(RunnerPlayer commandSource, RunnerPlayer target, string message)
     {
         this.Server.SayToChat(message, target.SteamID);
     }
 
-    [CommandCallback("AnnounceShort", Description = "Prints a short announce to all players", AllowedRoles = Roles.Admin | Roles.Moderator)]
+    [CommandCallback("announceshort", Description = "Prints a short announce to all players", AllowedRoles = Roles.Admin | Roles.Moderator)]
     public void AnnounceShort(RunnerPlayer commandSource, string message)
     {
         this.Server.AnnounceShort(message);
     }
 
-    [CommandCallback("AnnounceLong", Description = "Prints a long announce to all players", AllowedRoles = Roles.Admin | Roles.Moderator)]
+    [CommandCallback("announcelong", Description = "Prints a long announce to all players", AllowedRoles = Roles.Admin | Roles.Moderator)]
     public void AnnounceLong(RunnerPlayer commandSource, string message)
     {
         this.Server.AnnounceLong(message);
     }
 
-    [CommandCallback("Message", Description = "Messages a specific player", AllowedRoles = Roles.Admin | Roles.Moderator)]
+    [CommandCallback("message", Description = "Messages a specific player", AllowedRoles = Roles.Admin | Roles.Moderator)]
     public void Message(RunnerPlayer commandSource, RunnerPlayer target, string message, float? timeout = null)
     {
         if (timeout.HasValue)
@@ -97,13 +97,13 @@ public class ModeratorTools : BattleBitModule
         commandSource.Message($"Message sent to {target.Name}", 10);
     }
 
-    [CommandCallback("Clear", Description = "Clears the chat", AllowedRoles = Roles.Admin | Roles.Moderator)]
+    [CommandCallback("clear", Description = "Clears the chat", AllowedRoles = Roles.Admin | Roles.Moderator)]
     public void Clear(RunnerPlayer commandSource)
     {
         this.Server.SayToAllChat("".PadLeft(30, '\n') + "<size=0%>Chat cleared");
     }
 
-    [CommandCallback("Kick", Description = "Kicks a player", AllowedRoles = Roles.Admin | Roles.Moderator)]
+    [CommandCallback("kick", Description = "Kicks a player", AllowedRoles = Roles.Admin | Roles.Moderator)]
     public void Kick(RunnerPlayer commandSource, RunnerPlayer target, string? reason = null)
     {
         target.Kick(reason ?? string.Empty);
@@ -111,7 +111,7 @@ public class ModeratorTools : BattleBitModule
         commandSource.Message($"Player {target.Name} kicked", 10);
     }
 
-    [CommandCallback("Ban", Description = "Bans a player", AllowedRoles = Roles.Admin | Roles.Moderator)]
+    [CommandCallback("ban", Description = "Bans a player", AllowedRoles = Roles.Admin | Roles.Moderator)]
     public void Ban(RunnerPlayer commandSource, RunnerPlayer target)
     {
         this.Server.ExecuteCommand($"ban {target.SteamID}");
@@ -120,7 +120,7 @@ public class ModeratorTools : BattleBitModule
         commandSource.Message($"Player {target.Name} banned", 10);
     }
 
-    [CommandCallback("Kill", Description = "Kills a player", AllowedRoles = Roles.Admin | Roles.Moderator)]
+    [CommandCallback("kill", Description = "Kills a player", AllowedRoles = Roles.Admin | Roles.Moderator)]
     public void Kill(RunnerPlayer commandSource, RunnerPlayer target, string? message = null)
     {
         target.Kill();
@@ -133,7 +133,7 @@ public class ModeratorTools : BattleBitModule
         }
     }
 
-    [CommandCallback("Gag", Description = "Gags a player", AllowedRoles = Roles.Admin | Roles.Moderator)]
+    [CommandCallback("gag", Description = "Gags a player", AllowedRoles = Roles.Admin | Roles.Moderator)]
     public void Gag(RunnerPlayer commandSource, RunnerPlayer target, string? message = null)
     {
         if (this.gaggedPlayers.Contains(target.SteamID))
@@ -152,7 +152,7 @@ public class ModeratorTools : BattleBitModule
         }
     }
 
-    [CommandCallback("Ungag", Description = "Ungags a player", AllowedRoles = Roles.Admin | Roles.Moderator)]
+    [CommandCallback("ungag", Description = "Ungags a player", AllowedRoles = Roles.Admin | Roles.Moderator)]
     public void Ungag(RunnerPlayer commandSource, RunnerPlayer target, string? message = null)
     {
         if (!this.gaggedPlayers.Contains(target.SteamID))
@@ -171,7 +171,7 @@ public class ModeratorTools : BattleBitModule
         }
     }
 
-    [CommandCallback("Mute", Description = "Mutes a player", AllowedRoles = Roles.Admin | Roles.Moderator)]
+    [CommandCallback("mute", Description = "Mutes a player", AllowedRoles = Roles.Admin | Roles.Moderator)]
     public void Mute(RunnerPlayer commandSource, RunnerPlayer target, string? message = null)
     {
         if (target.Modifications.IsVoiceChatMuted)
@@ -190,7 +190,7 @@ public class ModeratorTools : BattleBitModule
         }
     }
 
-    [CommandCallback("Unmute", Description = "Unmutes a player", AllowedRoles = Roles.Admin | Roles.Moderator)]
+    [CommandCallback("unmute", Description = "Unmutes a player", AllowedRoles = Roles.Admin | Roles.Moderator)]
     public void Unmute(RunnerPlayer commandSource, RunnerPlayer target, string? message = null)
     {
         if (!target.Modifications.IsVoiceChatMuted)
@@ -209,7 +209,7 @@ public class ModeratorTools : BattleBitModule
         }
     }
 
-    [CommandCallback("Silence", Description = "Mutes and gags a player", AllowedRoles = Roles.Admin | Roles.Moderator)]
+    [CommandCallback("silence", Description = "Mutes and gags a player", AllowedRoles = Roles.Admin | Roles.Moderator)]
     public void Silence(RunnerPlayer commandSource, RunnerPlayer target, string? message = null)
     {
         Mute(commandSource, target);
@@ -222,7 +222,7 @@ public class ModeratorTools : BattleBitModule
         }
     }
 
-    [CommandCallback("Unsilence", Description = "Unmutes and ungags a player", AllowedRoles = Roles.Admin | Roles.Moderator)]
+    [CommandCallback("unsilence", Description = "Unmutes and ungags a player", AllowedRoles = Roles.Admin | Roles.Moderator)]
     public void Unsilence(RunnerPlayer commandSource, RunnerPlayer target, string? message = null)
     {
         Unmute(commandSource, target);
@@ -235,7 +235,7 @@ public class ModeratorTools : BattleBitModule
         }
     }
 
-    [CommandCallback("LockSpawn", Description = "Prevents a player or all players from spawning", AllowedRoles = Roles.Admin | Roles.Moderator)]
+    [CommandCallback("lockspawn", Description = "Prevents a player or all players from spawning", AllowedRoles = Roles.Admin | Roles.Moderator)]
     public void LockSpawn(RunnerPlayer commandSource, RunnerPlayer? target = null, string? message = null)
     {
         if (target == null)
@@ -266,7 +266,7 @@ public class ModeratorTools : BattleBitModule
         }
     }
 
-    [CommandCallback("UnlockSpawn", Description = "Allows a player or all players to spawn", AllowedRoles = Roles.Admin | Roles.Moderator)]
+    [CommandCallback("unlockspawn", Description = "Allows a player or all players to spawn", AllowedRoles = Roles.Admin | Roles.Moderator)]
     public void UnlockSpawn(RunnerPlayer commandSource, RunnerPlayer? target = null, string? message = null)
     {
         if (target == null)
@@ -327,7 +327,7 @@ public class ModeratorTools : BattleBitModule
 
     private Dictionary<RunnerPlayer, RunnerPlayer> inspectPlayers = new();
 
-    [CommandCallback("Inspect", Description = "Inspects a player or stops inspection", AllowedRoles = Roles.Admin | Roles.Moderator)]
+    [CommandCallback("inspect", Description = "Inspects a player or stops inspection", AllowedRoles = Roles.Admin | Roles.Moderator)]
     public void Inspect(RunnerPlayer commandSource, RunnerPlayer? target = null)
     {
         if (target is null)

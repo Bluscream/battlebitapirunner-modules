@@ -35,7 +35,7 @@ public class MOTD : BattleBitModule
     [CommandCallback("motd", Description = "Shows the MOTD")]
     public void ShowMOTD(RunnerPlayer commandSource)
     {
-        commandSource.Message(string.Format(this.Configuration.MOTD, commandSource.Name, commandSource.PingMs, this.Server.ServerName, this.Server.Gamemode, this.Server.Map, this.Server.DayNight, this.Server.MapSize.ToString().Trim('_'), this.Server.CurrentPlayerCount, this.Server.InQueuePlayerCount, this.Server.MaxPlayerCount));
+        commandSource.Message(string.Format(this.Configuration.MOTD, commandSource.Name, commandSource.PingMs, this.Server.ServerName, this.Server.Gamemode, this.Server.Map, this.Server.DayNight, this.Server.MapSize.ToString().Trim('_'), this.Server.CurrentPlayerCount, this.Server.InQueuePlayerCount, this.Server.MaxPlayerCount), 30f);
     }
 }
 
