@@ -121,7 +121,7 @@ namespace LoggerBattlebitModule {
             bool success = false;
             while (!success) {
                 var payload = new {
-                    content = msg
+                    content = msg.Replace("@", "\\@")
                 };
                 var payloadJson = JsonSerializer.Serialize(payload);
                 var content = new StringContent(payloadJson, Encoding.UTF8, "application/json");
@@ -172,40 +172,37 @@ namespace LoggerBattlebitModule {
             }
         }
 
-        internal string FormatString(string input, RunnerPlayer? player = null, RunnerPlayer? target = null, IpApi.Response? geoResponse = null, ReportReason? reportReason = null, string reportAdditional = null) {
+        internal string FormatString(string input, RunnerPlayer? player = null, RunnerPlayer? target = null, IpApi.Response? geoResponse = null, ReportReason? reportReason = null, ChatChannel? chatChannel = null, string msg = null) {
             var now = string.IsNullOrWhiteSpace(Configuration.TimeStampFormat) ? "" : DateTime.Now.ToString(Configuration.TimeStampFormat);
             input = input.Replace("{now}", now);
             if (input.Contains("{player.Name}")) input = input.Replace("{player.Name}", player.Name);
-            if (input.Contains("{from.Name}")) input = input.Replace("{from.Name}", player.Name);
             if (input.Contains("{to.Name}")) input = input.Replace("{to.Name}", target.Name);
             if (input.Contains("{player.SteamID}")) input = input.Replace("{player.SteamID}", player.SteamID.ToString());
-            if (input.Contains("{from.SteamID}")) input = input.Replace("{from.SteamID}", player.SteamID.ToString());
             if (input.Contains("{to.SteamID}")) input = input.Replace("{to.SteamID}", target.SteamID.ToString());
             if (input.Contains("{player.str()}")) input = input.Replace("{player.str()}", player.str());
-            if (input.Contains("{from.str()}")) input = input.Replace("{from.str()}", player.str());
             if (input.Contains("{to.str()}")) input = input.Replace("{to.str()}", target.str());
             if (input.Contains("{player.fullstr()}")) input = input.Replace("{player.fullstr()}", player.fullstr());
-            if (input.Contains("{from.fullstr()}")) input = input.Replace("{from.fullstr()}", player.fullstr());
             if (input.Contains("{to.fullstr()}")) input = input.Replace("{to.fullstr()}", target.fullstr());
             if (input.Contains("{player.IP}")) input = input.Replace("{player.IP}", player.IP.ToString());
-            if (input.Contains("{from.IP}")) input = input.Replace("{from.IP}", player.IP.ToString());
             if (input.Contains("{to.IP}")) input = input.Replace("{to.IP}", target.IP.ToString());
             if (input.Contains("{geoResponse.Country}")) input = input.Replace("{geoResponse.Country}", geoResponse.Country);
+            if (input.Contains("{geoResponse.CountryCode}")) input = input.Replace("{geoResponse.CountryCode}", geoResponse.CountryCode.ToLowerInvariant());
             if (input.Contains("{geoResponse.ToJson()}")) input = input.Replace("{geoResponse.ToJson()}", geoResponse.ToJson());
             if (input.Contains("{reason}")) input = input.Replace("{reason}", reportReason.ToString());
-            if (input.Contains("{additional}")) input = input.Replace("{additional}", reportAdditional);
+            if (input.Contains("{msg}")) input = input.Replace("{msg}", msg);
+            if (input.Contains("{chatChannel}")) input = input.Replace("{chatChannel}", chatChannel.ToString());
             foreach (var replacement in Configuration.randomReplacements) {
                 input = input.Replace("{random." + replacement.Key + "}", replacement.Value[random.Next(replacement.Value.Length)]);
             }
             return input; // Smart.Format(input, now=now, parms);
         }
 
-        internal async void HandleEvent(LogConfigurationEntry config, RunnerPlayer? player = null, RunnerPlayer? target = null, IpApi.Response? geoResponse = null, ReportReason? reportReason = null, string reportAdditional = null) {
+        internal async void HandleEvent(LogConfigurationEntry config, RunnerPlayer? player = null, RunnerPlayer? target = null, IpApi.Response? geoResponse = null, ReportReason? reportReason = null, ChatChannel? chatChannel = null, string _msg = null) {
             if (config.Console is not null && config.Console.Enabled && !string.IsNullOrWhiteSpace(config.Console.Message)) {
-                LogToConsole(FormatString(config.Console.Message, player, target, geoResponse, reportReason, reportAdditional));
+                LogToConsole(FormatString(config.Console.Message, player, target, geoResponse, reportReason, chatChannel, _msg));
             }
             if (config.Discord is not null && config.Discord.Enabled && !string.IsNullOrWhiteSpace(config.Discord.WebhookUrl) && !string.IsNullOrWhiteSpace(config.Discord.Message)) {
-                var msg = FormatString(config.Discord.Message, player, target, geoResponse, reportReason, reportAdditional);
+                var msg = FormatString(config.Discord.Message, player, target, geoResponse, reportReason, chatChannel, _msg);
                 await SendToWebhook(config.Discord.WebhookUrl, msg);
             }
             try { var _ = this.Server.IsConnected; } catch (Exception ex) {
@@ -214,7 +211,7 @@ namespace LoggerBattlebitModule {
             }
             if (this.Server is null || !this.Server.IsConnected) return;
             if (config.Chat is not null && config.Chat.Enabled && !string.IsNullOrWhiteSpace(config.Chat.Message)) {
-                var msg = FormatString(config.Chat.Message, player, target, geoResponse, reportReason, reportAdditional);
+                var msg = FormatString(config.Chat.Message, player, target, geoResponse, reportReason, chatChannel, _msg);
                 if (this.PlayerPermissions is not null && config.Chat.Roles != Roles.None) {
                     try {
                         foreach (var _player in this.Server.AllPlayers) {
@@ -227,44 +224,52 @@ namespace LoggerBattlebitModule {
                 } else SayToAll(msg);
             }
             if (config.Modal is not null && config.Modal.Enabled && !string.IsNullOrWhiteSpace(config.Modal.Message)) {
-                var msg = FormatString(config.Modal.Message, player, target, geoResponse, reportReason, reportAdditional);
+                var msg = FormatString(config.Modal.Message, player, target, geoResponse, reportReason, chatChannel, _msg);
                 foreach (var _player in this.Server.AllPlayers) {
                     if (this.PlayerPermissions is not null && (this.PlayerPermissions.Call<Roles>("GetPlayerRoles", _player.SteamID) & config.Modal.Roles) == 0) continue;
                     ModalMessage(msg, player: player);
                 }
             }
             if (config.UILog is not null && config.UILog.Enabled && !string.IsNullOrWhiteSpace(config.UILog.Message)) {
-                var msg = FormatString(config.UILog.Message, player, target, geoResponse, reportReason, reportAdditional);
+                var msg = FormatString(config.UILog.Message, player, target, geoResponse, reportReason, chatChannel, _msg);
                 UILogOnServer(msg, config.UILog.Duration);
             }
             if (config.Announce is not null && config.Announce.Enabled && !string.IsNullOrWhiteSpace(config.Announce.Message)) {
-                var msg = FormatString(config.Announce.Message, player, target, geoResponse, reportReason, reportAdditional);
+                var msg = FormatString(config.Announce.Message, player, target, geoResponse, reportReason, chatChannel, _msg);
                 Announce(msg, config.Announce.Duration);
             }
         }
 
         public override void OnModulesLoaded() {
             this.CommandHandler.Register(this);
-            HandleEvent(Configuration.OnModulesLoaded);
+            HandleEvent(Configuration.OnApiModulesLoaded);
         }
         public override Task OnConnected() {
-            HandleEvent(Configuration.OnConnected);
-            return Task.CompletedTask;
-        }
-        public override Task OnDisconnected() {
-            HandleEvent(Configuration.OnDisconnected);
+            HandleEvent(Configuration.OnApiConnected);
             return Task.CompletedTask;
         }
         public override async Task OnPlayerConnected(RunnerPlayer player) {
             var geoResponse = await GetGeoData(player.IP);
             HandleEvent(Configuration.OnPlayerConnected, player: player, geoResponse: geoResponse);
         }
+        public override Task<bool> OnPlayerTypedMessage(RunnerPlayer player, ChatChannel channel, string msg) {
+            if (msg.StartsWith(CommandHandler.CommandConfiguration.CommandPrefix)) {
+                HandleEvent(Configuration.OnPlayerChatCommand, player: player, chatChannel: channel, _msg: msg);
+            } else {
+                HandleEvent(Configuration.OnPlayerChatMessage, player: player, chatChannel: channel, _msg: msg);
+            }
+            return Task.FromResult(true);
+        }
         public override Task OnPlayerDisconnected(RunnerPlayer player) {
             HandleEvent(Configuration.OnPlayerDisconnected, player: player);
             return Task.CompletedTask;
         }
         public override Task OnPlayerReported(RunnerPlayer from, RunnerPlayer to, ReportReason reason, string additional) {
-            HandleEvent(Configuration.OnPlayerReported, player: from, target: to, reportReason: reason, reportAdditional: additional);
+            HandleEvent(Configuration.OnPlayerReported, player: from, target: to, reportReason: reason, _msg: additional);
+            return Task.CompletedTask;
+        }
+        public override Task OnDisconnected() {
+            HandleEvent(Configuration.OnApiDisconnected);
             return Task.CompletedTask;
         }
     }
@@ -313,51 +318,49 @@ namespace LoggerBattlebitModule {
         public Dictionary<string, string[]> randomReplacements = new Dictionary<string, string[]>() {
             { "joined", new string[] { "joined", "connected", "hailed" } },
         };
-        public LogConfigurationEntry OnModulesLoaded { get; set; } = new LogConfigurationEntry() {
-            Chat = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] API Modules loaded", Roles = Roles.Member },
+        public LogConfigurationEntry OnApiModulesLoaded { get; set; } = new LogConfigurationEntry() {
+            Chat = new LogConfigurationEntrySettings() { Enabled = false, Message = "[{now}] API Modules loaded", Roles = Roles.Member },
             Console = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] API Modules loaded" },
-            Announce = new LogConfigurationEntrySettings() { Enabled = true, Message = "Modules loaded", Duration = Duration.Short },
-            Modal = new LogConfigurationEntrySettings() { Enabled = false, Message = "Modules loaded" },
-            Discord = new DiscordWebhookLogConfigurationEntrySettings() { Enabled = false, Message = "[{now}] API Modules loaded" },
+            UILog = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] API Modules loaded" },
+            Discord = new DiscordWebhookLogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] API Modules loaded" },
         };
-        public LogConfigurationEntry OnConnected { get; set; } = new LogConfigurationEntry() {
-            Chat = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] Server connected to API", Roles = Roles.Member },
+        public LogConfigurationEntry OnApiConnected { get; set; } = new LogConfigurationEntry() {
+            Chat = new LogConfigurationEntrySettings() { Enabled = false, Message = "[{now}] Server connected to API", Roles = Roles.Member },
             Console = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] Server connected to API" },
             UILog = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] Server connected to API" },
             Announce = new LogConfigurationEntrySettings() { Enabled = true, Message = "Server connected to API", Duration = Duration.Short },
             Modal = new LogConfigurationEntrySettings() { Enabled = false, Message = "Server connected to API" },
-            Discord = new DiscordWebhookLogConfigurationEntrySettings() { Enabled = false, Message = "[{now}] Server connected to API" },
+            Discord = new DiscordWebhookLogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] Server connected to API" },
         };
-        public LogConfigurationEntry OnDisconnected { get; set; } = new LogConfigurationEntry() {
-            Chat = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] Server disconnected from API", Roles = Roles.Member },
+        public LogConfigurationEntry OnApiDisconnected { get; set; } = new LogConfigurationEntry() {
             Console = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] Server disconnected from API" },
-            UILog = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] Server disconnected from API" },
-            Announce = new LogConfigurationEntrySettings() { Enabled = true, Message = "Server disconnected from API", Duration = Duration.Short },
-            Modal = new LogConfigurationEntrySettings() { Enabled = false, Message = "Server disconnected from API" },
-            Discord = new DiscordWebhookLogConfigurationEntrySettings() { Enabled = false, Message = "[{now}] Server disconnected from API" },
+            Discord = new DiscordWebhookLogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] Server disconnected from API" },
         };
         public LogConfigurationEntry OnPlayerConnected { get; set; } = new LogConfigurationEntry() {
-            Chat = new LogConfigurationEntrySettings() { Enabled = true, Message = "[+] {player.Name} {random.joined} from {geoResponse.Country}", Roles = Roles.All },
-            Console = new LogConfigurationEntrySettings() { Enabled = true, Message = "[+] {player.Name} ({player.SteamID})) | {geoResponse.ToJson()}" },
-            UILog = new LogConfigurationEntrySettings() { Enabled = true, Message = "[+] {player.Name}" },
-            Announce = new LogConfigurationEntrySettings() { Enabled = true, Message = "{player.Name} {random.joined} from {geoResponse.Country}", Duration = Duration.Short },
-            Modal = new LogConfigurationEntrySettings() { Enabled = false, Message = "{player.Name} {random.joined} from {geoResponse.Country}" },
-            Discord = new DiscordWebhookLogConfigurationEntrySettings() { Enabled = false, Message = "[{now}] {player.Name} {random.joined} from {geoResponse.Country}" },
+            Chat = new LogConfigurationEntrySettings() { Enabled = false, Message = "[+] {player.Name} {random.joined} from {geoResponse.Country}", Roles = Roles.All },
+            Console = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] [+] {player.Name} ({player.SteamID})) | {geoResponse.ToJson()}" },
+            UILog = new LogConfigurationEntrySettings() { Enabled = true, Message = "{player.Name} [+]" },
+            Discord = new DiscordWebhookLogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] {player.str()} connected from {geoResponse.Country} :flag_{geoResponse.CountryCode}:" },
         };
         public LogConfigurationEntry OnPlayerDisconnected { get; set; } = new LogConfigurationEntry() {
-            Chat = new LogConfigurationEntrySettings() { Enabled = true, Message = "[-] {player.Name} left", Roles = Roles.All },
-            Console = new LogConfigurationEntrySettings() { Enabled = true, Message = "[-] {player.Name} ({player.SteamID})) [{player.IP}]" },
-            UILog = new LogConfigurationEntrySettings() { Enabled = true, Message = "[-] {player.Name}" },
-            Announce = new LogConfigurationEntrySettings() { Enabled = true, Message = "{player.Name} left", Duration = Duration.Short },
-            Modal = new LogConfigurationEntrySettings() { Enabled = false, Message = "{player.Name} left" },
-            Discord = new DiscordWebhookLogConfigurationEntrySettings() { Enabled = false, Message = "[{now}] {player.Name} ({player.SteamID})) left" },
+            Chat = new LogConfigurationEntrySettings() { Enabled = false, Message = "[-] {player.Name} left", Roles = Roles.All },
+            Console = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] [-] {player.Name} ({player.SteamID})) [{player.IP}]" },
+            UILog = new LogConfigurationEntrySettings() { Enabled = true, Message = "{player.Name} [-]" },
+            Discord = new DiscordWebhookLogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] {player.Name} ({player.SteamID})) disconnected :arrow_left:" },
+        };
+        public LogConfigurationEntry OnPlayerChatMessage { get; set; } = new LogConfigurationEntry() {
+            Console = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] {player.str()} says \"{msg}\" in {chatChannel}" },
+            Discord = new DiscordWebhookLogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] {player.str()} says \"{msg}\" in {chatChannel} :speech_balloon:" },
+        };
+        public LogConfigurationEntry OnPlayerChatCommand { get; set; } = new LogConfigurationEntry() {
+            Console = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] {player.str()} issued command \"{msg}\" in {chatChannel}" },
+            Discord = new DiscordWebhookLogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] {player.str()} issued command \"{msg}\" in {chatChannel}" },
         };
         public LogConfigurationEntry OnPlayerReported { get; set; } = new LogConfigurationEntry() {
-            Chat = new LogConfigurationEntrySettings() { Enabled = true, Message = "{to.Name} was reported for {reason}", Roles = Roles.All },
-            Console = new LogConfigurationEntrySettings() { Enabled = true, Message = "{from.Name} reported {to.Name} for {reason}: \"{additional}\"" },
+            Chat = new LogConfigurationEntrySettings() { Enabled = false, Message = "{to.Name} was reported for {reason}", Roles = Roles.All },
+            Console = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] {player.str()} reported {to.str()} for {reason}: \"{msg}\"" },
             UILog = new LogConfigurationEntrySettings() { Enabled = true, Message = "{to.Name} was reported ({reason})" },
-            Announce = new LogConfigurationEntrySettings() { Enabled = true, Message = "{to.Name} was reported for {reason}", Duration = Duration.Long },
-            Modal = new LogConfigurationEntrySettings() { Enabled = false, Message = "{to.fullstr()}\nwas reported by\n{from.fullstr()}\n\nReason: {reason}\n\n\"{additional}\"", Roles = Roles.AdminMod },
+            Modal = new LogConfigurationEntrySettings() { Enabled = false, Message = "{to.fullstr()}\nwas reported by\n{player.fullstr()}\n\nReason: {reason}\n\n\"{msg}\"", Roles = Roles.AdminMod },
             Discord = new DiscordWebhookLogConfigurationEntrySettings() { Enabled = false, Message = "[{now}] {to.Name} was reported for {reason} :warning:" },
         };
     }
