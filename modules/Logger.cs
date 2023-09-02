@@ -328,8 +328,6 @@ namespace LoggerBattlebitModule {
             Chat = new LogConfigurationEntrySettings() { Enabled = false, Message = "[{now}] Server connected to API", Roles = Roles.Member },
             Console = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] Server connected to API" },
             UILog = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] Server connected to API" },
-            Announce = new LogConfigurationEntrySettings() { Enabled = true, Message = "Server connected to API", Duration = Duration.Short },
-            Modal = new LogConfigurationEntrySettings() { Enabled = false, Message = "Server connected to API" },
             Discord = new DiscordWebhookLogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] Server connected to API" },
         };
         public LogConfigurationEntry OnApiDisconnected { get; set; } = new LogConfigurationEntry() {
@@ -340,21 +338,21 @@ namespace LoggerBattlebitModule {
             Chat = new LogConfigurationEntrySettings() { Enabled = false, Message = "[+] {player.Name} {random.joined} from {geoResponse.Country}", Roles = Roles.All },
             Console = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] [+] {player.Name} ({player.SteamID})) | {geoResponse.ToJson()}" },
             UILog = new LogConfigurationEntrySettings() { Enabled = true, Message = "{player.Name} [+]" },
-            Discord = new DiscordWebhookLogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] {player.str()} connected from {geoResponse.Country} :flag_{geoResponse.CountryCode}:" },
+            Discord = new DiscordWebhookLogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] `{player.str()}` connected from {geoResponse.Country} :flag_{geoResponse.CountryCode}:" },
         };
         public LogConfigurationEntry OnPlayerDisconnected { get; set; } = new LogConfigurationEntry() {
             Chat = new LogConfigurationEntrySettings() { Enabled = false, Message = "[-] {player.Name} left", Roles = Roles.All },
             Console = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] [-] {player.Name} ({player.SteamID})) [{player.IP}]" },
             UILog = new LogConfigurationEntrySettings() { Enabled = true, Message = "{player.Name} [-]" },
-            Discord = new DiscordWebhookLogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] {player.Name} ({player.SteamID})) disconnected :arrow_left:" },
+            Discord = new DiscordWebhookLogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] `{player.str()}` disconnected :arrow_left:" },
         };
         public LogConfigurationEntry OnPlayerChatMessage { get; set; } = new LogConfigurationEntry() {
             Console = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] {player.str()} says \"{msg}\" in {chatChannel}" },
-            Discord = new DiscordWebhookLogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] {player.str()} says \"{msg}\" in {chatChannel} :speech_balloon:" },
+            Discord = new DiscordWebhookLogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] `{player.Name}` says \"{msg}\" in {chatChannel} :speech_balloon:" },
         };
         public LogConfigurationEntry OnPlayerChatCommand { get; set; } = new LogConfigurationEntry() {
             Console = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] {player.str()} issued command \"{msg}\" in {chatChannel}" },
-            Discord = new DiscordWebhookLogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] {player.str()} issued command \"{msg}\" in {chatChannel}" },
+            Discord = new DiscordWebhookLogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] `{player.Name}` issued command \"{msg}\" in {chatChannel}" },
         };
         public LogConfigurationEntry OnPlayerReported { get; set; } = new LogConfigurationEntry() {
             Chat = new LogConfigurationEntrySettings() { Enabled = false, Message = "{to.Name} was reported for {reason}", Roles = Roles.All },
