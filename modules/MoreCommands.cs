@@ -27,7 +27,7 @@ public class MoreCommands : BattleBitModule {
         this.Server.MapRotation.SetRotation(mapName);
         if (gameMode != null) {
             var mode = ResolveNameMatch(gameMode, GameModes);
-            if (string.IsNullOrWhiteSpacemodemap)) {
+            if (string.IsNullOrWhiteSpace(mode)) {
                 commandSource.Message($"GameMode {gameMode} could not be found"); return;
             }
             this.Server.GamemodeRotation.SetRotation(mode);
