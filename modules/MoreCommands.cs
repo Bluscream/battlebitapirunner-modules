@@ -18,15 +18,19 @@ public class MoreCommands : BattleBitModule {
     }
 
     [CommandCallback("map", Description = "Changes the map", AllowedRoles = Roles.Admin)]
-    public void SetMap(RunnerPlayer commandSource, string mapName, string? gameMode = null) // , string? gameSize = null)
+    public void SetMap(RunnerPlayer commandSource, string? mapName = null, string? gameMode = null) // , string? gameSize = null)
     {
-        var map = ResolveNameMatch(mapName, Maps);
-        if (string.IsNullOrWhiteSpace(map)) {
-            commandSource.Message($"Map {mapName} could not be found"); return;
+        var map = this.Server.Map;
+        if (mapName != null) {
+            map = ResolveNameMatch(mapName, Maps);
+            if (string.IsNullOrWhiteSpace(map)) {
+                commandSource.Message($"Map {mapName} could not be found"); return;
+            }
         }
         this.Server.MapRotation.SetRotation(mapName);
+        var mode = this.Server.Gamemode;
         if (gameMode != null) {
-            var mode = ResolveNameMatch(gameMode, GameModes);
+            mode = ResolveNameMatch(gameMode, GameModes);
             if (string.IsNullOrWhiteSpace(mode)) {
                 commandSource.Message($"GameMode {gameMode} could not be found"); return;
             }
@@ -39,6 +43,7 @@ public class MoreCommands : BattleBitModule {
             }
             this.Server.MapSize = size;
         }*/
+        this.Server.SayToAllChat($"Changing map to {map} ({mode})");
         this.Server.ForceEndGame();
     }
 
