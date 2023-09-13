@@ -267,4 +267,9 @@ public class MoreCommands : BattleBitModule {
         { "Old_Namak", "Old Namak" },
         { "Old_OilDunes", "Old Oil Dunes" },
     };
+    public enum MapDayNight : byte {
+        Day,
+        Night,
+        None
+    }
 }
