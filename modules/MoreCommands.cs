@@ -1,9 +1,11 @@
 using BattleBitAPI.Common;
 using BBRAPIModules;
 using Commands;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 
 namespace BattleBitBaseModules;
 
@@ -27,6 +29,7 @@ public class MoreCommands : BattleBitModule {
                 commandSource.Message($"Map {mapName} could not be found"); return;
             }
         }
+        var oldMaps = this.Server.MapRotation.GetMapRotation();
         this.Server.MapRotation.SetRotation(mapName);
         var mode = this.Server.Gamemode;
         if (gameMode != null) {
@@ -34,8 +37,9 @@ public class MoreCommands : BattleBitModule {
             if (string.IsNullOrWhiteSpace(mode)) {
                 commandSource.Message($"GameMode {gameMode} could not be found"); return;
             }
-            this.Server.GamemodeRotation.SetRotation(mode);
         }
+        var oldModes = this.Server.GamemodeRotation.GetGamemodeRotation();
+        this.Server.GamemodeRotation.SetRotation(mode);
         /*if (gameSize != null) {
             var size = GetSizeFromString(gameSize);
             if (size == MapSize.None) {
@@ -43,8 +47,14 @@ public class MoreCommands : BattleBitModule {
             }
             this.Server.MapSize = size;
         }*/
-        this.Server.SayToAllChat($"Changing map to {map} ({mode})");
+        var msg = $"Changing map to {map} ({mode})";
+        this.Server.SayToAllChat(msg);
+        this.Server.AnnounceShort(msg);
+        Task.Delay(TimeSpan.FromSeconds(1)).Wait();
         this.Server.ForceEndGame();
+        Task.Delay(TimeSpan.FromMinutes(1)).Wait();
+        this.Server.MapRotation.SetRotation(oldMaps.ToArray());
+        this.Server.GamemodeRotation.SetRotation(oldModes.ToArray());
     }
 
     [CommandCallback("gamemode", Description = "Changes the gamemode", AllowedRoles = Roles.Admin)]
