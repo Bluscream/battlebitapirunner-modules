@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace BattleBitBaseModules;
@@ -19,27 +20,29 @@ public class MoreCommands : BattleBitModule {
         this.CommandHandler.Register(this);
     }
 
-    [CommandCallback("map", Description = "Changes the map", AllowedRoles = Roles.Admin)]
-    public void SetMap(RunnerPlayer commandSource, string? mapName = null, string? gameMode = null) // , string? gameSize = null)
+    [CommandCallback("map", Description = "Changes the map", AllowedRoles = Roles.Admin | Roles.Moderator)]
+    public void SetMap(RunnerPlayer commandSource, string mapName, string? gameMode = null, string dayNight = "day") // , string? gameSize = null)
     {
-        var map = this.Server.Map;
+        var map = ResolveNameMatch(this.Server.Map, Maps);
         if (mapName != null) {
             map = ResolveNameMatch(mapName, Maps);
-            if (string.IsNullOrWhiteSpace(map)) {
+            if (!map.HasValue) {
                 commandSource.Message($"Map {mapName} could not be found"); return;
             }
         }
         var oldMaps = this.Server.MapRotation.GetMapRotation();
-        this.Server.MapRotation.SetRotation(mapName);
-        var mode = this.Server.Gamemode;
+        this.Server.MapRotation.SetRotation(map.Value.Key);
+
+        var mode = ResolveNameMatch(this.Server.Gamemode, GameModes);
         if (gameMode != null) {
             mode = ResolveNameMatch(gameMode, GameModes);
-            if (string.IsNullOrWhiteSpace(mode)) {
+            if (!mode.HasValue) {
                 commandSource.Message($"GameMode {gameMode} could not be found"); return;
             }
         }
         var oldModes = this.Server.GamemodeRotation.GetGamemodeRotation();
-        this.Server.GamemodeRotation.SetRotation(mode);
+        this.Server.GamemodeRotation.SetRotation(mode.Value.Key);
+
         /*if (gameSize != null) {
             var size = GetSizeFromString(gameSize);
             if (size == MapSize.None) {
@@ -47,24 +50,66 @@ public class MoreCommands : BattleBitModule {
             }
             this.Server.MapSize = size;
         }*/
-        var msg = $"Changing map to {map} ({mode})";
-        this.Server.SayToAllChat(msg);
-        this.Server.AnnounceShort(msg);
+        var oldVoteDay = this.Server.ServerSettings.CanVoteDay;
+        var oldVoteNight = this.Server.ServerSettings.CanVoteNight;
+        var DayNight = ParseDayNight(dayNight);
+        if (DayNight != MapDayNight.None) {
+            // DayNight = (MapDayNight)this.Server.DayNight;
+            switch (DayNight) {
+                case MapDayNight.Day:
+                    this.Server.ServerSettings.CanVoteDay = true;
+                    this.Server.ServerSettings.CanVoteNight = false;
+                    break;
+                case MapDayNight.Night:
+                    this.Server.ServerSettings.CanVoteDay = false;
+                    this.Server.ServerSettings.CanVoteNight = true;
+                    break;
+            }
+        }
+        var msg = new StringBuilder();
+        if (map.HasValue) msg.Append($"Changing map to {map.Value.Value}");
+        if (mode.HasValue) msg.Append($" ({mode.Value.Value})");
+        if (DayNight != MapDayNight.None) msg.Append($" [{DayNight}]");
+
+        this.Server.SayToAllChat(msg.ToString());
+        this.Server.AnnounceShort(msg.ToString());
         Task.Delay(TimeSpan.FromSeconds(1)).Wait();
         this.Server.ForceEndGame();
         Task.Delay(TimeSpan.FromMinutes(1)).Wait();
         this.Server.MapRotation.SetRotation(oldMaps.ToArray());
         this.Server.GamemodeRotation.SetRotation(oldModes.ToArray());
+        this.Server.ServerSettings.CanVoteDay = oldVoteDay;
+        this.Server.ServerSettings.CanVoteNight = oldVoteNight;
     }
 
-    [CommandCallback("gamemode", Description = "Changes the gamemode", AllowedRoles = Roles.Admin)]
-    public void SetGameMode(RunnerPlayer commandSource, string gameMode) {
-        var mode = ResolveNameMatch(gameMode, GameModes);
-        if (string.IsNullOrWhiteSpace(mode)) {
-            commandSource.Message($"GameMode {mode} could not be found");
+    [CommandCallback("gamemode", Description = "Changes the gamemode", AllowedRoles = Roles.Admin | Roles.Moderator)]
+    public void SetGameMode(RunnerPlayer commandSource, string gameMode, string? dayNight = null) => SetMap(commandSource, this.Server.Map, gameMode, dayNight);
+
+    [CommandCallback("time", Description = "Changes the map time", AllowedRoles = Roles.Admin | Roles.Moderator)]
+    public void SetMapTime(RunnerPlayer commandSource, string dayNight) => SetGameMode(commandSource, this.Server.Gamemode, dayNight);
+
+    [CommandCallback("votetime", Description = "Changes the allowed map times for votes", AllowedRoles = Roles.Admin | Roles.Moderator)]
+    public void SetMapVoteTime(RunnerPlayer commandSource, string dayNightAll) {
+        var DayNight = ParseDayNight(dayNightAll);
+        var msg = $"Players can now vote for ";
+        switch (DayNight) {
+            case MapDayNight.Day:
+                this.Server.ServerSettings.CanVoteDay = true;
+                this.Server.ServerSettings.CanVoteNight = false;
+                msg += "Day";
+                break;
+            case MapDayNight.Night:
+                this.Server.ServerSettings.CanVoteDay = false;
+                this.Server.ServerSettings.CanVoteNight = true;
+                msg += "Night";
+                break;
+            default:
+                this.Server.ServerSettings.CanVoteDay = true;
+                this.Server.ServerSettings.CanVoteNight = true;
+                msg += "All";
+                break;
         }
-        this.Server.GamemodeRotation.SetRotation(mode);
-        this.Server.ForceEndGame();
+        commandSource.Message(msg);
     }
 
     [CommandCallback("maps", Description = "Lists all maps")]
@@ -117,14 +162,22 @@ public class MoreCommands : BattleBitModule {
         commandSource.Message($"Toggled bots firing");
     }
 
-    internal static string? ResolveNameMatch(string input, List<string> matches) {
+    internal MapDayNight ParseDayNight(string input) {
+        if (string.IsNullOrWhiteSpace(input)) return MapDayNight.None;
+        input = input.Trim().ToLowerInvariant();
+        if (input.Contains("day")) return MapDayNight.Day;
+        else if (input.Contains("night")) return MapDayNight.Night;
+        return MapDayNight.None;
+    }
+
+    internal static KeyValuePair<string, string?>? ResolveNameMatch(string input, Dictionary<string, string?> matches) {
         var lower = input.ToLowerInvariant().Trim();
         foreach (var match in matches) {
-            if (lower == match.ToLowerInvariant())
+            if (lower == match.Key.ToLowerInvariant() || (match.Value is not null && lower == match.Value.ToLowerInvariant()))
                 return match;
         }
         foreach (var match in matches) {
-            if (match.ToLowerInvariant().Contains(lower))
+            if (match.Key.ToLowerInvariant().Contains(lower) || (match.Value is not null && match.Value.ToLowerInvariant().Contains(lower)))
                 return match;
         }
         return null;
@@ -156,47 +209,58 @@ public class MoreCommands : BattleBitModule {
                 return MapSize.None;
         }
     }
-    public static List<string> GameModes { get; set; } = new()
+    public static Dictionary<string, string?> GameModes { get; set; } = new()
     {
-        "TDM",
-        "AAS",
-        "RUSH",
-        "CONQ",
-        "DOMI",
-        "ELI",
-        "INFCONQ",
-        "FRONTLINE",
-        "GunGameFFA",
-        "FFA",
-        "GunGameTeam",
-        "SuicideRush",
-        "CatchGame",
-        "Infected",
-        "CashRun",
-        "VoxelFortify",
-        "VoxelTrench",
-        "CaptureTheFlag"
+        { "TDM", "Team Deathmatch" },
+        { "AAS", null },
+        { "RUSH", "Rush" },
+        { "CONQ", "Conquest" },
+        { "DOMI", "Domination" },
+        { "ELI", "Elimination" },
+        { "INFCONQ", "Infantry Conquest" },
+        { "FRONTLINE", "Frontline" },
+        { "GunGameFFA", "Gun Game (Free For All)" },
+        { "FFA", "Free For All" },
+        { "GunGameTeam", "Gun Game (Team)" },
+        { "SuicideRush", "Suicide Rush" },
+        { "CatchGame", "Catch Game" },
+        { "Infected", null },
+        { "CashRun", "Cash Run" },
+        { "VoxelFortify", "Voxel Fortify" },
+        { "VoxelTrench", "Voxel Trench" },
+        { "CaptureTheFlag", "Capture The Flag" },
     };
-    public static List<string> Maps { get; set; } = new()
+    public static Dictionary<string, string?> Maps { get; set; } = new()
     {
-        "Azagor",
-        "Basra",
-        "Construction",
-        "District",
-        "Dustydew",
-        "Eduardovo",
-        "Frugis",
-        "Isle",
-        "Lonovo",
-        "MultuIslands",
-        "Namak",
-        "OilDunes",
-        "River",
-        "Salhan",
-        "SandySunset",
-        "TensaTown",
-        "Valley",
-        "Wakistan",
-        "WineParadise"
+        { "Azagor", null },
+        { "Basra", null },
+        { "Construction", null },
+        { "District", null },
+        { "Dustydew", null },
+        { "Eduardovo", null },
+        { "Frugis", null },
+        { "Isle", null },
+        { "Lonovo", null },
+        { "MultuIslands", "Multu Islands" },
+        { "Namak", null },
+        { "OilDunes", "Oil Dunes" },
+        { "River", null },
+        { "Salhan", null },
+        { "SandySunset", "Sandy Sunset" },
+        { "TensaTown", "Tensa Town" },
+        { "Valley", null },
+        { "Wakistan", "Wackistan" },
+        { "WineParadise", "WineParadise" },
+        { "Old_District", "Old District" },
+        { "Old_Eduardovo", "Old Eduardovo" },
+        { "Old_MultuIslands", "Old Multu Islands" },
+        { "Old_Namak", "Old Namak" },
+        { "Old_OilDunes", "Old Oil Dunes" },
     };
+
+    public enum MapDayNight : byte {
+        Day,
+        Night,
+        None
+    }
 }
