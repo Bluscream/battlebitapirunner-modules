@@ -1,7 +1,4 @@
-#nullable enable
-#pragma warning disable CS8618
-#pragma warning disable CS8601
-#pragma warning disable CS8603
+
 using System;
 using System.Linq;
 using System.Net;
@@ -17,6 +14,9 @@ using BattleBitAPI.Common;
 using BBRAPIModules;
 using Commands;
 using JsonExtensions;
+#if DEBUG
+using Permissions;
+#endif
 
 /// <summary>
 /// Author: Bluscream
@@ -35,11 +35,15 @@ namespace LoggerBattlebitModule {
     [RequireModule(typeof(CommandHandler))]
     public class Logger : BattleBitModule {
         [ModuleReference]
-        public CommandHandler CommandHandler { get; set; }
+        public CommandHandler CommandHandler { get; set; } = null!;
         [ModuleReference]
-        public BattleBitModule? PlayerPermissions { get; set; }
+#if DEBUG
+        public PlayerPermissions? PlayerPermissions { get; set; } = null!;
+#else
+        public dynamic? PlayerPermissions { get; set; } = null!;
+#endif
 
-        public ChatLoggerConfiguration Configuration { get; set; }
+        public ChatLoggerConfiguration Configuration { get; set; } = null!;
         internal HttpClient httpClient = new HttpClient();
         internal Random random = Random.Shared;
 
@@ -53,7 +57,7 @@ namespace LoggerBattlebitModule {
         internal async Task<SteamWebApi.BanResponse> GetSteamBans(ulong steamId64) {
             if (string.IsNullOrWhiteSpace(Configuration.SteamWebApiKey)) {
                 Console.WriteLine("Steam Web API Key is not set up in config, can't continue!");
-                return null;
+                return null!;
             }
             var url = $"http://api.steampowered.com/ISteamUser/GetPlayerBans/v1/?steamids={steamId64}&key={Configuration.SteamWebApiKey}";
             var httpResponse = await this.httpClient.GetAsync(url);
@@ -185,7 +189,7 @@ namespace LoggerBattlebitModule {
             if (input.Contains("{to.IP}")) input = input.Replace("{to.IP}", target.IP.ToString());
             if (input.Contains("{geoResponse.Country}")) input = input.Replace("{geoResponse.Country}", geoResponse.Country);
             if (input.Contains("{geoResponse.CountryCode}")) input = input.Replace("{geoResponse.CountryCode}", geoResponse.CountryCode.ToLowerInvariant());
-            if (input.Contains("{geoResponse.ToJson()}")) input = input.Replace("{geoResponse.ToJson()}", geoResponse.ToJson());
+            if (input.Contains("{geoResponse.ToJson()}")) input = input.Replace("{geoResponse.ToJson()}", IpApi.Serialize.ToJson(geoResponse));
             if (input.Contains("{reason}")) input = input.Replace("{reason}", reportReason.ToString());
             if (input.Contains("{msg}")) input = input.Replace("{msg}", msg);
             if (input.Contains("{chatChannel}")) input = input.Replace("{chatChannel}", chatChannel.ToString());
@@ -213,7 +217,8 @@ namespace LoggerBattlebitModule {
                 if (this.PlayerPermissions is not null && config.Chat.Roles != Roles.None) {
                     try {
                         foreach (var _player in this.Server.AllPlayers) {
-                            if ((this.PlayerPermissions.Call<Roles>("GetPlayerRoles", _player.SteamID) & config.Chat.Roles) == 0) continue;
+                            var playerRoles = (Roles)this.PlayerPermissions.GetPlayerRoles(player.SteamID);
+                            if (playerRoles & config.Chat.Roles) == 0) continue;
                             SayToPlayer(msg, player: player);
                         }
                     } catch (Exception ex) {
@@ -224,7 +229,8 @@ namespace LoggerBattlebitModule {
             if (config.Modal is not null && config.Modal.Enabled && !string.IsNullOrWhiteSpace(config.Modal.Message)) {
                 var msg = FormatString(config.Modal.Message, player, target, geoResponse, reportReason, chatChannel, _msg);
                 foreach (var _player in this.Server.AllPlayers) {
-                    if (this.PlayerPermissions is not null && (this.PlayerPermissions.Call<Roles>("GetPlayerRoles", _player.SteamID) & config.Modal.Roles) == 0) continue;
+                    var playerRoles = this.PlayerPermissions.GetPlayerRoles(_player.SteamID);
+                    if (this.PlayerPermissions is not null && (playerRoles & config.Modal.Roles) == 0) continue;
                     ModalMessage(msg, player: player);
                 }
             }
@@ -300,12 +306,12 @@ namespace LoggerBattlebitModule {
         public string WebhookUrl { get; set; } = string.Empty;
     }
     public class LogConfigurationEntry {
-        public LogConfigurationEntrySettings Chat { get; set; }
-        public LogConfigurationEntrySettings Console { get; set; }
-        public LogConfigurationEntrySettings UILog { get; set; }
-        public LogConfigurationEntrySettings Announce { get; set; }
-        public LogConfigurationEntrySettings Modal { get; set; }
-        public DiscordWebhookLogConfigurationEntrySettings Discord { get; set; }
+        public LogConfigurationEntrySettings Chat { get; set; } = null!;
+        public LogConfigurationEntrySettings Console { get; set; } = null!;
+        public LogConfigurationEntrySettings UILog { get; set; } = null!;
+        public LogConfigurationEntrySettings Announce { get; set; } = null!;
+        public LogConfigurationEntrySettings Modal { get; set; } = null!;
+        public DiscordWebhookLogConfigurationEntrySettings Discord { get; set; } = null!;
     }
     public class ChatLoggerConfiguration : ModuleConfiguration {
         public string SteamWebApiKey { get; set; } = string.Empty;
@@ -485,22 +491,22 @@ namespace JsonExtensions {
 namespace IpApi {
     public partial class Response {
         [JsonPropertyName("status")]
-        public string Status { get; set; }
+        public string Status { get; set; } = null!;
 
         [JsonPropertyName("country")]
-        public string Country { get; set; }
+        public string Country { get; set; } = null!;
 
         [JsonPropertyName("countryCode")]
-        public string CountryCode { get; set; }
+        public string CountryCode { get; set; } = null!;
 
         [JsonPropertyName("region")]
-        public string Region { get; set; }
+        public string Region { get; set; } = null!;
 
         [JsonPropertyName("regionName")]
-        public string RegionName { get; set; }
+        public string RegionName { get; set; } = null!;
 
         [JsonPropertyName("city")]
-        public string City { get; set; }
+        public string City { get; set; } = null!;
 
         [JsonPropertyName("zip")]
         [JsonConverter(typeof(ParseStringConverter))]
@@ -513,19 +519,19 @@ namespace IpApi {
         public double Lon { get; set; }
 
         [JsonPropertyName("timezone")]
-        public string Timezone { get; set; }
+        public string Timezone { get; set; } = null!;
 
         [JsonPropertyName("isp")]
-        public string Isp { get; set; }
+        public string Isp { get; set; } = null!;
 
         [JsonPropertyName("org")]
-        public string Org { get; set; }
+        public string Org { get; set; } = null!;
 
         [JsonPropertyName("as")]
-        public string As { get; set; }
+        public string As { get; set; } = null!;
 
         [JsonPropertyName("query")]
-        public string Query { get; set; }
+        public string Query { get; set; } = null!;
     }
 
     public partial class Response {
@@ -540,12 +546,12 @@ namespace IpApi {
 namespace SteamWebApi {
     public partial class BanResponse {
         [JsonPropertyName("players")]
-        public List<Player> Players { get; set; }
+        public List<Player> Players { get; set; } = null!;
     }
 
     public partial class Player {
         [JsonPropertyName("SteamId")]
-        public string SteamId { get; set; }
+        public string SteamId { get; set; } = null!;
 
         [JsonPropertyName("CommunityBanned")]
         public bool CommunityBanned { get; set; }
@@ -563,7 +569,7 @@ namespace SteamWebApi {
         public long NumberOfGameBans { get; set; }
 
         [JsonPropertyName("EconomyBan")]
-        public string EconomyBan { get; set; }
+        public string EconomyBan { get; set; } = null!;
     }
 
     public partial class BanResponse {
