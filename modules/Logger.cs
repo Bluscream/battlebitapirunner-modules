@@ -31,7 +31,7 @@ namespace LoggerBattlebitModule {
     }
 
     [RequireModule(typeof(CommandHandler))]
-    public class LoggerModule : BattleBitModule {
+    public class Logger : BattleBitModule {
         [ModuleReference]
         public CommandHandler CommandHandler { get; set; }
         [ModuleReference]
@@ -39,7 +39,7 @@ namespace LoggerBattlebitModule {
 
         public ChatLoggerConfiguration Configuration { get; set; }
         internal HttpClient httpClient = new HttpClient();
-        internal Random random = new Random();
+        internal Random random = Random.Shared;
 
         internal async Task<IpApi.Response> GetGeoData(IPAddress ip) {
             var url = $"http://ip-api.com/json/{ip}";
@@ -128,6 +128,7 @@ namespace LoggerBattlebitModule {
                 var response = await this.httpClient.PostAsync(webhookUrl, content);
                 if (!response.IsSuccessStatusCode) {
                     Console.WriteLine($"Error sending webhook message. Status Code: {response.StatusCode}");
+                    await Task.Delay(TimeSpan.FromSeconds(1));
                 }
                 success = response.IsSuccessStatusCode;
             }
@@ -206,8 +207,8 @@ namespace LoggerBattlebitModule {
                 await SendToWebhook(config.Discord.WebhookUrl, msg);
             }
             try { var _ = this.Server.IsConnected; } catch (Exception ex) {
-                        Console.WriteLine($"Got exception {ex.Message} while trying this.Server.IsConnected");
-                        return;
+                Console.WriteLine($"Got exception {ex.Message} while trying this.Server.IsConnected");
+                return;
             }
             if (this.Server is null || !this.Server.IsConnected) return;
             if (config.Chat is not null && config.Chat.Enabled && !string.IsNullOrWhiteSpace(config.Chat.Message)) {
@@ -284,7 +285,6 @@ namespace LoggerBattlebitModule {
         Member = Admin | Moderator | Vip | Special,
         All = Admin | Moderator | Vip | Special | None
     }
-
     public enum Duration {
         None,
         Short,
@@ -299,10 +299,9 @@ namespace LoggerBattlebitModule {
         public Roles Roles { get; set; } = Roles.None;
         public Duration Duration { get; set; } = Duration.None;
     }
-    public class DiscordWebhookLogConfigurationEntrySettings: LogConfigurationEntrySettings {
+    public class DiscordWebhookLogConfigurationEntrySettings : LogConfigurationEntrySettings {
         public string WebhookUrl { get; set; } = string.Empty;
     }
-
     public class LogConfigurationEntry {
         public LogConfigurationEntrySettings Chat { get; set; }
         public LogConfigurationEntrySettings Console { get; set; }
@@ -311,7 +310,6 @@ namespace LoggerBattlebitModule {
         public LogConfigurationEntrySettings Modal { get; set; }
         public DiscordWebhookLogConfigurationEntrySettings Discord { get; set; }
     }
-
     public class ChatLoggerConfiguration : ModuleConfiguration {
         public string SteamWebApiKey { get; set; } = string.Empty;
         public string TimeStampFormat { get; set; } = "HH:mm:ss";
@@ -362,7 +360,6 @@ namespace LoggerBattlebitModule {
             Discord = new DiscordWebhookLogConfigurationEntrySettings() { Enabled = false, Message = "[{now}] {to.Name} was reported for {reason} :warning:" },
         };
     }
-
 }
 
 namespace JsonExtensions {
@@ -483,7 +480,6 @@ namespace JsonExtensions {
                 return default(DateTimeOffset);
             }
         }
-
 
         public static readonly IsoDateTimeOffsetConverter Singleton = new IsoDateTimeOffsetConverter();
     }

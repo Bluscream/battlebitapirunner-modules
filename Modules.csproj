@@ -15,11 +15,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="configurations\**" />
     <Compile Remove="configurations_\**" />
+    <Compile Remove="dependencies\**" />
     <Compile Remove="modules_\**" />
+    <EmbeddedResource Remove="configurations\**" />
     <EmbeddedResource Remove="configurations_\**" />
+    <EmbeddedResource Remove="dependencies\**" />
     <EmbeddedResource Remove="modules_\**" />
+    <None Remove="configurations\**" />
     <None Remove="configurations_\**" />
+    <None Remove="dependencies\**" />
     <None Remove="modules_\**" />
   </ItemGroup>
 
