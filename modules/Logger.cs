@@ -17,7 +17,6 @@ using BattleBitAPI.Common;
 using BBRAPIModules;
 using Commands;
 using JsonExtensions;
-using IpApi;
 
 /// <summary>
 /// Author: Bluscream
