@@ -72,7 +72,7 @@ namespace LoggerBattlebitModule {
             return banCount;
         }
 
-        [CommandCallback("playerbans", Description = "Lists bans of a player", AllowedRoles = (BattleBitAPI.Common.Roles)Roles.Admin)]
+        [CommandCallback("playerbans", Description = "Lists bans of a player", AllowedRoles = (BattleBitAPI.Common.Roles)Roles.AdminMod)]
         public async void GetPlayerBans(RunnerPlayer commandSource, RunnerPlayer _player) {
             var response = new StringBuilder();
             if (!string.IsNullOrEmpty(_player.Name)) response.AppendLine($"Name: {_player.str()} ({_player.Name.Length} chars)");
