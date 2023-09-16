@@ -17,9 +17,12 @@ using BattleBitAPI.Common;
 using BBRAPIModules;
 using Commands;
 using JsonExtensions;
-using SmartFormat;
 using IpApi;
-using System.Runtime.CompilerServices;
+
+/// <summary>
+/// Author: Bluscream
+/// Version: 1.0.0
+/// </summary>
 
 namespace LoggerBattlebitModule {
 
@@ -47,11 +50,6 @@ namespace LoggerBattlebitModule {
             var json = await httpResponse.Content.ReadAsStringAsync();
             var response = IpApi.Response.FromJson(json);
             return response;
-            //using (var wc = new System.Net.WebClient()) {
-            //    var json = wc.DownloadString(url);
-            //    var response = IpApi.Response.FromJson(json);
-            //    return response;
-            //}
         }
         internal async Task<SteamWebApi.BanResponse> GetSteamBans(ulong steamId64) {
             if (string.IsNullOrWhiteSpace(Configuration.SteamWebApiKey)) {
