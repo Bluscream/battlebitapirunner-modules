@@ -1,0 +1,3 @@
+[submodule "BattleBitBaseModules"]
+	path = BattleBitBaseModules
+	url = https://github.com/RainOrigami/BattleBitBaseModules
