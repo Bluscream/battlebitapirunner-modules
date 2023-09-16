@@ -32,6 +32,12 @@ namespace LoggerBattlebitModule {
         internal static string ToEnabledDisabledString(this bool input) => input ? "Enabled" : "Disabled";
     }
 
+    public static partial class MoreRoles {
+        public const Roles Staff = Roles.Admin | Roles.Moderator;
+        public const Roles Member = Roles.Admin | Roles.Moderator | Roles.Special | Roles.Vip;
+        public const Roles All = Roles.Admin | Roles.Moderator | Roles.Special | Roles.Vip | Roles.None;
+    }
+
     [RequireModule(typeof(CommandHandler))]
     public class Logger : BattleBitModule {
         [ModuleReference]
@@ -75,7 +81,7 @@ namespace LoggerBattlebitModule {
             return banCount;
         }
 
-        [CommandCallback("playerbans", Description = "Lists bans of a player", AllowedRoles = (BattleBitAPI.Common.Roles)Roles.AdminMod)]
+        [CommandCallback("playerbans", Description = "Lists bans of a player", AllowedRoles = MoreRoles.Staff)]
         public async void GetPlayerBans(RunnerPlayer commandSource, RunnerPlayer _player) {
             var response = new StringBuilder();
             if (!string.IsNullOrEmpty(_player.Name)) response.AppendLine($"Name: {_player.str()} ({_player.Name.Length} chars)");
@@ -95,7 +101,7 @@ namespace LoggerBattlebitModule {
             commandSource.Message(response.ToString());
         }
 
-        [CommandCallback("playerinfo", Description = "Displays info about a player", AllowedRoles = (BattleBitAPI.Common.Roles)Roles.Admin)]
+        [CommandCallback("playerinfo", Description = "Displays info about a player", AllowedRoles = Roles.Admin)]
         public async void GetPlayerInfo(RunnerPlayer commandSource, RunnerPlayer player) {
             var geoResponse = await GetGeoData(player.IP);
             var response = new StringBuilder();
@@ -217,9 +223,9 @@ namespace LoggerBattlebitModule {
                 if (this.PlayerPermissions is not null && config.Chat.Roles != Roles.None) {
                     try {
                         foreach (var _player in this.Server.AllPlayers) {
-                            var playerRoles = (Roles)this.PlayerPermissions.GetPlayerRoles(player.SteamID);
-                            if (playerRoles & config.Chat.Roles) == 0) continue;
-                            SayToPlayer(msg, player: player);
+                            var playerRoles = this.PlayerPermissions.GetPlayerRoles(_player.SteamID);
+                            if ((playerRoles & config.Chat.Roles) == 0) continue;
+                            SayToPlayer(msg, player: _player);
                         }
                     } catch (Exception ex) {
                         Console.WriteLine($"Got exception {ex.Message} while trying to send message to players");
@@ -229,9 +235,11 @@ namespace LoggerBattlebitModule {
             if (config.Modal is not null && config.Modal.Enabled && !string.IsNullOrWhiteSpace(config.Modal.Message)) {
                 var msg = FormatString(config.Modal.Message, player, target, geoResponse, reportReason, chatChannel, _msg);
                 foreach (var _player in this.Server.AllPlayers) {
-                    var playerRoles = this.PlayerPermissions.GetPlayerRoles(_player.SteamID);
-                    if (this.PlayerPermissions is not null && (playerRoles & config.Modal.Roles) == 0) continue;
-                    ModalMessage(msg, player: player);
+                    if (this.PlayerPermissions is not null) {
+                        var playerRoles = this.PlayerPermissions.GetPlayerRoles(_player.SteamID);
+                        if ((playerRoles & config.Modal.Roles) == 0) continue;
+                    }
+                    ModalMessage(msg, player: _player);
                 }
             }
             if (config.UILog is not null && config.UILog.Enabled && !string.IsNullOrWhiteSpace(config.UILog.Message)) {
@@ -278,16 +286,6 @@ namespace LoggerBattlebitModule {
         }
     }
 
-    public enum Roles : ulong {
-        None = BattleBitAPI.Common.Roles.None,
-        Admin = BattleBitAPI.Common.Roles.Admin,
-        Moderator = BattleBitAPI.Common.Roles.Moderator,
-        Special = BattleBitAPI.Common.Roles.Special,
-        Vip = BattleBitAPI.Common.Roles.Vip,
-        AdminMod = Admin | Moderator,
-        Member = Admin | Moderator | Vip | Special,
-        All = Admin | Moderator | Vip | Special | None
-    }
     public enum Duration {
         None,
         Short,
@@ -320,29 +318,29 @@ namespace LoggerBattlebitModule {
             { "joined", new string[] { "joined", "connected", "hailed" } },
         };
         public LogConfigurationEntry OnApiModulesLoaded { get; set; } = new LogConfigurationEntry() {
-            Chat = new LogConfigurationEntrySettings() { Enabled = false, Message = "[{now}] API Modules loaded", Roles = Roles.Member },
+            Chat = new LogConfigurationEntrySettings() { Enabled = false, Message = "[{now}] API Modules loaded", Roles = Roles.Admin },
             Console = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] API Modules loaded" },
             UILog = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] API Modules loaded" },
             Discord = new DiscordWebhookLogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] API Modules loaded" },
         };
         public LogConfigurationEntry OnApiConnected { get; set; } = new LogConfigurationEntry() {
-            Chat = new LogConfigurationEntrySettings() { Enabled = false, Message = "[{now}] Server connected to API", Roles = Roles.Member },
+            Chat = new LogConfigurationEntrySettings() { Enabled = false, Message = "[{now}] Server connected to API", Roles = Roles.Admin },
             Console = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] Server connected to API" },
             UILog = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] Server connected to API" },
             Discord = new DiscordWebhookLogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] Server connected to API" },
         };
         public LogConfigurationEntry OnApiDisconnected { get; set; } = new LogConfigurationEntry() {
-            Console = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] Server disconnected from API" },
+            Console = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] Server disconnected from API", Roles = Roles.Admin },
             Discord = new DiscordWebhookLogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] Server disconnected from API" },
         };
         public LogConfigurationEntry OnPlayerConnected { get; set; } = new LogConfigurationEntry() {
-            Chat = new LogConfigurationEntrySettings() { Enabled = false, Message = "[+] {player.Name} {random.joined} from {geoResponse.Country}", Roles = Roles.All },
+            Chat = new LogConfigurationEntrySettings() { Enabled = false, Message = "[+] {player.Name} {random.joined} from {geoResponse.Country}", Roles = MoreRoles.All },
             Console = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] [+] {player.Name} ({player.SteamID})) | {geoResponse.ToJson()}" },
             UILog = new LogConfigurationEntrySettings() { Enabled = true, Message = "{player.Name} [+]" },
             Discord = new DiscordWebhookLogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] `{player.str()}` connected from {geoResponse.Country} :flag_{geoResponse.CountryCode}:" },
         };
         public LogConfigurationEntry OnPlayerDisconnected { get; set; } = new LogConfigurationEntry() {
-            Chat = new LogConfigurationEntrySettings() { Enabled = false, Message = "[-] {player.Name} left", Roles = Roles.All },
+            Chat = new LogConfigurationEntrySettings() { Enabled = false, Message = "[-] {player.Name} left", Roles = MoreRoles.All },
             Console = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] [-] {player.Name} ({player.SteamID})) [{player.IP}]" },
             UILog = new LogConfigurationEntrySettings() { Enabled = true, Message = "{player.Name} [-]" },
             Discord = new DiscordWebhookLogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] `{player.str()}` disconnected :arrow_left:" },
@@ -356,10 +354,10 @@ namespace LoggerBattlebitModule {
             Discord = new DiscordWebhookLogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] `{player.Name}` issued command \"{msg}\" in {chatChannel}" },
         };
         public LogConfigurationEntry OnPlayerReported { get; set; } = new LogConfigurationEntry() {
-            Chat = new LogConfigurationEntrySettings() { Enabled = false, Message = "{to.Name} was reported for {reason}", Roles = Roles.All },
+            Chat = new LogConfigurationEntrySettings() { Enabled = false, Message = "{to.Name} was reported for {reason}", Roles = MoreRoles.All },
             Console = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] {player.str()} reported {to.str()} for {reason}: \"{msg}\"" },
             UILog = new LogConfigurationEntrySettings() { Enabled = true, Message = "{to.Name} was reported ({reason})" },
-            Modal = new LogConfigurationEntrySettings() { Enabled = false, Message = "{to.fullstr()}\nwas reported by\n{player.fullstr()}\n\nReason: {reason}\n\n\"{msg}\"", Roles = Roles.AdminMod },
+            Modal = new LogConfigurationEntrySettings() { Enabled = false, Message = "{to.fullstr()}\nwas reported by\n{player.fullstr()}\n\nReason: {reason}\n\n\"{msg}\"", Roles = MoreRoles.Staff },
             Discord = new DiscordWebhookLogConfigurationEntrySettings() { Enabled = false, Message = "[{now}] {to.Name} was reported for {reason} :warning:" },
         };
     }
