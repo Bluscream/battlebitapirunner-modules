@@ -53,6 +53,7 @@ namespace RegionManager
         Circle,
     }
 
+    [Module("RegionManager", "1.0.0")]
     public class RegionManager : BattleBitModule
     {
         public RegionManagerConfiguration ServerConfig { get; set; }

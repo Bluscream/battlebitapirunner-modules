@@ -9,8 +9,8 @@ using System.Threading.Tasks;
 // Version: 1.2
 // Module for BattleBit Modular API
 //
-namespace ReconOnly
-{
+namespace mocfunky {
+    [Module("ReconOnly", "1.2.0")]
     public class ReconOnly : BattleBitModule
     {
         // Allow players to select Recon even without being in a squad.

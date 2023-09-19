@@ -12,6 +12,7 @@ namespace BattleBitBaseModules;
 /// Author: @RainOrigami expanded by @_dx2
 /// Version: 1.1
 /// </summary>
+[Module("GameModeRotation", "1.1.0")]
 public class GameModeRotation : BattleBitModule
 {
     public GameModeRotationConfiguration Configuration { get; set; }

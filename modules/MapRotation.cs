@@ -12,6 +12,7 @@ namespace BattleBitBaseModules;
 /// Version: 1.4
 /// </summary>
 [RequireModule(typeof(GameModeRotation))]
+[Module("MapRotation", "1.4.0")]
 public class MapRotation : BattleBitModule
 {
     [ModuleReference]

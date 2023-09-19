@@ -24,8 +24,8 @@ using System.Text.Json;
 /// 1.0.2 changes: Added channel to chat logs, Changed OnplayerReport "Reason" to "reason.ToString()", this will get the name of the reason rather than the number
 /// </summary>
 
-namespace MongoDBLogging
-{
+namespace Axiom {
+    [Module("MongoDBLogging", "1.1.4")]
     public class MongoDBLogging : BattleBitModule
     {
         public MongoDBLoggingConfiguration Configuration { get; set; }

@@ -20,24 +20,25 @@ using System.Linq;
 
 namespace Bluscream {
 
-    internal static class Extensions {
-        internal static string str(this RunnerPlayer player) => $"\"{player.Name}\"";
-        internal static string fullstr(this RunnerPlayer player) => $"{player.str()} ({player.SteamID})";
-        internal static string ToYesNoString(this bool input) => input ? "Yes" : "No";
-        internal static string ToEnabledDisabledString(this bool input) => input ? "Enabled" : "Disabled";
+    public static class Extensions {
+        public static string str(this RunnerPlayer player) => $"\"{player.Name}\"";
+        public static string fullstr(this RunnerPlayer player) => $"{player.str()} ({player.SteamID})";
+        public static string ToYesNoString(this bool input) => input ? "Yes" : "No";
+        public static string ToEnabledDisabledString(this bool input) => input ? "Enabled" : "Disabled";
     }
     public static class MoreRoles {
         public const Roles Staff = Roles.Admin | Roles.Moderator;
         public const Roles Member = Roles.Admin | Roles.Moderator | Roles.Special | Roles.Vip;
         public const Roles All = Roles.Admin | Roles.Moderator | Roles.Special | Roles.Vip | Roles.None;
     }
-    public class GameModeInfo {
+    public abstract class BaseInfo {
         public bool Available { get; internal set; } = true;
         public string Name { get; internal set; } = "None";
         public string DisplayName { get; internal set; } = "Unknown";
         public string Description { get; internal set; } = "Unknown";
     }
-    public class MapInfo : GameModeInfo {
+    public class GameModeInfo : BaseInfo { }
+    public class MapInfo : BaseInfo {
         public (string Name, MapSize[] Sizes)[]? SupportedGamemodes { get; internal set; }
     }
     public enum MapDayNight : byte {
@@ -46,23 +47,13 @@ namespace Bluscream {
         None
     }
 
-    [RequireModule(typeof(DevMinersBBModules.Telemetry))]
-    [Module("Bluscream's Library", "2.0.0")]
-    public class BluscreamLib : BattleBitModule {
-        public static class ModuleInfo {
-            public const string Name = "Bluscream's Library";
-            public const string Description = "Generic library for common code used by multiple modules.";
-            public static readonly Version Version = new Version(2, 0);
-            public const string UpdateUrl = "https://github.com/Bluscream/battlebitapirunner-modules/raw/master/modules/BluscreamLib.cs";
-            public const string Author = "Bluscream";
-        }
-
-        internal static string GetStringValue(KeyValuePair<string, string?>? match) {
-            if (match is null || !match.HasValue) return string.Empty;
+    public static class BluscreamLib {
+        public static string GetStringValue(KeyValuePair<string, string?>? match) {
+            if (!match.HasValue) return string.Empty;
             if (!string.IsNullOrWhiteSpace(match.Value.Value)) return match.Value.Value;
             return match.Value.Key ?? "Unknown";
         }
-        internal static KeyValuePair<string, string?>? ResolveNameMatch(string input, IDictionary<string, string?> matches) {
+        public static KeyValuePair<string, string?>? ResolveNameMatch(string input, IDictionary<string, string?> matches) {
             var lower = input.ToLowerInvariant().Trim();
             foreach (var match in matches) {
                 if (lower == match.Key.ToLowerInvariant() || (match.Value is not null && lower == match.Value.ToLowerInvariant()))
@@ -74,29 +65,15 @@ namespace Bluscream {
             }
             return null;
         }
-        internal static GameModeInfo ResolveGameModeNameMatch(string input, IEnumerable<GameModeInfo>? matches = null) {
-            matches = matches ?? GameModes;
+        public static T? ResolveGameModeMapNameMatch<T>(string input, IEnumerable<T> matches) where T : BaseInfo {
             var lower = input.ToLowerInvariant().Trim();
             foreach (var match in matches) {
                 if (lower == match.Name?.ToLowerInvariant()) return match;
                 else if (lower == match.DisplayName?.ToLowerInvariant()) return match;
             }
             foreach (var match in matches) {
-                if ((bool)match.DisplayName?.ToLowerInvariant().Contains(lower)) return match;
-                else if ((bool)(match.DisplayName?.ToLowerInvariant().Contains(lower))) return match;
-            }
-            return null;
-        }
-        internal static MapInfo ResolveMapNameMatch(string input, IEnumerable<MapInfo>? matches = null) {
-            matches = matches ?? Maps;
-            var lower = input.ToLowerInvariant().Trim();
-            foreach (var match in matches) {
-                if (lower == match.Name?.ToLowerInvariant()) return match;
-                else if (lower == match.DisplayName?.ToLowerInvariant()) return match;
-            }
-            foreach (var match in matches) {
-                if ((bool)match.DisplayName?.ToLowerInvariant().Contains(lower)) return match;
-                else if ((bool)(match.DisplayName?.ToLowerInvariant().Contains(lower))) return match;
+                if (match.DisplayName?.ToLowerInvariant().Contains(lower) == true) return match;
+                else if ((match.DisplayName?.ToLowerInvariant().Contains(lower) == true)) return match;
             }
             return null;
         }
@@ -236,7 +213,7 @@ namespace Bluscream {
             },
         };
         public static IReadOnlyList<string> MapNames { get { return Maps.Where(m => m.Available).Select(m => m.Name).ToList(); } }
-        public static IReadOnlyList<string> MapDisplayNames { get { return Maps.Where(m=>m.Available).Select(m => m.DisplayName).ToList(); } }
+        public static IReadOnlyList<string> MapDisplayNames { get { return Maps.Where(m => m.Available).Select(m => m.DisplayName).ToList(); } }
         public static IReadOnlyList<MapInfo> Maps = new MapInfo[] {
             new MapInfo() {
                 Name = "Azagor",
@@ -281,7 +258,7 @@ namespace Bluscream {
             },
             new MapInfo() {
                 Name = "Dustydew",
-                DisplayName = "DustyDew",
+                DisplayName = "Dusty Dew",
                 SupportedGamemodes = new[] {
                     ("TDM", new[] { MapSize._8v8, MapSize._16vs16, }),
                     ("RUSH", new[] { MapSize._16vs16, MapSize._32vs32, }),
@@ -362,6 +339,7 @@ namespace Bluscream {
             },
             new MapInfo() {
                 Name = "OilDunes",
+                DisplayName = "Oil Dunes",
                 SupportedGamemodes = new[] {
                     ("CONQ", new[] { MapSize._32vs32, }),
                     ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, }),
@@ -522,10 +500,22 @@ namespace Bluscream {
             }
         };
     }
+
+    [RequireModule(typeof(DevMinersBBModules.Telemetry))]
+    [Module("Bluscream's Library", "2.0.0")]
+    public class BluscreamLibModule : BattleBitModule {
+        public static class ModuleInfo {
+            public const string Name = "Bluscream's Library";
+            public const string Description = "Generic library for common code used by multiple modules.";
+            public static readonly Version Version = new Version(2, 0);
+            public const string UpdateUrl = "https://github.com/Bluscream/battlebitapirunner-modules/raw/master/modules/BluscreamLib.cs";
+            public const string Author = "Bluscream";
+        }
+    }
 }
 
     namespace JsonExtensions {
-    internal static class Converter {
+    public static class Converter {
         public static readonly JsonSerializerOptions Settings = new(JsonSerializerDefaults.General) {
             Converters =
             {
@@ -536,7 +526,7 @@ namespace Bluscream {
         };
     }
 
-    internal class ParseStringConverter : JsonConverter<long> {
+    public class ParseStringConverter : JsonConverter<long> {
         public override bool CanConvert(Type t) => t == typeof(long);
 
         public override long Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
@@ -591,7 +581,7 @@ namespace Bluscream {
             => writer.WriteStringValue(value.ToString(serializationFormat));
     }
 
-    internal class IsoDateTimeOffsetConverter : JsonConverter<DateTimeOffset> {
+    public class IsoDateTimeOffsetConverter : JsonConverter<DateTimeOffset> {
         public override bool CanConvert(Type t) => t == typeof(DateTimeOffset);
 
         private const string DefaultDateTimeFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ss.FFFFFFFK";

@@ -1,20 +1,18 @@
 // Version 2.0
 using BattleBitAPI.Common;
 using BBRAPIModules;
-using Commands;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-#if DEBUG
+using Commands;
 using Bluscream;
 using static Bluscream.BluscreamLib;
-#endif
 
 namespace Bluscream {
-    [RequireModule(typeof(BluscreamLib))]
+    [RequireModule(typeof(BluscreamLibModule))]
     [RequireModule(typeof(CommandHandler))]
     [Module("More Commands", "2.0.0")]
     public class MoreCommands : BattleBitModule {
@@ -33,7 +31,7 @@ namespace Bluscream {
             this.CommandHandler.Register(this);
         }
 
-        public string GetCurrentMapInfoString() => $"Current Map:\n\nName: {ResolveMapNameMatch(this.Server.Map).DisplayName} ({this.Server.Map})\nMode: {ResolveGameModeNameMatch(this.Server.Gamemode)} ({this.Server.Gamemode})\nSize: {this.Server.MapSize}";
+        public string GetCurrentMapInfoString() => $"Current Map:\n\nName: {ResolveGameModeMapNameMatch(this.Server.Map, Maps)?.DisplayName} ({this.Server.Map})\nMode: {ResolveGameModeMapNameMatch(this.Server.Gamemode, GameModes)} ({this.Server.Gamemode})\nSize: {this.Server.MapSize}";
 
         [CommandCallback("map", Description = "Changes the map", AllowedRoles = Roles.Admin | Roles.Moderator)]
         public void SetMap(RunnerPlayer commandSource, string? mapName = null, string? gameMode = null, string? dayNight = null) // , string? gameSize = null)
@@ -41,7 +39,7 @@ namespace Bluscream {
             if (mapName is null) {
                 commandSource.Message(GetCurrentMapInfoString()); return;
             }
-            var map = ResolveMapNameMatch(mapName);
+            var map = ResolveGameModeMapNameMatch(mapName, Maps);
             if (map is null) {
                 commandSource.Message($"Map {mapName} could not be found"); return;
             }
@@ -49,9 +47,9 @@ namespace Bluscream {
             this.Server.MapRotation.SetRotation(map.Name);
 
             var oldModes = this.Server.GamemodeRotation.GetGamemodeRotation();
-            var mode = ResolveGameModeNameMatch(this.Server.Gamemode);
+            var mode = ResolveGameModeMapNameMatch(this.Server.Gamemode, GameModes);
             if (gameMode != null) {
-                mode = ResolveGameModeNameMatch(gameMode);
+                mode = ResolveGameModeMapNameMatch(gameMode, GameModes);
                 if (mode is null) {
                     commandSource.Message($"GameMode {gameMode} could not be found"); return;
                 }
@@ -142,21 +140,15 @@ namespace Bluscream {
 
         [CommandCallback("listmaps", Description = "Lists all maps")]
         public void ListMaps(RunnerPlayer commandSource) {
-            commandSource.Message("<b>Available Maps:</b>\n\n" + string.Join("\n", Maps.Select(m => $"{m.Name}: {m.DisplayName}")));
+            commandSource.Message("<b>Available Maps:</b>\n\n" + string.Join("\n", BluscreamLib.Maps.Select(m => $"{m.Name}: {m.DisplayName}")));
         }
         [CommandCallback("listmodes", Description = "Lists all gamemodes")]
         public void ListGameMods(RunnerPlayer commandSource) {
-            commandSource.Message("<b>Available Game Modes:</b>\n\n" + string.Join("\n", GameModes.Select(m => $"{m.Name}: {m.DisplayName}")));
+            commandSource.Message("<b>Available Game Modes:</b>\n\n" + string.Join("\n", BluscreamLib.GameModes.Select(m => $"{m.Name}: {m.DisplayName}")));
         }
         [CommandCallback("listsizes", Description = "Lists all game sizes")]
         public void ListGameSizes(RunnerPlayer commandSource) {
             commandSource.Message("<b>Available Sizes:</b>\n\n" + string.Join("\n", Enum.GetValues(typeof(MapSize))));
-        }
-        public static readonly FieldInfo modulesField = typeof(RunnerServer).GetField("modules", BindingFlags.NonPublic | BindingFlags.Instance);
-        [CommandCallback("modules", Description = "Lists all loaded modules")]
-        public void ListModules(RunnerPlayer commandSource) {
-            List<BattleBitModule> modules = (List<BattleBitModule>)modulesField.GetValue(Server);
-            commandSource.Message(string.Join(", ", modules.Select(m => m.GetType().Name)));
         }
 
         [CommandCallback("start", Description = "Force starts the round", AllowedRoles = Roles.Admin | Roles.Moderator)]

@@ -6,8 +6,9 @@ using BBRAPIModules;
 using Discord;
 using Discord.WebSocket;
 
-namespace DiscordStatus;
+namespace Sentennial;
 
+[Module("DiscordStatus", "1.2.0")]
 public class DiscordStatus : BattleBitModule
 {
     public DiscordConfiguration Configuration { get; set; }

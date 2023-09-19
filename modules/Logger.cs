@@ -17,11 +17,11 @@ using JsonExtensions;
 #if DEBUG
 using Permissions;
 using Bluscream;
-using static Bluscream.BluscreamLib;
+using static Bluscream.BluscreamLibModule;
 #endif
 
 namespace Bluscream {
-    [RequireModule(typeof(BluscreamLib))]
+    [RequireModule(typeof(BluscreamLibModule))]
     [RequireModule(typeof(CommandHandler))]
     [Module("Logger", "2.0.0")]
     public class Logger : BattleBitModule {

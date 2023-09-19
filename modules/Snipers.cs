@@ -11,8 +11,8 @@ using System.Threading.Tasks;
 // Module for BattleBit Modular API
 //
 
-namespace Snipers
-{
+namespace mocfunky {
+    [Module("Snipers", "1.1.0")]
     public class Snipers : BattleBitModule
     {
         //
