@@ -1,3 +1,15 @@
 [submodule "BattleBitBaseModules"]
 	path = BattleBitBaseModules
 	url = https://github.com/RainOrigami/BattleBitBaseModules
+[submodule "BattleBitZombies"]
+	path = BattleBitZombies
+	url = https://github.com/RainOrigami/BattleBitZombies
+	branch = main
+[submodule "BattleBitExamples"]
+	path = BattleBitExamples
+	url = https://github.com/RainOrigami/BattleBitExamples
+	branch = main
+[submodule "bb-modules"]
+	path = bb-modules
+	url = https://github.com/TheDevMinerTV/bb-modules
+	branch = main
