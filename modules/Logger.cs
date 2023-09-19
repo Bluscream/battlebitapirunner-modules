@@ -1,4 +1,4 @@
-
+// Version 2.0
 using System;
 using System.Linq;
 using System.Net;
@@ -16,30 +16,23 @@ using Commands;
 using JsonExtensions;
 #if DEBUG
 using Permissions;
+using Bluscream;
+using static Bluscream.BluscreamLib;
 #endif
 
-/// <summary>
-/// Author: Bluscream
-/// Version: 1.0.0
-/// </summary>
-
-namespace LoggerBattlebitModule {
-
-    internal static partial class Extensions {
-        internal static string str(this RunnerPlayer player) => $"\"{player.Name}\"";
-        internal static string fullstr(this RunnerPlayer player) => $"{player.str()} ({player.SteamID})";
-        internal static string ToYesNoString(this bool input) => input ? "Yes" : "No";
-        internal static string ToEnabledDisabledString(this bool input) => input ? "Enabled" : "Disabled";
-    }
-
-    public static partial class MoreRoles {
-        public const Roles Staff = Roles.Admin | Roles.Moderator;
-        public const Roles Member = Roles.Admin | Roles.Moderator | Roles.Special | Roles.Vip;
-        public const Roles All = Roles.Admin | Roles.Moderator | Roles.Special | Roles.Vip | Roles.None;
-    }
-
+namespace Bluscream {
+    [RequireModule(typeof(BluscreamLib))]
     [RequireModule(typeof(CommandHandler))]
+    [Module("Logger", "2.0.0")]
     public class Logger : BattleBitModule {
+        public static class ModuleInfo {
+            public const string Name = "Logger";
+            public const string Description = "Extensive customizable logging for the BattleBit Modular API";
+            public static readonly Version Version = new Version(2, 0, 0);
+            public const string UpdateUrl = "https://github.com/Bluscream/battlebitapirunner-modules/raw/master/modules/Logger.cs";
+            public const string Author = "Bluscream";
+        }
+
         [ModuleReference]
         public CommandHandler CommandHandler { get; set; } = null!;
         [ModuleReference]
@@ -360,129 +353,6 @@ namespace LoggerBattlebitModule {
             Modal = new LogConfigurationEntrySettings() { Enabled = false, Message = "{to.fullstr()}\nwas reported by\n{player.fullstr()}\n\nReason: {reason}\n\n\"{msg}\"", Roles = MoreRoles.Staff },
             Discord = new DiscordWebhookLogConfigurationEntrySettings() { Enabled = false, Message = "[{now}] {to.Name} was reported for {reason} :warning:" },
         };
-    }
-}
-
-namespace JsonExtensions {
-    internal static class Converter {
-        public static readonly JsonSerializerOptions Settings = new(JsonSerializerDefaults.General) {
-            Converters =
-            {
-                new DateOnlyConverter(),
-                new TimeOnlyConverter(),
-                IsoDateTimeOffsetConverter.Singleton
-            },
-        };
-    }
-
-    internal class ParseStringConverter : JsonConverter<long> {
-        public override bool CanConvert(Type t) => t == typeof(long);
-
-        public override long Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
-            var value = reader.GetString();
-            long l;
-            if (Int64.TryParse(value, out l)) {
-                return l;
-            }
-            throw new Exception("Cannot unmarshal type long");
-        }
-
-        public override void Write(Utf8JsonWriter writer, long value, JsonSerializerOptions options) {
-            JsonSerializer.Serialize(writer, value.ToString(), options);
-            return;
-        }
-
-        public static readonly ParseStringConverter Singleton = new ParseStringConverter();
-    }
-
-    public class DateOnlyConverter : JsonConverter<DateOnly> {
-        private readonly string serializationFormat;
-        public DateOnlyConverter() : this(null) { }
-
-        public DateOnlyConverter(string? serializationFormat) {
-            this.serializationFormat = serializationFormat ?? "yyyy-MM-dd";
-        }
-
-        public override DateOnly Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
-            var value = reader.GetString();
-            return DateOnly.Parse(value!);
-        }
-
-        public override void Write(Utf8JsonWriter writer, DateOnly value, JsonSerializerOptions options)
-            => writer.WriteStringValue(value.ToString(serializationFormat));
-    }
-
-    public class TimeOnlyConverter : JsonConverter<TimeOnly> {
-        private readonly string serializationFormat;
-
-        public TimeOnlyConverter() : this(null) { }
-
-        public TimeOnlyConverter(string? serializationFormat) {
-            this.serializationFormat = serializationFormat ?? "HH:mm:ss.fff";
-        }
-
-        public override TimeOnly Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
-            var value = reader.GetString();
-            return TimeOnly.Parse(value!);
-        }
-
-        public override void Write(Utf8JsonWriter writer, TimeOnly value, JsonSerializerOptions options)
-            => writer.WriteStringValue(value.ToString(serializationFormat));
-    }
-
-    internal class IsoDateTimeOffsetConverter : JsonConverter<DateTimeOffset> {
-        public override bool CanConvert(Type t) => t == typeof(DateTimeOffset);
-
-        private const string DefaultDateTimeFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ss.FFFFFFFK";
-
-        private DateTimeStyles _dateTimeStyles = DateTimeStyles.RoundtripKind;
-        private string? _dateTimeFormat;
-        private CultureInfo? _culture;
-
-        public DateTimeStyles DateTimeStyles {
-            get => _dateTimeStyles;
-            set => _dateTimeStyles = value;
-        }
-
-        public string? DateTimeFormat {
-            get => _dateTimeFormat ?? string.Empty;
-            set => _dateTimeFormat = (string.IsNullOrEmpty(value)) ? null : value;
-        }
-
-        public CultureInfo Culture {
-            get => _culture ?? CultureInfo.CurrentCulture;
-            set => _culture = value;
-        }
-
-        public override void Write(Utf8JsonWriter writer, DateTimeOffset value, JsonSerializerOptions options) {
-            string text;
-
-
-            if ((_dateTimeStyles & DateTimeStyles.AdjustToUniversal) == DateTimeStyles.AdjustToUniversal
-                || (_dateTimeStyles & DateTimeStyles.AssumeUniversal) == DateTimeStyles.AssumeUniversal) {
-                value = value.ToUniversalTime();
-            }
-
-            text = value.ToString(_dateTimeFormat ?? DefaultDateTimeFormat, Culture);
-
-            writer.WriteStringValue(text);
-        }
-
-        public override DateTimeOffset Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
-            string? dateText = reader.GetString();
-
-            if (string.IsNullOrEmpty(dateText) == false) {
-                if (!string.IsNullOrEmpty(_dateTimeFormat)) {
-                    return DateTimeOffset.ParseExact(dateText, _dateTimeFormat, Culture, _dateTimeStyles);
-                } else {
-                    return DateTimeOffset.Parse(dateText, Culture, _dateTimeStyles);
-                }
-            } else {
-                return default(DateTimeOffset);
-            }
-        }
-
-        public static readonly IsoDateTimeOffsetConverter Singleton = new IsoDateTimeOffsetConverter();
     }
 }
 
