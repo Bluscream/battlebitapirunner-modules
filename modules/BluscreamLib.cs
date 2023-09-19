@@ -409,6 +409,16 @@ namespace Bluscream {
                     ("TDM", new[] { MapSize._16vs16, MapSize._32vs32 }),
                     ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
                     ("ELI", new[] { MapSize._16vs16, MapSize._32vs32, }) }
+            },
+            new MapInfo() {
+                Name = "ZalfiBay",
+                DisplayName = "Zalfi Bay",
+                SupportedGamemodes = new[] {
+                    ("CONQ", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
+                    ("INFCONQ", new [] {MapSize._32vs32, MapSize._64vs64,MapSize._127vs127,}),
+                    ("DOMI", new [] { MapSize._16vs16, MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
+                    ("FRONTLINE", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
+                    ("CTF", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}) }
             }
         };
     }
