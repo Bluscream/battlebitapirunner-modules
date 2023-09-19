@@ -33,7 +33,7 @@ namespace Bluscream {
             this.CommandHandler.Register(this);
         }
 
-        public string GetCurrentMapInfoString() => $"Current Map:\n\nName: {GetMapFromName(this.Server.Map).DisplayName} ({this.Server.Map})\nMode: {GameModes[this.Server.Gamemode]} ({this.Server.Gamemode})\nSize: {this.Server.MapSize}";
+        public string GetCurrentMapInfoString() => $"Current Map:\n\nName: {ResolveMapNameMatch(this.Server.Map).DisplayName} ({this.Server.Map})\nMode: {ResolveGameModeNameMatch(this.Server.Gamemode)} ({this.Server.Gamemode})\nSize: {this.Server.MapSize}";
 
         [CommandCallback("map", Description = "Changes the map", AllowedRoles = Roles.Admin | Roles.Moderator)]
         public void SetMap(RunnerPlayer commandSource, string? mapName = null, string? gameMode = null, string? dayNight = null) // , string? gameSize = null)
@@ -41,7 +41,7 @@ namespace Bluscream {
             if (mapName is null) {
                 commandSource.Message(GetCurrentMapInfoString()); return;
             }
-            var map = GetMapFromName(mapName);
+            var map = ResolveMapNameMatch(mapName);
             if (map is null) {
                 commandSource.Message($"Map {mapName} could not be found"); return;
             }
@@ -49,13 +49,13 @@ namespace Bluscream {
             this.Server.MapRotation.SetRotation(map.Name);
 
             var oldModes = this.Server.GamemodeRotation.GetGamemodeRotation();
-            var mode = ResolveNameMatch(this.Server.Gamemode, GameModes);
+            var mode = ResolveGameModeNameMatch(this.Server.Gamemode);
             if (gameMode != null) {
-                mode = ResolveNameMatch(gameMode, GameModes);
-                if (!mode.HasValue) {
+                mode = ResolveGameModeNameMatch(gameMode);
+                if (mode is null) {
                     commandSource.Message($"GameMode {gameMode} could not be found"); return;
                 }
-                this.Server.GamemodeRotation.SetRotation(mode.Value.Key);
+                this.Server.GamemodeRotation.SetRotation(mode.Name);
             }
 
             /*if (gameSize != null) {
@@ -83,7 +83,7 @@ namespace Bluscream {
             }
             var msg = new StringBuilder();
             if (map is not null) msg.Append($"Changing map to {map.DisplayName}");
-            if (mode.HasValue) msg.Append($" ({GetStringValue(mode)})");
+            if (mode is not null) msg.Append($" ({mode.DisplayName})");
             if (DayNight != MapDayNight.None) msg.Append($" [{DayNight}]");
 
             this.Server.SayToAllChat(msg.ToString());
@@ -146,7 +146,7 @@ namespace Bluscream {
         }
         [CommandCallback("listmodes", Description = "Lists all gamemodes")]
         public void ListGameMods(RunnerPlayer commandSource) {
-            commandSource.Message("<b>Available GameModes:</b>\n\n" + string.Join("\n", GameModes.Select(m => $"{m.Value}: {m.Key}")));
+            commandSource.Message("<b>Available Game Modes:</b>\n\n" + string.Join("\n", GameModes.Select(m => $"{m.Name}: {m.DisplayName}")));
         }
         [CommandCallback("listsizes", Description = "Lists all game sizes")]
         public void ListGameSizes(RunnerPlayer commandSource) {
@@ -193,7 +193,6 @@ namespace Bluscream {
         [CommandCallback("pos", Description = "Current position (logs to file)", AllowedRoles = Roles.Admin)] // YOINK!
         public void PosCommand(RunnerPlayer commandSource) {
             commandSource.Message($"Position: {commandSource.Position}", 5);
-
             System.IO.File.AppendAllLines(".data/SavedPositions.txt", new[] { $"{this.Server.Map},{this.Server.MapSize},{commandSource.Position.X}|{commandSource.Position.Y}|{commandSource.Position.Z}" });
         }
     }

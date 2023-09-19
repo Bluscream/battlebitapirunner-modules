@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using BattleBitAPI.Common;
 using BBRAPIModules;
 using System.Collections.ObjectModel;
+using System.Linq;
 //using JsonExtensions;
 //using System.Runtime.InteropServices;
 //using System.Text.RegularExpressions;
@@ -30,10 +31,13 @@ namespace Bluscream {
         public const Roles Member = Roles.Admin | Roles.Moderator | Roles.Special | Roles.Vip;
         public const Roles All = Roles.Admin | Roles.Moderator | Roles.Special | Roles.Vip | Roles.None;
     }
-    public class MapInfo {
+    public class GameModeInfo {
+        public bool Available { get; internal set; } = true;
         public string Name { get; internal set; } = "None";
         public string DisplayName { get; internal set; } = "Unknown";
         public string Description { get; internal set; } = "Unknown";
+    }
+    public class MapInfo : GameModeInfo {
         public (string Name, MapSize[] Sizes)[]? SupportedGamemodes { get; internal set; }
     }
     public enum MapDayNight : byte {
@@ -67,6 +71,32 @@ namespace Bluscream {
             foreach (var match in matches) {
                 if (match.Key.ToLowerInvariant().Contains(lower) || (match.Value is not null && match.Value.ToLowerInvariant().Contains(lower)))
                     return match;
+            }
+            return null;
+        }
+        internal static GameModeInfo ResolveGameModeNameMatch(string input, IEnumerable<GameModeInfo>? matches = null) {
+            matches = matches ?? GameModes;
+            var lower = input.ToLowerInvariant().Trim();
+            foreach (var match in matches) {
+                if (lower == match.Name?.ToLowerInvariant()) return match;
+                else if (lower == match.DisplayName?.ToLowerInvariant()) return match;
+            }
+            foreach (var match in matches) {
+                if ((bool)match.DisplayName?.ToLowerInvariant().Contains(lower)) return match;
+                else if ((bool)(match.DisplayName?.ToLowerInvariant().Contains(lower))) return match;
+            }
+            return null;
+        }
+        internal static MapInfo ResolveMapNameMatch(string input, IEnumerable<MapInfo>? matches = null) {
+            matches = matches ?? Maps;
+            var lower = input.ToLowerInvariant().Trim();
+            foreach (var match in matches) {
+                if (lower == match.Name?.ToLowerInvariant()) return match;
+                else if (lower == match.DisplayName?.ToLowerInvariant()) return match;
+            }
+            foreach (var match in matches) {
+                if ((bool)match.DisplayName?.ToLowerInvariant().Contains(lower)) return match;
+                else if ((bool)(match.DisplayName?.ToLowerInvariant().Contains(lower))) return match;
             }
             return null;
         }
@@ -109,40 +139,105 @@ namespace Bluscream {
                     return MapSize.None;
             }
         }
-        public static MapInfo GetMapFromName(string input) {
-            var lower = input.ToLowerInvariant().Trim();
-            foreach (var map in Maps) {
-                if (lower == map.Name?.ToLowerInvariant()) return map;
-                else if (lower == map.DisplayName?.ToLowerInvariant()) return map;
-            }
-            foreach (var map in Maps) {
-                if ((bool)map.DisplayName?.ToLowerInvariant().Contains(lower)) return map;
-                else if ((bool)(map.DisplayName?.ToLowerInvariant().Contains(lower))) return map;
-            }
-            return null;
-        }
+        //    var lower = input.ToLowerInvariant().Trim();
+        //    foreach (var map in Maps) {
+        //        if (lower == map.Name?.ToLowerInvariant()) return map;
+        //        else if (lower == map.DisplayName?.ToLowerInvariant()) return map;
+        //    }
+        //    foreach (var map in Maps) {
+        //        if ((bool)map.DisplayName?.ToLowerInvariant().Contains(lower)) return map;
+        //        else if ((bool)(map.DisplayName?.ToLowerInvariant().Contains(lower))) return map;
+        //    }
+        //    return null;
+        //}
 
-        public static ReadOnlyDictionary<string, string?> GameModes { get; set; } = new() {
-            { "TDM", "Team Deathmatch" },
-            { "AAS", "AAS" },
-            { "RUSH", "Rush" },
-            { "CONQ", "Conquest" },
-            { "DOMI", "Domination" },
-            { "ELI", "Elimination" },
-            { "INFCONQ", "Infantry Conquest" },
-            { "FRONTLINE", "Frontline" },
-            { "GunGameFFA", "Gun Game (Free For All)" },
-            { "FFA", "Free For All" },
-            { "GunGameTeam", "Gun Game (Team)" },
-            { "SuicideRush", "Suicide Rush" },
-            { "CatchGame", "Catch Game" },
-            { "Infected", "Infected" },
-            { "CashRun", "Cash Run" },
-            { "VoxelFortify", "Voxel Fortify" },
-            { "VoxelTrench", "Voxel Trench" },
-            { "CaptureTheFlag", "Capture The Flag" },
+        public static IReadOnlyList<string> GameModeNames { get { return GameModes.Where(m => m.Available).Select(m => m.Name).ToList(); } }
+        public static IReadOnlyList<string> GameModeDisplayNames { get { return Maps.Where(m => m.Available).Select(m => m.DisplayName).ToList(); } }
+        public static IReadOnlyList<GameModeInfo> GameModes = new GameModeInfo[] {
+            new GameModeInfo() {
+                Name = "TDM",
+                DisplayName = "Team Deathmatch",
+                Description = "Kill the enemy team"
+            },
+            new GameModeInfo() {
+                Name = "AAS",
+                DisplayName = "AAS"
+            },
+            new GameModeInfo() {
+                Name = "RUSH",
+                DisplayName = "Rush",
+                Description = "Plant or defuse bombs"
+            },
+            new GameModeInfo() {
+                Name = "CONQ",
+                DisplayName = "Conquest",
+                Description = "Capture and hold positions"
+            },
+            new GameModeInfo() {
+                Name = "DOMI",
+                DisplayName = "Domination"
+            },
+            new GameModeInfo() {
+                Name = "ELI",
+                DisplayName = "Elimination"
+            },
+            new GameModeInfo() {
+                Name = "INFCONQ",
+                DisplayName = "Infantry Conquest",
+                Description = "Conquest without strong vehicles"
+            },
+            new GameModeInfo() {
+                Name = "FRONTLINE",
+                DisplayName = "Frontline"
+            },
+            new GameModeInfo() {
+                Name = "GunGameFFA",
+                DisplayName = "Gun Game (Free For All)",
+                Description = "Get through the loadouts as fast as possible"
+            },
+            new GameModeInfo() {
+                Name = "FFA",
+                DisplayName = "Free For All",
+                Description = "Team Deathmatch without teams"
+            },
+            new GameModeInfo() {
+                Name = "GunGameTeam",
+                DisplayName = "Gun Game (Team)",
+                Description = "Get through the loadouts as fast as possible"
+            },
+            new GameModeInfo() {
+                Name = "SuicideRush",
+                DisplayName = "Suicide Rush"
+            },
+            new GameModeInfo() {
+                Name = "CatchGame",
+                DisplayName = "Catch Game"
+            },
+            new GameModeInfo() {
+                Name = "Infected",
+                DisplayName = "Infected",
+                Description = "Zombies"
+            },
+            new GameModeInfo() {
+                Name = "CashRun",
+                DisplayName = "Cash Run"
+            },
+            new GameModeInfo() {
+                Name = "VoxelFortify",
+                DisplayName = "Voxel Fortify"
+            },
+            new GameModeInfo() {
+                Name = "VoxelTrench",
+                DisplayName = "Voxel Trench"
+            },
+            new GameModeInfo() {
+                Name = "CaptureTheFlag",
+                DisplayName = "Capture The Flag"
+            },
         };
-        public static readonly MapInfo[] Maps = new MapInfo[] {
+        public static IReadOnlyList<string> MapNames { get { return Maps.Where(m => m.Available).Select(m => m.Name).ToList(); } }
+        public static IReadOnlyList<string> MapDisplayNames { get { return Maps.Where(m=>m.Available).Select(m => m.DisplayName).ToList(); } }
+        public static IReadOnlyList<MapInfo> Maps = new MapInfo[] {
             new MapInfo() {
                 Name = "Azagor",
                 SupportedGamemodes = new[] {
@@ -419,6 +514,11 @@ namespace Bluscream {
                     ("DOMI", new [] { MapSize._16vs16, MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
                     ("FRONTLINE", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
                     ("CTF", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}) }
+            },
+            new MapInfo() {
+                Available = false,
+                Name = "Polygon",
+                Description = "Tutorial map"
             }
         };
     }
