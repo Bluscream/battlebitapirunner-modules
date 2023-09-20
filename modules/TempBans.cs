@@ -19,6 +19,7 @@ using System.IO;
 using Bans;
 using TimeSpanParserUtil;
 using Humanizer;
+using System.Net;
 
 namespace Bluscream {
 
@@ -86,15 +87,15 @@ namespace Bluscream {
 
         public void KickBannedPlayer(BanEntry banEntry) {
             if (!banEntry.Servers?.Contains("*") == true && !banEntry.Servers?.Contains($"{this.Server.GameIP}:{this.Server.GamePort}") == true) return;
-            Server.Kick(banEntry.TargetSteamId64, Configuration.KickNoticeTemplate
+            Server.Kick(banEntry.Target.SteamId64.Value , Configuration.KickNoticeTemplate
                 .Replace("{servername}", this.Server.ServerName)
-                .Replace("{invoker}", banEntry.InvokerName)
+                .Replace("{invoker}", banEntry.Invoker?.Name)
                 .Replace("{reason}", banEntry.Reason)
                 .Replace("{note}", banEntry.Note)
                 .Replace("{until}", banEntry.BannedUntil.ToString())
                 .Replace("{remaining}", banEntry.Remaining.Humanize())
             );
-            Log($"Kicked tempbanned player {banEntry.TargetName} ({banEntry.TargetSteamId64}) kicked until {banEntry.BannedUntil}");
+            Log($"Kicked tempbanned player {banEntry.Target.Name} ({banEntry.Target.SteamId64}) kicked until {banEntry.BannedUntil}");
         }
 
         //public override Task OnPlayerJoiningToServer(RunnerPlayer player, PlayerJoiningArguments request)
@@ -106,13 +107,12 @@ namespace Bluscream {
             TempBanPlayer(target, DateTime.Now + timeSpan, reason, note, servers, invoker);
         public BanEntry? TempBanPlayer(RunnerPlayer target, DateTime dateTime, string? reason = null, string? note = null, List<string>? servers = null, RunnerPlayer? invoker = null) {
             var newban = new BanEntry() {
-                TargetSteamId64 = target.SteamID, TargetName = target.Name,
+                Target = new PlayerEntry() { SteamId64 = target.SteamID, Name = target.Name, IpAddress = target.IP.ToString() },
                 BannedUntil = dateTime,
                 Reason = reason,
                 Note = note,
                 Servers = servers?.Distinct().ToList(),
-                InvokerName = invoker?.Name,
-                InvokerSteamId64 = invoker?.SteamID
+                Invoker = new PlayerEntry() { SteamId64 = invoker?.SteamID, Name = invoker?.Name, IpAddress = invoker?.IP.ToString() },
             };
             var ban = Bans.Add(newban);
             KickBannedPlayer(ban);
@@ -134,14 +134,31 @@ namespace Bluscream {
 }
 
 namespace Bans {
-    public partial class BanEntry {
+    public partial class PlayerEntry {
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        [JsonPropertyName("TargetSteamId64")]
-        public ulong TargetSteamId64 { get; set; }
+        [JsonPropertyName("SteamId64")]
+        public ulong? SteamId64 { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        [JsonPropertyName("TargetName")]
-        public string? TargetName { get; set; }
+        [JsonPropertyName("Name")]
+        public string? Name { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        [JsonPropertyName("IpAddress")]
+        public string? IpAddress { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        [JsonPropertyName("Hwid")]
+        public string? Hwid { get; set; }
+    }
+    public partial class BanEntry {
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        [JsonPropertyName("Target")]
+        public PlayerEntry? Target { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        [JsonPropertyName("Invoker")]
+        public PlayerEntry? Invoker { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         [JsonPropertyName("Reason")]
@@ -150,14 +167,6 @@ namespace Bans {
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         [JsonPropertyName("Note")]
         public string? Note { get; set; }
-
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        [JsonPropertyName("InvokerSteamId64")]
-        public double? InvokerSteamId64 { get; set; }
-
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        [JsonPropertyName("InvokerName")]
-        public string? InvokerName { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         [JsonPropertyName("BannedUntil")]
@@ -182,7 +191,7 @@ namespace Bans {
         }
 
         public BanEntry? Get(RunnerPlayer player) {
-            var result = Entries.FirstOrDefault(b => b.TargetSteamId64 == player.SteamID);
+            var result = Entries.FirstOrDefault(b => b.Target?.SteamId64 == player.SteamID);
             if (result is not null && result.BannedUntil.HasValue) {
                 if (result.Remaining.TotalSeconds <= 0) {
                     TempBans.Log($"Temporary ban for player {player.str()} expired {result.Remaining.Humanize()} ago, removing ...");
@@ -194,7 +203,7 @@ namespace Bans {
         }
 
         public BanEntry? Add(BanEntry entry, bool overwrite = false) {
-            var exists = Entries.FirstOrDefault(b=>b.TargetSteamId64 == entry.TargetSteamId64);
+            var exists = Entries.FirstOrDefault(b=>b.Target?.SteamId64 == entry.Target?.SteamId64);
             if (exists is not null ) {
                 if (!overwrite) {
                     TempBans.Log($"Tried to add duplicate ban but overwrite was not enabled!");

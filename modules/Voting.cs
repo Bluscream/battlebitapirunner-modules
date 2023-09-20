@@ -28,6 +28,9 @@ public class Voting : BattleBitModule {
     public CommandHandler CommandHandler { get; set; }
 
     [ModuleReference]
+    public TempBans TempBans { get; set; }
+
+    [ModuleReference]
     public BluscreamLibModule BluscreamLibModule { get; set; }
 
     public override void OnModulesLoaded() {
@@ -47,7 +50,7 @@ public class Voting : BattleBitModule {
             return;
         }
         StartVote(commandSource, $"Vote to change map to {map}", string.Join("|", MapDisplayNames), (int totalVotes, int winnerVotes, string won) => {
-            if (totalVotes <= (this.Server.AllPlayers.Count() / 2)) return;
+            if (winnerVotes <= (this.Server.AllPlayers.Count() / 2)) return;
             this.Server.ChangeMap(map);
         });
     }
@@ -60,12 +63,12 @@ public class Voting : BattleBitModule {
             return;
         }
         StartVote(commandSource, "Vote for game mode change", string.Join("|", GameModeDisplayNames), (int totalVotes, int winnerVotes, string won) => {
-            if (totalVotes <= (this.Server.AllPlayers.Count() / 2)) return;
+            if (winnerVotes <= (this.Server.AllPlayers.Count() / 2)) return;
             this.Server.ChangeGameMode(mode);
         });
     }
 
-    [CommandCallback("votetime", Description = "Starts a vote for map time")]
+    [CommandCallback("votemaptime", Description = "Starts a vote for map time")]
     public void StartMapTimeVoteCommand(RunnerPlayer commandSource, string dayTime) {
         MapDayNight time = GetDayNightFromString(dayTime);
         if (time == MapDayNight.None) {
@@ -73,7 +76,7 @@ public class Voting : BattleBitModule {
             return;
         }
         StartVote(commandSource, "Vote for time change", "Day|Night", (int totalVotes, int winnerVotes, string won) => {
-            if (totalVotes <= (this.Server.AllPlayers.Count() / 2)) return;
+            if (winnerVotes <= (this.Server.AllPlayers.Count() / 2)) return;
             this.Server.ChangeTime(time);
         });
     }
@@ -81,20 +84,20 @@ public class Voting : BattleBitModule {
     [CommandCallback("voterestart", Description = "Starts a vote for map restart")]
     public void StartMapRestartVoteCommand(RunnerPlayer commandSource) {
         StartVote(commandSource, "Vote for map restart", "Yes|No", (int totalVotes, int winnerVotes, string won) => {
-            if (totalVotes <= (this.Server.AllPlayers.Count() / 2)) return;
+            if (winnerVotes <= (this.Server.AllPlayers.Count() / 2)) return;
             this.Server.ChangeMap();
         });
     }
 
-    [CommandCallback("voteban", Description = "Starts a vote for map restart")]
+    [CommandCallback("voteban", Description = "Starts a voteban for a player")]
     public void StartVoteBanCommand(RunnerPlayer commandSource, RunnerPlayer target, string reason) {
         if (target is null) {
             commandSource.Message($"Player \"{target}\" could not be found!");
             return;
         }
         StartVote(commandSource, "Vote for map restart", "Yes|No", (int totalVotes, int winnerVotes, string won) => {
-            if (totalVotes <= (this.Server.AllPlayers.Count() / 2)) return;
-            target.Kick(reason)
+            if (winnerVotes <= (this.Server.AllPlayers.Count() / 2)) return;
+            TempBans.TempBanPlayer(target, TimeSpan.FromMinutes(30), $"Votebanned by {winnerVotes} votes", "voteban", invoker: commandSource);
         });
     }
 
