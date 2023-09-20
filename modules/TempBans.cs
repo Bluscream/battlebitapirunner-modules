@@ -95,12 +95,12 @@ namespace Bluscream {
         }
 
         public BanEntry? TempBanPlayer(RunnerPlayer target, TimeSpan timeSpan, string? reason = null, string? note = null, List<string>? servers = null, RunnerPlayer? invoker = null) =>
-            TempBanPlayer(target, DateTime.Now + timeSpan, reason, note, servers, invoker);
+            TempBanPlayer(target, DateTime.UtcNow + timeSpan, reason, note, servers, invoker);
         public BanEntry? TempBanPlayer(RunnerPlayer target, DateTime dateTime, string? reason = null, string? note = null, List<string>? servers = null, RunnerPlayer? invoker = null) {
             servers = servers ?? Configuration.DefaultServers;
             var newban = new BanEntry() {
                 Target = new PlayerEntry() { SteamId64 = target.SteamID, Name = target.Name, IpAddress = target.IP.ToString() },
-                BannedUntil = dateTime,
+                BannedUntilUtc = dateTime,
                 Reason = reason,
                 Note = note,
                 Servers = servers.Distinct().ToList(),
@@ -120,10 +120,10 @@ namespace Bluscream {
                     .Replace("{invoker}", banEntry.Invoker?.Name)
                     .Replace("{reason}", banEntry.Reason)
                     .Replace("{note}", banEntry.Note)
-                    .Replace("{until}", banEntry.BannedUntil.ToString())
+                    .Replace("{until}", banEntry.BannedUntilUtc.ToString())
                     .Replace("{remaining}", banEntry.Remaining.Humanize())
                 );
-                TempBans.Log($"Kicked tempbanned player {banEntry.Target.Name} ({banEntry.Target.SteamId64}): Banned until {banEntry.BannedUntil}");
+                TempBans.Log($"Kicked tempbanned player {banEntry.Target.Name} ({banEntry.Target.SteamId64}): Banned until {banEntry.BannedUntilUtc} UTC");
             }
         }
 
@@ -142,7 +142,7 @@ namespace Bluscream {
         public bool LogToConsole { get; set; } = true;
         public string BanFilePath { get; set; } = "./data/bans.json";
         public List<string> DefaultServers { get; set; } = new List<string>() { "*" };
-        public string KickNoticeTemplate { get; set; } = "You are banned on {servername}!\n\nBanned by: {invoker}\nReason: \"{reason}\"\nUntil: {until}\n\nTry again in {remaining}";
+        public string KickNoticeTemplate { get; set; } = "You are banned on {servername}!\n\nBanned by: {invoker}\nReason: \"{reason}\"\nUntil: {until} UTC\n\nTry again in {remaining}";
     }
 }
 
@@ -182,7 +182,7 @@ namespace Bans {
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         [JsonPropertyName("BannedUntil")]
-        public DateTime? BannedUntil { get; set; }
+        public DateTime? BannedUntilUtc { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         [JsonPropertyName("Servers")]
@@ -190,7 +190,7 @@ namespace Bans {
     }
     public partial class BanEntry {
         [JsonIgnore]
-        public TimeSpan Remaining => BannedUntil.Value - DateTime.Now;
+        public TimeSpan Remaining => BannedUntilUtc.Value - DateTime.UtcNow;
     }
 
         public class BanList {
@@ -212,7 +212,7 @@ namespace Bans {
 
         public BanEntry? Get(RunnerPlayer player) {
             var result = Entries.FirstOrDefault(b => (b.Target != null) && (b.Target?.SteamId64 == player.SteamID), null);
-            if (result is not null && result.BannedUntil.HasValue) {
+            if (result is not null && result.BannedUntilUtc.HasValue) {
                 if (result.Remaining.TotalSeconds <= 0) {
                     TempBans.Log($"Temporary ban for player {player.str()} expired {result.Remaining.Humanize()} ago, removing ...");
                     Entries.Remove(result);
