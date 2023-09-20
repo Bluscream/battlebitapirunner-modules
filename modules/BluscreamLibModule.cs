@@ -8,6 +8,13 @@ using BattleBitAPI.Common;
 using BBRAPIModules;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
+using Discord.WebSocket;
+using Bans;
+using System.IO;
+using Bluscream;
 //using JsonExtensions;
 //using System.Runtime.InteropServices;
 //using System.Text.RegularExpressions;
@@ -37,9 +44,13 @@ namespace Bluscream {
         public string DisplayName { get; internal set; } = "Unknown";
         public string Description { get; internal set; } = "Unknown";
     }
-    public class GameModeInfo : BaseInfo { }
+    public class GameModeInfo : BaseInfo {
+        public static GameModeInfo FromName(string name) => BluscreamLib.GameModes.First(m => m.Name == name);
+    }
     public class MapInfo : BaseInfo {
         public (string Name, MapSize[] Sizes)[]? SupportedGamemodes { get; internal set; }
+
+        public static MapInfo FromName(string name) => BluscreamLib.Maps.First(m => m.Name == name);
     }
     public enum MapDayNight : byte {
         Day,
@@ -48,6 +59,7 @@ namespace Bluscream {
     }
 
     public static class BluscreamLib {
+
         public static string GetStringValue(KeyValuePair<string, string?>? match) {
             if (!match.HasValue) return string.Empty;
             if (!string.IsNullOrWhiteSpace(match.Value.Value)) return match.Value.Value;
@@ -116,17 +128,53 @@ namespace Bluscream {
                     return MapSize.None;
             }
         }
-        //    var lower = input.ToLowerInvariant().Trim();
-        //    foreach (var map in Maps) {
-        //        if (lower == map.Name?.ToLowerInvariant()) return map;
-        //        else if (lower == map.DisplayName?.ToLowerInvariant()) return map;
-        //    }
-        //    foreach (var map in Maps) {
-        //        if ((bool)map.DisplayName?.ToLowerInvariant().Contains(lower)) return map;
-        //        else if ((bool)(map.DisplayName?.ToLowerInvariant().Contains(lower))) return map;
-        //    }
-        //    return null;
-        //}
+
+        public static void Log(object _msg, string source = "") {
+            var msg = _msg.ToString();
+            if (string.IsNullOrWhiteSpace(msg)) return;
+            Console.WriteLine($"[{DateTime.Now.ToString("HH:mm:ss")}] {source} > {msg.Trim()}");
+        }
+        public static void ChangeTime(this RunnerServer Server, MapDayNight dayNight = MapDayNight.None) => ChangeMap(Server, dayNight: dayNight);
+        public static void ChangeGameMode(this RunnerServer Server, GameModeInfo? gameMode = null, MapDayNight dayNight = MapDayNight.None) => ChangeMap(Server, gameMode: gameMode, dayNight: dayNight);
+        public static void ChangeMap(this RunnerServer Server, MapInfo? map = null, GameModeInfo? gameMode = null, MapDayNight dayNight = MapDayNight.None) {
+            map = map ?? MapInfo.FromName(Server.Map);
+            gameMode = gameMode ?? GameModeInfo.FromName(Server.Gamemode);
+            dayNight = dayNight == MapDayNight.None ? (MapDayNight)Server.DayNight : dayNight;
+
+            var oldMaps = Server.MapRotation.GetMapRotation();
+            Server.MapRotation.SetRotation(map.Name);
+            var oldModes = Server.GamemodeRotation.GetGamemodeRotation();
+            Server.GamemodeRotation.SetRotation(gameMode.Name);
+
+            var oldVoteDay = Server.ServerSettings.CanVoteDay;
+            var oldVoteNight = Server.ServerSettings.CanVoteNight;
+            if (dayNight != MapDayNight.None) {
+                switch (dayNight) {
+                    case MapDayNight.Day:
+                        Server.ServerSettings.CanVoteDay = true;
+                        Server.ServerSettings.CanVoteNight = false;
+                        break;
+                    case MapDayNight.Night:
+                        Server.ServerSettings.CanVoteDay = false;
+                        Server.ServerSettings.CanVoteNight = true;
+                        break;
+                }
+            }
+            var msg = new StringBuilder();
+            if (map is not null) msg.Append($"Changing map to {map.DisplayName}");
+            if (gameMode is not null) msg.Append($" ({gameMode.DisplayName})");
+            if (dayNight != MapDayNight.None) msg.Append($" [{dayNight}]");
+
+            Server.SayToAllChat(msg.ToString());
+            Server.AnnounceShort(msg.ToString());
+            Task.Delay(TimeSpan.FromSeconds(1)).Wait();
+            Server.ForceEndGame();
+            Task.Delay(TimeSpan.FromMinutes(1)).Wait();
+            Server.MapRotation.SetRotation(oldMaps.ToArray());
+            Server.GamemodeRotation.SetRotation(oldModes.ToArray());
+            Server.ServerSettings.CanVoteDay = oldVoteDay;
+            Server.ServerSettings.CanVoteNight = oldVoteNight;
+        }
 
         public static IReadOnlyList<string> GameModeNames { get { return GameModes.Where(m => m.Available).Select(m => m.Name).ToList(); } }
         public static IReadOnlyList<string> GameModeDisplayNames { get { return Maps.Where(m => m.Available).Select(m => m.DisplayName).ToList(); } }
@@ -504,6 +552,7 @@ namespace Bluscream {
     [RequireModule(typeof(DevMinersBBModules.Telemetry))]
     [Module("Bluscream's Library", "2.0.0")]
     public class BluscreamLibModule : BattleBitModule {
+        public BluscreamLibConfiguration Configuration { get; set; } = null!;
         public static class ModuleInfo {
             public const string Name = "Bluscream's Library";
             public const string Description = "Generic library for common code used by multiple modules.";
@@ -512,127 +561,143 @@ namespace Bluscream {
             public const string Author = "Bluscream";
         }
     }
+    public class BluscreamLibConfiguration : ModuleConfiguration {
+        public string TimeStampFormat { get; set; } = "HH:mm:ss";
+    }
 }
+#region json
+namespace JsonExtensions {
+public static class JsonUtils {
+    public static T FromJson<T>(string jsonText) => JsonSerializer.Deserialize<T>(jsonText, Converter.Settings);
+    public static T FromJsonFile<T>(FileInfo file) => FromJson<T>(File.ReadAllText(file.FullName));
+    public static string ToJson<T>(this T self) => JsonSerializer.Serialize(self, Converter.Settings);
+    public static void ToFile<T>(this T self, FileInfo file) => File.WriteAllText(file.FullName, ToJson(self));
+}
+//public class JsonBase {
+//    public FileInfo File { get; set; }
+//    public JsonBase(FileInfo file) { File = file; }
+//}
+//public class JsonDict : JsonBase {
+//    public dynamic Content { get; set; }
+//    public void Load<T>() { Content = JsonUtils.FromJsonFile<T>(File); }
+//    public void Save() => Content.ToFile(File);
+//    public JsonDict(FileInfo file) { File = file; }
+//}
+public static class Converter {
+    public static readonly JsonSerializerOptions Settings = new(JsonSerializerDefaults.General) {
+        Converters =
+        {
+            new DateOnlyConverter(),
+            new TimeOnlyConverter(),
+            IsoDateTimeOffsetConverter.Singleton
+        },
+    };
+}
+public class ParseStringConverter : JsonConverter<long> {
+    public override bool CanConvert(Type t) => t == typeof(long);
 
-    namespace JsonExtensions {
-    public static class Converter {
-        public static readonly JsonSerializerOptions Settings = new(JsonSerializerDefaults.General) {
-            Converters =
-            {
-                new DateOnlyConverter(),
-                new TimeOnlyConverter(),
-                IsoDateTimeOffsetConverter.Singleton
-            },
-        };
+    public override long Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
+        var value = reader.GetString();
+        long l;
+        if (Int64.TryParse(value, out l)) {
+            return l;
+        }
+        throw new Exception("Cannot unmarshal type long");
     }
 
-    public class ParseStringConverter : JsonConverter<long> {
-        public override bool CanConvert(Type t) => t == typeof(long);
-
-        public override long Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
-            var value = reader.GetString();
-            long l;
-            if (Int64.TryParse(value, out l)) {
-                return l;
-            }
-            throw new Exception("Cannot unmarshal type long");
-        }
-
-        public override void Write(Utf8JsonWriter writer, long value, JsonSerializerOptions options) {
-            JsonSerializer.Serialize(writer, value.ToString(), options);
-            return;
-        }
-
-        public static readonly ParseStringConverter Singleton = new ParseStringConverter();
+    public override void Write(Utf8JsonWriter writer, long value, JsonSerializerOptions options) {
+        JsonSerializer.Serialize(writer, value.ToString(), options);
+        return;
     }
 
-    public class DateOnlyConverter : JsonConverter<DateOnly> {
-        private readonly string serializationFormat;
-        public DateOnlyConverter() : this(null) { }
+    public static readonly ParseStringConverter Singleton = new ParseStringConverter();
+}
+public class DateOnlyConverter : JsonConverter<DateOnly> {
+    private readonly string serializationFormat;
+    public DateOnlyConverter() : this(null) { }
 
-        public DateOnlyConverter(string? serializationFormat) {
-            this.serializationFormat = serializationFormat ?? "yyyy-MM-dd";
-        }
-
-        public override DateOnly Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
-            var value = reader.GetString();
-            return DateOnly.Parse(value!);
-        }
-
-        public override void Write(Utf8JsonWriter writer, DateOnly value, JsonSerializerOptions options)
-            => writer.WriteStringValue(value.ToString(serializationFormat));
+    public DateOnlyConverter(string? serializationFormat) {
+        this.serializationFormat = serializationFormat ?? "yyyy-MM-dd";
     }
 
-    public class TimeOnlyConverter : JsonConverter<TimeOnly> {
-        private readonly string serializationFormat;
-
-        public TimeOnlyConverter() : this(null) { }
-
-        public TimeOnlyConverter(string? serializationFormat) {
-            this.serializationFormat = serializationFormat ?? "HH:mm:ss.fff";
-        }
-
-        public override TimeOnly Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
-            var value = reader.GetString();
-            return TimeOnly.Parse(value!);
-        }
-
-        public override void Write(Utf8JsonWriter writer, TimeOnly value, JsonSerializerOptions options)
-            => writer.WriteStringValue(value.ToString(serializationFormat));
+    public override DateOnly Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
+        var value = reader.GetString();
+        return DateOnly.Parse(value!);
     }
 
-    public class IsoDateTimeOffsetConverter : JsonConverter<DateTimeOffset> {
-        public override bool CanConvert(Type t) => t == typeof(DateTimeOffset);
+    public override void Write(Utf8JsonWriter writer, DateOnly value, JsonSerializerOptions options)
+        => writer.WriteStringValue(value.ToString(serializationFormat));
+}
+public class TimeOnlyConverter : JsonConverter<TimeOnly> {
+    private readonly string serializationFormat;
 
-        private const string DefaultDateTimeFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ss.FFFFFFFK";
+    public TimeOnlyConverter() : this(null) { }
 
-        private DateTimeStyles _dateTimeStyles = DateTimeStyles.RoundtripKind;
-        private string? _dateTimeFormat;
-        private CultureInfo? _culture;
+    public TimeOnlyConverter(string? serializationFormat) {
+        this.serializationFormat = serializationFormat ?? "HH:mm:ss.fff";
+    }
 
-        public DateTimeStyles DateTimeStyles {
-            get => _dateTimeStyles;
-            set => _dateTimeStyles = value;
+    public override TimeOnly Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
+        var value = reader.GetString();
+        return TimeOnly.Parse(value!);
+    }
+
+    public override void Write(Utf8JsonWriter writer, TimeOnly value, JsonSerializerOptions options)
+        => writer.WriteStringValue(value.ToString(serializationFormat));
+}
+public class IsoDateTimeOffsetConverter : JsonConverter<DateTimeOffset> {
+    public override bool CanConvert(Type t) => t == typeof(DateTimeOffset);
+
+    private const string DefaultDateTimeFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ss.FFFFFFFK";
+
+    private DateTimeStyles _dateTimeStyles = DateTimeStyles.RoundtripKind;
+    private string? _dateTimeFormat;
+    private CultureInfo? _culture;
+
+    public DateTimeStyles DateTimeStyles {
+        get => _dateTimeStyles;
+        set => _dateTimeStyles = value;
+    }
+
+    public string? DateTimeFormat {
+        get => _dateTimeFormat ?? string.Empty;
+        set => _dateTimeFormat = (string.IsNullOrEmpty(value)) ? null : value;
+    }
+
+    public CultureInfo Culture {
+        get => _culture ?? CultureInfo.CurrentCulture;
+        set => _culture = value;
+    }
+
+    public override void Write(Utf8JsonWriter writer, DateTimeOffset value, JsonSerializerOptions options) {
+        string text;
+
+
+        if ((_dateTimeStyles & DateTimeStyles.AdjustToUniversal) == DateTimeStyles.AdjustToUniversal
+            || (_dateTimeStyles & DateTimeStyles.AssumeUniversal) == DateTimeStyles.AssumeUniversal) {
+            value = value.ToUniversalTime();
         }
 
-        public string? DateTimeFormat {
-            get => _dateTimeFormat ?? string.Empty;
-            set => _dateTimeFormat = (string.IsNullOrEmpty(value)) ? null : value;
-        }
+        text = value.ToString(_dateTimeFormat ?? DefaultDateTimeFormat, Culture);
 
-        public CultureInfo Culture {
-            get => _culture ?? CultureInfo.CurrentCulture;
-            set => _culture = value;
-        }
+        writer.WriteStringValue(text);
+    }
 
-        public override void Write(Utf8JsonWriter writer, DateTimeOffset value, JsonSerializerOptions options) {
-            string text;
+    public override DateTimeOffset Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
+        string? dateText = reader.GetString();
 
-
-            if ((_dateTimeStyles & DateTimeStyles.AdjustToUniversal) == DateTimeStyles.AdjustToUniversal
-                || (_dateTimeStyles & DateTimeStyles.AssumeUniversal) == DateTimeStyles.AssumeUniversal) {
-                value = value.ToUniversalTime();
-            }
-
-            text = value.ToString(_dateTimeFormat ?? DefaultDateTimeFormat, Culture);
-
-            writer.WriteStringValue(text);
-        }
-
-        public override DateTimeOffset Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
-            string? dateText = reader.GetString();
-
-            if (string.IsNullOrEmpty(dateText) == false) {
-                if (!string.IsNullOrEmpty(_dateTimeFormat)) {
-                    return DateTimeOffset.ParseExact(dateText, _dateTimeFormat, Culture, _dateTimeStyles);
-                } else {
-                    return DateTimeOffset.Parse(dateText, Culture, _dateTimeStyles);
-                }
+        if (string.IsNullOrEmpty(dateText) == false) {
+            if (!string.IsNullOrEmpty(_dateTimeFormat)) {
+                return DateTimeOffset.ParseExact(dateText, _dateTimeFormat, Culture, _dateTimeStyles);
             } else {
-                return default(DateTimeOffset);
+                return DateTimeOffset.Parse(dateText, Culture, _dateTimeStyles);
             }
+        } else {
+            return default(DateTimeOffset);
         }
-
-        public static readonly IsoDateTimeOffsetConverter Singleton = new IsoDateTimeOffsetConverter();
     }
+
+    public static readonly IsoDateTimeOffsetConverter Singleton = new IsoDateTimeOffsetConverter();
 }
+}
+#endregion

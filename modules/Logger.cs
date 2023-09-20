@@ -206,10 +206,7 @@ namespace Bluscream {
                 var msg = FormatString(config.Discord.Message, player, target, geoResponse, reportReason, chatChannel, _msg);
                 await SendToWebhook(config.Discord.WebhookUrl, msg);
             }
-            try { var _ = this.Server.IsConnected; } catch (Exception ex) {
-                Console.WriteLine($"Got exception {ex.Message} while trying this.Server.IsConnected");
-                return;
-            }
+            try { var _ = this.Server.IsConnected; } catch (Exception ex) { return; }
             if (this.Server is null || !this.Server.IsConnected) return;
             if (config.Chat is not null && config.Chat.Enabled && !string.IsNullOrWhiteSpace(config.Chat.Message)) {
                 var msg = FormatString(config.Chat.Message, player, target, geoResponse, reportReason, chatChannel, _msg);
