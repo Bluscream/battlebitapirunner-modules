@@ -51,7 +51,7 @@ namespace Bluscream {
             var url = $"http://ip-api.com/json/{ip}";
             HttpResponseMessage httpResponse;
             try { httpResponse = await this.httpClient.GetAsync(url); } catch (Exception ex) {
-                BluscreamLib.Log($"Failed to get geo data: {ex.Message}");
+                // BluscreamLib.Log($"Failed to get geo data: {ex.Message}");
                 return null;
             }
             var json = await httpResponse.Content.ReadAsStringAsync();
@@ -134,7 +134,7 @@ namespace Bluscream {
                 var content = new StringContent(payloadJson, Encoding.UTF8, "application/json");
                 HttpResponseMessage response;
                 try { response = await this.httpClient.PostAsync(webhookUrl, content); } catch (Exception ex) {
-                    BluscreamLib.Log($"Failed to POST webhook: {ex.Message}");
+                    // BluscreamLib.Log($"Failed to POST webhook: {ex.Message}");
                     return;
                 }
                 if (!response.IsSuccessStatusCode) {
