@@ -12,7 +12,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using Discord.WebSocket;
-using Bans;
 using System.IO;
 using Bluscream;
 //using JsonExtensions;

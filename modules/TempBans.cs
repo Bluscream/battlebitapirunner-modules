@@ -17,7 +17,6 @@ using JsonExtensions;
 using System.Runtime.CompilerServices;
 using System.IO;
 using Bans;
-using BattleBitBaseModules;
 using TimeSpanParserUtil;
 using Humanizer;
 
@@ -86,6 +85,7 @@ namespace Bluscream {
         }
 
         public void KickBannedPlayer(BanEntry banEntry) {
+            if (!banEntry.Servers?.Contains("*") == true && !banEntry.Servers?.Contains($"{this.Server.GameIP}:{this.Server.GamePort}") == true) return;
             Server.Kick(banEntry.TargetSteamId64, Configuration.KickNoticeTemplate
                 .Replace("{servername}", this.Server.ServerName)
                 .Replace("{invoker}", banEntry.InvokerName)
@@ -105,16 +105,18 @@ namespace Bluscream {
         public BanEntry? TempBanPlayer(RunnerPlayer target, TimeSpan timeSpan, string? reason = null, string? note = null, List<string>? servers = null, RunnerPlayer? invoker = null) =>
             TempBanPlayer(target, DateTime.Now + timeSpan, reason, note, servers, invoker);
         public BanEntry? TempBanPlayer(RunnerPlayer target, DateTime dateTime, string? reason = null, string? note = null, List<string>? servers = null, RunnerPlayer? invoker = null) {
-
-            return Bans.Add(new BanEntry() {
+            var newban = new BanEntry() {
                 TargetSteamId64 = target.SteamID, TargetName = target.Name,
                 BannedUntil = dateTime,
                 Reason = reason,
                 Note = note,
-                Servers = servers,
+                Servers = servers?.Distinct().ToList(),
                 InvokerName = invoker?.Name,
                 InvokerSteamId64 = invoker?.SteamID
-            });
+            };
+            var ban = Bans.Add(newban);
+            KickBannedPlayer(ban);
+            return ban;
         }
     }
 
@@ -133,41 +135,41 @@ namespace Bluscream {
 
 namespace Bans {
     public partial class BanEntry {
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         [JsonPropertyName("TargetSteamId64")]
         public ulong TargetSteamId64 { get; set; }
 
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         [JsonPropertyName("TargetName")]
         public string? TargetName { get; set; }
 
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         [JsonPropertyName("Reason")]
         public string? Reason { get; set; }
 
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         [JsonPropertyName("Note")]
         public string? Note { get; set; }
 
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         [JsonPropertyName("InvokerSteamId64")]
         public double? InvokerSteamId64 { get; set; }
 
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         [JsonPropertyName("InvokerName")]
         public string? InvokerName { get; set; }
 
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         [JsonPropertyName("BannedUntil")]
         public DateTime? BannedUntil { get; set; }
 
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         [JsonPropertyName("Servers")]
         public List<string>? Servers { get; set; }
     }
     public partial class BanEntry {
         [JsonIgnore]
-        public TimeSpan Remaining => DateTime.Now - BannedUntil.Value;
+        public TimeSpan Remaining => BannedUntil.Value - DateTime.Now;
     }
 
         public class BanList {
@@ -216,7 +218,7 @@ namespace Bans {
                 Entries = JsonUtils.FromJsonFile<List<BanEntry>>(File);
             } catch (Exception ex) {
                 Console.WriteLine($"Failed to load banlist from {File}: \"{ex.Message}\" Backing up and creating a new one...");
-                File.MoveTo(File.Name + ".bak", true);
+                if(File.Exists) File.MoveTo(File.Name + ".bak", true);
                 Save();
             }
         }
