@@ -678,6 +678,34 @@ public static class Extensions {
         }
         #endregion
         #region String
+        public static bool EvalToBool(string expression) {
+            System.Data.DataTable table = new System.Data.DataTable();
+            table.Columns.Add("expression", string.Empty.GetType(), expression);
+            System.Data.DataRow row = table.NewRow();
+            table.Rows.Add(row);
+            return bool.Parse((string)row["expression"]);
+        }
+        public static double EvalToDouble(string expression) {
+            System.Data.DataTable table = new System.Data.DataTable();
+            table.Columns.Add("expression", string.Empty.GetType(), expression);
+            System.Data.DataRow row = table.NewRow();
+            table.Rows.Add(row);
+            return double.Parse((string)row["expression"]);
+        }
+        public static string EvalToString(string expression) {
+            System.Data.DataTable table = new System.Data.DataTable();
+            table.Columns.Add("expression", string.Empty.GetType(), expression);
+            System.Data.DataRow row = table.NewRow();
+            table.Rows.Add(row);
+            return (string)row["expression"];
+        }
+        public static int EvalToInt(string expression) {
+            System.Data.DataTable table = new System.Data.DataTable();
+            table.Columns.Add("expression", string.Empty.GetType(), expression);
+            System.Data.DataRow row = table.NewRow();
+            table.Rows.Add(row);
+            return int.Parse((string)row["expression"]);
+        }
         public static MapInfo? ToMap(this string mapName) => BluscreamLib.Maps.Where(m => m.Name.ToLowerInvariant() == mapName.ToLowerInvariant()).First();
         public static MapInfo? ParseMap(this string input) => BluscreamLib.ResolveGameModeMapNameMatch(input, BluscreamLib.Maps);
         public static GameModeInfo? ToGameMode(this string gameModeName) => BluscreamLib.GameModes.Where(m => m.Name.ToLowerInvariant() == gameModeName.ToLowerInvariant()).First();
