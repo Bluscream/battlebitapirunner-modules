@@ -87,6 +87,7 @@ namespace Bluscream {
         public BluscreamLibConfiguration Configuration { get; set; } = null!;
 
         #region Methods
+
         public static string GetStringValue(KeyValuePair<string, string?>? match) {
             if (!match.HasValue) return string.Empty;
             if (!string.IsNullOrWhiteSpace(match.Value.Value)) return match.Value.Value;
@@ -536,6 +537,10 @@ namespace Bluscream {
     };
         #endregion
     }
+    public class CommandConfiguration {
+        public bool Enabled { get; set; } = true;
+        public string? AllowedRoles { get; set; } = "All";
+    }
     public class BluscreamLibConfiguration : ModuleConfiguration {
         public string TimeStampFormat { get; set; } = "HH:mm:ss";
     }
@@ -630,6 +635,31 @@ public static partial class Utils {
 #region Extensions
 namespace Bluscream {
 public static class Extensions {
+        #region Roles
+        public static string ToRoleString(this Roles roles) {
+            if (roles == Roles.None) {
+                return string.Empty;
+            }
+            if (roles.HasFlag(Roles.Admin) && roles.HasFlag(Roles.Moderator) && roles.HasFlag(Roles.Special) && roles.HasFlag(Roles.Vip)) {
+                return "All";
+            }
+            var roleStrings = new List<string>();
+            if (roles.HasFlag(Roles.Admin)) {
+                roleStrings.Add(nameof(Roles.Admin));
+            }
+            if (roles.HasFlag(Roles.Moderator)) {
+                roleStrings.Add(nameof(Roles.Moderator));
+            }
+            if (roles.HasFlag(Roles.Special)) {
+                roleStrings.Add(nameof(Roles.Special));
+            }
+            if (roles.HasFlag(Roles.Vip)) {
+                roleStrings.Add(nameof(Roles.Vip));
+            }
+            return string.Join(",", roleStrings);
+        }
+
+        #endregion
         #region Server
         public static RunnerPlayer GetPlayerBySteamId64(this RunnerServer server, ulong steamId64) => server.AllPlayers.Where(p=>p.SteamID==steamId64).First();
         public static string GetPlayerNameBySteamId64(this RunnerServer server, ulong steamId64) {
@@ -715,6 +745,21 @@ public static class Extensions {
             table.Rows.Add(row);
             return int.Parse((string)row["expression"]);
         }
+        public static Roles ParseRoles(this string rolesString) {
+            if (string.IsNullOrEmpty(rolesString) || rolesString.Equals("All", StringComparison.OrdinalIgnoreCase)) {
+                return Roles.None | Roles.Admin | Roles.Moderator | Roles.Special | Roles.Vip;
+            }
+            Roles result = Roles.None;
+            var separators = new[] { ',', '|' };
+            var roleStrings = rolesString.Split(separators, StringSplitOptions.RemoveEmptyEntries);
+            foreach (var roleString in roleStrings) {
+                if (Enum.TryParse<Roles>(roleString, true, out var role)) {
+                    result |= role;
+                }
+            }
+            return result;
+        }
+
         public static MapInfo? ToMap(this string mapName) => BluscreamLib.Maps.Where(m => m.Name.ToLowerInvariant() == mapName.ToLowerInvariant()).First();
         public static MapInfo? ParseMap(this string input) => BluscreamLib.ResolveGameModeMapNameMatch(input, BluscreamLib.Maps);
         public static GameModeInfo? ToGameMode(this string gameModeName) => BluscreamLib.GameModes.Where(m => m.Name.ToLowerInvariant() == gameModeName.ToLowerInvariant()).First();
