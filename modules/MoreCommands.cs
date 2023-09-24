@@ -12,7 +12,7 @@ using Bluscream;
 using static Bluscream.BluscreamLib;
 
 namespace Bluscream {
-    [RequireModule(typeof(BluscreamLibModule))]
+    [RequireModule(typeof(BluscreamLib))]
     [RequireModule(typeof(CommandHandler))]
     [Module("More Commands", "2.0.0")]
     public class MoreCommands : BattleBitModule {
