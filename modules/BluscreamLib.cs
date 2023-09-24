@@ -21,6 +21,7 @@ using System.Net;
 using BattleBitAPI.Common;
 using BBRAPIModules;
 using Bluscream;
+using Commands;
 
 namespace Bluscream {
     public static class MoreRoles {
@@ -633,6 +634,8 @@ public static class Extensions {
         #region Player
         public static string str(this RunnerPlayer player) => $"\"{player.Name}\"";
         public static string fullstr(this RunnerPlayer player) => $"{player.str()} ({player.SteamID})";
+        public static Roles GetRoles(this RunnerPlayer player, Permissions.PlayerPermissions permissionsModule) => permissionsModule.GetPlayerRoles(player.SteamID);
+        public static bool HasAnyRoleOf(this RunnerPlayer player, Permissions.PlayerPermissions permissionsModule, Roles needsAnyRole) => (player.GetRoles(permissionsModule) & needsAnyRole) == 0;
         #endregion
         #region Map
         public static void ChangeTime(this RunnerServer Server, MapDayNight dayNight = MapDayNight.None) => ChangeMap(Server, dayNight: dayNight);

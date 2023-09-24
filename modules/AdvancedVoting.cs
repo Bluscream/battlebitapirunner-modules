@@ -1,6 +1,7 @@
 ﻿using BattleBitAPI.Common;
 using BBRAPIModules;
 using Commands;
+using Permissions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,6 +37,12 @@ public class AdvancedVoting : BattleBitModule {
     public CommandHandler CommandHandler { get; set; }
     [ModuleReference]
     public TempBans TempBans { get; set; }
+    [ModuleReference]
+#if DEBUG
+    public PlayerPermissions? PlayerPermissions { get; set; }
+#else
+    public dynamic? PlayerPermissions { get; set; }
+#endif
     #region Events
     public override void OnModulesLoaded() {
         this.CommandHandler.Register(this);
@@ -54,8 +61,16 @@ public class AdvancedVoting : BattleBitModule {
             commandSource.Message($"\"{mapName}\" is not a valid map!");
             return;
         }
+        var config = Configuration.VoteCommandConfigurations["votemap"];
+        if (!config.Enabled) {
+            commandSource.Message($"{config.Description} is not enabled on this server!"); return;
+        }
+        if (this.PlayerPermissions is not null && config.AllowedRoles != MoreRoles.All && !commandSource.HasAnyRoleOf(PlayerPermissions, config.AllowedRoles)) {
+            commandSource.Message($"You don't have permission to use this command.");
+            return;
+        }
         StartVote(commandSource, $"Vote to change map to {map}", string.Join("|", MapDisplayNames), (int totalVotes, int winnerVotes, string won) => {
-            if (Extensions.EvalToBool(Configuration.VoteWinningConditions["votemap"]) == false) return;
+            if (Extensions.EvalToBool(Configuration.VoteCommandConfigurations["votemap"].WinningCondition) == false) return;
             this.Server.ChangeMap(map);
         });
     }
@@ -67,8 +82,16 @@ public class AdvancedVoting : BattleBitModule {
             commandSource.Message($"\"{gameModeName}\" is not a valid game mode!");
             return;
         }
+        var config = Configuration.VoteCommandConfigurations["votegamemode"];
+        if (!config.Enabled) {
+            commandSource.Message($"{config.Description} is not enabled on this server!"); return;
+        }
+        if (this.PlayerPermissions is not null && config.AllowedRoles != MoreRoles.All && !commandSource.HasAnyRoleOf(PlayerPermissions, config.AllowedRoles)) {
+            commandSource.Message($"You don't have permission to use this command.");
+            return;
+        }
         StartVote(commandSource, "Vote for game mode change", string.Join("|", GameModeDisplayNames), (int totalVotes, int winnerVotes, string won) => {
-            if (Extensions.EvalToBool(Configuration.VoteWinningConditions["votegamemode"]) == false) return;
+            if (Extensions.EvalToBool(Configuration.VoteCommandConfigurations["votegamemode"].WinningCondition) == false) return;
             this.Server.ChangeGameMode(mode);
         });
     }
@@ -80,17 +103,32 @@ public class AdvancedVoting : BattleBitModule {
             commandSource.Message($"\"{dayTime}\" is not a valid time!");
             return;
         }
+        var config = Configuration.VoteCommandConfigurations["votemaptime"];
+        if (!config.Enabled) {
+            commandSource.Message($"{config.Description} is not enabled on this server!"); return;
+        }
+        if (this.PlayerPermissions is not null && config.AllowedRoles != MoreRoles.All && !commandSource.HasAnyRoleOf(PlayerPermissions, config.AllowedRoles)) {
+            commandSource.Message($"You don't have permission to use this command.");
+            return;
+        }
         StartVote(commandSource, "Vote for time change", "Day|Night", (int totalVotes, int winnerVotes, string won) => {
-            if (Extensions.EvalToBool(Configuration.VoteWinningConditions["votemaptime"]) == false) return;
+            if (Extensions.EvalToBool(Configuration.VoteCommandConfigurations["votemaptime"].WinningCondition) == false) return;
             this.Server.ChangeTime(time);
         });
     }
 
     [CommandCallback("voterestart", Description = "Starts a vote for map restart")]
     public void StartMapRestartVoteCommand(RunnerPlayer commandSource) {
+        var config = Configuration.VoteCommandConfigurations["voterestart"];
+        if (!config.Enabled) {
+            commandSource.Message($"{config.Description} is not enabled on this server!"); return;
+        }
+        if (this.PlayerPermissions is not null && config.AllowedRoles != MoreRoles.All && !commandSource.HasAnyRoleOf(PlayerPermissions, config.AllowedRoles)) {
+            commandSource.Message($"You don't have permission to use this command.");
+            return;
+        }
         StartVote(commandSource, "Vote for map restart", "Yes|No", (int totalVotes, int winnerVotes, string won) => {
-
-            if (Extensions.EvalToBool(Configuration.VoteWinningConditions["voterestart"]) == false) return;
+            if (Extensions.EvalToBool(Configuration.VoteCommandConfigurations["voterestart"].WinningCondition) == false) return;
             this.Server.ChangeMap();
         });
     }
@@ -101,8 +139,16 @@ public class AdvancedVoting : BattleBitModule {
             commandSource.Message($"Player \"{target}\" could not be found!");
             return;
         }
+        var config = Configuration.VoteCommandConfigurations["voteban"];
+        if (!config.Enabled) {
+            commandSource.Message($"{config.Description} is not enabled on this server!"); return;
+        }
+        if (this.PlayerPermissions is not null && config.AllowedRoles != MoreRoles.All && !commandSource.HasAnyRoleOf(PlayerPermissions, config.AllowedRoles)) {
+            commandSource.Message($"You don't have permission to use this command.");
+            return;
+        }
         StartVote(commandSource, "Vote for map restart", "Yes|No", (int totalVotes, int winnerVotes, string won) => {
-            if (Extensions.EvalToBool(Configuration.VoteWinningConditions["voteban"]) == false) return;
+            if (Extensions.EvalToBool(Configuration.VoteCommandConfigurations["voteban"].WinningCondition) == false) return;
             TempBans.TempBanPlayer(target, TimeSpan.FromMinutes(30), $"Votebanned by {winnerVotes} votes", "voteban", invoker: commandSource);
         });
     }
@@ -222,14 +268,22 @@ public class AdvancedVoting : BattleBitModule {
     #endregion
 }
 
+public class VoteCommandConfiguration {
+    public string Description { get; set; }
+    public bool Enabled { get; set; }
+    public Roles AllowedRoles { get; set; }
+    public string WinningCondition { get; set; }
+}
+
 public class AdvancedVotingConfiguration : ModuleConfiguration {
     public int VoteDuration { get; set; } = 60;
-    public Dictionary<string, string> VoteWinningConditions { get; set; } = new Dictionary<string, string>() {
-        {"votemap", "{winnerVotes} > ({allPlayers} / 2)" },
-        {"votegamemode", "{winnerVotes} > ({allPlayers} / 2)" },
-        {"votemaptime", "{winnerVotes} > ({allPlayers} / 2)" },
-        {"voterestart", "{winnerVotes} > ({allPlayers} / 2)" },
-        {"voteban", "{winnerVotes} > ({allPlayers} / 2)" },
+    public TimeSpan VoteBanDuration { get; set; } = TimeSpan.FromMinutes(30);
+    public Dictionary<string, VoteCommandConfiguration> VoteCommandConfigurations { get; set; } = new Dictionary<string, VoteCommandConfiguration>() {
+        {"votemap", new() { Description = "Voting for map", Enabled = true, AllowedRoles = MoreRoles.All, WinningCondition = "{winnerVotes} > ({allPlayers} / 2)" } },
+        {"votegamemode", new() { Description = "Voting for game mode", Enabled = true, AllowedRoles = MoreRoles.All, WinningCondition = "{winnerVotes} > ({allPlayers} / 2)" } },
+        {"votemaptime", new() { Description = "Voting for map time", Enabled = true, AllowedRoles = MoreRoles.All, WinningCondition = "{winnerVotes} > ({allPlayers} / 2)" } },
+        {"voterestart", new() { Description = "Voting for map restart", Enabled = true, AllowedRoles = MoreRoles.All, WinningCondition = "{winnerVotes} > ({allPlayers} / 2)" } },
+        {"voteban", new() { Description = "Voting for tempban", Enabled = true, AllowedRoles = MoreRoles.All, WinningCondition = "{winnerVotes} > ({allPlayers} / 2)" } }
     };
 
 }

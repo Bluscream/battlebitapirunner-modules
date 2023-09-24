@@ -144,11 +144,11 @@ namespace Bluscream {
             [CommandCallback("pos", Description = "Current position (logs to file)", AllowedRoles = Roles.Admin)]
             public void PosCommand(RunnerPlayer commandSource) {
                 commandSource.Message($"Position: {commandSource.Position}", 5);
-                File.AppendAllLines(Configuration.SavedPositionsFile.FullName, new[] { $"{this.Server.Map},{this.Server.MapSize},{commandSource.Position.X}|{commandSource.Position.Y}|{commandSource.Position.Z}" });
+                File.AppendAllLines(Configuration.SavedPositionsFile, new[] { $"{this.Server.Map},{this.Server.MapSize},{commandSource.Position.X}|{commandSource.Position.Y}|{commandSource.Position.Z}" });
             }
         #endregion
         public class MoreCommandsConfiguration : ModuleConfiguration {
-            public FileInfo SavedPositionsFile { get; set; } = new FileInfo(".data/SavedPositions.txt");
+            public string SavedPositionsFile { get; set; } = ".data/SavedPositions.txt";
         }
     }
 }
