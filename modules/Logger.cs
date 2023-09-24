@@ -13,26 +13,28 @@ using System.Net.Http;
 using BattleBitAPI.Common;
 using BBRAPIModules;
 using Commands;
-using JsonExtensions;
 using IpApi;
+using static Bluscream.BluscreamLib;
+using static Bluscream.Extensions;
+using Bluscream;
 #if DEBUG
 using Permissions;
-using Bluscream;
-using static Bluscream.BluscreamLibModule;
 #endif
 
 namespace Bluscream {
-    [RequireModule(typeof(BluscreamLibModule))]
+    [RequireModule(typeof(BluscreamLib))]
     [RequireModule(typeof(CommandHandler))]
     [Module("Logger", "2.0.0")]
     public class Logger : BattleBitModule {
-        public static class ModuleInfo {
-            public const string Name = "Logger";
-            public const string Description = "Extensive customizable logging for the BattleBit Modular API";
-            public static readonly Version Version = new Version(2, 0, 0);
-            public const string UpdateUrl = "https://github.com/Bluscream/battlebitapirunner-modules/raw/master/modules/Logger.cs";
-            public const string Author = "Bluscream";
-        }
+        public static ModuleInfo ModuleInfo = new() {
+            Name = "Logger",
+            Description = "Extensive customizable logging for the BattleBit Modular API",
+            Version = new Version(2, 0),
+            Author = "Bluscream",
+            WebsiteUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/"),
+            UpdateUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/raw/master/modules/Logger.cs"),
+            SupportUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/issues/new?title=Logger")
+        };
 
         [ModuleReference]
         public CommandHandler CommandHandler { get; set; } = null!;
@@ -46,7 +48,7 @@ namespace Bluscream {
         public ChatLoggerConfiguration Configuration { get; set; } = null!;
         internal HttpClient httpClient = new HttpClient();
         internal Random random = Random.Shared;
-
+        #region Api
         internal async Task<IpApi.Response> GetGeoData(IPAddress ip) {
             var url = $"http://ip-api.com/json/{ip}";
             HttpResponseMessage httpResponse;
@@ -78,7 +80,8 @@ namespace Bluscream {
             if (player.EconomyBan != "none") banCount++;
             return banCount;
         }
-
+        #endregion
+        #region Commands
         [CommandCallback("playerbans", Description = "Lists bans of a player", AllowedRoles = MoreRoles.Staff)]
         public async void GetPlayerBans(RunnerPlayer commandSource, RunnerPlayer _player) {
             var response = new StringBuilder();
@@ -90,11 +93,11 @@ namespace Bluscream {
                     return;
                 }
                 var player = bans.Players.First();
-                response.AppendLine($"VAC Banned: {player.VacBanned.ToYesNoString()} ({player.NumberOfVacBans} times)");
+                response.AppendLine($"VAC Banned: {player.VacBanned.ToYesNo()} ({player.NumberOfVacBans} times)");
                 if (player.VacBanned) response.AppendLine($"Last VAC Ban: {player.DaysSinceLastBan} days ago");
-                response.AppendLine($"Community Banned: {player.CommunityBanned.ToYesNoString()}");
-                response.AppendLine($"Trade Banned: {(player.EconomyBan != "none").ToYesNoString()}");
-                response.AppendLine($"Game Banned: {(player.NumberOfGameBans > 0).ToYesNoString()} ({player.NumberOfGameBans} times)");
+                response.AppendLine($"Community Banned: {player.CommunityBanned.ToYesNo()}");
+                response.AppendLine($"Trade Banned: {(player.EconomyBan != "none").ToYesNo()}");
+                response.AppendLine($"Game Banned: {(player.NumberOfGameBans > 0).ToYesNo()} ({player.NumberOfGameBans} times)");
             }
             commandSource.Message(response.ToString());
         }
@@ -118,7 +121,8 @@ namespace Bluscream {
             }
             commandSource.Message(response.ToString());
         }
-
+        #endregion
+        #region Methods
         internal void LogToConsole(string msg) {
             if (string.IsNullOrWhiteSpace(msg)) return;
             Console.WriteLine(msg);
@@ -254,7 +258,8 @@ namespace Bluscream {
                 Announce(msg, config.Announce.Duration);
             }
         }
-
+        #endregion
+        #region Events
         public override void OnModulesLoaded() {
             this.CommandHandler.Register(this);
             HandleEvent(Configuration.OnApiModulesLoaded);
@@ -287,8 +292,9 @@ namespace Bluscream {
             HandleEvent(Configuration.OnApiDisconnected);
             return Task.CompletedTask;
         }
+        #endregion
     }
-
+    #region Enums
     public enum Duration {
         None,
         Short,
@@ -296,7 +302,8 @@ namespace Bluscream {
         Long,
         Infinite
     }
-
+    #endregion
+    #region Config
     public class LogConfigurationEntrySettings {
         public bool Enabled { get; set; } = false;
         public string Message { get; set; } = string.Empty;
@@ -364,8 +371,9 @@ namespace Bluscream {
             Discord = new DiscordWebhookLogConfigurationEntrySettings() { Enabled = false, Message = "[{now}] {to.Name} was reported for {reason} :warning:" },
         };
     }
+    #endregion
 }
-
+#region Json
 namespace IpApi {
     public partial class Response {
         [JsonPropertyName("status")]
@@ -413,11 +421,11 @@ namespace IpApi {
     }
 
     public partial class Response {
-        public static Response FromJson(string json) => JsonSerializer.Deserialize<Response>(json, JsonExtensions.Converter.Settings);
+        public static Response FromJson(string json) => JsonSerializer.Deserialize<Response>(json, Converter.Settings);
     }
 
     public static class Serialize {
-        public static string ToJson(this Response self) => JsonSerializer.Serialize(self, JsonExtensions.Converter.Settings);
+        public static string ToJson(this Response self) => JsonSerializer.Serialize(self, Converter.Settings);
     }
 }
 
@@ -451,10 +459,11 @@ namespace SteamWebApi {
     }
 
     public partial class BanResponse {
-        public static BanResponse FromJson(string json) => JsonSerializer.Deserialize<BanResponse>(json, JsonExtensions.Converter.Settings);
+        public static BanResponse FromJson(string json) => JsonSerializer.Deserialize<BanResponse>(json, Converter.Settings);
     }
 
     public static class Serialize {
-        public static string ToJson(this BanResponse self) => JsonSerializer.Serialize(self, JsonExtensions.Converter.Settings);
+        public static string ToJson(this BanResponse self) => JsonSerializer.Serialize(self, Converter.Settings);
     }
 }
+#endregion
