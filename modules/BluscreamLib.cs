@@ -48,15 +48,15 @@ namespace Bluscream {
         None
     }
     public class ModuleInfo {
-        public bool Loaded { get; internal set; }
-        public bool Enabled { get; internal set; }
-        public string Name { get; internal set; }
-        public string Description { get; internal set; }
-        public Version Version { get; internal set; }
-        public string Author { get; internal set; }
-        public Uri? WebsiteUrl { get; internal set; }
-        public Uri? UpdateUrl { get; internal set; }
-        public Uri? SupportUrl { get; internal set; }
+        public bool Loaded { get; set; }
+        public bool Enabled { get; set; }
+        public string Name { get; set; }
+        public string? Description { get; set; }
+        public Version Version { get; set; }
+        public string Author { get; set; }
+        public Uri? WebsiteUrl { get; set; }
+        public Uri? UpdateUrl { get; set; }
+        public Uri? SupportUrl { get; set; }
         public ModuleInfo() { }
         public ModuleInfo(string name, string description, Version version, string author, Uri websiteUrl, Uri updateUrl, Uri supportUrl) {
             Name = name;
@@ -677,7 +677,110 @@ public static class Extensions {
             Server.ServerSettings.CanVoteNight = oldVoteNight;
         }
         #endregion
-
+        #region String
+        public static MapInfo? ToMap(this string mapName) => BluscreamLib.Maps.Where(m => m.Name.ToLowerInvariant() == mapName.ToLowerInvariant()).First();
+        public static MapInfo? ParseMap(this string input) => BluscreamLib.ResolveGameModeMapNameMatch(input, BluscreamLib.Maps);
+        public static GameModeInfo? ToGameMode(this string gameModeName) => BluscreamLib.GameModes.Where(m => m.Name.ToLowerInvariant() == gameModeName.ToLowerInvariant()).First();
+        public static GameModeInfo? ParseGameMode(this string input) => BluscreamLib.ResolveGameModeMapNameMatch(input, BluscreamLib.GameModes);
+        public static MapDayNight ParseDayNight(this string input) => BluscreamLib.GetDayNightFromString(input);
+        public static string Base64Encode(this string plainText) {
+            var plainTextBytes = Encoding.UTF8.GetBytes(plainText);
+            return Convert.ToBase64String(plainTextBytes);
+        }
+        public static string Base64Decode(this string base64EncodedData) {
+            var base64EncodedBytes = Convert.FromBase64String(base64EncodedData);
+            return Encoding.UTF8.GetString(base64EncodedBytes);
+        }
+        public static string GetDigits(this string input) {
+            return new string(input.Where(char.IsDigit).ToArray());
+        }
+        public static string Format(this string input, params string[] args) {
+            return string.Format(input, args);
+        }
+        public static IEnumerable<string> SplitToLines(this string input) {
+            if (input == null) {
+                yield break;
+            }
+            using (System.IO.StringReader reader = new System.IO.StringReader(input)) {
+                string line;
+                while ((line = reader.ReadLine()) != null) {
+                    yield return line;
+                }
+            }
+        }
+        public static string ToTitleCase(this string source, string langCode = "en-US") {
+            return new CultureInfo(langCode, false).TextInfo.ToTitleCase(source);
+        }
+        public static bool Contains(this string source, string toCheck, StringComparison comp) {
+            return source?.IndexOf(toCheck, comp) >= 0;
+        }
+        public static bool IsNullOrEmpty(this string source) {
+            return string.IsNullOrEmpty(source);
+        }
+        public static bool IsNullOrWhiteSpace(this string source) {
+            return string.IsNullOrWhiteSpace(source);
+        }
+        public static string[] Split(this string source, string split, int count = -1, StringSplitOptions options = StringSplitOptions.None) {
+            if (count != -1) return source.Split(new string[] { split }, count, options);
+            return source.Split(new string[] { split }, options);
+        }
+        public static string Remove(this string Source, string Replace) {
+            return Source.Replace(Replace, string.Empty);
+        }
+        public static string ReplaceLastOccurrence(this string Source, string Find, string Replace) {
+            int place = Source.LastIndexOf(Find);
+            if (place == -1)
+                return Source;
+            string result = Source.Remove(place, Find.Length).Insert(place, Replace);
+            return result;
+        }
+        public static string EscapeLineBreaks(this string source) {
+            return Regex.Replace(source, @"\r\n?|\n", @"\$&");
+        }
+        public static string Ext(this string text, string extension) {
+            return text + "." + extension;
+        }
+        public static string Quote(this string text) {
+            return SurroundWith(text, "\"");
+        }
+        public static string Enclose(this string text) {
+            return SurroundWith(text, "(", ")");
+        }
+        public static string Brackets(this string text) {
+            return SurroundWith(text, "[", "]");
+        }
+        public static string SurroundWith(this string text, string surrounds) {
+            return surrounds + text + surrounds;
+        }
+        public static string SurroundWith(this string text, string starts, string ends) {
+            return starts + text + ends;
+        }
+        public static string RemoveInvalidFileNameChars(this string filename) {
+            return string.Concat(filename.Split(Path.GetInvalidFileNameChars()));
+        }
+        public static string ReplaceInvalidFileNameChars(this string filename) {
+            return string.Join("_", filename.Split(Path.GetInvalidFileNameChars()));
+        }
+        public static Uri ToUri(this string url) {
+            var success = Uri.TryCreate(url, new UriCreationOptions() { DangerousDisablePathAndQueryCanonicalization = false }, out var uri);
+            if (url.IsNullOrWhiteSpace() || !success) {
+                BluscreamLib.Log($"Unable to parse: {url} as URI!");
+            }
+            return uri;
+        }
+        public static Version ToVersion(this string version) {
+            var success = System.Version.TryParse(version, out var Version);
+            if (version.IsNullOrWhiteSpace() || !success) {
+                BluscreamLib.Log($"Unable to parse: {version} as version!");
+            }
+            return Version;
+        }
+        #endregion String
+        #region bool
+        public static string ToYesNo(this bool input) => input ? "Yes" : "No";
+        public static string ToEnabledDisabled(this bool input) => input ? "Enabled" : "Disabled";
+        public static string ToOnOff(this bool input) => input ? "On" : "Off";
+        #endregion bool
         #region Reflection
 
         public static Dictionary<string, object> ToDictionary(this object instanceToConvert) {
@@ -823,123 +926,6 @@ public static class Extensions {
             });
         }
         #endregion Object
-        #region String
-
-        public static string Base64Encode(this string plainText) {
-            var plainTextBytes = Encoding.UTF8.GetBytes(plainText);
-            return Convert.ToBase64String(plainTextBytes);
-        }
-
-        public static string Base64Decode(this string base64EncodedData) {
-            var base64EncodedBytes = Convert.FromBase64String(base64EncodedData);
-            return Encoding.UTF8.GetString(base64EncodedBytes);
-        }
-
-        public static string GetDigits(this string input) {
-            return new string(input.Where(char.IsDigit).ToArray());
-        }
-
-        public static string Format(this string input, params string[] args) {
-            return string.Format(input, args);
-        }
-
-        public static IEnumerable<string> SplitToLines(this string input) {
-            if (input == null) {
-                yield break;
-            }
-
-            using (System.IO.StringReader reader = new System.IO.StringReader(input)) {
-                string line;
-                while ((line = reader.ReadLine()) != null) {
-                    yield return line;
-                }
-            }
-        }
-
-        public static string ToTitleCase(this string source, string langCode = "en-US") {
-            return new CultureInfo(langCode, false).TextInfo.ToTitleCase(source);
-        }
-
-        public static bool Contains(this string source, string toCheck, StringComparison comp) {
-            return source?.IndexOf(toCheck, comp) >= 0;
-        }
-
-        public static bool IsNullOrEmpty(this string source) {
-            return string.IsNullOrEmpty(source);
-        }
-
-        public static bool IsNullOrWhiteSpace(this string source) {
-            return string.IsNullOrWhiteSpace(source);
-        }
-
-        public static string[] Split(this string source, string split, int count = -1, StringSplitOptions options = StringSplitOptions.None) {
-            if (count != -1) return source.Split(new string[] { split }, count, options);
-            return source.Split(new string[] { split }, options);
-        }
-
-        public static string Remove(this string Source, string Replace) {
-            return Source.Replace(Replace, string.Empty);
-        }
-
-        public static string ReplaceLastOccurrence(this string Source, string Find, string Replace) {
-            int place = Source.LastIndexOf(Find);
-            if (place == -1)
-                return Source;
-            string result = Source.Remove(place, Find.Length).Insert(place, Replace);
-            return result;
-        }
-
-        public static string EscapeLineBreaks(this string source) {
-            return Regex.Replace(source, @"\r\n?|\n", @"\$&");
-        }
-
-        public static string Ext(this string text, string extension) {
-            return text + "." + extension;
-        }
-
-        public static string Quote(this string text) {
-            return SurroundWith(text, "\"");
-        }
-
-        public static string Enclose(this string text) {
-            return SurroundWith(text, "(", ")");
-        }
-
-        public static string Brackets(this string text) {
-            return SurroundWith(text, "[", "]");
-        }
-
-        public static string SurroundWith(this string text, string surrounds) {
-            return surrounds + text + surrounds;
-        }
-
-        public static string SurroundWith(this string text, string starts, string ends) {
-            return starts + text + ends;
-        }
-
-        public static string RemoveInvalidFileNameChars(this string filename) {
-            return string.Concat(filename.Split(Path.GetInvalidFileNameChars()));
-        }
-
-        public static string ReplaceInvalidFileNameChars(this string filename) {
-            return string.Join("_", filename.Split(Path.GetInvalidFileNameChars()));
-        }
-
-        public static Uri ToUri(this string url) {
-            var success = Uri.TryCreate(url, new UriCreationOptions() { DangerousDisablePathAndQueryCanonicalization = false }, out var uri);
-            if (url.IsNullOrWhiteSpace() || !success) {
-                BluscreamLib.Log($"Unable to parse: {url} as URI!");
-            }
-            return uri;
-        }
-        public static Version ToVersion(this string version) {
-            var success = System.Version.TryParse(version, out var Version);
-            if (version.IsNullOrWhiteSpace() || !success) {
-                BluscreamLib.Log($"Unable to parse: {version} as version!");
-            }
-            return Version;
-        }
-        #endregion String
         #region Int
 
         public static int Percentage(this int total, int part) {
@@ -1099,11 +1085,6 @@ public static class Extensions {
         }
 
         #endregion Task
-        #region bool
-        public static string ToYesNo(this bool input) => input ? "Yes" : "No";
-        public static string ToEnabledDisabled(this bool input) => input ? "Enabled" : "Disabled";
-        public static string ToOnOff(this bool input) => input ? "On" : "Off";
-        #endregion bool
     }
 }
 #endregion

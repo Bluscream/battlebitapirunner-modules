@@ -2,27 +2,27 @@
 using BattleBitAPI.Common;
 using BBRAPIModules;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using Commands;
 using Bluscream;
-using static Bluscream.BluscreamLib;
+using System.IO;
 
 namespace Bluscream {
     [RequireModule(typeof(BluscreamLib))]
     [RequireModule(typeof(CommandHandler))]
     [Module("More Commands", "2.0.0")]
     public class MoreCommands : BattleBitModule {
-        public static class ModuleInfo {
-            public const string Name = "More Commands";
-            public const string Description = "More commands for the Battlebit Modular API";
-            public static readonly Version Version = new Version(2, 0, 0);
-            public const string UpdateUrl = "https://github.com/Bluscream/battlebitapirunner-modules/raw/master/modules/MoreCommands.cs";
-            public const string Author = "Bluscream";
-        }
+        public static MoreCommandsConfiguration Configuration { get; set; } = null!;
+        public static ModuleInfo ModuleInfo = new() {
+            Name = "More Commands",
+            Description = "GenMore commands for the Battlebit Modular API",
+            Version = new Version(2, 0, 0),
+            Author = "Bluscream",
+            WebsiteUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/"),
+            UpdateUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/raw/master/modules/MoreCommands.cs"),
+            SupportUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/issues/new?title=MoreCommands")
+        };
 
         [ModuleReference]
         public CommandHandler CommandHandler { get; set; }
@@ -30,30 +30,28 @@ namespace Bluscream {
         public override void OnModulesLoaded() {
             this.CommandHandler.Register(this);
         }
-
-        public string GetCurrentMapInfoString() => $"Current Map:\n\nName: {ResolveGameModeMapNameMatch(this.Server.Map, Maps)?.DisplayName} ({this.Server.Map})\nMode: {ResolveGameModeMapNameMatch(this.Server.Gamemode, GameModes)} ({this.Server.Gamemode})\nSize: {this.Server.MapSize}";
-
+        public string GetCurrentMapInfoString() => $"Current Map:\n\nName: {this.Server.Map.ToMap()?.DisplayName} ({this.Server.Map})\nMode: {this.Server.Gamemode.ToGameMode()?.DisplayName} ({this.Server.Gamemode})\nSize: {this.Server.MapSize}";
+        #region commands
         [CommandCallback("map", Description = "Changes the map", AllowedRoles = Roles.Admin | Roles.Moderator)]
         public void SetMap(RunnerPlayer commandSource, string? mapName = null, string? gameMode = null, string? dayNight = null)
         {
             if (mapName is null) {
                 commandSource.Message(GetCurrentMapInfoString()); return;
             }
-            var map = ResolveGameModeMapNameMatch(mapName, Maps);
+            var map = mapName.ParseMap();
             if (map is null) {
                 commandSource.Message($"Map {mapName} could not be found"); return;
             }
             GameModeInfo? mode = null;
             if (gameMode is not null) {
                 if (gameMode != null) {
-                    mode = ResolveGameModeMapNameMatch(gameMode, GameModes);
+                    mode = gameMode.ParseGameMode();
                     if (mode is null) {
                         commandSource.Message($"GameMode {gameMode} could not be found"); return;
                     }
                 }
             }
-            var DayNight = GetDayNightFromString(dayNight);
-            this.Server.ChangeMap(map, mode, DayNight);
+            this.Server.ChangeMap(map, mode, dayNight.ParseDayNight());
         }
 
             [CommandCallback("gamemode", Description = "Changes the gamemode", AllowedRoles = Roles.Admin | Roles.Moderator)]
@@ -77,7 +75,7 @@ namespace Bluscream {
 
             [CommandCallback("votetime", Description = "Changes the allowed map times for votes", AllowedRoles = Roles.Admin | Roles.Moderator)]
             public void SetMapVoteTime(RunnerPlayer commandSource, string dayNightAll) {
-                var DayNight = GetDayNightFromString(dayNightAll);
+                var DayNight = dayNightAll.ParseDayNight();
                 var msg = $"Players can now vote for ";
                 switch (DayNight) {
                     case MapDayNight.Day:
@@ -143,10 +141,14 @@ namespace Bluscream {
                 commandSource.Message($"Toggled bots firing");
             }
 
-            [CommandCallback("pos", Description = "Current position (logs to file)", AllowedRoles = Roles.Admin)] // YOINK!
+            [CommandCallback("pos", Description = "Current position (logs to file)", AllowedRoles = Roles.Admin)]
             public void PosCommand(RunnerPlayer commandSource) {
                 commandSource.Message($"Position: {commandSource.Position}", 5);
-                System.IO.File.AppendAllLines(".data/SavedPositions.txt", new[] { $"{this.Server.Map},{this.Server.MapSize},{commandSource.Position.X}|{commandSource.Position.Y}|{commandSource.Position.Z}" });
+                File.AppendAllLines(Configuration.SavedPositionsFile.FullName, new[] { $"{this.Server.Map},{this.Server.MapSize},{commandSource.Position.X}|{commandSource.Position.Y}|{commandSource.Position.Z}" });
             }
+        #endregion
+        public class MoreCommandsConfiguration : ModuleConfiguration {
+            public FileInfo SavedPositionsFile { get; set; } = new FileInfo(".data/SavedPositions.txt");
         }
     }
+}
