@@ -1,19 +1,18 @@
 // Version 2.0
-using BattleBitAPI.Common;
-using BBRAPIModules;
 using System;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using BattleBitAPI.Common;
+using BBRAPIModules;
 using Commands;
 using Bluscream;
-using System.IO;
 
 namespace Bluscream {
     [RequireModule(typeof(BluscreamLib))]
     [RequireModule(typeof(CommandHandler))]
     [Module("More Commands", "2.0.0")]
     public class MoreCommands : BattleBitModule {
-        public static MoreCommandsConfiguration Configuration { get; set; } = null!;
         public static ModuleInfo ModuleInfo = new() {
             Name = "More Commands",
             Description = "GenMore commands for the Battlebit Modular API",
@@ -23,6 +22,7 @@ namespace Bluscream {
             UpdateUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/raw/master/modules/MoreCommands.cs"),
             SupportUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/issues/new?title=MoreCommands")
         };
+        public static MoreCommandsConfiguration Configuration { get; set; } = null!;
 
         [ModuleReference]
         public CommandHandler CommandHandler { get; set; }

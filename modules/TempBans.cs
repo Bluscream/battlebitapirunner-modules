@@ -1,39 +1,39 @@
-﻿using BattleBitAPI.Common;
-using BBRAPIModules;
-using Commands;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Numerics;
-using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Text.Json;
-using System.Globalization;
-using Bluscream;
-using static Bluscream.BluscreamLib;
-using JsonExtensions;
-using System.Runtime.CompilerServices;
 using System.IO;
+using BattleBitAPI.Common;
+using BBRAPIModules;
+using Commands;
 using Bans;
 using TimeSpanParserUtil;
 using Humanizer;
-using System.Net;
+using Bluscream;
+using static Bluscream.BluscreamLib;
 
 namespace Bluscream {
 
 
-    [RequireModule(typeof(BluscreamLibModule))]
+    [RequireModule(typeof(BluscreamLib))]
     [RequireModule(typeof(CommandHandler))]
     [Module("Basic temp banning", "1.0.0")]
-    public class TempBans : BattleBitModule
-    {
+    public class TempBans : BattleBitModule {
+        public static ModuleInfo ModuleInfo = new() {
+            Name = "Temporary Bans",
+            Description = "Rudimentary support for temporary bans stored in a json file",
+            Version = new Version(2, 0, 0),
+            Author = "Bluscream",
+            WebsiteUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/"),
+            UpdateUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/raw/master/modules/TempBans.cs"),
+            SupportUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/issues/new?title=TempBans")
+        };
         [ModuleReference]
         public CommandHandler CommandHandler { get; set; }
 
         public static TempBansConfiguration Configuration { get; set; }
-
 
         public static FileInfo BanListFile { get; set; }
         public static BanList Bans { get; set; }

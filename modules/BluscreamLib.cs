@@ -4,14 +4,11 @@ using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Collections.Generic;
-using BattleBitAPI.Common;
-using BBRAPIModules;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-using Bluscream;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -21,6 +18,9 @@ using System.Threading;
 using System.Web;
 using System.Security.Principal;
 using System.Net;
+using BattleBitAPI.Common;
+using BBRAPIModules;
+using Bluscream;
 
 namespace Bluscream {
     public static class MoreRoles {
@@ -75,7 +75,6 @@ namespace Bluscream {
     // [RequireModule(typeof(DevMinersBBModules.Telemetry))]
     [Module("Bluscream's Library", "2.0.0")]
     public class BluscreamLib : BattleBitModule {
-        public BluscreamLibConfiguration Configuration { get; set; } = null!;
         public static ModuleInfo ModuleInfo = new() {
             Name = "Bluscream's Library",
             Description = "Generic library for common code used by multiple modules.",
@@ -85,6 +84,7 @@ namespace Bluscream {
             UpdateUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/raw/master/modules/BluscreamLib.cs"),
             SupportUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/issues/new?title=BluscreamLib")
         };
+        public BluscreamLibConfiguration Configuration { get; set; } = null!;
 
         #region Methods
         public static string GetStringValue(KeyValuePair<string, string?>? match) {
