@@ -21,7 +21,6 @@ using System.Threading;
 using System.Web;
 using System.Security.Principal;
 using System.Net;
-using JsonExtensions;
 
 namespace Bluscream {
     public static class MoreRoles {
@@ -48,16 +47,17 @@ namespace Bluscream {
         Night,
         None
     }
-    public abstract class ModuleInfo {
-        public static bool Loaded { get; internal set; }
-        public static bool Enabled { get; internal set; }
-        public static string Name { get; internal set; }
-        public static string Description { get; internal set; }
-        public static Version Version { get; internal set; }
-        public static string Author { get; internal set; }
-        public static Uri? WebsiteUrl { get; internal set; }
-        public static Uri? UpdateUrl { get; internal set; }
-        public static Uri? SupportUrl { get; internal set; }
+    public class ModuleInfo {
+        public bool Loaded { get; internal set; }
+        public bool Enabled { get; internal set; }
+        public string Name { get; internal set; }
+        public string Description { get; internal set; }
+        public Version Version { get; internal set; }
+        public string Author { get; internal set; }
+        public Uri? WebsiteUrl { get; internal set; }
+        public Uri? UpdateUrl { get; internal set; }
+        public Uri? SupportUrl { get; internal set; }
+        public ModuleInfo() { }
         public ModuleInfo(string name, string description, Version version, string author, Uri websiteUrl, Uri updateUrl, Uri supportUrl) {
             Name = name;
             Description = description;
@@ -68,21 +68,23 @@ namespace Bluscream {
             SupportUrl = supportUrl;
         }
         public ModuleInfo(string name, string description, Version version, string author, string websiteUrl, string updateUrl, string supportUrl) :
-            this(name, description, version, author, websiteUrl.toUri(), updateUrl.toUri(), supportUrl.toUri()) { }
+            this(name, description, version, author, websiteUrl.ToUri(), updateUrl.ToUri(), supportUrl.ToUri()) { }
         public ModuleInfo(string name, string description, string version, string author, string websiteUrl, string updateUrl, string supportUrl) :
-            this(name, description, version.toVersion(), author, websiteUrl.toUri(), updateUrl.toUri(), supportUrl.toUri()) { }
-     }
+            this(name, description, version.ToVersion(), author, websiteUrl.ToUri(), updateUrl.ToUri(), supportUrl.ToUri()) { }
         // [RequireModule(typeof(DevMinersBBModules.Telemetry))]
         [Module("Bluscream's Library", "2.0.0")]
         public class BluscreamLib : BattleBitModule {
             public BluscreamLibConfiguration Configuration { get; set; } = null!;
-            public static class ModuleInfo {
-                public const string Name = "Bluscream's Library";
-                public const string Description = "Generic library for common code used by multiple modules.";
-                public static readonly Version Version = new Version(2, 0);
-                public const string UpdateUrl = "https://github.com/Bluscream/battlebitapirunner-modules/raw/master/modules/BluscreamLib.cs";
-                public const string Author = "Bluscream";
-            }
+            public static ModuleInfo ModuleInfo = new() {
+                Name = "Bluscream's Library",
+                Description = "Generic library for common code used by multiple modules.",
+                Version = new Version(2, 0),
+                Author = "Bluscream",
+                WebsiteUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/"),
+                UpdateUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/raw/master/modules/BluscreamLib.cs"),
+                SupportUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/issues/new?title=BluscreamLib")
+            };
+
             #region Methods
             public static string GetStringValue(KeyValuePair<string, string?>? match) {
                 if (!match.HasValue) return string.Empty;
@@ -538,737 +540,718 @@ namespace Bluscream {
         }
     }
 }
-    #region Utils
-    namespace Bluscream {
-    public static partial class Utils {
-            public static FileInfo getOwnPath() {
-                return new FileInfo(Path.GetDirectoryName(Environment.ProcessPath));
-            }
+#region Utils
+namespace Bluscream {
+public static partial class Utils {
+        public static FileInfo getOwnPath() {
+            return new FileInfo(Path.GetDirectoryName(Environment.ProcessPath));
+        }
 
-            public static bool IsAlreadyRunning(string appName) {
-                System.Threading.Mutex m = new System.Threading.Mutex(false, appName);
-                if (m.WaitOne(1, false) == false) {
-                    return true;
-                }
-                return false;
+        public static bool IsAlreadyRunning(string appName) {
+            System.Threading.Mutex m = new System.Threading.Mutex(false, appName);
+            if (m.WaitOne(1, false) == false) {
+                return true;
             }
+            return false;
+        }
 
-            internal static void Exit() {
-                Environment.Exit(0);
-                var currentP = Process.GetCurrentProcess();
-                currentP.Kill();
-            }
+        internal static void Exit() {
+            Environment.Exit(0);
+            var currentP = Process.GetCurrentProcess();
+            currentP.Kill();
+        }
 
-            public static void RestartAsAdmin(string[] arguments) {
-                if (IsAdmin()) return;
-                ProcessStartInfo proc = new ProcessStartInfo();
-                proc.UseShellExecute = true;
-                proc.WorkingDirectory = Environment.CurrentDirectory;
-                proc.FileName = Assembly.GetEntryAssembly().CodeBase;
-                proc.Arguments += arguments.ToString();
-                proc.Verb = "runas";
-                try {
-                    /*new Thread(() =>
-                    {
-                        Thread.CurrentThread.IsBackground = true;
-                        Process.Start(proc);
-                    }).Start();*/
-                    Process.Start(proc);
-                    Exit();
-                } catch (Exception ex) {
-                    Console.WriteLine($"Unable to restart as admin: {ex.Message}");
-                    Exit();
-                }
-            }
-
-            internal static bool IsAdmin() {
-                bool isAdmin;
-                try {
-                    WindowsIdentity user = WindowsIdentity.GetCurrent();
-                    WindowsPrincipal principal = new WindowsPrincipal(user);
-                    isAdmin = principal.IsInRole(WindowsBuiltInRole.Administrator);
-                } catch (UnauthorizedAccessException) {
-                    isAdmin = false;
-                } catch (Exception) {
-                    isAdmin = false;
-                }
-                return isAdmin;
-            }
-
-            public static Process StartProcess(FileInfo file, params string[] args) => StartProcess(file.FullName, file.DirectoryName, args);
-            public static Process StartProcess(string file, string workDir = null, params string[] args) {
-                ProcessStartInfo proc = new ProcessStartInfo();
-                proc.FileName = file;
-                proc.Arguments = string.Join(" ", args);
-                Console.WriteLine("Starting Process: {0} {1}", proc.FileName, proc.Arguments);
-                if (workDir != null) {
-                    proc.WorkingDirectory = workDir;
-                    Console.WriteLine("Working Directory: {0}", proc.WorkingDirectory);
-                }
-                return Process.Start(proc);
-            }
-
-            public static IPEndPoint ParseIPEndPoint(string endPoint) {
-                string[] ep = endPoint.Split(':');
-                if (ep.Length < 2) return null;
-                IPAddress ip;
-                if (ep.Length > 2) {
-                    if (!IPAddress.TryParse(string.Join(":", ep, 0, ep.Length - 1), out ip)) {
-                        return null;
-                    }
-                } else {
-                    if (!IPAddress.TryParse(ep[0], out ip)) {
-                        return null;
-                    }
-                }
-                int port;
-                if (!int.TryParse(ep[ep.Length - 1], NumberStyles.None, NumberFormatInfo.CurrentInfo, out port)) {
-                    return null;
-                }
-                return new IPEndPoint(ip, port);
+        public static void RestartAsAdmin(string[] arguments) {
+            if (IsAdmin()) return;
+            ProcessStartInfo proc = new ProcessStartInfo();
+            proc.UseShellExecute = true;
+            proc.WorkingDirectory = Environment.CurrentDirectory;
+            proc.FileName = Assembly.GetEntryAssembly().CodeBase;
+            proc.Arguments += arguments.ToString();
+            proc.Verb = "runas";
+            try {
+                Process.Start(proc);
+                Exit();
+            } catch (Exception ex) {
+                Console.WriteLine($"Unable to restart as admin: {ex.Message}");
+                Exit();
             }
         }
+
+        internal static bool IsAdmin() {
+            bool isAdmin;
+            try {
+                WindowsIdentity user = WindowsIdentity.GetCurrent();
+                WindowsPrincipal principal = new WindowsPrincipal(user);
+                isAdmin = principal.IsInRole(WindowsBuiltInRole.Administrator);
+            } catch (UnauthorizedAccessException) {
+                isAdmin = false;
+            } catch (Exception) {
+                isAdmin = false;
+            }
+            return isAdmin;
+        }
+
+        public static Process StartProcess(FileInfo file, params string[] args) => StartProcess(file.FullName, file.DirectoryName, args);
+        public static Process StartProcess(string file, string workDir = null, params string[] args) {
+            ProcessStartInfo proc = new ProcessStartInfo();
+            proc.FileName = file;
+            proc.Arguments = string.Join(" ", args);
+            Console.WriteLine("Starting Process: {0} {1}", proc.FileName, proc.Arguments);
+            if (workDir != null) {
+                proc.WorkingDirectory = workDir;
+                Console.WriteLine("Working Directory: {0}", proc.WorkingDirectory);
+            }
+            return Process.Start(proc);
+        }
+
+        public static IPEndPoint ParseIPEndPoint(string endPoint) {
+            string[] ep = endPoint.Split(':');
+            if (ep.Length < 2) return null;
+            IPAddress ip;
+            if (ep.Length > 2) {
+                if (!IPAddress.TryParse(string.Join(":", ep, 0, ep.Length - 1), out ip)) {
+                    return null;
+                }
+            } else {
+                if (!IPAddress.TryParse(ep[0], out ip)) {
+                    return null;
+                }
+            }
+            int port;
+            if (!int.TryParse(ep[ep.Length - 1], NumberStyles.None, NumberFormatInfo.CurrentInfo, out port)) {
+                return null;
+            }
+            return new IPEndPoint(ip, port);
+        }
     }
-    #endregion
-    #region Extensions
-    namespace Bluscream {
-    public static class Extensions {
-            #region Player
-            public static string str(this RunnerPlayer player) => $"\"{player.Name}\"";
-            public static string fullstr(this RunnerPlayer player) => $"{player.str()} ({player.SteamID})";
-            #endregion
-            #region Map
-            public static void ChangeTime(this RunnerServer Server, MapDayNight dayNight = MapDayNight.None) => ChangeMap(Server, dayNight: dayNight);
-            public static void ChangeGameMode(this RunnerServer Server, GameModeInfo? gameMode = null, MapDayNight dayNight = MapDayNight.None) => ChangeMap(Server, gameMode: gameMode, dayNight: dayNight);
-            public static void ChangeMap(this RunnerServer Server, MapInfo? map = null, GameModeInfo? gameMode = null, MapDayNight dayNight = MapDayNight.None) {
-                map = map ?? MapInfo.FromName(Server.Map);
-                gameMode = gameMode ?? GameModeInfo.FromName(Server.Gamemode);
-                dayNight = dayNight == MapDayNight.None ? (MapDayNight)Server.DayNight : dayNight;
+}
+#endregion
+#region Extensions
+namespace Bluscream {
+public static class Extensions {
+        #region Player
+        public static string str(this RunnerPlayer player) => $"\"{player.Name}\"";
+        public static string fullstr(this RunnerPlayer player) => $"{player.str()} ({player.SteamID})";
+        #endregion
+        #region Map
+        public static void ChangeTime(this RunnerServer Server, MapDayNight dayNight = MapDayNight.None) => ChangeMap(Server, dayNight: dayNight);
+        public static void ChangeGameMode(this RunnerServer Server, GameModeInfo? gameMode = null, MapDayNight dayNight = MapDayNight.None) => ChangeMap(Server, gameMode: gameMode, dayNight: dayNight);
+        public static void ChangeMap(this RunnerServer Server, MapInfo? map = null, GameModeInfo? gameMode = null, MapDayNight dayNight = MapDayNight.None) {
+            map = map ?? MapInfo.FromName(Server.Map);
+            gameMode = gameMode ?? GameModeInfo.FromName(Server.Gamemode);
+            dayNight = dayNight == MapDayNight.None ? (MapDayNight)Server.DayNight : dayNight;
 
-                var oldMaps = Server.MapRotation.GetMapRotation();
-                Server.MapRotation.SetRotation(map.Name);
-                var oldModes = Server.GamemodeRotation.GetGamemodeRotation();
-                Server.GamemodeRotation.SetRotation(gameMode.Name);
+            var oldMaps = Server.MapRotation.GetMapRotation();
+            Server.MapRotation.SetRotation(map.Name);
+            var oldModes = Server.GamemodeRotation.GetGamemodeRotation();
+            Server.GamemodeRotation.SetRotation(gameMode.Name);
 
-                var oldVoteDay = Server.ServerSettings.CanVoteDay;
-                var oldVoteNight = Server.ServerSettings.CanVoteNight;
-                if (dayNight != MapDayNight.None) {
-                    switch (dayNight) {
-                        case MapDayNight.Day:
-                            Server.ServerSettings.CanVoteDay = true;
-                            Server.ServerSettings.CanVoteNight = false;
-                            break;
-                        case MapDayNight.Night:
-                            Server.ServerSettings.CanVoteDay = false;
-                            Server.ServerSettings.CanVoteNight = true;
-                            break;
+            var oldVoteDay = Server.ServerSettings.CanVoteDay;
+            var oldVoteNight = Server.ServerSettings.CanVoteNight;
+            if (dayNight != MapDayNight.None) {
+                switch (dayNight) {
+                    case MapDayNight.Day:
+                        Server.ServerSettings.CanVoteDay = true;
+                        Server.ServerSettings.CanVoteNight = false;
+                        break;
+                    case MapDayNight.Night:
+                        Server.ServerSettings.CanVoteDay = false;
+                        Server.ServerSettings.CanVoteNight = true;
+                        break;
+                }
+            }
+            var msg = new StringBuilder();
+            if (map is not null) msg.Append($"Changing map to {map.DisplayName}");
+            if (gameMode is not null) msg.Append($" ({gameMode.DisplayName})");
+            if (dayNight != MapDayNight.None) msg.Append($" [{dayNight}]");
+
+            Server.SayToAllChat(msg.ToString());
+            Server.AnnounceShort(msg.ToString());
+            Task.Delay(TimeSpan.FromSeconds(1)).Wait();
+            Server.ForceEndGame();
+            Task.Delay(TimeSpan.FromMinutes(1)).Wait();
+            Server.MapRotation.SetRotation(oldMaps.ToArray());
+            Server.GamemodeRotation.SetRotation(oldModes.ToArray());
+            Server.ServerSettings.CanVoteDay = oldVoteDay;
+            Server.ServerSettings.CanVoteNight = oldVoteNight;
+        }
+        #endregion
+
+        #region Reflection
+
+        public static Dictionary<string, object> ToDictionary(this object instanceToConvert) {
+            return instanceToConvert.GetType()
+                .GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static)
+                .ToDictionary(
+                propertyInfo => propertyInfo.Name,
+                propertyInfo => Extensions.ConvertPropertyToDictionary(propertyInfo, instanceToConvert));
+        }
+
+        public static object ConvertPropertyToDictionary(PropertyInfo propertyInfo, object owner) {
+            Type propertyType = propertyInfo.PropertyType;
+            object propertyValue = propertyInfo.GetValue(owner);
+
+            if (!propertyType.Equals(typeof(string)) && (typeof(ICollection<>).Name.Equals(propertyValue.GetType().BaseType.Name) || typeof(Collection<>).Name.Equals(propertyValue.GetType().BaseType.Name))) {
+                var collectionItems = new List<Dictionary<string, object>>();
+                var count = (int)propertyType.GetProperty("Count").GetValue(propertyValue);
+                PropertyInfo indexerProperty = propertyType.GetProperty("Item");
+                for (var index = 0; index < count; index++) {
+                    object item = indexerProperty.GetValue(propertyValue, new object[] { index });
+                    PropertyInfo[] itemProperties = item.GetType().GetProperties(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+
+                    if (itemProperties.Any()) {
+                        Dictionary<string, object> dictionary = itemProperties
+                            .ToDictionary(
+                            subtypePropertyInfo => subtypePropertyInfo.Name,
+                            subtypePropertyInfo => Extensions.ConvertPropertyToDictionary(subtypePropertyInfo, item));
+                        collectionItems.Add(dictionary);
                     }
                 }
-                var msg = new StringBuilder();
-                if (map is not null) msg.Append($"Changing map to {map.DisplayName}");
-                if (gameMode is not null) msg.Append($" ({gameMode.DisplayName})");
-                if (dayNight != MapDayNight.None) msg.Append($" [{dayNight}]");
 
-                Server.SayToAllChat(msg.ToString());
-                Server.AnnounceShort(msg.ToString());
-                Task.Delay(TimeSpan.FromSeconds(1)).Wait();
-                Server.ForceEndGame();
-                Task.Delay(TimeSpan.FromMinutes(1)).Wait();
-                Server.MapRotation.SetRotation(oldMaps.ToArray());
-                Server.GamemodeRotation.SetRotation(oldModes.ToArray());
-                Server.ServerSettings.CanVoteDay = oldVoteDay;
-                Server.ServerSettings.CanVoteNight = oldVoteNight;
-            }
-            #endregion
-
-            #region Reflection
-
-            public static Dictionary<string, object> ToDictionary(this object instanceToConvert) {
-                return instanceToConvert.GetType()
-                  .GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static)
-                  .ToDictionary(
-                  propertyInfo => propertyInfo.Name,
-                  propertyInfo => Extensions.ConvertPropertyToDictionary(propertyInfo, instanceToConvert));
+                return collectionItems;
             }
 
-            private static object ConvertPropertyToDictionary(PropertyInfo propertyInfo, object owner) {
-                Type propertyType = propertyInfo.PropertyType;
-                object propertyValue = propertyInfo.GetValue(owner);
-
-                // If property is a collection don't traverse collection properties but the items instead
-                if (!propertyType.Equals(typeof(string)) && (typeof(ICollection<>).Name.Equals(propertyValue.GetType().BaseType.Name) || typeof(Collection<>).Name.Equals(propertyValue.GetType().BaseType.Name))) {
-                    var collectionItems = new List<Dictionary<string, object>>();
-                    var count = (int)propertyType.GetProperty("Count").GetValue(propertyValue);
-                    PropertyInfo indexerProperty = propertyType.GetProperty("Item");
-
-                    // Convert collection items to dictionary
-                    for (var index = 0; index < count; index++) {
-                        object item = indexerProperty.GetValue(propertyValue, new object[] { index });
-                        PropertyInfo[] itemProperties = item.GetType().GetProperties(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
-
-                        if (itemProperties.Any()) {
-                            Dictionary<string, object> dictionary = itemProperties
-                              .ToDictionary(
-                                subtypePropertyInfo => subtypePropertyInfo.Name,
-                                subtypePropertyInfo => Extensions.ConvertPropertyToDictionary(subtypePropertyInfo, item));
-                            collectionItems.Add(dictionary);
-                        }
-                    }
-
-                    return collectionItems;
-                }
-
-                // If property is a string stop traversal (ignore that string is a char[])
-                if (propertyType.IsPrimitive || propertyType.Equals(typeof(string))) {
-                    return propertyValue;
-                }
-
-                PropertyInfo[] properties = propertyType.GetProperties(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
-                if (properties.Any()) {
-                    return properties.ToDictionary(
-                                        subtypePropertyInfo => subtypePropertyInfo.Name,
-                                        subtypePropertyInfo => (object)Extensions.ConvertPropertyToDictionary(subtypePropertyInfo, propertyValue));
-                }
-
+            if (propertyType.IsPrimitive || propertyType.Equals(typeof(string))) {
                 return propertyValue;
             }
 
-            #endregion Reflection
-            #region DateTime
-
-            public static bool ExpiredSince(this DateTime dateTime, int minutes) {
-                return (dateTime - DateTime.Now).TotalMinutes < minutes;
+            PropertyInfo[] properties = propertyType.GetProperties(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+            if (properties.Any()) {
+                return properties.ToDictionary(
+                                    subtypePropertyInfo => subtypePropertyInfo.Name,
+                                    subtypePropertyInfo => (object)Extensions.ConvertPropertyToDictionary(subtypePropertyInfo, propertyValue));
             }
 
-            public static TimeSpan StripMilliseconds(this TimeSpan time) {
-                return new TimeSpan(time.Days, time.Hours, time.Minutes, time.Seconds);
-            }
-
-            #endregion DateTime
-            #region DirectoryInfo
-
-            public static DirectoryInfo Combine(this Environment.SpecialFolder specialFolder, params string[] paths) => Combine(new DirectoryInfo(Environment.GetFolderPath(specialFolder)), paths);
-
-            public static FileInfo CombineFile(this Environment.SpecialFolder specialFolder, params string[] paths) => CombineFile(new DirectoryInfo(Environment.GetFolderPath(specialFolder)), paths);
-
-            public static DirectoryInfo Combine(this DirectoryInfo dir, params string[] paths) {
-                var final = dir.FullName;
-                foreach (var path in paths) {
-                    final = Path.Combine(final, path.ReplaceInvalidFileNameChars());
-                }
-                return new DirectoryInfo(final);
-            }
-
-            public static FileInfo CombineFile(this DirectoryInfo dir, params string[] paths) {
-                var final = dir.FullName;
-                foreach (var path in paths) {
-                    final = Path.Combine(final, path);
-                }
-                return new FileInfo(final);
-            }
-
-            public static void ShowInExplorer(this DirectoryInfo dir) {
-                Utils.StartProcess("explorer.exe", null, dir.FullName.Quote());
-            }
-
-            public static string PrintablePath(this FileSystemInfo file) => file.FullName.Replace(@"\\", @"\");
-
-            #endregion DirectoryInfo
-            #region FileInfo
-
-            public static FileInfo Backup(this FileInfo file, bool overwrite = true, string extension = ".bak") {
-                return file.CopyTo(file.FullName + extension, overwrite);
-            }
-
-            public static FileInfo Combine(this FileInfo file, params string[] paths) {
-                var final = file.DirectoryName;
-                foreach (var path in paths) {
-                    final = Path.Combine(final, path);
-                }
-                return new FileInfo(final);
-            }
-
-            public static string FileNameWithoutExtension(this FileInfo file) {
-                return Path.GetFileNameWithoutExtension(file.Name);
-            }
-            /*public static string Extension(this FileInfo file) {
-                return Path.GetExtension(file.Name);
-            }*/
-
-            public static void AppendLine(this FileInfo file, string line) {
-                try {
-                    if (!file.Exists) file.Create();
-                    File.AppendAllLines(file.FullName, new string[] { line });
-                } catch { }
-            }
-
-            public static void WriteAllText(this FileInfo file, string text) {
-                file.Directory.Create();
-                if (!file.Exists) file.Create().Close();
-                File.WriteAllText(file.FullName, text);
-            }
-
-            public static string ReadAllText(this FileInfo file) => File.ReadAllText(file.FullName);
-
-            public static List<string> ReadAllLines(this FileInfo file) => File.ReadAllLines(file.FullName).ToList();
-
-            public static void ShowInExplorer(this FileInfo file) {
-                Utils.StartProcess("explorer.exe", null, "/select, " + file.FullName.Quote());
-            }
-
-            #endregion FileInfo
-            #region Object
-            public static string ToJSON(this object obj, bool indented = true) {
-                return JsonSerializer.Serialize(obj, new JsonSerializerOptions {
-                    WriteIndented = indented,
-                    Converters =
-                {
-                        new JsonStringEnumConverter(),
-                        new IPAddressConverter(),
-                        new IPEndPointConverter()
-                    }
-                });
-            }
-            #endregion Object
-            #region String
-
-            public static string Base64Encode(this string plainText) {
-                var plainTextBytes = Encoding.UTF8.GetBytes(plainText);
-                return Convert.ToBase64String(plainTextBytes);
-            }
-
-            public static string Base64Decode(this string base64EncodedData) {
-                var base64EncodedBytes = Convert.FromBase64String(base64EncodedData);
-                return Encoding.UTF8.GetString(base64EncodedBytes);
-            }
-
-            public static string GetDigits(this string input) {
-                return new string(input.Where(char.IsDigit).ToArray());
-            }
-
-            public static string Format(this string input, params string[] args) {
-                return string.Format(input, args);
-            }
-
-            public static IEnumerable<string> SplitToLines(this string input) {
-                if (input == null) {
-                    yield break;
-                }
-
-                using (System.IO.StringReader reader = new System.IO.StringReader(input)) {
-                    string line;
-                    while ((line = reader.ReadLine()) != null) {
-                        yield return line;
-                    }
-                }
-            }
-
-            public static string ToTitleCase(this string source, string langCode = "en-US") {
-                return new CultureInfo(langCode, false).TextInfo.ToTitleCase(source);
-            }
-
-            public static bool Contains(this string source, string toCheck, StringComparison comp) {
-                return source?.IndexOf(toCheck, comp) >= 0;
-            }
-
-            public static bool IsNullOrEmpty(this string source) {
-                return string.IsNullOrEmpty(source);
-            }
-
-            public static bool IsNullOrWhiteSpace(this string source) {
-                return string.IsNullOrWhiteSpace(source);
-            }
-
-            public static string[] Split(this string source, string split, int count = -1, StringSplitOptions options = StringSplitOptions.None) {
-                if (count != -1) return source.Split(new string[] { split }, count, options);
-                return source.Split(new string[] { split }, options);
-            }
-
-            public static string Remove(this string Source, string Replace) {
-                return Source.Replace(Replace, string.Empty);
-            }
-
-            public static string ReplaceLastOccurrence(this string Source, string Find, string Replace) {
-                int place = Source.LastIndexOf(Find);
-                if (place == -1)
-                    return Source;
-                string result = Source.Remove(place, Find.Length).Insert(place, Replace);
-                return result;
-            }
-
-            public static string EscapeLineBreaks(this string source) {
-                return Regex.Replace(source, @"\r\n?|\n", @"\$&");
-            }
-
-            public static string Ext(this string text, string extension) {
-                return text + "." + extension;
-            }
-
-            public static string Quote(this string text) {
-                return SurroundWith(text, "\"");
-            }
-
-            public static string Enclose(this string text) {
-                return SurroundWith(text, "(", ")");
-            }
-
-            public static string Brackets(this string text) {
-                return SurroundWith(text, "[", "]");
-            }
-
-            public static string SurroundWith(this string text, string surrounds) {
-                return surrounds + text + surrounds;
-            }
-
-            public static string SurroundWith(this string text, string starts, string ends) {
-                return starts + text + ends;
-            }
-
-            public static string RemoveInvalidFileNameChars(this string filename) {
-                return string.Concat(filename.Split(Path.GetInvalidFileNameChars()));
-            }
-
-            public static string ReplaceInvalidFileNameChars(this string filename) {
-                return string.Join("_", filename.Split(Path.GetInvalidFileNameChars()));
-            }
-
-            private static Uri ToUri(this string url) {
-                var success = Uri.TryCreate(url, new UriCreationOptions() { DangerousDisablePathAndQueryCanonicalization = false }, out var uri);
-                if (url.IsNullOrWhiteSpace() || !success) {
-                    BluscreamLib.Log($"Unable to parse: {url} as URI!");
-                }
-                return uri;
-            }
-            private static Version ToVersion(this string version) {
-                var success = System.Version.TryParse(version, out var Version);
-                if (version.IsNullOrWhiteSpace() || !success) {
-                    BluscreamLib.Log($"Unable to parse: {version} as version!");
-                }
-                return Version;
-            }
-            #endregion String
-            #region Int
-
-            public static int Percentage(this int total, int part) {
-                return (int)((double)part / total * 100);
-            }
-
-            #endregion Int
-            #region Dict
-
-            public static void AddSafe(this IDictionary<string, string> dictionary, string key, string value) {
-                if (!dictionary.ContainsKey(key))
-                    dictionary.Add(key, value);
-            }
-
-            #endregion Dict
-            #region List
-
-            public static IEnumerable<(T item, int index)> WithIndex<T>(this IEnumerable<T> self)
-       => self.Select((item, index) => (item, index));
-
-            public static string ToQueryString(this NameValueCollection nvc) {
-                if (nvc == null) return string.Empty;
-
-                StringBuilder sb = new StringBuilder();
-
-                foreach (string key in nvc.Keys) {
-                    if (string.IsNullOrWhiteSpace(key)) continue;
-
-                    string[] values = nvc.GetValues(key);
-                    if (values == null) continue;
-
-                    foreach (string value in values) {
-                        sb.Append(sb.Length == 0 ? "?" : "&");
-                        sb.AppendFormat("{0}={1}", key, value);
-                    }
-                }
-
-                return sb.ToString();
-            }
-
-            public static bool GetBool(this NameValueCollection collection, string key, bool defaultValue = false) {
-                if (!collection.AllKeys.Contains(key, StringComparer.OrdinalIgnoreCase)) return false;
-                var trueValues = new string[] { true.ToString(), "yes", "1" };
-                if (trueValues.Contains(collection[key], StringComparer.OrdinalIgnoreCase)) return true;
-                var falseValues = new string[] { false.ToString(), "no", "0" };
-                if (falseValues.Contains(collection[key], StringComparer.OrdinalIgnoreCase)) return true;
-                return defaultValue;
-            }
-
-            public static string GetString(this NameValueCollection collection, string key) {
-                if (!collection.AllKeys.Contains(key)) return collection[key];
-                return null;
-            }
-
-            public static string Join(this List<string> strings, string separator) {
-                return string.Join(separator, strings);
-            }
-
-            public static T PopFirst<T>(this IEnumerable<T> list) => list.ToList().PopAt(0);
-
-            public static T PopLast<T>(this IEnumerable<T> list) => list.ToList().PopAt(list.Count() - 1);
-
-            public static T PopAt<T>(this List<T> list, int index) {
-                T r = list.ElementAt<T>(index);
-                list.RemoveAt(index);
-                return r;
-            }
-
-            #endregion List
-            #region Uri
-
-            internal static bool ContainsKey(this NameValueCollection collection, string key) {
-                if (collection.Get(key) == null) {
-                    return collection.AllKeys.Contains(key);
-                }
-
-                return true;
-            }
-
-            internal static NameValueCollection ParseQueryString(this Uri uri) {
-                return HttpUtility.ParseQueryString(uri.Query);
-            }
-
-            public static void OpenIn(this Uri uri, string browser) {
-                var url = uri.ToString();
-                try {
-                    Process.Start(browser, url);
-                } catch {
-                    url = url.Replace("&", "^&");
-                    Process.Start(new ProcessStartInfo("cmd", $"/c start \"{browser}\" {url}") { CreateNoWindow = true });
-                }
-            }
-
-            public static void OpenInDefault(this Uri uri) {
-                var url = uri.ToString();
-                try {
-                    Process.Start(url);
-                } catch {
-                    url = url.Replace("&", "^&");
-                    Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = true });
-                }
-            }
-            public static FileInfo Download(this Uri url, DirectoryInfo destinationPath, string? fileName = null) {
-                fileName = fileName ?? url.AbsolutePath.Split("/").Last();
-                Console.WriteLine("todo download");
-                return new FileInfo(Path.Combine(destinationPath.FullName, fileName));
-            }
-            #endregion Uri
-            #region Enum
-
-            public static string GetDescription(this Enum value) {
-                Type type = value.GetType();
-                string name = Enum.GetName(type, value);
-                if (name != null) {
-                    FieldInfo field = type.GetField(name);
-                    if (field != null) {
-                        DescriptionAttribute attr = Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) as DescriptionAttribute;
-                        if (attr != null) {
-                            return attr.Description;
-                        }
-                    }
-                }
-                return null;
-            }
-
-            public static T GetValueFromDescription<T>(string description, bool returnDefault = false) {
-                var type = typeof(T);
-                if (!type.IsEnum) throw new InvalidOperationException();
-                foreach (var field in type.GetFields()) {
-                    var attribute = Attribute.GetCustomAttribute(field,
-                        typeof(DescriptionAttribute)) as DescriptionAttribute;
-                    if (attribute != null) {
-                        if (attribute.Description == description)
-                            return (T)field.GetValue(null);
-                    } else {
-                        if (field.Name == description)
-                            return (T)field.GetValue(null);
-                    }
-                }
-                if (returnDefault) return default(T);
-                else throw new ArgumentException("Not found.", "description");
-            }
-
-            #endregion Enum
-            #region Task
-
-            public static async Task<TResult> TimeoutAfter<TResult>(this Task<TResult> task, TimeSpan timeout) {
-                using (var timeoutCancellationTokenSource = new CancellationTokenSource()) {
-                    var completedTask = await Task.WhenAny(task, Task.Delay(timeout, timeoutCancellationTokenSource.Token));
-                    if (completedTask == task) {
-                        timeoutCancellationTokenSource.Cancel();
-                        return await task;  // Very important in order to propagate exceptions
-                    } else {
-                        return default(TResult);
-                    }
-                }
-            }
-
-            #endregion Task
-            #region bool
-            public static string ToYesNo(this bool input) => input ? "Yes" : "No";
-            public static string ToEnabledDisabled(this bool input) => input ? "Enabled" : "Disabled";
-            public static string ToOnOff(this bool input) => input ? "On" : "Off";
-            #endregion bool
+            return propertyValue;
         }
+
+        #endregion Reflection
+        #region DateTime
+
+        public static bool ExpiredSince(this DateTime dateTime, int minutes) {
+            return (dateTime - DateTime.Now).TotalMinutes < minutes;
+        }
+
+        public static TimeSpan StripMilliseconds(this TimeSpan time) {
+            return new TimeSpan(time.Days, time.Hours, time.Minutes, time.Seconds);
+        }
+
+        #endregion DateTime
+        #region DirectoryInfo
+
+        public static DirectoryInfo Combine(this Environment.SpecialFolder specialFolder, params string[] paths) => Combine(new DirectoryInfo(Environment.GetFolderPath(specialFolder)), paths);
+
+        public static FileInfo CombineFile(this Environment.SpecialFolder specialFolder, params string[] paths) => CombineFile(new DirectoryInfo(Environment.GetFolderPath(specialFolder)), paths);
+
+        public static DirectoryInfo Combine(this DirectoryInfo dir, params string[] paths) {
+            var final = dir.FullName;
+            foreach (var path in paths) {
+                final = Path.Combine(final, path.ReplaceInvalidFileNameChars());
+            }
+            return new DirectoryInfo(final);
+        }
+
+        public static FileInfo CombineFile(this DirectoryInfo dir, params string[] paths) {
+            var final = dir.FullName;
+            foreach (var path in paths) {
+                final = Path.Combine(final, path);
+            }
+            return new FileInfo(final);
+        }
+
+        public static void ShowInExplorer(this DirectoryInfo dir) {
+            Utils.StartProcess("explorer.exe", null, dir.FullName.Quote());
+        }
+
+        public static string PrintablePath(this FileSystemInfo file) => file.FullName.Replace(@"\\", @"\");
+
+        #endregion DirectoryInfo
+        #region FileInfo
+
+        public static FileInfo Backup(this FileInfo file, bool overwrite = true, string extension = ".bak") {
+            return file.CopyTo(file.FullName + extension, overwrite);
+        }
+
+        public static FileInfo Combine(this FileInfo file, params string[] paths) {
+            var final = file.DirectoryName;
+            foreach (var path in paths) {
+                final = Path.Combine(final, path);
+            }
+            return new FileInfo(final);
+        }
+
+        public static string FileNameWithoutExtension(this FileInfo file) {
+            return Path.GetFileNameWithoutExtension(file.Name);
+        }
+        public static string Extension(this FileInfo file) {
+            return Path.GetExtension(file.Name);
+        }
+
+        public static void AppendLine(this FileInfo file, string line) {
+            try {
+                if (!file.Exists) file.Create();
+                File.AppendAllLines(file.FullName, new string[] { line });
+            } catch { }
+        }
+
+        public static void WriteAllText(this FileInfo file, string text) {
+            file.Directory.Create();
+            if (!file.Exists) file.Create().Close();
+            File.WriteAllText(file.FullName, text);
+        }
+
+        public static string ReadAllText(this FileInfo file) => File.ReadAllText(file.FullName);
+
+        public static List<string> ReadAllLines(this FileInfo file) => File.ReadAllLines(file.FullName).ToList();
+
+        public static void ShowInExplorer(this FileInfo file) {
+            Utils.StartProcess("explorer.exe", null, "/select, " + file.FullName.Quote());
+        }
+
+        #endregion FileInfo
+        #region Object
+        public static string ToJSON(this object obj, bool indented = true) {
+            return JsonSerializer.Serialize(obj, new JsonSerializerOptions {
+                WriteIndented = indented,
+                Converters =
+            {
+                    new JsonStringEnumConverter(),
+                    new IPAddressConverter(),
+                    new IPEndPointConverter()
+                }
+            });
+        }
+        #endregion Object
+        #region String
+
+        public static string Base64Encode(this string plainText) {
+            var plainTextBytes = Encoding.UTF8.GetBytes(plainText);
+            return Convert.ToBase64String(plainTextBytes);
+        }
+
+        public static string Base64Decode(this string base64EncodedData) {
+            var base64EncodedBytes = Convert.FromBase64String(base64EncodedData);
+            return Encoding.UTF8.GetString(base64EncodedBytes);
+        }
+
+        public static string GetDigits(this string input) {
+            return new string(input.Where(char.IsDigit).ToArray());
+        }
+
+        public static string Format(this string input, params string[] args) {
+            return string.Format(input, args);
+        }
+
+        public static IEnumerable<string> SplitToLines(this string input) {
+            if (input == null) {
+                yield break;
+            }
+
+            using (System.IO.StringReader reader = new System.IO.StringReader(input)) {
+                string line;
+                while ((line = reader.ReadLine()) != null) {
+                    yield return line;
+                }
+            }
+        }
+
+        public static string ToTitleCase(this string source, string langCode = "en-US") {
+            return new CultureInfo(langCode, false).TextInfo.ToTitleCase(source);
+        }
+
+        public static bool Contains(this string source, string toCheck, StringComparison comp) {
+            return source?.IndexOf(toCheck, comp) >= 0;
+        }
+
+        public static bool IsNullOrEmpty(this string source) {
+            return string.IsNullOrEmpty(source);
+        }
+
+        public static bool IsNullOrWhiteSpace(this string source) {
+            return string.IsNullOrWhiteSpace(source);
+        }
+
+        public static string[] Split(this string source, string split, int count = -1, StringSplitOptions options = StringSplitOptions.None) {
+            if (count != -1) return source.Split(new string[] { split }, count, options);
+            return source.Split(new string[] { split }, options);
+        }
+
+        public static string Remove(this string Source, string Replace) {
+            return Source.Replace(Replace, string.Empty);
+        }
+
+        public static string ReplaceLastOccurrence(this string Source, string Find, string Replace) {
+            int place = Source.LastIndexOf(Find);
+            if (place == -1)
+                return Source;
+            string result = Source.Remove(place, Find.Length).Insert(place, Replace);
+            return result;
+        }
+
+        public static string EscapeLineBreaks(this string source) {
+            return Regex.Replace(source, @"\r\n?|\n", @"\$&");
+        }
+
+        public static string Ext(this string text, string extension) {
+            return text + "." + extension;
+        }
+
+        public static string Quote(this string text) {
+            return SurroundWith(text, "\"");
+        }
+
+        public static string Enclose(this string text) {
+            return SurroundWith(text, "(", ")");
+        }
+
+        public static string Brackets(this string text) {
+            return SurroundWith(text, "[", "]");
+        }
+
+        public static string SurroundWith(this string text, string surrounds) {
+            return surrounds + text + surrounds;
+        }
+
+        public static string SurroundWith(this string text, string starts, string ends) {
+            return starts + text + ends;
+        }
+
+        public static string RemoveInvalidFileNameChars(this string filename) {
+            return string.Concat(filename.Split(Path.GetInvalidFileNameChars()));
+        }
+
+        public static string ReplaceInvalidFileNameChars(this string filename) {
+            return string.Join("_", filename.Split(Path.GetInvalidFileNameChars()));
+        }
+
+        public static Uri ToUri(this string url) {
+            var success = Uri.TryCreate(url, new UriCreationOptions() { DangerousDisablePathAndQueryCanonicalization = false }, out var uri);
+            if (url.IsNullOrWhiteSpace() || !success) {
+                BluscreamLib.Log($"Unable to parse: {url} as URI!");
+            }
+            return uri;
+        }
+        public static Version ToVersion(this string version) {
+            var success = System.Version.TryParse(version, out var Version);
+            if (version.IsNullOrWhiteSpace() || !success) {
+                BluscreamLib.Log($"Unable to parse: {version} as version!");
+            }
+            return Version;
+        }
+        #endregion String
+        #region Int
+
+        public static int Percentage(this int total, int part) {
+            return (int)((double)part / total * 100);
+        }
+
+        #endregion Int
+        #region Dict
+
+        public static void AddSafe(this IDictionary<string, string> dictionary, string key, string value) {
+            if (!dictionary.ContainsKey(key))
+                dictionary.Add(key, value);
+        }
+
+        #endregion Dict
+        #region List
+
+        public static IEnumerable<(T item, int index)> WithIndex<T>(this IEnumerable<T> self)
+    => self.Select((item, index) => (item, index));
+
+        public static string ToQueryString(this NameValueCollection nvc) {
+            if (nvc == null) return string.Empty;
+
+            StringBuilder sb = new StringBuilder();
+
+            foreach (string key in nvc.Keys) {
+                if (string.IsNullOrWhiteSpace(key)) continue;
+
+                string[] values = nvc.GetValues(key);
+                if (values == null) continue;
+
+                foreach (string value in values) {
+                    sb.Append(sb.Length == 0 ? "?" : "&");
+                    sb.AppendFormat("{0}={1}", key, value);
+                }
+            }
+
+            return sb.ToString();
+        }
+
+        public static bool GetBool(this NameValueCollection collection, string key, bool defaultValue = false) {
+            if (!collection.AllKeys.Contains(key, StringComparer.OrdinalIgnoreCase)) return false;
+            var trueValues = new string[] { true.ToString(), "yes", "1" };
+            if (trueValues.Contains(collection[key], StringComparer.OrdinalIgnoreCase)) return true;
+            var falseValues = new string[] { false.ToString(), "no", "0" };
+            if (falseValues.Contains(collection[key], StringComparer.OrdinalIgnoreCase)) return true;
+            return defaultValue;
+        }
+
+        public static string GetString(this NameValueCollection collection, string key) {
+            if (!collection.AllKeys.Contains(key)) return collection[key];
+            return null;
+        }
+
+        public static string Join(this List<string> strings, string separator) {
+            return string.Join(separator, strings);
+        }
+
+        public static T PopFirst<T>(this IEnumerable<T> list) => list.ToList().PopAt(0);
+
+        public static T PopLast<T>(this IEnumerable<T> list) => list.ToList().PopAt(list.Count() - 1);
+
+        public static T PopAt<T>(this List<T> list, int index) {
+            T r = list.ElementAt<T>(index);
+            list.RemoveAt(index);
+            return r;
+        }
+
+        #endregion List
+        #region Uri
+
+        public static bool ContainsKey(this NameValueCollection collection, string key) {
+            if (collection.Get(key) == null) {
+                return collection.AllKeys.Contains(key);
+            }
+
+            return true;
+        }
+
+        public static NameValueCollection ParseQueryString(this Uri uri) {
+            return HttpUtility.ParseQueryString(uri.Query);
+        }
+
+        public static void OpenIn(this Uri uri, string browser) {
+            var url = uri.ToString();
+            try {
+                Process.Start(browser, url);
+            } catch {
+                url = url.Replace("&", "^&");
+                Process.Start(new ProcessStartInfo("cmd", $"/c start \"{browser}\" {url}") { CreateNoWindow = true });
+            }
+        }
+
+        public static void OpenInDefault(this Uri uri) {
+            var url = uri.ToString();
+            try {
+                Process.Start(url);
+            } catch {
+                url = url.Replace("&", "^&");
+                Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = true });
+            }
+        }
+        public static FileInfo Download(this Uri url, DirectoryInfo destinationPath, string? fileName = null) {
+            fileName = fileName ?? url.AbsolutePath.Split("/").Last();
+            Console.WriteLine("todo download");
+            return new FileInfo(Path.Combine(destinationPath.FullName, fileName));
+        }
+        #endregion Uri
+        #region Enum
+
+        public static string GetDescription(this Enum value) {
+            Type type = value.GetType();
+            string name = Enum.GetName(type, value);
+            if (name != null) {
+                FieldInfo field = type.GetField(name);
+                if (field != null) {
+                    DescriptionAttribute attr = Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) as DescriptionAttribute;
+                    if (attr != null) {
+                        return attr.Description;
+                    }
+                }
+            }
+            return null;
+        }
+
+        public static T GetValueFromDescription<T>(string description, bool returnDefault = false) {
+            var type = typeof(T);
+            if (!type.IsEnum) throw new InvalidOperationException();
+            foreach (var field in type.GetFields()) {
+                var attribute = Attribute.GetCustomAttribute(field,
+                    typeof(DescriptionAttribute)) as DescriptionAttribute;
+                if (attribute != null) {
+                    if (attribute.Description == description)
+                        return (T)field.GetValue(null);
+                } else {
+                    if (field.Name == description)
+                        return (T)field.GetValue(null);
+                }
+            }
+            if (returnDefault) return default(T);
+            else throw new ArgumentException("Not found.", "description");
+        }
+
+        #endregion Enum
+        #region Task
+
+        public static async Task<TResult> TimeoutAfter<TResult>(this Task<TResult> task, TimeSpan timeout) {
+            using (var timeoutCancellationTokenSource = new CancellationTokenSource()) {
+                var completedTask = await Task.WhenAny(task, Task.Delay(timeout, timeoutCancellationTokenSource.Token));
+                if (completedTask == task) {
+                    timeoutCancellationTokenSource.Cancel();
+                    return await task;
+                } else {
+                    return default(TResult);
+                }
+            }
+        }
+
+        #endregion Task
+        #region bool
+        public static string ToYesNo(this bool input) => input ? "Yes" : "No";
+        public static string ToEnabledDisabled(this bool input) => input ? "Enabled" : "Disabled";
+        public static string ToOnOff(this bool input) => input ? "On" : "Off";
+        #endregion bool
     }
+}
 #endregion
 #region json
-namespace JsonExtensions {
-    public static class JsonUtils {
-        public static T FromJson<T>(string jsonText) => JsonSerializer.Deserialize<T>(jsonText, Converter.Settings);
-        public static T FromJsonFile<T>(FileInfo file) => FromJson<T>(File.ReadAllText(file.FullName));
-        public static string ToJson<T>(this T self) => JsonSerializer.Serialize(self, Converter.Settings);
-        public static void ToFile<T>(this T self, FileInfo file) => File.WriteAllText(file.FullName, ToJson(self));
+namespace Bluscream {
+public static class JsonUtils {
+    public static T FromJson<T>(string jsonText) => JsonSerializer.Deserialize<T>(jsonText, Converter.Settings);
+    public static T FromJsonFile<T>(FileInfo file) => FromJson<T>(File.ReadAllText(file.FullName));
+    public static string ToJson<T>(this T self) => JsonSerializer.Serialize(self, Converter.Settings);
+    public static void ToFile<T>(this T self, FileInfo file) => File.WriteAllText(file.FullName, ToJson(self));
+}
+public static class Converter {
+    public static readonly JsonSerializerOptions Settings = new(JsonSerializerDefaults.General) {
+        Converters =
+        {
+        new DateOnlyConverter(),
+        new TimeOnlyConverter(),
+        IsoDateTimeOffsetConverter.Singleton
+    },
+    };
+}
+public class ParseStringConverter : JsonConverter<long> {
+    public override bool CanConvert(Type t) => t == typeof(long);
+
+    public override long Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
+        var value = reader.GetString();
+        long l;
+        if (Int64.TryParse(value, out l)) {
+            return l;
+        }
+        throw new Exception("Cannot unmarshal type long");
     }
-    //public class JsonBase {
-    //    public FileInfo File { get; set; }
-    //    public JsonBase(FileInfo file) { File = file; }
-    //}
-    //public class JsonDict : JsonBase {
-    //    public dynamic Content { get; set; }
-    //    public void Load<T>() { Content = JsonUtils.FromJsonFile<T>(File); }
-    //    public void Save() => Content.ToFile(File);
-    //    public JsonDict(FileInfo file) { File = file; }
-    //}
-    public static class Converter {
-        public static readonly JsonSerializerOptions Settings = new(JsonSerializerDefaults.General) {
-            Converters =
-            {
-            new DateOnlyConverter(),
-            new TimeOnlyConverter(),
-            IsoDateTimeOffsetConverter.Singleton
-        },
-        };
+
+    public override void Write(Utf8JsonWriter writer, long value, JsonSerializerOptions options) {
+        JsonSerializer.Serialize(writer, value.ToString(), options);
+        return;
     }
-    public class ParseStringConverter : JsonConverter<long> {
-        public override bool CanConvert(Type t) => t == typeof(long);
 
-        public override long Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
-            var value = reader.GetString();
-            long l;
-            if (Int64.TryParse(value, out l)) {
-                return l;
-            }
-            throw new Exception("Cannot unmarshal type long");
-        }
+    public static readonly ParseStringConverter Singleton = new ParseStringConverter();
+}
+public class DateOnlyConverter : JsonConverter<DateOnly> {
+    private readonly string serializationFormat;
+    public DateOnlyConverter() : this(null) { }
 
-        public override void Write(Utf8JsonWriter writer, long value, JsonSerializerOptions options) {
-            JsonSerializer.Serialize(writer, value.ToString(), options);
-            return;
-        }
-
-        public static readonly ParseStringConverter Singleton = new ParseStringConverter();
+    public DateOnlyConverter(string? serializationFormat) {
+        this.serializationFormat = serializationFormat ?? "yyyy-MM-dd";
     }
-    public class DateOnlyConverter : JsonConverter<DateOnly> {
-        private readonly string serializationFormat;
-        public DateOnlyConverter() : this(null) { }
 
-        public DateOnlyConverter(string? serializationFormat) {
-            this.serializationFormat = serializationFormat ?? "yyyy-MM-dd";
-        }
-
-        public override DateOnly Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
-            var value = reader.GetString();
-            return DateOnly.Parse(value!);
-        }
-
-        public override void Write(Utf8JsonWriter writer, DateOnly value, JsonSerializerOptions options)
-            => writer.WriteStringValue(value.ToString(serializationFormat));
+    public override DateOnly Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
+        var value = reader.GetString();
+        return DateOnly.Parse(value!);
     }
-    public class TimeOnlyConverter : JsonConverter<TimeOnly> {
-        private readonly string serializationFormat;
 
-        public TimeOnlyConverter() : this(null) { }
+    public override void Write(Utf8JsonWriter writer, DateOnly value, JsonSerializerOptions options)
+        => writer.WriteStringValue(value.ToString(serializationFormat));
+}
+public class TimeOnlyConverter : JsonConverter<TimeOnly> {
+    private readonly string serializationFormat;
 
-        public TimeOnlyConverter(string? serializationFormat) {
-            this.serializationFormat = serializationFormat ?? "HH:mm:ss.fff";
-        }
+    public TimeOnlyConverter() : this(null) { }
 
-        public override TimeOnly Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
-            var value = reader.GetString();
-            return TimeOnly.Parse(value!);
-        }
-
-        public override void Write(Utf8JsonWriter writer, TimeOnly value, JsonSerializerOptions options)
-            => writer.WriteStringValue(value.ToString(serializationFormat));
+    public TimeOnlyConverter(string? serializationFormat) {
+        this.serializationFormat = serializationFormat ?? "HH:mm:ss.fff";
     }
-    public class IsoDateTimeOffsetConverter : JsonConverter<DateTimeOffset> {
-        public override bool CanConvert(Type t) => t == typeof(DateTimeOffset);
 
-        private const string DefaultDateTimeFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ss.FFFFFFFK";
+    public override TimeOnly Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
+        var value = reader.GetString();
+        return TimeOnly.Parse(value!);
+    }
 
-        private DateTimeStyles _dateTimeStyles = DateTimeStyles.RoundtripKind;
-        private string? _dateTimeFormat;
-        private CultureInfo? _culture;
+    public override void Write(Utf8JsonWriter writer, TimeOnly value, JsonSerializerOptions options)
+        => writer.WriteStringValue(value.ToString(serializationFormat));
+}
+public class IsoDateTimeOffsetConverter : JsonConverter<DateTimeOffset> {
+    public override bool CanConvert(Type t) => t == typeof(DateTimeOffset);
 
-        public DateTimeStyles DateTimeStyles {
-            get => _dateTimeStyles;
-            set => _dateTimeStyles = value;
+    private const string DefaultDateTimeFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ss.FFFFFFFK";
+
+    private DateTimeStyles _dateTimeStyles = DateTimeStyles.RoundtripKind;
+    private string? _dateTimeFormat;
+    private CultureInfo? _culture;
+
+    public DateTimeStyles DateTimeStyles {
+        get => _dateTimeStyles;
+        set => _dateTimeStyles = value;
+    }
+
+    public string? DateTimeFormat {
+        get => _dateTimeFormat ?? string.Empty;
+        set => _dateTimeFormat = (string.IsNullOrEmpty(value)) ? null : value;
+    }
+
+    public CultureInfo Culture {
+        get => _culture ?? CultureInfo.CurrentCulture;
+        set => _culture = value;
+    }
+
+    public override void Write(Utf8JsonWriter writer, DateTimeOffset value, JsonSerializerOptions options) {
+        string text;
+
+
+        if ((_dateTimeStyles & DateTimeStyles.AdjustToUniversal) == DateTimeStyles.AdjustToUniversal
+            || (_dateTimeStyles & DateTimeStyles.AssumeUniversal) == DateTimeStyles.AssumeUniversal) {
+            value = value.ToUniversalTime();
         }
 
-        public string? DateTimeFormat {
-            get => _dateTimeFormat ?? string.Empty;
-            set => _dateTimeFormat = (string.IsNullOrEmpty(value)) ? null : value;
-        }
+        text = value.ToString(_dateTimeFormat ?? DefaultDateTimeFormat, Culture);
 
-        public CultureInfo Culture {
-            get => _culture ?? CultureInfo.CurrentCulture;
-            set => _culture = value;
-        }
+        writer.WriteStringValue(text);
+    }
 
-        public override void Write(Utf8JsonWriter writer, DateTimeOffset value, JsonSerializerOptions options) {
-            string text;
+    public override DateTimeOffset Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
+        string? dateText = reader.GetString();
 
-
-            if ((_dateTimeStyles & DateTimeStyles.AdjustToUniversal) == DateTimeStyles.AdjustToUniversal
-                || (_dateTimeStyles & DateTimeStyles.AssumeUniversal) == DateTimeStyles.AssumeUniversal) {
-                value = value.ToUniversalTime();
-            }
-
-            text = value.ToString(_dateTimeFormat ?? DefaultDateTimeFormat, Culture);
-
-            writer.WriteStringValue(text);
-        }
-
-        public override DateTimeOffset Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
-            string? dateText = reader.GetString();
-
-            if (string.IsNullOrEmpty(dateText) == false) {
-                if (!string.IsNullOrEmpty(_dateTimeFormat)) {
-                    return DateTimeOffset.ParseExact(dateText, _dateTimeFormat, Culture, _dateTimeStyles);
-                } else {
-                    return DateTimeOffset.Parse(dateText, Culture, _dateTimeStyles);
-                }
+        if (string.IsNullOrEmpty(dateText) == false) {
+            if (!string.IsNullOrEmpty(_dateTimeFormat)) {
+                return DateTimeOffset.ParseExact(dateText, _dateTimeFormat, Culture, _dateTimeStyles);
             } else {
-                return default(DateTimeOffset);
+                return DateTimeOffset.Parse(dateText, Culture, _dateTimeStyles);
             }
-        }
-
-        public static readonly IsoDateTimeOffsetConverter Singleton = new IsoDateTimeOffsetConverter();
-    }
-    public class IPAddressConverter : JsonConverter<IPAddress> {
-        public override IPAddress Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
-            return IPAddress.Parse(reader.GetString());
-        }
-
-        public override void Write(Utf8JsonWriter writer, IPAddress value, JsonSerializerOptions options) {
-            writer.WriteStringValue(value.ToString());
+        } else {
+            return default(DateTimeOffset);
         }
     }
-    public class IPEndPointConverter : JsonConverter<IPEndPoint> {
-        public override IPEndPoint Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
-            var ipEndPointString = reader.GetString();
-            var endPointParts = ipEndPointString.Split(':');
-            var ip = IPAddress.Parse(endPointParts[0]);
-            var port = int.Parse(endPointParts[1]);
-            return new IPEndPoint(ip, port);
-        }
 
-        public override void Write(Utf8JsonWriter writer, IPEndPoint value, JsonSerializerOptions options) {
-            writer.WriteStringValue(value.ToString());
-        }
+    public static readonly IsoDateTimeOffsetConverter Singleton = new IsoDateTimeOffsetConverter();
+}
+public class IPAddressConverter : JsonConverter<IPAddress> {
+    public override IPAddress Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
+        return IPAddress.Parse(reader.GetString());
     }
+
+    public override void Write(Utf8JsonWriter writer, IPAddress value, JsonSerializerOptions options) {
+        writer.WriteStringValue(value.ToString());
+    }
+}
+public class IPEndPointConverter : JsonConverter<IPEndPoint> {
+    public override IPEndPoint Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
+        var ipEndPointString = reader.GetString();
+        var endPointParts = ipEndPointString.Split(':');
+        var ip = IPAddress.Parse(endPointParts[0]);
+        var port = int.Parse(endPointParts[1]);
+        return new IPEndPoint(ip, port);
+    }
+
+    public override void Write(Utf8JsonWriter writer, IPEndPoint value, JsonSerializerOptions options) {
+        writer.WriteStringValue(value.ToString());
+    }
+}
 }
 #endregion
