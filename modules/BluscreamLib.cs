@@ -71,473 +71,473 @@ namespace Bluscream {
             this(name, description, version, author, websiteUrl.ToUri(), updateUrl.ToUri(), supportUrl.ToUri()) { }
         public ModuleInfo(string name, string description, string version, string author, string websiteUrl, string updateUrl, string supportUrl) :
             this(name, description, version.ToVersion(), author, websiteUrl.ToUri(), updateUrl.ToUri(), supportUrl.ToUri()) { }
-        // [RequireModule(typeof(DevMinersBBModules.Telemetry))]
-        [Module("Bluscream's Library", "2.0.0")]
-        public class BluscreamLib : BattleBitModule {
-            public BluscreamLibConfiguration Configuration { get; set; } = null!;
-            public static ModuleInfo ModuleInfo = new() {
-                Name = "Bluscream's Library",
-                Description = "Generic library for common code used by multiple modules.",
-                Version = new Version(2, 0),
-                Author = "Bluscream",
-                WebsiteUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/"),
-                UpdateUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/raw/master/modules/BluscreamLib.cs"),
-                SupportUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/issues/new?title=BluscreamLib")
-            };
-
-            #region Methods
-            public static string GetStringValue(KeyValuePair<string, string?>? match) {
-                if (!match.HasValue) return string.Empty;
-                if (!string.IsNullOrWhiteSpace(match.Value.Value)) return match.Value.Value;
-                return match.Value.Key ?? "Unknown";
-            }
-            public static KeyValuePair<string, string?>? ResolveNameMatch(string input, IDictionary<string, string?> matches) {
-                var lower = input.ToLowerInvariant().Trim();
-                foreach (var match in matches) {
-                    if (lower == match.Key.ToLowerInvariant() || (match.Value is not null && lower == match.Value.ToLowerInvariant()))
-                        return match;
-                }
-                foreach (var match in matches) {
-                    if (match.Key.ToLowerInvariant().Contains(lower) || (match.Value is not null && match.Value.ToLowerInvariant().Contains(lower)))
-                        return match;
-                }
-                return null;
-            }
-            public static T? ResolveGameModeMapNameMatch<T>(string input, IEnumerable<T> matches) where T : BaseInfo {
-                var lower = input.ToLowerInvariant().Trim();
-                foreach (var match in matches) {
-                    if (lower == match.Name?.ToLowerInvariant()) return match;
-                    else if (lower == match.DisplayName?.ToLowerInvariant()) return match;
-                }
-                foreach (var match in matches) {
-                    if (match.DisplayName?.ToLowerInvariant().Contains(lower) == true) return match;
-                    else if ((match.DisplayName?.ToLowerInvariant().Contains(lower) == true)) return match;
-                }
-                return null;
-            }
-
-            public static MapDayNight GetDayNightFromString(string input) {
-                if (string.IsNullOrWhiteSpace(input)) return MapDayNight.None;
-                input = input.Trim().ToLowerInvariant();
-                if (input.Contains("day")) return MapDayNight.Day;
-                else if (input.Contains("night")) return MapDayNight.Night;
-                return MapDayNight.None;
-            }
-            public static MapSize GetMapSizeFromString(string input) {
-                switch (input) {
-                    case "16":
-                    case "8v8":
-                    case "_8v8":
-                    case "8vs8":
-                        return MapSize._8v8;
-                    case "32":
-                    case "16v16":
-                    case "_16v16":
-                    case "16vs16":
-                        return MapSize._16vs16;
-                    case "64":
-                    case "32v32":
-                    case "_32v32":
-                    case "32vs32":
-                        return MapSize._32vs32;
-                    case "128":
-                    case "64v64":
-                    case "_64v64":
-                    case "64vs64":
-                        return MapSize._64vs64;
-                    case "256":
-                    case "127v127":
-                    case "_127v127":
-                    case "127vs127":
-                        return MapSize._127vs127;
-                    default:
-                        return MapSize.None;
-                }
-            }
-
-            public static void Log(object _msg, string source = "") {
-                var msg = _msg.ToString();
-                if (string.IsNullOrWhiteSpace(msg)) return;
-                Console.WriteLine($"[{DateTime.Now.ToString("HH:mm:ss")}] {source} > {msg.Trim()}");
-            }
-            #endregion
-            #region Data
-            public static IReadOnlyList<string> GameModeNames { get { return GameModes.Where(m => m.Available).Select(m => m.Name).ToList(); } }
-            public static IReadOnlyList<string> GameModeDisplayNames { get { return Maps.Where(m => m.Available).Select(m => m.DisplayName).ToList(); } }
-            public static IReadOnlyList<GameModeInfo> GameModes = new GameModeInfo[] {
-            new GameModeInfo() {
-                Name = "TDM",
-                DisplayName = "Team Deathmatch",
-                Description = "Kill the enemy team"
-            },
-            new GameModeInfo() {
-                Name = "AAS",
-                DisplayName = "AAS"
-            },
-            new GameModeInfo() {
-                Name = "RUSH",
-                DisplayName = "Rush",
-                Description = "Plant or defuse bombs"
-            },
-            new GameModeInfo() {
-                Name = "CONQ",
-                DisplayName = "Conquest",
-                Description = "Capture and hold positions"
-            },
-            new GameModeInfo() {
-                Name = "DOMI",
-                DisplayName = "Domination"
-            },
-            new GameModeInfo() {
-                Name = "ELI",
-                DisplayName = "Elimination"
-            },
-            new GameModeInfo() {
-                Name = "INFCONQ",
-                DisplayName = "Infantry Conquest",
-                Description = "Conquest without strong vehicles"
-            },
-            new GameModeInfo() {
-                Name = "FRONTLINE",
-                DisplayName = "Frontline"
-            },
-            new GameModeInfo() {
-                Name = "GunGameFFA",
-                DisplayName = "Gun Game (Free For All)",
-                Description = "Get through the loadouts as fast as possible"
-            },
-            new GameModeInfo() {
-                Name = "FFA",
-                DisplayName = "Free For All",
-                Description = "Team Deathmatch without teams"
-            },
-            new GameModeInfo() {
-                Name = "GunGameTeam",
-                DisplayName = "Gun Game (Team)",
-                Description = "Get through the loadouts as fast as possible"
-            },
-            new GameModeInfo() {
-                Name = "SuicideRush",
-                DisplayName = "Suicide Rush"
-            },
-            new GameModeInfo() {
-                Name = "CatchGame",
-                DisplayName = "Catch Game"
-            },
-            new GameModeInfo() {
-                Name = "Infected",
-                DisplayName = "Infected",
-                Description = "Zombies"
-            },
-            new GameModeInfo() {
-                Name = "CashRun",
-                DisplayName = "Cash Run"
-            },
-            new GameModeInfo() {
-                Name = "VoxelFortify",
-                DisplayName = "Voxel Fortify"
-            },
-            new GameModeInfo() {
-                Name = "VoxelTrench",
-                DisplayName = "Voxel Trench"
-            },
-            new GameModeInfo() {
-                Name = "CaptureTheFlag",
-                DisplayName = "Capture The Flag"
-            },
+    }
+    // [RequireModule(typeof(DevMinersBBModules.Telemetry))]
+    [Module("Bluscream's Library", "2.0.0")]
+    public class BluscreamLib : BattleBitModule {
+        public BluscreamLibConfiguration Configuration { get; set; } = null!;
+        public static ModuleInfo ModuleInfo = new() {
+            Name = "Bluscream's Library",
+            Description = "Generic library for common code used by multiple modules.",
+            Version = new Version(2, 0),
+            Author = "Bluscream",
+            WebsiteUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/"),
+            UpdateUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/raw/master/modules/BluscreamLib.cs"),
+            SupportUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/issues/new?title=BluscreamLib")
         };
-            public static IReadOnlyList<string> MapNames { get { return Maps.Where(m => m.Available).Select(m => m.Name).ToList(); } }
-            public static IReadOnlyList<string> MapDisplayNames { get { return Maps.Where(m => m.Available).Select(m => m.DisplayName).ToList(); } }
-            public static IReadOnlyList<MapInfo> Maps = new MapInfo[] {
-            new MapInfo() {
-                Name = "Azagor",
-                SupportedGamemodes = new[] {
-                    ("TDM", new[] { MapSize._8v8, MapSize._16vs16, }),
-                    ("RUSH", new[] { MapSize._16vs16, MapSize._32vs32, }),
-                    ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("INFCONQ", new[] { MapSize._64vs64, MapSize._127vs127, }),
-                    ("DOMI", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("ELI", new[] { MapSize._16vs16, }),
-                    ("FRONTLINE", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }) }
-            },
-            new MapInfo() {
-                Name = "Basra",
-                Description = "Has a shipwreck",
-                SupportedGamemodes = new[] {
-                    ("TDM", new[] { MapSize._8v8, MapSize._16vs16, }),
-                    ("CONQ", new[] { MapSize._64vs64, MapSize._127vs127, }),
-                    ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("ELI", new[] { MapSize._8v8, MapSize._16vs16, }),
-                    ("FRONTLINE", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }) }
-            },
-            new MapInfo() {
-                Name = "Construction",
-                SupportedGamemodes = new[] {
-                    ("TDM", new[] { MapSize._8v8, MapSize._16vs16, }),
-                    ("CONQ", new[] { MapSize._32vs32, }),
-                    ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("DOMI", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("ELI", new[] { MapSize._8v8, MapSize._16vs16, }),
-                    ("CashRun", new[] { MapSize._16vs16, }) }
-            },
-            new MapInfo() {
-                Name = "District",
-                SupportedGamemodes = new[] {
-                    ("RUSH", new[] { MapSize._16vs16, MapSize._32vs32, }),
-                    ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("DOMI", new[] { MapSize._16vs16, MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("FRONTLINE", new[] { MapSize._32vs32, MapSize._64vs64, }),
-                    ("CTF", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }) }
-            },
-            new MapInfo() {
-                Name = "Dustydew",
-                DisplayName = "Dusty Dew",
-                SupportedGamemodes = new[] {
-                    ("TDM", new[] { MapSize._8v8, MapSize._16vs16, }),
-                    ("RUSH", new[] { MapSize._16vs16, MapSize._32vs32, }),
-                    ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("INFCONQ", new[] { MapSize._16vs16, MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("DOMI", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("ELI", new[] { MapSize._8v8, MapSize._16vs16, }),
-                    ("GunGameFFA", new[] { MapSize._8v8, }),
-                    ("GunGameTeam", new[] { MapSize._8v8, MapSize._16vs16, }),
-                    ("FFA", new[] { MapSize._8v8, }) }
-            },
-            new MapInfo() {
-                Name = "Eduardovo",
-                SupportedGamemodes = new[] {
-                    ("TDM", new[] { MapSize._16vs16, }),
-                    ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("DOMI", new[] { MapSize._16vs16, MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("FRONTLINE", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("GunGameFFA", new[] { MapSize._16vs16, }),
-                    ("CashRun", new[] { MapSize._16vs16, MapSize._32vs32, }) }
-            },
-            new MapInfo() {
-                Name = "Frugis",
-                Description = "Inspired by Paris, France",
-                SupportedGamemodes = new[] {
-                    ("TDM", new[] { MapSize._8v8, MapSize._16vs16, }),
-                    ("RUSH", new[] { MapSize._16vs16, MapSize._32vs32, }),
-                    ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("DOMI", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("FRONTLINE", new[] { MapSize._32vs32, }),
-                    ("GunGameFFA", new[] { MapSize._8v8, MapSize._16vs16, }),
-                    ("GunGameTeam", new[] { MapSize._8v8, MapSize._16vs16, }),
-                    ("CashRun", new[] { MapSize._16vs16, MapSize._32vs32, }),
-                    ("CTF", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }) }
-            },
-            new MapInfo() {
-                Name = "Isle",
-                SupportedGamemodes = new[] {
-                    ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("DOMI", new[] { MapSize._16vs16, MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("FRONTLINE", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("CTF", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }) }
-            },
-            new MapInfo() {
-                Name = "Lonovo",
-                SupportedGamemodes = new[] {
-                    ("TDM", new[] { MapSize._8v8, MapSize._16vs16, }),
-                    ("RUSH", new[] { MapSize._32vs32, }),
-                    ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("DOMI", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("ELI", new[] { MapSize._16vs16, }),
-                    ("GunGameFFA", new[] { MapSize._8v8, }),
-                    ("GunGameTeam", new[] { MapSize._8v8, MapSize._16vs16, }),
-                    ("FFA", new[] { MapSize._8v8, }),
-                    ("CashRun", new[] { MapSize._16vs16, MapSize._32vs32, }) }
-            },
-            new MapInfo() {
-                Name = "MultuIslands",
-                DisplayName = "Multu Islands",
-                SupportedGamemodes = new[] {
-                    ("RUSH", new[] { MapSize._8v8, MapSize._16vs16, MapSize._32vs32, }),
-                    ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("DOMI", new[] { MapSize._16vs16, MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("CTF", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }) }
-            },
-            new MapInfo() {
-                Name = "Namak",
-                SupportedGamemodes = new[] {
-                    ("RUSH", new[] { MapSize._16vs16, MapSize._32vs32, }),
-                    ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, }),
-                    ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("DOMI", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }) }
-            },
-            new MapInfo() {
-                Name = "OilDunes",
-                DisplayName = "Oil Dunes",
-                SupportedGamemodes = new[] {
-                    ("CONQ", new[] { MapSize._32vs32, }),
-                    ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, }),
-                    ("DOMI", new[] { MapSize._16vs16, MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("CashRun", new[] { MapSize._16vs16, MapSize._32vs32, }) }
-            },
-            new MapInfo() {
-                Name = "River",
-                SupportedGamemodes = new[] {
-                    ("TDM", new[] { MapSize._8v8, MapSize._16vs16, }),
-                    ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("DOMI", new[] { MapSize._16vs16, MapSize._32vs32, MapSize._64vs64, }),
-                    ("ELI", new[] { MapSize._8v8, MapSize._16vs16, }),
-                    ("FRONTLINE", new[] { MapSize._32vs32, MapSize._64vs64, }),
-                    ("GunGameFFA", new[] { MapSize._8v8, }),
-                    ("GunGameTeam", new[] { MapSize._8v8, MapSize._16vs16, }),
-                    ("FFA", new[] { MapSize._8v8, }),
-                    ("CashRun", new[] { MapSize._16vs16, MapSize._32vs32, }) }
-            },
-            new MapInfo() {
-                Name = "Salhan",
-                SupportedGamemodes = new[] {
-                    ("TDM", new[] { MapSize._8v8, MapSize._16vs16, }),
-                    ("RUSH", new[] { MapSize._8v8, MapSize._16vs16, MapSize._32vs32, }),
-                    ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("DOMI", new[] { MapSize._16vs16, MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("ELI", new[] { MapSize._8v8, MapSize._16vs16, }),
-                    ("FRONTLINE", new[] { MapSize._32vs32, }),
-                    ("CashRun", new[] { MapSize._16vs16, MapSize._32vs32, }) }
-            },
-            new MapInfo() {
-                Name = "SandySunset",
-                DisplayName = "SandySunset",
-                Description = "Sniper's paradise",
-                SupportedGamemodes = new[] {
-                    ("TDM", new[] { MapSize._8v8, MapSize._16vs16, }),
-                    ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("DOMI", new[] { MapSize._16vs16, MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("FRONTLINE", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("CashRun", new[] { MapSize._16vs16, MapSize._32vs32, }),
-                    ("CTF", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }) }
-            },
-            new MapInfo() {
-                Name = "TensaTown",
-                DisplayName  = "Tensa Town",
-                SupportedGamemodes = new[] {
-                    ("TDM", new[] { MapSize._8v8, MapSize._16vs16, }),
-                    ("RUSH", new[] { MapSize._16vs16, MapSize._32vs32, }),
-                    ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("DOMI", new[] { MapSize._16vs16, MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("ELI", new[] { MapSize._8v8, MapSize._16vs16, }),
-                    ("FRONTLINE", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("CashRun", new[] { MapSize._16vs16, MapSize._32vs32, }),
-                    ("CTF", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }) }
-            },
-            new MapInfo() {
-                Name = "Valley",
-                SupportedGamemodes = new[] {
-                    ("TDM", new[] { MapSize._8v8, MapSize._16vs16, }),
-                    ("RUSH", new[] { MapSize._16vs16, MapSize._32vs32, }),
-                    ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("DOMI", new[] { MapSize._16vs16, MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("FRONTLINE", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("CashRun", new[] { MapSize._16vs16, MapSize._32vs32, }) }
-            },
-            new MapInfo() {
-                Name = "Wakistan",
-                Description = "I don't know why anyone would want to play this map",
-                SupportedGamemodes = new[] {
-                    ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("DOMI", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("FRONTLINE", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }) }
-            },
-            new MapInfo() {
-                Name = "WineParadise",
-                DisplayName = "Wine Paradise",
-                SupportedGamemodes = new[] {
-                    ("TDM", new[] { MapSize._8v8, MapSize._16vs16, }),
-                    ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("INFCONQ", new[] { MapSize._32vs32, }),
-                    ("DOMI", new[] { MapSize._16vs16, MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("GunGameFFA", new[] { MapSize._8v8, MapSize._16vs16, }),
-                    ("GunGameTeam", new[] { MapSize._8v8, MapSize._16vs16, }),
-                    ("FFA", new[] { MapSize._8v8, MapSize._16vs16, }),
-                    ("CashRun", new[] { MapSize._16vs16, MapSize._32vs32, }) }
-            },
-            new MapInfo() {
-                Name = "Old_District",
-                DisplayName = "Old District",
-                Description = "Old version of the map District",
-                SupportedGamemodes = new[] {
-                    ("TDM", new[] { MapSize._8v8, MapSize._16vs16, }),
-                    ("RUSH", new[] { MapSize._16vs16, MapSize._32vs32, }),
-                    ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64 }),
-                    ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("DOMI", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("ELI", new[] { MapSize._16vs16, }),
-                    ("CashRun", new[] { MapSize._16vs16, MapSize._32vs32, }) }
-            },
-            new MapInfo() {
-                Name = "Old_Eduardovo",
-                DisplayName = "Old Eduardovo",
-                Description = "Old version of the map Eduardovo",
-                SupportedGamemodes = new[] {
-                    ("TDM", new[] { MapSize._8v8, MapSize._16vs16, MapSize._32vs32, }),
-                    ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("ELI", new[] { MapSize._16vs16, MapSize._32vs32, }),
-                    ("FRONTLINE", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }) }
-            },
-            new MapInfo() {
-                Name = "Old_MultuIslands",
-                DisplayName = "Old Multu Islands",
-                Description = "Old version of the map Multu Islands",
-                SupportedGamemodes = new[] {
-                    ("TDM", new[] { MapSize._8v8, MapSize._16vs16 }),
-                    ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }) }
-            },
-            new MapInfo() {
-                Name = "Old_Namak",
-                DisplayName = "Old Namak",
-                Description = "Old version of the map Namak",
-                SupportedGamemodes = new[] {
-                    ("TDM", new[] { MapSize._8v8, MapSize._16vs16 }),
-                    ("CONQ", new[] { MapSize._16vs16, MapSize._32vs32, MapSize._64vs64, }),
-                    ("DOMI", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("GunGameFFA", new[] { MapSize._8v8 }),
-                    ("GunGameTeam", new[] { MapSize._8v8, MapSize._16vs16, }),
-                    ("FFA", new[] { MapSize._8v8 }) }
-            },
-            new MapInfo() {
-                Name = "Old_OilDunes",
-                DisplayName = "Old Oil Dunes",
-                SupportedGamemodes = new[] {
-                    ("TDM", new[] { MapSize._16vs16, MapSize._32vs32 }),
-                    ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                    ("ELI", new[] { MapSize._16vs16, MapSize._32vs32, }) }
-            },
-            new MapInfo() {
-                Name = "ZalfiBay",
-                DisplayName = "Zalfi Bay",
-                SupportedGamemodes = new[] {
-                    ("CONQ", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-                    ("INFCONQ", new [] {MapSize._32vs32, MapSize._64vs64,MapSize._127vs127,}),
-                    ("DOMI", new [] { MapSize._16vs16, MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-                    ("FRONTLINE", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-                    ("CTF", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}) }
-            },
-            new MapInfo() {
-                Available = false,
-                Name = "Polygon",
-                Description = "Tutorial map"
+
+        #region Methods
+        public static string GetStringValue(KeyValuePair<string, string?>? match) {
+            if (!match.HasValue) return string.Empty;
+            if (!string.IsNullOrWhiteSpace(match.Value.Value)) return match.Value.Value;
+            return match.Value.Key ?? "Unknown";
+        }
+        public static KeyValuePair<string, string?>? ResolveNameMatch(string input, IDictionary<string, string?> matches) {
+            var lower = input.ToLowerInvariant().Trim();
+            foreach (var match in matches) {
+                if (lower == match.Key.ToLowerInvariant() || (match.Value is not null && lower == match.Value.ToLowerInvariant()))
+                    return match;
             }
-        };
-            #endregion
+            foreach (var match in matches) {
+                if (match.Key.ToLowerInvariant().Contains(lower) || (match.Value is not null && match.Value.ToLowerInvariant().Contains(lower)))
+                    return match;
+            }
+            return null;
         }
-        public class BluscreamLibConfiguration : ModuleConfiguration {
-            public string TimeStampFormat { get; set; } = "HH:mm:ss";
+        public static T? ResolveGameModeMapNameMatch<T>(string input, IEnumerable<T> matches) where T : BaseInfo {
+            var lower = input.ToLowerInvariant().Trim();
+            foreach (var match in matches) {
+                if (lower == match.Name?.ToLowerInvariant()) return match;
+                else if (lower == match.DisplayName?.ToLowerInvariant()) return match;
+            }
+            foreach (var match in matches) {
+                if (match.DisplayName?.ToLowerInvariant().Contains(lower) == true) return match;
+                else if ((match.DisplayName?.ToLowerInvariant().Contains(lower) == true)) return match;
+            }
+            return null;
         }
+
+        public static MapDayNight GetDayNightFromString(string input) {
+            if (string.IsNullOrWhiteSpace(input)) return MapDayNight.None;
+            input = input.Trim().ToLowerInvariant();
+            if (input.Contains("day")) return MapDayNight.Day;
+            else if (input.Contains("night")) return MapDayNight.Night;
+            return MapDayNight.None;
+        }
+        public static MapSize GetMapSizeFromString(string input) {
+            switch (input) {
+                case "16":
+                case "8v8":
+                case "_8v8":
+                case "8vs8":
+                    return MapSize._8v8;
+                case "32":
+                case "16v16":
+                case "_16v16":
+                case "16vs16":
+                    return MapSize._16vs16;
+                case "64":
+                case "32v32":
+                case "_32v32":
+                case "32vs32":
+                    return MapSize._32vs32;
+                case "128":
+                case "64v64":
+                case "_64v64":
+                case "64vs64":
+                    return MapSize._64vs64;
+                case "256":
+                case "127v127":
+                case "_127v127":
+                case "127vs127":
+                    return MapSize._127vs127;
+                default:
+                    return MapSize.None;
+            }
+        }
+
+        public static void Log(object _msg, string source = "") {
+            var msg = _msg.ToString();
+            if (string.IsNullOrWhiteSpace(msg)) return;
+            Console.WriteLine($"[{DateTime.Now.ToString("HH:mm:ss")}] {source} > {msg.Trim()}");
+        }
+        #endregion
+        #region Data
+        public static IReadOnlyList<string> GameModeNames { get { return GameModes.Where(m => m.Available).Select(m => m.Name).ToList(); } }
+        public static IReadOnlyList<string> GameModeDisplayNames { get { return Maps.Where(m => m.Available).Select(m => m.DisplayName).ToList(); } }
+        public static IReadOnlyList<GameModeInfo> GameModes = new GameModeInfo[] {
+        new GameModeInfo() {
+            Name = "TDM",
+            DisplayName = "Team Deathmatch",
+            Description = "Kill the enemy team"
+        },
+        new GameModeInfo() {
+            Name = "AAS",
+            DisplayName = "AAS"
+        },
+        new GameModeInfo() {
+            Name = "RUSH",
+            DisplayName = "Rush",
+            Description = "Plant or defuse bombs"
+        },
+        new GameModeInfo() {
+            Name = "CONQ",
+            DisplayName = "Conquest",
+            Description = "Capture and hold positions"
+        },
+        new GameModeInfo() {
+            Name = "DOMI",
+            DisplayName = "Domination"
+        },
+        new GameModeInfo() {
+            Name = "ELI",
+            DisplayName = "Elimination"
+        },
+        new GameModeInfo() {
+            Name = "INFCONQ",
+            DisplayName = "Infantry Conquest",
+            Description = "Conquest without strong vehicles"
+        },
+        new GameModeInfo() {
+            Name = "FRONTLINE",
+            DisplayName = "Frontline"
+        },
+        new GameModeInfo() {
+            Name = "GunGameFFA",
+            DisplayName = "Gun Game (Free For All)",
+            Description = "Get through the loadouts as fast as possible"
+        },
+        new GameModeInfo() {
+            Name = "FFA",
+            DisplayName = "Free For All",
+            Description = "Team Deathmatch without teams"
+        },
+        new GameModeInfo() {
+            Name = "GunGameTeam",
+            DisplayName = "Gun Game (Team)",
+            Description = "Get through the loadouts as fast as possible"
+        },
+        new GameModeInfo() {
+            Name = "SuicideRush",
+            DisplayName = "Suicide Rush"
+        },
+        new GameModeInfo() {
+            Name = "CatchGame",
+            DisplayName = "Catch Game"
+        },
+        new GameModeInfo() {
+            Name = "Infected",
+            DisplayName = "Infected",
+            Description = "Zombies"
+        },
+        new GameModeInfo() {
+            Name = "CashRun",
+            DisplayName = "Cash Run"
+        },
+        new GameModeInfo() {
+            Name = "VoxelFortify",
+            DisplayName = "Voxel Fortify"
+        },
+        new GameModeInfo() {
+            Name = "VoxelTrench",
+            DisplayName = "Voxel Trench"
+        },
+        new GameModeInfo() {
+            Name = "CaptureTheFlag",
+            DisplayName = "Capture The Flag"
+        },
+    };
+        public static IReadOnlyList<string> MapNames { get { return Maps.Where(m => m.Available).Select(m => m.Name).ToList(); } }
+        public static IReadOnlyList<string> MapDisplayNames { get { return Maps.Where(m => m.Available).Select(m => m.DisplayName).ToList(); } }
+        public static IReadOnlyList<MapInfo> Maps = new MapInfo[] {
+        new MapInfo() {
+            Name = "Azagor",
+            SupportedGamemodes = new[] {
+                ("TDM", new[] { MapSize._8v8, MapSize._16vs16, }),
+                ("RUSH", new[] { MapSize._16vs16, MapSize._32vs32, }),
+                ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("INFCONQ", new[] { MapSize._64vs64, MapSize._127vs127, }),
+                ("DOMI", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("ELI", new[] { MapSize._16vs16, }),
+                ("FRONTLINE", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }) }
+        },
+        new MapInfo() {
+            Name = "Basra",
+            Description = "Has a shipwreck",
+            SupportedGamemodes = new[] {
+                ("TDM", new[] { MapSize._8v8, MapSize._16vs16, }),
+                ("CONQ", new[] { MapSize._64vs64, MapSize._127vs127, }),
+                ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("ELI", new[] { MapSize._8v8, MapSize._16vs16, }),
+                ("FRONTLINE", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }) }
+        },
+        new MapInfo() {
+            Name = "Construction",
+            SupportedGamemodes = new[] {
+                ("TDM", new[] { MapSize._8v8, MapSize._16vs16, }),
+                ("CONQ", new[] { MapSize._32vs32, }),
+                ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("DOMI", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("ELI", new[] { MapSize._8v8, MapSize._16vs16, }),
+                ("CashRun", new[] { MapSize._16vs16, }) }
+        },
+        new MapInfo() {
+            Name = "District",
+            SupportedGamemodes = new[] {
+                ("RUSH", new[] { MapSize._16vs16, MapSize._32vs32, }),
+                ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("DOMI", new[] { MapSize._16vs16, MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("FRONTLINE", new[] { MapSize._32vs32, MapSize._64vs64, }),
+                ("CTF", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }) }
+        },
+        new MapInfo() {
+            Name = "Dustydew",
+            DisplayName = "Dusty Dew",
+            SupportedGamemodes = new[] {
+                ("TDM", new[] { MapSize._8v8, MapSize._16vs16, }),
+                ("RUSH", new[] { MapSize._16vs16, MapSize._32vs32, }),
+                ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("INFCONQ", new[] { MapSize._16vs16, MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("DOMI", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("ELI", new[] { MapSize._8v8, MapSize._16vs16, }),
+                ("GunGameFFA", new[] { MapSize._8v8, }),
+                ("GunGameTeam", new[] { MapSize._8v8, MapSize._16vs16, }),
+                ("FFA", new[] { MapSize._8v8, }) }
+        },
+        new MapInfo() {
+            Name = "Eduardovo",
+            SupportedGamemodes = new[] {
+                ("TDM", new[] { MapSize._16vs16, }),
+                ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("DOMI", new[] { MapSize._16vs16, MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("FRONTLINE", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("GunGameFFA", new[] { MapSize._16vs16, }),
+                ("CashRun", new[] { MapSize._16vs16, MapSize._32vs32, }) }
+        },
+        new MapInfo() {
+            Name = "Frugis",
+            Description = "Inspired by Paris, France",
+            SupportedGamemodes = new[] {
+                ("TDM", new[] { MapSize._8v8, MapSize._16vs16, }),
+                ("RUSH", new[] { MapSize._16vs16, MapSize._32vs32, }),
+                ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("DOMI", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("FRONTLINE", new[] { MapSize._32vs32, }),
+                ("GunGameFFA", new[] { MapSize._8v8, MapSize._16vs16, }),
+                ("GunGameTeam", new[] { MapSize._8v8, MapSize._16vs16, }),
+                ("CashRun", new[] { MapSize._16vs16, MapSize._32vs32, }),
+                ("CTF", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }) }
+        },
+        new MapInfo() {
+            Name = "Isle",
+            SupportedGamemodes = new[] {
+                ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("DOMI", new[] { MapSize._16vs16, MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("FRONTLINE", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("CTF", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }) }
+        },
+        new MapInfo() {
+            Name = "Lonovo",
+            SupportedGamemodes = new[] {
+                ("TDM", new[] { MapSize._8v8, MapSize._16vs16, }),
+                ("RUSH", new[] { MapSize._32vs32, }),
+                ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("DOMI", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("ELI", new[] { MapSize._16vs16, }),
+                ("GunGameFFA", new[] { MapSize._8v8, }),
+                ("GunGameTeam", new[] { MapSize._8v8, MapSize._16vs16, }),
+                ("FFA", new[] { MapSize._8v8, }),
+                ("CashRun", new[] { MapSize._16vs16, MapSize._32vs32, }) }
+        },
+        new MapInfo() {
+            Name = "MultuIslands",
+            DisplayName = "Multu Islands",
+            SupportedGamemodes = new[] {
+                ("RUSH", new[] { MapSize._8v8, MapSize._16vs16, MapSize._32vs32, }),
+                ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("DOMI", new[] { MapSize._16vs16, MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("CTF", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }) }
+        },
+        new MapInfo() {
+            Name = "Namak",
+            SupportedGamemodes = new[] {
+                ("RUSH", new[] { MapSize._16vs16, MapSize._32vs32, }),
+                ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, }),
+                ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("DOMI", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }) }
+        },
+        new MapInfo() {
+            Name = "OilDunes",
+            DisplayName = "Oil Dunes",
+            SupportedGamemodes = new[] {
+                ("CONQ", new[] { MapSize._32vs32, }),
+                ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, }),
+                ("DOMI", new[] { MapSize._16vs16, MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("CashRun", new[] { MapSize._16vs16, MapSize._32vs32, }) }
+        },
+        new MapInfo() {
+            Name = "River",
+            SupportedGamemodes = new[] {
+                ("TDM", new[] { MapSize._8v8, MapSize._16vs16, }),
+                ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("DOMI", new[] { MapSize._16vs16, MapSize._32vs32, MapSize._64vs64, }),
+                ("ELI", new[] { MapSize._8v8, MapSize._16vs16, }),
+                ("FRONTLINE", new[] { MapSize._32vs32, MapSize._64vs64, }),
+                ("GunGameFFA", new[] { MapSize._8v8, }),
+                ("GunGameTeam", new[] { MapSize._8v8, MapSize._16vs16, }),
+                ("FFA", new[] { MapSize._8v8, }),
+                ("CashRun", new[] { MapSize._16vs16, MapSize._32vs32, }) }
+        },
+        new MapInfo() {
+            Name = "Salhan",
+            SupportedGamemodes = new[] {
+                ("TDM", new[] { MapSize._8v8, MapSize._16vs16, }),
+                ("RUSH", new[] { MapSize._8v8, MapSize._16vs16, MapSize._32vs32, }),
+                ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("DOMI", new[] { MapSize._16vs16, MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("ELI", new[] { MapSize._8v8, MapSize._16vs16, }),
+                ("FRONTLINE", new[] { MapSize._32vs32, }),
+                ("CashRun", new[] { MapSize._16vs16, MapSize._32vs32, }) }
+        },
+        new MapInfo() {
+            Name = "SandySunset",
+            DisplayName = "SandySunset",
+            Description = "Sniper's paradise",
+            SupportedGamemodes = new[] {
+                ("TDM", new[] { MapSize._8v8, MapSize._16vs16, }),
+                ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("DOMI", new[] { MapSize._16vs16, MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("FRONTLINE", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("CashRun", new[] { MapSize._16vs16, MapSize._32vs32, }),
+                ("CTF", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }) }
+        },
+        new MapInfo() {
+            Name = "TensaTown",
+            DisplayName  = "Tensa Town",
+            SupportedGamemodes = new[] {
+                ("TDM", new[] { MapSize._8v8, MapSize._16vs16, }),
+                ("RUSH", new[] { MapSize._16vs16, MapSize._32vs32, }),
+                ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("DOMI", new[] { MapSize._16vs16, MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("ELI", new[] { MapSize._8v8, MapSize._16vs16, }),
+                ("FRONTLINE", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("CashRun", new[] { MapSize._16vs16, MapSize._32vs32, }),
+                ("CTF", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }) }
+        },
+        new MapInfo() {
+            Name = "Valley",
+            SupportedGamemodes = new[] {
+                ("TDM", new[] { MapSize._8v8, MapSize._16vs16, }),
+                ("RUSH", new[] { MapSize._16vs16, MapSize._32vs32, }),
+                ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("DOMI", new[] { MapSize._16vs16, MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("FRONTLINE", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("CashRun", new[] { MapSize._16vs16, MapSize._32vs32, }) }
+        },
+        new MapInfo() {
+            Name = "Wakistan",
+            Description = "I don't know why anyone would want to play this map",
+            SupportedGamemodes = new[] {
+                ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("DOMI", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("FRONTLINE", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }) }
+        },
+        new MapInfo() {
+            Name = "WineParadise",
+            DisplayName = "Wine Paradise",
+            SupportedGamemodes = new[] {
+                ("TDM", new[] { MapSize._8v8, MapSize._16vs16, }),
+                ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("INFCONQ", new[] { MapSize._32vs32, }),
+                ("DOMI", new[] { MapSize._16vs16, MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("GunGameFFA", new[] { MapSize._8v8, MapSize._16vs16, }),
+                ("GunGameTeam", new[] { MapSize._8v8, MapSize._16vs16, }),
+                ("FFA", new[] { MapSize._8v8, MapSize._16vs16, }),
+                ("CashRun", new[] { MapSize._16vs16, MapSize._32vs32, }) }
+        },
+        new MapInfo() {
+            Name = "Old_District",
+            DisplayName = "Old District",
+            Description = "Old version of the map District",
+            SupportedGamemodes = new[] {
+                ("TDM", new[] { MapSize._8v8, MapSize._16vs16, }),
+                ("RUSH", new[] { MapSize._16vs16, MapSize._32vs32, }),
+                ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64 }),
+                ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("DOMI", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("ELI", new[] { MapSize._16vs16, }),
+                ("CashRun", new[] { MapSize._16vs16, MapSize._32vs32, }) }
+        },
+        new MapInfo() {
+            Name = "Old_Eduardovo",
+            DisplayName = "Old Eduardovo",
+            Description = "Old version of the map Eduardovo",
+            SupportedGamemodes = new[] {
+                ("TDM", new[] { MapSize._8v8, MapSize._16vs16, MapSize._32vs32, }),
+                ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("ELI", new[] { MapSize._16vs16, MapSize._32vs32, }),
+                ("FRONTLINE", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }) }
+        },
+        new MapInfo() {
+            Name = "Old_MultuIslands",
+            DisplayName = "Old Multu Islands",
+            Description = "Old version of the map Multu Islands",
+            SupportedGamemodes = new[] {
+                ("TDM", new[] { MapSize._8v8, MapSize._16vs16 }),
+                ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }) }
+        },
+        new MapInfo() {
+            Name = "Old_Namak",
+            DisplayName = "Old Namak",
+            Description = "Old version of the map Namak",
+            SupportedGamemodes = new[] {
+                ("TDM", new[] { MapSize._8v8, MapSize._16vs16 }),
+                ("CONQ", new[] { MapSize._16vs16, MapSize._32vs32, MapSize._64vs64, }),
+                ("DOMI", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("GunGameFFA", new[] { MapSize._8v8 }),
+                ("GunGameTeam", new[] { MapSize._8v8, MapSize._16vs16, }),
+                ("FFA", new[] { MapSize._8v8 }) }
+        },
+        new MapInfo() {
+            Name = "Old_OilDunes",
+            DisplayName = "Old Oil Dunes",
+            SupportedGamemodes = new[] {
+                ("TDM", new[] { MapSize._16vs16, MapSize._32vs32 }),
+                ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
+                ("ELI", new[] { MapSize._16vs16, MapSize._32vs32, }) }
+        },
+        new MapInfo() {
+            Name = "ZalfiBay",
+            DisplayName = "Zalfi Bay",
+            SupportedGamemodes = new[] {
+                ("CONQ", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
+                ("INFCONQ", new [] {MapSize._32vs32, MapSize._64vs64,MapSize._127vs127,}),
+                ("DOMI", new [] { MapSize._16vs16, MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
+                ("FRONTLINE", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
+                ("CTF", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}) }
+        },
+        new MapInfo() {
+            Available = false,
+            Name = "Polygon",
+            Description = "Tutorial map"
+        }
+    };
+        #endregion
+    }
+    public class BluscreamLibConfiguration : ModuleConfiguration {
+        public string TimeStampFormat { get; set; } = "HH:mm:ss";
     }
 }
 #region Utils
