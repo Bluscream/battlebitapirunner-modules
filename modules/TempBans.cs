@@ -13,6 +13,7 @@ using TimeSpanParserUtil;
 using Humanizer;
 using Bluscream;
 using static Bluscream.BluscreamLib;
+using System.Text;
 
 namespace Bluscream {
 
@@ -64,7 +65,7 @@ namespace Bluscream {
             commandSource.Message($"{target.str()} has been banned for {ban.Remaining.Humanize()}");
         }
 
-        [CommandCallback("untempban", Description = "Bans a player for a specified time period", AllowedRoles = Roles.Admin | Roles.Moderator)]
+        [CommandCallback("untempban", Description = "Unbans a player that is temporary banned", AllowedRoles = Roles.Admin | Roles.Moderator)]
         public void UnTempBanCommand(RunnerPlayer commandSource, RunnerPlayer target) {
             var ban = Bans.Get(target);
             if (ban is null) {
@@ -163,6 +164,13 @@ namespace Bans {
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         [JsonPropertyName("Hwid")]
         public string? Hwid { get; set; }
+
+        public override string ToString() {
+            var sb = new StringBuilder();
+            if (Name is not null) sb.Append(Name.Quote());
+            if (SteamId64 is not null) sb.Append($" ({SteamId64})");
+            return sb.ToString();
+        }
     }
     public partial class BanEntry {
         [JsonPropertyName("Target")]
@@ -210,11 +218,12 @@ namespace Bans {
             return removed;
         }
 
-        public BanEntry? Get(RunnerPlayer player) {
-            var result = Entries.FirstOrDefault(b => (b.Target != null) && (b.Target?.SteamId64 == player.SteamID), null);
+        public BanEntry? Get(RunnerPlayer player) => Get(player.SteamID);
+        public BanEntry? Get(ulong steamId64) {
+            var result = Entries.FirstOrDefault(b => (b.Target != null) && (b.Target?.SteamId64 == steamId64), null);
             if (result is not null && result.BannedUntilUtc.HasValue) {
                 if (result.Remaining.TotalSeconds <= 0) {
-                    TempBans.Log($"Temporary ban for player {player.str()} expired {result.Remaining.Humanize()} ago, removing ...");
+                    TempBans.Log($"Temporary ban for player {result.Target} expired {result.Remaining.Humanize()} ago, removing ...");
                     Entries.Remove(result);
                     result = null;
                 }

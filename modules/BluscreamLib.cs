@@ -21,7 +21,6 @@ using System.Net;
 using BattleBitAPI.Common;
 using BBRAPIModules;
 using Bluscream;
-using Commands;
 
 namespace Bluscream {
     public static class MoreRoles {
@@ -631,6 +630,13 @@ public static partial class Utils {
 #region Extensions
 namespace Bluscream {
 public static class Extensions {
+        #region Server
+        public static RunnerPlayer GetPlayerBySteamId64(this RunnerServer server, ulong steamId64) => server.AllPlayers.Where(p=>p.SteamID==steamId64).First();
+        public static string GetPlayerNameBySteamId64(this RunnerServer server, ulong steamId64) {
+            var player = server.GetPlayerBySteamId64(steamId64);
+            return player?.Name ?? steamId64.ToString();
+        }
+        #endregion
         #region Player
         public static string str(this RunnerPlayer player) => $"\"{player.Name}\"";
         public static string fullstr(this RunnerPlayer player) => $"{player.str()} ({player.SteamID})";
