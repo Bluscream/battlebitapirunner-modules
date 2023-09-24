@@ -1,4 +1,4 @@
-﻿using BattleBitAPI.Common;
+using BattleBitAPI.Common;
 using BBRAPIModules;
 using Commands;
 using System;
@@ -12,7 +12,8 @@ namespace BattleBitBaseModules;
 /// Author: @RainOrigami expanded by @_dx2
 /// Version: 1.1
 /// </summary>
-[Module("GameModeRotation", "1.1.0")]
+[RequireModule(typeof(CommandHandler))]
+[Module("This version of gamemode rotation allows you to set up a different set of gamemodes each match, forcing a diversity of gamemodes of the server.", "1.1")]
 public class GameModeRotation : BattleBitModule
 {
     public GameModeRotationConfiguration Configuration { get; set; }

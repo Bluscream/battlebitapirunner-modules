@@ -1,4 +1,4 @@
-﻿using BattleBitAPI.Common;
+using BattleBitAPI.Common;
 using BattleBitAPI.Server;
 using BBRAPIModules;
 using System.Threading.Tasks;
@@ -9,9 +9,10 @@ using System.Threading.Tasks;
 // Version: 1.2
 // Module for BattleBit Modular API
 //
-namespace mocfunky {
-    [Module("ReconOnly", "1.2.0")]
-    public class ReconOnly : BattleBitModule
+namespace ReconOnly
+{
+    [Module("This module forces players to become the Recon (Sniper) role.", "1.2")]
+public class ReconOnly : BattleBitModule
     {
         // Allow players to select Recon even without being in a squad.
         public override Task OnPlayerConnected(RunnerPlayer player)

@@ -1,4 +1,4 @@
-﻿using BattleBitAPI.Common;
+using BattleBitAPI.Common;
 using BBRAPIModules;
 using MongoDB.Driver;
 using MongoDB.Bson;
@@ -24,9 +24,10 @@ using System.Text.Json;
 /// 1.0.2 changes: Added channel to chat logs, Changed OnplayerReport "Reason" to "reason.ToString()", this will get the name of the reason rather than the number
 /// </summary>
 
-namespace Axiom {
-    [Module("MongoDBLogging", "1.1.4")]
-    public class MongoDBLogging : BattleBitModule
+namespace MongoDBLogging
+{
+    [Module("Provides the means for users to leverage MongoDB for Logging certain actions within their BattleBit Server. The module has out-of-the-box for ChatLogs, ConnectionLogs, PlayerReportLogs, ServerAPI logs", "1.1.4")]
+public class MongoDBLogging : BattleBitModule
     {
         public MongoDBLoggingConfiguration Configuration { get; set; }
         private IMongoCollection<BsonDocument> ServerAPILogs;
