@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 //
 // Author: mocfunky
 // Module: ReconOnly
-// Version: 1.2
 // Module for BattleBit Modular API
 //
 namespace ReconOnly

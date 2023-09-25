@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 //
 // Author mocfunky
-// Version 1.1
 // Snipers Only
 // Module for BattleBit Modular API
 //

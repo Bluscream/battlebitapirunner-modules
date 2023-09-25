@@ -1,4 +1,3 @@
-// Version 2.0.0.0.0.0.0.0.1
 using System;
 using System.Globalization;
 using System.Text.Json;
@@ -76,12 +75,12 @@ namespace Bluscream {
     }
     //[RequireModule(typeof(DevMinersBBModules.Telemetry))]
     [RequireModule(typeof(Permissions.PlayerPermissions))]
-    [Module("Bluscream's Library", "2.0.0.0.0.0.0.0.1")]
+    [Module("Bluscream's Library", "2.0.1")]
     public class BluscreamLib : BattleBitModule {
         public static ModuleInfo ModuleInfo = new() {
             Name = "Bluscream's Library",
             Description = "Generic library for common code used by multiple modules.",
-            Version = new Version(2,0,0,1),
+            Version = new Version(2,0,1),
             Author = "Bluscream",
             WebsiteUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/"),
             UpdateUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/raw/master/modules/BluscreamLib.cs"),

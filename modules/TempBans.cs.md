@@ -2,7 +2,7 @@
 
 | Description        | Version   |
 |:-------------------|:----------|
-| Basic temp banning | 1.0.0     |
+| Basic temp banning | 2.0.0     |
 
 ## Commands
 | Command      | Function Name   | Description                                              | Allowed Roles   | Parameters                                                                                                                  | Defaults                           |

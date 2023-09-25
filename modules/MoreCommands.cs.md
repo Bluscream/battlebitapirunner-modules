@@ -2,7 +2,7 @@
 
 | Description   | Version   |
 |:--------------|:----------|
-| More Commands | 2.0.0     |
+| More Commands | 2.0.0.1   |
 
 ## Commands
 | Command       | Function Name   | Description                             | Allowed Roles   | Parameters                                                                                                     | Defaults                                                    |
@@ -15,7 +15,6 @@
 | listmaps      | void            | Lists all maps                          |                 | ['RunnerPlayer commandSource']                                                                                 | {}                                                          |
 | listmodes     | void            | Lists all gamemodes                     |                 | ['RunnerPlayer commandSource']                                                                                 | {}                                                          |
 | listsizes     | void            | Lists all game sizes                    |                 | ['RunnerPlayer commandSource']                                                                                 | {}                                                          |
-| listmodules   | void            | Lists all loaded modules                |                 | ['RunnerPlayer commandSource']                                                                                 | {}                                                          |
 | start         | void            | Force starts the round                  |                 | ['RunnerPlayer commandSource']                                                                                 | {}                                                          |
 | end           | void            | Force ends the round                    |                 | ['RunnerPlayer commandSource']                                                                                 | {}                                                          |
 | exec          | void            | Executes a command on the server        |                 | ['RunnerPlayer commandSource', 'string command']                                                               | {}                                                          |
@@ -44,7 +43,6 @@
 | ListMaps                | ['RunnerPlayer commandSource']                                                                                 | {}                                                          |
 | ListGameMods            | ['RunnerPlayer commandSource']                                                                                 | {}                                                          |
 | ListGameSizes           | ['RunnerPlayer commandSource']                                                                                 | {}                                                          |
-| ListModules             | ['RunnerPlayer commandSource']                                                                                 | {}                                                          |
 | ForceStartRound         | ['RunnerPlayer commandSource']                                                                                 | {}                                                          |
 | ForceEndRound           | ['RunnerPlayer commandSource']                                                                                 | {}                                                          |
 | ExecServerCommand       | ['RunnerPlayer commandSource', 'string command']                                                               | {}                                                          |
@@ -61,7 +59,6 @@
 | listmaps                | ['']                                                                                                           | {'AllowedRoles': 'Extensions'}                              |
 | listmodes               | ['']                                                                                                           | {'AllowedRoles': 'Extensions'}                              |
 | listsizes               | ['']                                                                                                           | {'AllowedRoles': 'Extensions'}                              |
-| listmodules             | ['']                                                                                                           | {'AllowedRoles': 'Extensions'}                              |
 | start                   | ['']                                                                                                           | {'AllowedRoles': 'Extensions'}                              |
 | end                     | ['']                                                                                                           | {'AllowedRoles': 'Extensions'}                              |
 | exec                    | ['']                                                                                                           | {'AllowedRoles': 'Extensions'}                              |

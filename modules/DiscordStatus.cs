@@ -1,4 +1,3 @@
-// VERSION 1.2
 // MADE BY @SENTENNIAL
 using System;
 using System.Threading.Tasks;

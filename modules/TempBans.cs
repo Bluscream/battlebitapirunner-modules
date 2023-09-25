@@ -18,12 +18,12 @@ using Bans;
 namespace Bluscream {
     [RequireModule(typeof(BluscreamLib))]
     [RequireModule(typeof(Commands.CommandHandler))]
-    [Module("Basic temp banning", "1.0.0")]
+    [Module("Basic temp banning", "2.0.0")]
     public class TempBans : BattleBitModule {
         public static ModuleInfo ModuleInfo = new() {
             Name = "Temporary Bans",
             Description = "Rudimentary support for temporary bans stored in a json file",
-            Version = new Version(2, 0, 0),
+            Version = new Version(2,0,0),
             Author = "Bluscream",
             WebsiteUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/"),
             UpdateUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/raw/master/modules/TempBans.cs"),

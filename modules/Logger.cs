@@ -1,4 +1,3 @@
-// Version 2.0
 using System;
 using System.Linq;
 using System.Net;
@@ -30,7 +29,7 @@ namespace Bluscream {
         public static ModuleInfo ModuleInfo = new() {
             Name = "Logger",
             Description = "Extensive customizable logging for the BattleBit Modular API",
-            Version = new Version(2, 0),
+            Version = new Version(2,0,0),
             Author = "Bluscream",
             WebsiteUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/"),
             UpdateUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/raw/master/modules/Logger.cs"),
