@@ -949,10 +949,6 @@ public static class Extensions {
             return new FileInfo(final);
         }
 
-        public static void ShowInExplorer(this DirectoryInfo dir) {
-            Utils.StartProcess("explorer.exe", null, dir.FullName.Quote());
-        }
-
         public static string PrintablePath(this FileSystemInfo file) => file.FullName.Replace(@"\\", @"\");
 
         #endregion DirectoryInfo
