@@ -16,7 +16,7 @@ def parse_method(code:str):
     parameters = param[0]
     parameters = [param.strip() for param in parameters.split(',')]
     default_values = re.findall(r'(\w+)\s*=\s*(\w+)', code)
-    default_values = {param: value for param, value in default_values}
+    default_values = dict(default_values)
     return (method_name, parameters, default_values)
 
 def find_cs_files(path):
@@ -84,7 +84,7 @@ def main():
         print(cs_file)
         module, commands, methods = extract_attributes(cs_file)
         total+="\n"+write_to_md(cs_file, module, commands, methods)
-    with open(f'modules.md', 'w') as file:
+    with open('modules.md', 'w') as file:
         file.write(total)
 
 if __name__ == "__main__":
