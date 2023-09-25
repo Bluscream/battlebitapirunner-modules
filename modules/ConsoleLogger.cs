@@ -1,17 +1,18 @@
-using BattleBitAPI;
-using BattleBitAPI.Common;
-using BBRAPIModules;
 using System;
 using System.Threading.Tasks;
 
-namespace ConsoleLoggerBattleBitModules;
+using BattleBitAPI;
+using BattleBitAPI.Common;
+using BBRAPIModules;
 
-internal static class Extensions {
-    internal static string str(this RunnerPlayer player) => $"\"{player.Name}\"";
-    internal static string fullstr(this RunnerPlayer player) => $"{player.str()} ({player.SteamID})";
-}
+using static Bluscream.BluscreamLib;
+using static Bluscream.Extensions;
+using Bluscream;
 
-[Module("ConsoleLogger", "1.0.0")]
+namespace Bluscream;
+
+[RequireModule(typeof(BluscreamLib))]
+[Module("ConsoleLogger", "2.0.0")]
 public class ConsoleLogger : BattleBitModule {
 
     public override void OnModulesLoaded() {

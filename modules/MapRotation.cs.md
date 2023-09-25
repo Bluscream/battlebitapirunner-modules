@@ -7,10 +7,37 @@
 ## Commands
 | Command    | Function Name   | Description                                                                                | Allowed Roles   | Parameters                                        | Defaults   |
 |:-----------|:----------------|:-------------------------------------------------------------------------------------------|:----------------|:--------------------------------------------------|:-----------|
-| Maps       | Maps            | Shows the current map rotation                                                             |                 | ['RunnerPlayer commandSource']                    | {}         |
-| AddMap     | AddMap          | Adds a map in the current rotation                                                         | Admin           | ['RunnerPlayer commandSource', 'string map']      | {}         |
-| RemoveMap  | RemoveMap       | Removes a map from the current rotation                                                    | Admin           | ['RunnerPlayer commandSource', 'string map']      | {}         |
-| AddGMMaps  | AddGMMaps       | Adds every map that supports the selected gamemode at the current map size to the rotation | Admin           | ['RunnerPlayer commandSource', 'string gamemode'] | {}         |
-| MapCleanup | MapCleanup      | Removes a maps that don't support current gamemodes at current map size                    | Admin           | ['RunnerPlayer commandSource']                    | {}         |
-| M          | M               | Shows how many matches since the last time a map was played                                |                 | ['RunnerPlayer commandSource']                    | {}         |
-| CM         | CM              | Shows the Current Map name returned by Server.map                                          |                 | ['RunnerPlayer commandSource']                    | {}         |
+| Maps       | void            | Shows the current map rotation                                                             |                 | ['RunnerPlayer commandSource']                    | {}         |
+| AddMap     | void            | Adds a map in the current rotation                                                         | Admin           | ['RunnerPlayer commandSource', 'string map']      | {}         |
+| RemoveMap  | void            | Removes a map from the current rotation                                                    | Admin           | ['RunnerPlayer commandSource', 'string map']      | {}         |
+| AddGMMaps  | void            | Adds every map that supports the selected gamemode at the current map size to the rotation | Admin           | ['RunnerPlayer commandSource', 'string gamemode'] | {}         |
+| MapCleanup | void            | Removes a maps that don't support current gamemodes at current map size                    | Admin           | ['RunnerPlayer commandSource']                    | {}         |
+| M          | void            | Shows how many matches since the last time a map was played                                |                 | ['RunnerPlayer commandSource']                    | {}         |
+| CM         | void            | Shows the Current Map name returned by Server.map                                          |                 | ['RunnerPlayer commandSource']                    | {}         |
+
+## Public Methods
+| Function Name   | Parameters                                        | Defaults   |
+|:----------------|:--------------------------------------------------|:-----------|
+|                 |                                                   |            |
+|                 |                                                   |            |
+|                 |                                                   |            |
+|                 |                                                   |            |
+| async           | ['']                                              | {}         |
+| Task            | ['GameState oldState', 'GameState newState']      | {}         |
+| void            | ['']                                              | {}         |
+| Maps            | ['RunnerPlayer commandSource']                    | {}         |
+| AddMap          | ['RunnerPlayer commandSource', 'string map']      | {}         |
+| RemoveMap       | ['RunnerPlayer commandSource', 'string map']      | {}         |
+| AddGMMaps       | ['RunnerPlayer commandSource', 'string gamemode'] | {}         |
+| MapCleanup      | ['RunnerPlayer commandSource']                    | {}         |
+| M               | ['RunnerPlayer commandSource']                    | {}         |
+| CM              | ['RunnerPlayer commandSource']                    | {}         |
+|                 |                                                   |            |
+|                 |                                                   |            |
+|                 |                                                   |            |
+|                 |                                                   |            |
+|                 |                                                   |            |
+|                 |                                                   |            |
+|                 |                                                   |            |
+|                 |                                                   |            |
+|                 |                                                   |            |

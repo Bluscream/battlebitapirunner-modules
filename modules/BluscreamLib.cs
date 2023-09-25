@@ -74,7 +74,8 @@ namespace Bluscream {
         public ModuleInfo(string name, string description, string version, string author, string websiteUrl, string updateUrl, string supportUrl) :
             this(name, description, version.ToVersion(), author, websiteUrl.ToUri(), updateUrl.ToUri(), supportUrl.ToUri()) { }
     }
-    // [RequireModule(typeof(DevMinersBBModules.Telemetry))]
+    [RequireModule(typeof(DevMinersBBModules.Telemetry))]
+    [RequireModule(typeof(Permissions.PlayerPermissions))]
     [Module("Bluscream's Library", "2.0.0")]
     public class BluscreamLib : BattleBitModule {
         public static ModuleInfo ModuleInfo = new() {
@@ -86,6 +87,13 @@ namespace Bluscream {
             UpdateUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/raw/master/modules/BluscreamLib.cs"),
             SupportUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/issues/new?title=BluscreamLib")
         };
+//         [ModuleReference]
+// #if DEBUG
+//         public Permissions.PlayerPermissions? PlayerPermissions { get; set; } = null!;
+// #else
+//         public dynamic? PlayerPermissions { get; set; } = null!;
+// #endif
+
         public BluscreamLibConfiguration Configuration { get; set; } = null!;
 
         #region Methods

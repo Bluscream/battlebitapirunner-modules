@@ -23,7 +23,8 @@ using Permissions;
 
 namespace Bluscream {
     [RequireModule(typeof(BluscreamLib))]
-    [RequireModule(typeof(CommandHandler))]
+    [RequireModule(typeof(Permissions.PlayerPermissions))]
+    [RequireModule(typeof(Commands.CommandHandler))]
     [Module("Logger", "2.0.0")]
     public class Logger : BattleBitModule {
         public static ModuleInfo ModuleInfo = new() {
