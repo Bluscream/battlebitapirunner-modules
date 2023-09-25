@@ -18,7 +18,7 @@ using Bans;
 namespace Bluscream {
     [RequireModule(typeof(BluscreamLib))]
     [RequireModule(typeof(Commands.CommandHandler))]
-    [Module("Basic temp banning", "1.0.0")]
+    [Module("Basic temp banning", "2.0.0")]
     public class TempBans : BattleBitModule {
         public static ModuleInfo ModuleInfo = new() {
             Name = "Temporary Bans",

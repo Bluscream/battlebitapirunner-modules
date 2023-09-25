@@ -73,7 +73,7 @@
 |:----------|:----------------|:----------------------------------|:----------------|:------------------------------------------|:--------------|
 | help      | void            | Shows this help message           |                 | ['RunnerPlayer player', 'int page = 1']   | {'page': '1'} |
 | cmdhelp   | void            | Shows help for a specific command |                 | ['RunnerPlayer player', 'string command'] | {}            |
-| modules   | void            | Lists all loaded modules          | Admin           | ['RunnerPlayer commandSource']            | {}            |
+| modules   | void            | Lists all loaded modules          |                 | ['RunnerPlayer commandSource']            | {}            |
 
 ## Public Methods
 | Function Name      | Parameters                                                       | Defaults      |
@@ -113,33 +113,33 @@
 | Basic moderator tools | 1.0.0     |
 
 ## Commands
-| Command       | Function Name   | Description                                    | Allowed Roles   | Parameters                                                                                       | Defaults                              |
-|:--------------|:----------------|:-----------------------------------------------|:----------------|:-------------------------------------------------------------------------------------------------|:--------------------------------------|
-| Say           | void            | Prints a message to all players                | Moderator       | ['RunnerPlayer commandSource', 'string message']                                                 | {}                                    |
-| SayToPlayer   | void            | Prints a message to all players                | Moderator       | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string message']                          | {}                                    |
-| AnnounceShort | void            | Prints a short announce to all players         | Moderator       | ['RunnerPlayer commandSource', 'string message']                                                 | {}                                    |
-| AnnounceLong  | void            | Prints a long announce to all players          | Moderator       | ['RunnerPlayer commandSource', 'string message']                                                 | {}                                    |
-| Message       | void            | Messages a specific player                     | Moderator       | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string message', 'float? timeout = null'] | {'timeout': 'null'}                   |
-| Clear         | void            | Clears the chat                                | Moderator       | ['RunnerPlayer commandSource']                                                                   | {}                                    |
-| Kick          | void            | Kicks a player                                 | Moderator       | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? reason = null']                   | {'reason': 'null'}                    |
-| Ban           | void            | Bans a player                                  | Moderator       | ['RunnerPlayer commandSource', 'RunnerPlayer target']                                            | {}                                    |
-| Kill          | void            | Kills a player                                 | Moderator       | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? message = null']                  | {'message': 'null'}                   |
-| Gag           | void            | Gags a player                                  | Moderator       | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? message = null']                  | {'message': 'null'}                   |
-| Ungag         | void            | Ungags a player                                | Moderator       | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? message = null']                  | {'message': 'null'}                   |
-| Mute          | void            | Mutes a player                                 | Moderator       | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? message = null']                  | {'message': 'null'}                   |
-| Unmute        | void            | Unmutes a player                               | Moderator       | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? message = null']                  | {'message': 'null'}                   |
-| Silence       | void            | Mutes and gags a player                        | Moderator       | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? message = null']                  | {'message': 'null'}                   |
-| Unsilence     | void            | Unmutes and ungags a player                    | Moderator       | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? message = null']                  | {'message': 'null'}                   |
-| LockSpawn     | void            | Prevents a player or all players from spawning | Moderator       | ['RunnerPlayer commandSource', 'RunnerPlayer? target = null', 'string? message = null']          | {'target': 'null', 'message': 'null'} |
-| UnlockSpawn   | void            | Allows a player or all players to spawn        | Moderator       | ['RunnerPlayer commandSource', 'RunnerPlayer? target = null', 'string? message = null']          | {'target': 'null', 'message': 'null'} |
-| tp2me         | void            | Teleports a player to you                      | Moderator       | ['RunnerPlayer commandSource', 'RunnerPlayer target']                                            | {}                                    |
-| tpme2         | void            | Teleports you to a player                      | Moderator       | ['RunnerPlayer commandSource', 'RunnerPlayer target']                                            | {}                                    |
-| tp            | void            | Teleports a player to another player           | Moderator       | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'RunnerPlayer destination']                | {}                                    |
-| tp2pos        | void            | Teleports a player to a position               | Moderator       | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'int x', 'int y', 'int z']                 | {}                                    |
-| tpme2pos      | void            | Teleports you to a position                    | Moderator       | ['RunnerPlayer commandSource', 'int x', 'int y', 'int z']                                        | {}                                    |
-| freeze        | void            | Freezes a player                               | Moderator       | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? message = null']                  | {'message': 'null'}                   |
-| unfreeze      | void            | Unfreezes a player                             | Moderator       | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? message = null']                  | {'message': 'null'}                   |
-| Inspect       | void            | Inspects a player or stops inspection          | Moderator       | ['RunnerPlayer commandSource', 'RunnerPlayer? target = null']                                    | {'target': 'null'}                    |
+| Command       | Function Name   | Description                                    | Allowed Roles    | Parameters                                                                                       | Defaults                              |
+|:--------------|:----------------|:-----------------------------------------------|:-----------------|:-------------------------------------------------------------------------------------------------|:--------------------------------------|
+| Say           | void            | Prints a message to all players                | Admin, Moderator | ['RunnerPlayer commandSource', 'string message']                                                 | {}                                    |
+| SayToPlayer   | void            | Prints a message to all players                | Admin, Moderator | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string message']                          | {}                                    |
+| AnnounceShort | void            | Prints a short announce to all players         | Admin, Moderator | ['RunnerPlayer commandSource', 'string message']                                                 | {}                                    |
+| AnnounceLong  | void            | Prints a long announce to all players          | Admin, Moderator | ['RunnerPlayer commandSource', 'string message']                                                 | {}                                    |
+| Message       | void            | Messages a specific player                     | Admin, Moderator | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string message', 'float? timeout = null'] | {'timeout': 'null'}                   |
+| Clear         | void            | Clears the chat                                | Admin, Moderator | ['RunnerPlayer commandSource']                                                                   | {}                                    |
+| Kick          | void            | Kicks a player                                 | Admin, Moderator | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? reason = null']                   | {'reason': 'null'}                    |
+| Ban           | void            | Bans a player                                  | Admin, Moderator | ['RunnerPlayer commandSource', 'RunnerPlayer target']                                            | {}                                    |
+| Kill          | void            | Kills a player                                 | Admin, Moderator | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? message = null']                  | {'message': 'null'}                   |
+| Gag           | void            | Gags a player                                  | Admin, Moderator | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? message = null']                  | {'message': 'null'}                   |
+| Ungag         | void            | Ungags a player                                | Admin, Moderator | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? message = null']                  | {'message': 'null'}                   |
+| Mute          | void            | Mutes a player                                 | Admin, Moderator | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? message = null']                  | {'message': 'null'}                   |
+| Unmute        | void            | Unmutes a player                               | Admin, Moderator | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? message = null']                  | {'message': 'null'}                   |
+| Silence       | void            | Mutes and gags a player                        | Admin, Moderator | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? message = null']                  | {'message': 'null'}                   |
+| Unsilence     | void            | Unmutes and ungags a player                    | Admin, Moderator | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? message = null']                  | {'message': 'null'}                   |
+| LockSpawn     | void            | Prevents a player or all players from spawning | Admin, Moderator | ['RunnerPlayer commandSource', 'RunnerPlayer? target = null', 'string? message = null']          | {'target': 'null', 'message': 'null'} |
+| UnlockSpawn   | void            | Allows a player or all players to spawn        | Admin, Moderator | ['RunnerPlayer commandSource', 'RunnerPlayer? target = null', 'string? message = null']          | {'target': 'null', 'message': 'null'} |
+| tp2me         | void            | Teleports a player to you                      | Admin, Moderator | ['RunnerPlayer commandSource', 'RunnerPlayer target']                                            | {}                                    |
+| tpme2         | void            | Teleports you to a player                      | Admin, Moderator | ['RunnerPlayer commandSource', 'RunnerPlayer target']                                            | {}                                    |
+| tp            | void            | Teleports a player to another player           | Admin, Moderator | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'RunnerPlayer destination']                | {}                                    |
+| tp2pos        | void            | Teleports a player to a position               | Admin, Moderator | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'int x', 'int y', 'int z']                 | {}                                    |
+| tpme2pos      | void            | Teleports you to a position                    | Admin, Moderator | ['RunnerPlayer commandSource', 'int x', 'int y', 'int z']                                        | {}                                    |
+| freeze        | void            | Freezes a player                               | Admin, Moderator | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? message = null']                  | {'message': 'null'}                   |
+| unfreeze      | void            | Unfreezes a player                             | Admin, Moderator | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? message = null']                  | {'message': 'null'}                   |
+| Inspect       | void            | Inspects a player or stops inspection          | Admin, Moderator | ['RunnerPlayer commandSource', 'RunnerPlayer? target = null']                                    | {'target': 'null'}                    |
 
 ## Public Methods
 | Function Name          | Parameters                                                                                       | Defaults                              |
@@ -479,9 +479,9 @@
 | VoteBanDuration            | ['30']                                                                                                            | {}                             |
 # 1 Modules in BluscreamLib.cs
 
-| Description         | Version   |
-|:--------------------|:----------|
-| Bluscream's Library | 2.0.0     |
+| Description         | Version           |
+|:--------------------|:------------------|
+| Bluscream's Library | 2.0.0.0.0.0.0.0.1 |
 # 1 Modules in ConsoleLogger.cs
 
 | Description   | Version   |
@@ -663,7 +663,7 @@
 
 | Description   | Version   |
 |:--------------|:----------|
-| More Commands | 2.0.0     |
+| More Commands | 2.0.0.1   |
 
 ## Commands
 | Command       | Function Name   | Description                             | Allowed Roles   | Parameters                                                                                                     | Defaults                                                    |
@@ -676,7 +676,6 @@
 | listmaps      | void            | Lists all maps                          |                 | ['RunnerPlayer commandSource']                                                                                 | {}                                                          |
 | listmodes     | void            | Lists all gamemodes                     |                 | ['RunnerPlayer commandSource']                                                                                 | {}                                                          |
 | listsizes     | void            | Lists all game sizes                    |                 | ['RunnerPlayer commandSource']                                                                                 | {}                                                          |
-| listmodules   | void            | Lists all loaded modules                |                 | ['RunnerPlayer commandSource']                                                                                 | {}                                                          |
 | start         | void            | Force starts the round                  |                 | ['RunnerPlayer commandSource']                                                                                 | {}                                                          |
 | end           | void            | Force ends the round                    |                 | ['RunnerPlayer commandSource']                                                                                 | {}                                                          |
 | exec          | void            | Executes a command on the server        |                 | ['RunnerPlayer commandSource', 'string command']                                                               | {}                                                          |
@@ -705,7 +704,6 @@
 | ListMaps                | ['RunnerPlayer commandSource']                                                                                 | {}                                                          |
 | ListGameMods            | ['RunnerPlayer commandSource']                                                                                 | {}                                                          |
 | ListGameSizes           | ['RunnerPlayer commandSource']                                                                                 | {}                                                          |
-| ListModules             | ['RunnerPlayer commandSource']                                                                                 | {}                                                          |
 | ForceStartRound         | ['RunnerPlayer commandSource']                                                                                 | {}                                                          |
 | ForceEndRound           | ['RunnerPlayer commandSource']                                                                                 | {}                                                          |
 | ExecServerCommand       | ['RunnerPlayer commandSource', 'string command']                                                               | {}                                                          |
@@ -722,7 +720,6 @@
 | listmaps                | ['']                                                                                                           | {'AllowedRoles': 'Extensions'}                              |
 | listmodes               | ['']                                                                                                           | {'AllowedRoles': 'Extensions'}                              |
 | listsizes               | ['']                                                                                                           | {'AllowedRoles': 'Extensions'}                              |
-| listmodules             | ['']                                                                                                           | {'AllowedRoles': 'Extensions'}                              |
 | start                   | ['']                                                                                                           | {'AllowedRoles': 'Extensions'}                              |
 | end                     | ['']                                                                                                           | {'AllowedRoles': 'Extensions'}                              |
 | exec                    | ['']                                                                                                           | {'AllowedRoles': 'Extensions'}                              |
@@ -751,7 +748,7 @@
 
 | Description        | Version   |
 |:-------------------|:----------|
-| Basic temp banning | 1.0.0     |
+| Basic temp banning | 2.0.0     |
 
 ## Commands
 | Command      | Function Name   | Description                                              | Allowed Roles   | Parameters                                                                                                                  | Defaults                           |
