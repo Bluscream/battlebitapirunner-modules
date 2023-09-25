@@ -74,7 +74,7 @@ namespace Bluscream {
         public ModuleInfo(string name, string description, string version, string author, string websiteUrl, string updateUrl, string supportUrl) :
             this(name, description, version.ToVersion(), author, websiteUrl.ToUri(), updateUrl.ToUri(), supportUrl.ToUri()) { }
     }
-    // [RequireModule(typeof(DevMinersBBModules.Telemetry))]
+    [RequireModule(typeof(DevMinersBBModules.Telemetry))]
     [Module("Bluscream's Library", "2.0.0")]
     public class BluscreamLib : BattleBitModule {
         public static ModuleInfo ModuleInfo = new() {
