@@ -7,6 +7,7 @@ using System.Collections.Generic;
 
 using BattleBitAPI.Common;
 using BBRAPIModules;
+using System.Text;
 
 namespace Bluscream {
     [RequireModule(typeof(BluscreamLib))]
@@ -92,68 +93,56 @@ namespace Bluscream {
             var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}maprestart\""; var cmdConfig = MyCommandsConfiguration.maprestart;
             if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
             if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
-            SetMapTime(commandSource, this.Server.DayNight.ToString()); }
+            SetMapTime(commandSource, this.Server.DayNight.ToString());
+        }
 
-            [Commands.CommandCallback("allowvotetime", Description = "Changes the allowed map times for votes")]
-            public void SetMapVoteTime(RunnerPlayer commandSource, string dayNightAll) {
-            var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}allowvotetime\""; var cmdConfig = MyCommandsConfiguration.allowvotetime;
+        [Commands.CommandCallback("allowvotetime", Description = "Changes the allowed map times for votes")]
+        public void SetMapVoteTime(RunnerPlayer commandSource, string dayNightAll) {
+        var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}allowvotetime\""; var cmdConfig = MyCommandsConfiguration.allowvotetime;
+        if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
+        if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
+        var DayNight = dayNightAll.ParseDayNight();
+            var msg = $"Players can now vote for ";
+            switch (DayNight) {
+                case MapDayNight.Day:
+                    this.Server.ServerSettings.CanVoteDay = true;
+                    this.Server.ServerSettings.CanVoteNight = false;
+                    msg += "Day";
+                    break;
+                case MapDayNight.Night:
+                    this.Server.ServerSettings.CanVoteDay = false;
+                    this.Server.ServerSettings.CanVoteNight = true;
+                    msg += "Night";
+                    break;
+                default:
+                    this.Server.ServerSettings.CanVoteDay = true;
+                    this.Server.ServerSettings.CanVoteNight = true;
+                    msg += "All";
+                    break;
+            }
+            commandSource.Message(msg);
+        }
+
+        [Commands.CommandCallback("listmaps", Description = "Lists all maps")]
+        public void ListMaps(RunnerPlayer commandSource) {
+            var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}listmaps\""; var cmdConfig = MyCommandsConfiguration.listmaps;
             if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
             if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
-            var DayNight = dayNightAll.ParseDayNight();
-                var msg = $"Players can now vote for ";
-                switch (DayNight) {
-                    case MapDayNight.Day:
-                        this.Server.ServerSettings.CanVoteDay = true;
-                        this.Server.ServerSettings.CanVoteNight = false;
-                        msg += "Day";
-                        break;
-                    case MapDayNight.Night:
-                        this.Server.ServerSettings.CanVoteDay = false;
-                        this.Server.ServerSettings.CanVoteNight = true;
-                        msg += "Night";
-                        break;
-                    default:
-                        this.Server.ServerSettings.CanVoteDay = true;
-                        this.Server.ServerSettings.CanVoteNight = true;
-                        msg += "All";
-                        break;
-                }
-                commandSource.Message(msg);
-            }
-
-            [Commands.CommandCallback("listmaps", Description = "Lists all maps")]
-            public void ListMaps(RunnerPlayer commandSource) {
-                var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}listmaps\""; var cmdConfig = MyCommandsConfiguration.listmaps;
-                if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
-                if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
-                commandSource.Message("<b>Available Maps:</b>\n\n" + string.Join("\n", BluscreamLib.Maps.Select(m => $"{m.Name}: {m.DisplayName}")));
-            }
-            [Commands.CommandCallback("listmodes", Description = "Lists all gamemodes")]
-            public void ListGameMods(RunnerPlayer commandSource) {
-            var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}listmodes\""; var cmdConfig = MyCommandsConfiguration.listmodes;
-            if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
-            if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
-            commandSource.Message("<b>Available Game Modes:</b>\n\n" + string.Join("\n", BluscreamLib.GameModes.Select(m => $"{m.Name}: {m.DisplayName}")));
-            }
-            [Commands.CommandCallback("listsizes", Description = "Lists all game sizes")]
-            public void ListGameSizes(RunnerPlayer commandSource) {
-            var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}listsizes\""; var cmdConfig = MyCommandsConfiguration.listsizes;
-            if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
-            if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
-            commandSource.Message("<b>Available Sizes:</b>\n\n" + string.Join("\n", Enum.GetValues(typeof(MapSize))));
-            }
-        [Commands.CommandCallback("modules", Description = "Lists all loaded modules")]
-        public void ListModules(RunnerPlayer commandSource) {
-            var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}modules\""; var cmdConfig = MyCommandsConfiguration.modules;
-            if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
-            if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
-
-            var moduleType = Assembly.GetEntryAssembly().GetType("BattleBitAPIRunner.Module");
-            var moduleListField = moduleType.GetField("Modules", BindingFlags.Static | BindingFlags.Public);
-            if (moduleListField is null) return;
-
-            IReadOnlyList<Module> modules = (IReadOnlyList<Module>)moduleListField.GetValue(null);
-            commandSource.Message(string.Join(", ", modules.Select(m => m.Name)));
+            commandSource.Message("<b>Available Maps:</b>\n\n" + string.Join(", ", BluscreamLib.Maps.Select(m => m.DisplayName)));
+        }
+        [Commands.CommandCallback("listmodes", Description = "Lists all gamemodes")]
+        public void ListGameMods(RunnerPlayer commandSource) {
+        var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}listmodes\""; var cmdConfig = MyCommandsConfiguration.listmodes;
+        if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
+        if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
+        commandSource.Message("<b>Available Game Modes:</b>\n\n" + string.Join("\n", BluscreamLib.GameModes.Select(m => $"{m.Name}: {m.DisplayName}")));
+        }
+        [Commands.CommandCallback("listsizes", Description = "Lists all game sizes")]
+        public void ListGameSizes(RunnerPlayer commandSource) {
+        var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}listsizes\""; var cmdConfig = MyCommandsConfiguration.listsizes;
+        if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
+        if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
+        commandSource.Message("<b>Available Sizes:</b>\n\n" + string.Join("\n", Enum.GetValues(typeof(MapSize))));
         }
 
         [Commands.CommandCallback("start", Description = "Force starts the round")]
@@ -203,9 +192,25 @@ namespace Bluscream {
             if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
             this.Server.ExecuteCommand($"bot fire");
                 commandSource.Message($"Toggled bots firing");
-            }
+        }
 
-            [Commands.CommandCallback("pos", Description = "Current position (logs to file)")]
+        //[Commands.CommandCallback("tps", Description = "Information about server usage")]
+        //public void PosCommand(RunnerPlayer commandSource) {
+        //    var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}tps\""; var cmdConfig = MyCommandsConfiguration.tps;
+        //    if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
+        //    if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
+        //    var sb = new StringBuilder();
+        //    sb.AppendLine($"CPU: {cpu_ghz_used} / {cpu_ghz_total}");
+        //    sb.AppendLine($"Ram: {ram_used} / {ram_total}");
+        //    sb.AppendLine($"Upload: {bandwith_used_mbytes_per_second_upload}");
+        //    sb.AppendLine($"Download: {bandwith_used_mbytes_per_second_download}");
+        //    sb.AppendLine($"Ping (To Google): {ping_to_8_8_8_8}");
+        //    System.Net.IPAddress playerIp = commandSource.IP;
+        //    sb.AppendLine($"Ping (To You): {ping_to_playerIP}");
+        //    commandSource.Message(sb.ToString(), 5);
+        //}
+
+        [Commands.CommandCallback("pos", Description = "Current position (logs to file)")]
             public void PosCommand(RunnerPlayer commandSource) {
             var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}pos\""; var cmdConfig = MyCommandsConfiguration.pos;
             if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
@@ -223,7 +228,6 @@ namespace Bluscream {
             public CommandConfiguration listmaps { get; set; } = new CommandConfiguration() { AllowedRoles = Extensions.ToRoleStringList(MoreRoles.All) };
             public CommandConfiguration listmodes { get; set; } = new CommandConfiguration() { AllowedRoles = Extensions.ToRoleStringList(MoreRoles.All) };
             public CommandConfiguration listsizes { get; set; } = new CommandConfiguration() { AllowedRoles = Extensions.ToRoleStringList(MoreRoles.All) };
-            public CommandConfiguration modules { get; set; } = new CommandConfiguration() { AllowedRoles = Extensions.ToRoleStringList(MoreRoles.All) };
             public CommandConfiguration start { get; set; } = new CommandConfiguration() { AllowedRoles = Extensions.ToRoleStringList(MoreRoles.Staff) };
             public CommandConfiguration end { get; set; } = new CommandConfiguration() { AllowedRoles = Extensions.ToRoleStringList(MoreRoles.Staff) };
             public CommandConfiguration exec { get; set; } = new CommandConfiguration() { AllowedRoles = Extensions.ToRoleStringList(Roles.Admin) };

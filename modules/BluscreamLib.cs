@@ -576,50 +576,6 @@ public static partial class Utils {
             currentP.Kill();
         }
 
-        public static void RestartAsAdmin(string[] arguments) {
-            if (IsAdmin()) return;
-            ProcessStartInfo proc = new ProcessStartInfo();
-            proc.UseShellExecute = true;
-            proc.WorkingDirectory = Environment.CurrentDirectory;
-            proc.FileName = Assembly.GetEntryAssembly().CodeBase;
-            proc.Arguments += arguments.ToString();
-            proc.Verb = "runas";
-            try {
-                Process.Start(proc);
-                Exit();
-            } catch (Exception ex) {
-                Console.WriteLine($"Unable to restart as admin: {ex.Message}");
-                Exit();
-            }
-        }
-
-        internal static bool IsAdmin() {
-            bool isAdmin;
-            try {
-                WindowsIdentity user = WindowsIdentity.GetCurrent();
-                WindowsPrincipal principal = new WindowsPrincipal(user);
-                isAdmin = principal.IsInRole(WindowsBuiltInRole.Administrator);
-            } catch (UnauthorizedAccessException) {
-                isAdmin = false;
-            } catch (Exception) {
-                isAdmin = false;
-            }
-            return isAdmin;
-        }
-
-        public static Process StartProcess(FileInfo file, params string[] args) => StartProcess(file.FullName, file.DirectoryName, args);
-        public static Process StartProcess(string file, string workDir = null, params string[] args) {
-            ProcessStartInfo proc = new ProcessStartInfo();
-            proc.FileName = file;
-            proc.Arguments = string.Join(" ", args);
-            Console.WriteLine("Starting Process: {0} {1}", proc.FileName, proc.Arguments);
-            if (workDir != null) {
-                proc.WorkingDirectory = workDir;
-                Console.WriteLine("Working Directory: {0}", proc.WorkingDirectory);
-            }
-            return Process.Start(proc);
-        }
-
         public static IPEndPoint ParseIPEndPoint(string endPoint) {
             string[] ep = endPoint.Split(':');
             if (ep.Length < 2) return null;
@@ -1038,10 +994,6 @@ public static class Extensions {
 
         public static List<string> ReadAllLines(this FileInfo file) => File.ReadAllLines(file.FullName).ToList();
 
-        public static void ShowInExplorer(this FileInfo file) {
-            Utils.StartProcess("explorer.exe", null, "/select, " + file.FullName.Quote());
-        }
-
         #endregion FileInfo
         #region Object
         public static string ToJSON(this object obj, bool indented = true) {
@@ -1137,26 +1089,6 @@ public static class Extensions {
 
         public static NameValueCollection ParseQueryString(this Uri uri) {
             return HttpUtility.ParseQueryString(uri.Query);
-        }
-
-        public static void OpenIn(this Uri uri, string browser) {
-            var url = uri.ToString();
-            try {
-                Process.Start(browser, url);
-            } catch {
-                url = url.Replace("&", "^&");
-                Process.Start(new ProcessStartInfo("cmd", $"/c start \"{browser}\" {url}") { CreateNoWindow = true });
-            }
-        }
-
-        public static void OpenInDefault(this Uri uri) {
-            var url = uri.ToString();
-            try {
-                Process.Start(url);
-            } catch {
-                url = url.Replace("&", "^&");
-                Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = true });
-            }
         }
         public static FileInfo Download(this Uri url, DirectoryInfo destinationPath, string? fileName = null) {
             fileName = fileName ?? url.AbsolutePath.Split("/").Last();
