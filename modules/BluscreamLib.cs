@@ -40,6 +40,8 @@ namespace Bluscream {
     }
     public class MapInfo : BaseInfo {
         public (string Name, MapSize[] Sizes)[]? SupportedGamemodes { get; internal set; }
+        public Uri? PreviewImageUrl { get; internal set; }
+        public Uri? MinimapImageUrl { get; internal set; }
 
         public static MapInfo FromName(string name) => BluscreamLib.Maps.First(m => m.Name == name);
     }
@@ -73,7 +75,7 @@ namespace Bluscream {
         public ModuleInfo(string name, string description, string version, string author, string websiteUrl, string updateUrl, string supportUrl) :
             this(name, description, version.ToVersion(), author, websiteUrl.ToUri(), updateUrl.ToUri(), supportUrl.ToUri()) { }
     }
-    //[RequireModule(typeof(DevMinersBBModules.Telemetry))]
+    [RequireModule(typeof(DevMinersBBModules.ModuleUsageStats))]
     [RequireModule(typeof(Permissions.PlayerPermissions))]
     [Module("Bluscream's Library", "2.0.1")]
     public class BluscreamLib : BattleBitModule {
@@ -262,6 +264,8 @@ namespace Bluscream {
         public static IReadOnlyList<MapInfo> Maps = new MapInfo[] {
         new MapInfo() {
             Name = "Azagor",
+            Description = "A desert island with a small town.",
+            PreviewImageUrl = new Uri("https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/2/2c/AzagorBanner.png/revision/latest"),
             SupportedGamemodes = new[] {
                 ("TDM", new[] { MapSize._8v8, MapSize._16vs16, }),
                 ("RUSH", new[] { MapSize._16vs16, MapSize._32vs32, }),
@@ -273,7 +277,8 @@ namespace Bluscream {
         },
         new MapInfo() {
             Name = "Basra",
-            Description = "Has a shipwreck",
+            Description = "An archipelago with a grounded container ship in the map's center. The northern island is a military base, while the southern island has a tourist resort and public airport.",
+            PreviewImageUrl = new Uri("https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/8/86/Basra.png/revision/latest"),
             SupportedGamemodes = new[] {
                 ("TDM", new[] { MapSize._8v8, MapSize._16vs16, }),
                 ("CONQ", new[] { MapSize._64vs64, MapSize._127vs127, }),
@@ -283,6 +288,8 @@ namespace Bluscream {
         },
         new MapInfo() {
             Name = "Construction",
+            Description = "	A coastal, industrial construction site with a symmetrical layout.",
+            PreviewImageUrl = new Uri("https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/6/6b/Construction_.png/revision/latest"),
             SupportedGamemodes = new[] {
                 ("TDM", new[] { MapSize._8v8, MapSize._16vs16, }),
                 ("CONQ", new[] { MapSize._32vs32, }),
@@ -293,6 +300,8 @@ namespace Bluscream {
         },
         new MapInfo() {
             Name = "District",
+            Description = "A rain-shrouded map in a hilly region with factories and military fortifications.",
+            PreviewImageUrl = new Uri("https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/e/e5/DistrictBanner.png/revision/latest"),
             SupportedGamemodes = new[] {
                 ("RUSH", new[] { MapSize._16vs16, MapSize._32vs32, }),
                 ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
@@ -304,6 +313,8 @@ namespace Bluscream {
         new MapInfo() {
             Name = "Dustydew",
             DisplayName = "Dusty Dew",
+            Description = "An arid, mountainous region with scattered settlements.",
+            PreviewImageUrl = new Uri("https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/e/e0/DustyDewBanner.png/revision/latest"),
             SupportedGamemodes = new[] {
                 ("TDM", new[] { MapSize._8v8, MapSize._16vs16, }),
                 ("RUSH", new[] { MapSize._16vs16, MapSize._32vs32, }),
@@ -317,6 +328,8 @@ namespace Bluscream {
         },
         new MapInfo() {
             Name = "Eduardovo",
+            Description = "A forested rural map with farms and abandoned factories.",
+            PreviewImageUrl = new Uri("https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/7/7b/EduardovoBanner.png/revision/latest"),
             SupportedGamemodes = new[] {
                 ("TDM", new[] { MapSize._16vs16, }),
                 ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
@@ -328,7 +341,8 @@ namespace Bluscream {
         },
         new MapInfo() {
             Name = "Frugis",
-            Description = "Inspired by Paris, France",
+            Description = "Urban map featuring cozy, small streets and parks. Most buildings are three floors high and surrounded by curved streets. Inspired by Paris, France.",
+            PreviewImageUrl = new Uri("https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/3/3d/Frugis-test.png/revision/latest"),
             SupportedGamemodes = new[] {
                 ("TDM", new[] { MapSize._8v8, MapSize._16vs16, }),
                 ("RUSH", new[] { MapSize._16vs16, MapSize._32vs32, }),
@@ -343,6 +357,8 @@ namespace Bluscream {
         },
         new MapInfo() {
             Name = "Isle",
+            Description = "An island with an early-warning radar system used to detect nuclear missile launches. Flanked by opposing aircraft carriers, used by both factions as bases.",
+            PreviewImageUrl = new Uri("https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/9/98/ISLE_loading_screen_image.png/revision/latest"),
             SupportedGamemodes = new[] {
                 ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
                 ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
@@ -352,6 +368,8 @@ namespace Bluscream {
         },
         new MapInfo() {
             Name = "Lonovo",
+            Description = "A city with extensive railway yards under the cover of night.",
+            PreviewImageUrl = new Uri("https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/a/ae/LonovoBanner.png/revision/latest"),
             SupportedGamemodes = new[] {
                 ("TDM", new[] { MapSize._8v8, MapSize._16vs16, }),
                 ("RUSH", new[] { MapSize._32vs32, }),
@@ -367,6 +385,8 @@ namespace Bluscream {
         new MapInfo() {
             Name = "MultuIslands",
             DisplayName = "Multu Islands",
+            Description = "A small island chain with a fortified military base.",
+            PreviewImageUrl = new Uri("https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/3/3f/MultuIslandsBanner.png/revision/latest"),
             SupportedGamemodes = new[] {
                 ("RUSH", new[] { MapSize._8v8, MapSize._16vs16, MapSize._32vs32, }),
                 ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
@@ -376,6 +396,8 @@ namespace Bluscream {
         },
         new MapInfo() {
             Name = "Namak",
+            Description = "	A small yet dense urban map dominated by high-rise buildings overlooking the streets. Inspired by Tokyo, Japan.",
+            PreviewImageUrl = new Uri("https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/0/03/Namak_loading.png/revision/latest"),
             SupportedGamemodes = new[] {
                 ("RUSH", new[] { MapSize._16vs16, MapSize._32vs32, }),
                 ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, }),
@@ -385,6 +407,8 @@ namespace Bluscream {
         new MapInfo() {
             Name = "OilDunes",
             DisplayName = "Oil Dunes",
+            Description = "A sprawling oil extraction operation in flat, desert region.",
+            PreviewImageUrl = new Uri("https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/c/c2/OilDunes_loading_screen.png/revision/latest"),
             SupportedGamemodes = new[] {
                 ("CONQ", new[] { MapSize._32vs32, }),
                 ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, }),
@@ -393,6 +417,8 @@ namespace Bluscream {
         },
         new MapInfo() {
             Name = "River",
+            Description = "A container shipping port on a river.",
+            PreviewImageUrl = new Uri("https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/0/04/River-loadingscreen.png/revision/latest"),
             SupportedGamemodes = new[] {
                 ("TDM", new[] { MapSize._8v8, MapSize._16vs16, }),
                 ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
@@ -407,6 +433,8 @@ namespace Bluscream {
         },
         new MapInfo() {
             Name = "Salhan",
+            Description = "A desert valley containing an oil refinery and a small town.",
+            PreviewImageUrl = new Uri("https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/0/0d/SalhanBanner.png/revision/latest"),
             SupportedGamemodes = new[] {
                 ("TDM", new[] { MapSize._8v8, MapSize._16vs16, }),
                 ("RUSH", new[] { MapSize._8v8, MapSize._16vs16, MapSize._32vs32, }),
@@ -420,7 +448,8 @@ namespace Bluscream {
         new MapInfo() {
             Name = "SandySunset",
             DisplayName = "SandySunset",
-            Description = "Sniper's paradise",
+            Description = "Big desert hills and canyons encircle a crowded town concentrated around one major road.",
+            PreviewImageUrl = new Uri("https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/3/33/SandySunsetBanner.png/revision/latest"),
             SupportedGamemodes = new[] {
                 ("TDM", new[] { MapSize._8v8, MapSize._16vs16, }),
                 ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
@@ -433,6 +462,8 @@ namespace Bluscream {
         new MapInfo() {
             Name = "TensaTown",
             DisplayName  = "Tensa Town",
+            Description = "A dense map with narrow residential streets and many low-lying buildings.",
+            PreviewImageUrl = new Uri("https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/1/1d/TensaTown_Loadingscreen.png/revision/latest"),
             SupportedGamemodes = new[] {
                 ("TDM", new[] { MapSize._8v8, MapSize._16vs16, }),
                 ("RUSH", new[] { MapSize._16vs16, MapSize._32vs32, }),
@@ -446,6 +477,8 @@ namespace Bluscream {
         },
         new MapInfo() {
             Name = "Valley",
+            Description = "A nuclear power plant surrounded by wind turbines and prominent hills.",
+            PreviewImageUrl = new Uri("https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/b/b4/Valley_Loading_screen.png/revision/latest"),
             SupportedGamemodes = new[] {
                 ("TDM", new[] { MapSize._8v8, MapSize._16vs16, }),
                 ("RUSH", new[] { MapSize._16vs16, MapSize._32vs32, }),
@@ -457,7 +490,8 @@ namespace Bluscream {
         },
         new MapInfo() {
             Name = "Wakistan",
-            Description = "I don't know why anyone would want to play this map",
+            Description = "Wide valley with long bridges that connect two cliffs. Inspired by the mountain Tebulosmta in Georgia.",
+            PreviewImageUrl = new Uri("https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/b/b5/WakistanBanner.png/revision/latest"),
             SupportedGamemodes = new[] {
                 ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
                 ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
@@ -467,6 +501,8 @@ namespace Bluscream {
         new MapInfo() {
             Name = "WineParadise",
             DisplayName = "Wine Paradise",
+            Description = "A seaside village surrounded by rural countryside and vineyards.",
+            PreviewImageUrl = new Uri("https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/5/5e/WineParadiseBanner.png/revision/latest"),
             SupportedGamemodes = new[] {
                 ("TDM", new[] { MapSize._8v8, MapSize._16vs16, }),
                 ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
@@ -480,7 +516,7 @@ namespace Bluscream {
         new MapInfo() {
             Name = "Old_District",
             DisplayName = "Old District",
-            Description = "Old version of the map District",
+            Description = "Old version of the map District.",
             SupportedGamemodes = new[] {
                 ("TDM", new[] { MapSize._8v8, MapSize._16vs16, }),
                 ("RUSH", new[] { MapSize._16vs16, MapSize._32vs32, }),
@@ -493,7 +529,7 @@ namespace Bluscream {
         new MapInfo() {
             Name = "Old_Eduardovo",
             DisplayName = "Old Eduardovo",
-            Description = "Old version of the map Eduardovo",
+            Description = "Old version of the map Eduardovo.",
             SupportedGamemodes = new[] {
                 ("TDM", new[] { MapSize._8v8, MapSize._16vs16, MapSize._32vs32, }),
                 ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
@@ -503,7 +539,7 @@ namespace Bluscream {
         new MapInfo() {
             Name = "Old_MultuIslands",
             DisplayName = "Old Multu Islands",
-            Description = "Old version of the map Multu Islands",
+            Description = "Old version of the map Multu Islands.",
             SupportedGamemodes = new[] {
                 ("TDM", new[] { MapSize._8v8, MapSize._16vs16 }),
                 ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }) }
@@ -511,7 +547,7 @@ namespace Bluscream {
         new MapInfo() {
             Name = "Old_Namak",
             DisplayName = "Old Namak",
-            Description = "Old version of the map Namak",
+            Description = "Old version of the map Namak.",
             SupportedGamemodes = new[] {
                 ("TDM", new[] { MapSize._8v8, MapSize._16vs16 }),
                 ("CONQ", new[] { MapSize._16vs16, MapSize._32vs32, MapSize._64vs64, }),
