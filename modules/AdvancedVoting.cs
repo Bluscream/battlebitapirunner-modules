@@ -19,7 +19,7 @@ namespace Bluscream {
         public static ModuleInfo ModuleInfo = new() {
             Name = "Bluscream's Library",
             Description = "Generic library for common code used by multiple modules.",
-            Version = new Version(2, 0),
+            Version = new Version(2,0,0),
             Author = "Bluscream",
             WebsiteUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/"),
             UpdateUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/raw/master/modules/BluscreamLib.cs"),
