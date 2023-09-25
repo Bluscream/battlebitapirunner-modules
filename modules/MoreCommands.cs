@@ -17,7 +17,7 @@ namespace Bluscream {
     public class MoreCommands : BattleBitModule {
         public static ModuleInfo ModuleInfo = new() {
             Name = "More Commands",
-            Description = "GenMore commands for the Battlebit Modular API",
+            Description = "More commands for the Battlebit Modular API",
             Version = new Version(2, 0, 0, 1),
             Author = "Bluscream",
             WebsiteUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/"),
@@ -146,52 +146,52 @@ namespace Bluscream {
         }
 
         [Commands.CommandCallback("start", Description = "Force starts the round")]
-            public void ForceStartRound(RunnerPlayer commandSource) {
-            var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}start\""; var cmdConfig = MyCommandsConfiguration.start;
-            if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
-            if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
-            commandSource.Message("Forcing round to start...");
-                this.Server.ForceStartGame();
-            }
-            [Commands.CommandCallback("end", Description = "Force ends the round")]
-            public void ForceEndRound(RunnerPlayer commandSource) {
-            var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}end\""; var cmdConfig = MyCommandsConfiguration.end;
-            if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
-            if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
-            commandSource.Message("Forcing round to end...");
-                this.Server.ForceEndGame();
-            }
-            [Commands.CommandCallback("exec", Description = "Executes a command on the server")]
-            public void ExecServerCommand(RunnerPlayer commandSource, string command) {
-            var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}exec\""; var cmdConfig = MyCommandsConfiguration.exec;
-            if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
-            if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
-            this.Server.ExecuteCommand(command);
-                commandSource.Message($"Executed {command}");
-            }
-            [Commands.CommandCallback("bots", Description = "Spawns bots")]
-            public void SpawnBotCommand(RunnerPlayer commandSource, int amount = 1) {
-            var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}bots\""; var cmdConfig = MyCommandsConfiguration.bots;
-            if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
-            if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
-            this.Server.ExecuteCommand($"join bot {amount}");
-                commandSource.Message($"Spawned {amount} bots, use !nobots to remove them");
-            }
-            [Commands.CommandCallback("nobots", Description = "Kicks all bots")]
-            public void KickBotsCommand(RunnerPlayer commandSource, int amount = 999) {
-            var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}nobots\""; var cmdConfig = MyCommandsConfiguration.nobots;
-            if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
-            if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
-            this.Server.ExecuteCommand($"remove bot {amount}");
-                commandSource.Message($"Kicked {amount} bots");
-            }
-            [Commands.CommandCallback("fire", Description = "Toggles bots firing")]
-            public void BotsFireCommand(RunnerPlayer commandSource) {
-            var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}fire\""; var cmdConfig = MyCommandsConfiguration.fire;
-            if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
-            if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
-            this.Server.ExecuteCommand($"bot fire");
-                commandSource.Message($"Toggled bots firing");
+        public void ForceStartRound(RunnerPlayer commandSource) {
+        var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}start\""; var cmdConfig = MyCommandsConfiguration.start;
+        if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
+        if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
+        commandSource.Message("Forcing round to start...");
+            this.Server.ForceStartGame();
+        }
+        [Commands.CommandCallback("end", Description = "Force ends the round")]
+        public void ForceEndRound(RunnerPlayer commandSource) {
+        var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}end\""; var cmdConfig = MyCommandsConfiguration.end;
+        if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
+        if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
+        commandSource.Message("Forcing round to end...");
+            this.Server.ForceEndGame();
+        }
+        [Commands.CommandCallback("exec", Description = "Executes a command on the server")]
+        public void ExecServerCommand(RunnerPlayer commandSource, string command) {
+        var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}exec\""; var cmdConfig = MyCommandsConfiguration.exec;
+        if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
+        if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
+        this.Server.ExecuteCommand(command);
+            commandSource.Message($"Executed {command}");
+        }
+        [Commands.CommandCallback("bots", Description = "Spawns bots")]
+        public void SpawnBotCommand(RunnerPlayer commandSource, int amount = 1) {
+        var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}bots\""; var cmdConfig = MyCommandsConfiguration.bots;
+        if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
+        if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
+        this.Server.ExecuteCommand($"join bot {amount}");
+            commandSource.Message($"Spawned {amount} bots, use !nobots to remove them");
+        }
+        [Commands.CommandCallback("nobots", Description = "Kicks all bots")]
+        public void KickBotsCommand(RunnerPlayer commandSource, int amount = 999) {
+        var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}nobots\""; var cmdConfig = MyCommandsConfiguration.nobots;
+        if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
+        if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
+        this.Server.ExecuteCommand($"remove bot {amount}");
+            commandSource.Message($"Kicked {amount} bots");
+        }
+        [Commands.CommandCallback("fire", Description = "Toggles bots firing")]
+        public void BotsFireCommand(RunnerPlayer commandSource) {
+        var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}fire\""; var cmdConfig = MyCommandsConfiguration.fire;
+        if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
+        if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
+        this.Server.ExecuteCommand($"bot fire");
+            commandSource.Message($"Toggled bots firing");
         }
 
         //[Commands.CommandCallback("tps", Description = "Information about server usage")]
