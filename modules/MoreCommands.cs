@@ -11,6 +11,7 @@ using BBRAPIModules;
 namespace Bluscream {
     [RequireModule(typeof(BluscreamLib))]
     [RequireModule(typeof(Commands.CommandHandler))]
+    [RequireModule(typeof(Permissions.PlayerPermissions))]
     [Module("More Commands", "2.0.0")]
     public class MoreCommands : BattleBitModule {
         public static ModuleInfo ModuleInfo = new() {
