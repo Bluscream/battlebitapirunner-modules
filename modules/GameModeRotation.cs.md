@@ -7,4 +7,19 @@
 ## Commands
 | Command   | Function Name   | Description                         | Allowed Roles   | Parameters                     | Defaults   |
 |:----------|:----------------|:------------------------------------|:----------------|:-------------------------------|:-----------|
-| GameModes | GameModes       | Shows the current gamemode rotation |                 | ['RunnerPlayer commandSource'] | {}         |
+| GameModes | void            | Shows the current gamemode rotation |                 | ['RunnerPlayer commandSource'] | {}         |
+
+## Public Methods
+| Function Name   | Parameters                                   | Defaults   |
+|:----------------|:---------------------------------------------|:-----------|
+|                 |                                              |            |
+|                 |                                              |            |
+|                 |                                              |            |
+| void            | ['']                                         | {}         |
+| Task            | ['']                                         | {}         |
+| Task            | ['GameState oldState', 'GameState newState'] | {}         |
+|                 |                                              |            |
+| GameModes       | ['RunnerPlayer commandSource']               | {}         |
+| string          | ['string Gamemode']                          | {}         |
+|                 |                                              |            |
+|                 |                                              |            |

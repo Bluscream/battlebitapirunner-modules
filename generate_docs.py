@@ -6,9 +6,14 @@ regex_module_attr = re.compile(r'\[Module\("(.*?)", "(.*?)"\)\]')
 regex_cmd_attr = re.compile(r'CommandCallback\("(.*?)"(, Description = "(.*?)")?(, AllowedRoles = (.*?))?\)\]')
 
 def parse_method(code:str):
-    access_modifier = re.search(r'(\w+)\s+void', code).group(1)
-    method_name = re.search(r'void\s+(\w+)', code).group(1)
-    parameters = re.findall(r'\((.*?)\)', code)[0]
+    # access = re.search(r'(\w+)\s+void', code)
+    # access_modifier = re.search(r'(\w+)\s+void', code).group(1)
+    method = re.search(r'\s+\w+\s+(\w+)', code)
+    if not method: return ""
+    method_name = method.group(1)
+    param = re.findall(r'\((.*?)\)', code)
+    if not param: return ""
+    parameters = param[0]
     parameters = [param.strip() for param in parameters.split(',')]
     default_values = re.findall(r'(\w+)\s*=\s*(\w+)', code)
     default_values = dict(default_values)
@@ -25,15 +30,18 @@ def extract_attributes(file_path):
         content = file.read()
         modules = regex_module_attr.findall(content)
         commands = []
+        methods = []
         lines = content.split('\n')
         for i, line in enumerate(lines):
             line = line.strip()
             if line.startswith("[CommandCallback(") or line.startswith("[Commands.CommandCallback("):
                 cmd_attr = regex_cmd_attr.findall(line)
                 commands.append((cmd_attr, parse_method(lines[i+1])))
-        return modules, commands
+            elif line.startswith("public"):
+                methods.append(parse_method(line))
+        return modules, commands, methods
 
-def write_to_md(file_path, modules, commands):
+def write_to_md(file_path, modules, commands, methods):
     file_str = ""
     with open(f'{file_path}.md', 'w') as file:
         file_str+=f'# {len(modules)} Modules in {os.path.basename(file_path)}\n\n'
@@ -59,6 +67,9 @@ def write_to_md(file_path, modules, commands):
                 rows.append(row)
             headers = ["Command", "Function Name", "Description", "Allowed Roles", "Parameters", "Defaults"]
             file_str+=tabulate(rows, headers=headers, tablefmt="pipe")
+            file_str+='\n\n## Public Methods\n'
+            headers = ["Function Name", "Parameters", "Defaults"]
+            file_str+=tabulate(methods, headers=headers, tablefmt="pipe")
             file.write(file_str)    
     return file_str
 
@@ -71,8 +82,8 @@ def main():
             print(f"{cs_file} does not exist")
             continue
         print(cs_file)
-        module, commands = extract_attributes(cs_file)
-        total+="\n"+write_to_md(cs_file, module, commands)
+        module, commands, methods = extract_attributes(cs_file)
+        total+="\n"+write_to_md(cs_file, module, commands, methods)
     with open('modules.md', 'w') as file:
         file.write(total)
 

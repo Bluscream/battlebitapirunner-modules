@@ -141,9 +141,9 @@ namespace Bluscream {
             if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
             commandSource.Message("<b>Available Sizes:</b>\n\n" + string.Join("\n", Enum.GetValues(typeof(MapSize))));
             }
-        [Commands.CommandCallback("listmodules", Description = "Lists all loaded modules")]
+        [Commands.CommandCallback("modules", Description = "Lists all loaded modules")]
         public void ListModules(RunnerPlayer commandSource) {
-            var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}listmodules\""; var cmdConfig = MyCommandsConfiguration.listmodules;
+            var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}modules\""; var cmdConfig = MyCommandsConfiguration.modules;
             if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
             if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
 
@@ -222,7 +222,7 @@ namespace Bluscream {
             public CommandConfiguration listmaps { get; set; } = new CommandConfiguration() { AllowedRoles = Extensions.ToRoleStringList(MoreRoles.All) };
             public CommandConfiguration listmodes { get; set; } = new CommandConfiguration() { AllowedRoles = Extensions.ToRoleStringList(MoreRoles.All) };
             public CommandConfiguration listsizes { get; set; } = new CommandConfiguration() { AllowedRoles = Extensions.ToRoleStringList(MoreRoles.All) };
-            public CommandConfiguration listmodules { get; set; } = new CommandConfiguration() { AllowedRoles = Extensions.ToRoleStringList(MoreRoles.All) };
+            public CommandConfiguration modules { get; set; } = new CommandConfiguration() { AllowedRoles = Extensions.ToRoleStringList(MoreRoles.All) };
             public CommandConfiguration start { get; set; } = new CommandConfiguration() { AllowedRoles = Extensions.ToRoleStringList(MoreRoles.Staff) };
             public CommandConfiguration end { get; set; } = new CommandConfiguration() { AllowedRoles = Extensions.ToRoleStringList(MoreRoles.Staff) };
             public CommandConfiguration exec { get; set; } = new CommandConfiguration() { AllowedRoles = Extensions.ToRoleStringList(Roles.Admin) };
