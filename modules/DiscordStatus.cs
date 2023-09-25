@@ -1,4 +1,4 @@
-﻿// VERSION 1.2
+// VERSION 1.2
 // MADE BY @SENTENNIAL
 using System;
 using System.Threading.Tasks;
@@ -8,6 +8,7 @@ using Discord.WebSocket;
 
 namespace DiscordStatus;
 
+[Module("Connects each server to a Discord Bot, and updates the Discord Bot's status with the server's player-count and map information.", "1.2")]
 public class DiscordStatus : BattleBitModule
 {
     public DiscordConfiguration Configuration { get; set; }

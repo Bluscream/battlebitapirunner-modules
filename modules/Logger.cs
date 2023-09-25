@@ -13,11 +13,12 @@ using System.Net.Http;
 using BattleBitAPI.Common;
 using BBRAPIModules;
 using Commands;
-using JsonExtensions;
+using IpApi;
+using static Bluscream.BluscreamLib;
+using static Bluscream.Extensions;
+using Bluscream;
 #if DEBUG
 using Permissions;
-using Bluscream;
-using static Bluscream.BluscreamLib;
 #endif
 
 namespace Bluscream {
@@ -25,30 +26,37 @@ namespace Bluscream {
     [RequireModule(typeof(CommandHandler))]
     [Module("Logger", "2.0.0")]
     public class Logger : BattleBitModule {
-        public static class ModuleInfo {
-            public const string Name = "Logger";
-            public const string Description = "Extensive customizable logging for the BattleBit Modular API";
-            public static readonly Version Version = new Version(2, 0, 0);
-            public const string UpdateUrl = "https://github.com/Bluscream/battlebitapirunner-modules/raw/master/modules/Logger.cs";
-            public const string Author = "Bluscream";
-        }
+        public static ModuleInfo ModuleInfo = new() {
+            Name = "Logger",
+            Description = "Extensive customizable logging for the BattleBit Modular API",
+            Version = new Version(2, 0),
+            Author = "Bluscream",
+            WebsiteUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/"),
+            UpdateUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/raw/master/modules/Logger.cs"),
+            SupportUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/issues/new?title=Logger")
+        };
 
         [ModuleReference]
         public CommandHandler CommandHandler { get; set; } = null!;
         [ModuleReference]
 #if DEBUG
-        public PlayerPermissions? PlayerPermissions { get; set; } = null!;
+        public Permissions.PlayerPermissions? PlayerPermissions { get; set; }
 #else
-        public dynamic? PlayerPermissions { get; set; } = null!;
+        public dynamic? PlayerPermissions { get; set; }
 #endif
+        public LoggerCommandsConfiguration CommandsConfiguration { get; set; }
 
         public ChatLoggerConfiguration Configuration { get; set; } = null!;
         internal HttpClient httpClient = new HttpClient();
         internal Random random = Random.Shared;
-
+        #region Api
         internal async Task<IpApi.Response> GetGeoData(IPAddress ip) {
             var url = $"http://ip-api.com/json/{ip}";
-            var httpResponse = await this.httpClient.GetAsync(url);
+            HttpResponseMessage httpResponse;
+            try { httpResponse = await this.httpClient.GetAsync(url); } catch (Exception ex) {
+                // BluscreamLib.Log($"Failed to get geo data: {ex.Message}");
+                return null;
+            }
             var json = await httpResponse.Content.ReadAsStringAsync();
             var response = IpApi.Response.FromJson(json);
             return response;
@@ -73,9 +81,13 @@ namespace Bluscream {
             if (player.EconomyBan != "none") banCount++;
             return banCount;
         }
-
-        [CommandCallback("playerbans", Description = "Lists bans of a player", AllowedRoles = MoreRoles.Staff)]
+        #endregion
+        #region Commands
+        [CommandCallback("playerbans", Description = "Lists bans of a player")]
         public async void GetPlayerBans(RunnerPlayer commandSource, RunnerPlayer _player) {
+            var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}playerbans\""; var cmdConfig = CommandsConfiguration.playerbans;
+            if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
+            if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
             var response = new StringBuilder();
             if (!string.IsNullOrEmpty(_player.Name)) response.AppendLine($"Name: {_player.str()} ({_player.Name.Length} chars)");
             if (!string.IsNullOrEmpty(_player.SteamID.ToString())) {
@@ -85,17 +97,20 @@ namespace Bluscream {
                     return;
                 }
                 var player = bans.Players.First();
-                response.AppendLine($"VAC Banned: {player.VacBanned.ToYesNoString()} ({player.NumberOfVacBans} times)");
+                response.AppendLine($"VAC Banned: {player.VacBanned.ToYesNo()} ({player.NumberOfVacBans} times)");
                 if (player.VacBanned) response.AppendLine($"Last VAC Ban: {player.DaysSinceLastBan} days ago");
-                response.AppendLine($"Community Banned: {player.CommunityBanned.ToYesNoString()}");
-                response.AppendLine($"Trade Banned: {(player.EconomyBan != "none").ToYesNoString()}");
-                response.AppendLine($"Game Banned: {(player.NumberOfGameBans > 0).ToYesNoString()} ({player.NumberOfGameBans} times)");
+                response.AppendLine($"Community Banned: {player.CommunityBanned.ToYesNo()}");
+                response.AppendLine($"Trade Banned: {(player.EconomyBan != "none").ToYesNo()}");
+                response.AppendLine($"Game Banned: {(player.NumberOfGameBans > 0).ToYesNo()} ({player.NumberOfGameBans} times)");
             }
             commandSource.Message(response.ToString());
         }
 
-        [CommandCallback("playerinfo", Description = "Displays info about a player", AllowedRoles = Roles.Admin)]
+        [CommandCallback("playerinfo", Description = "Displays info about a player")]
         public async void GetPlayerInfo(RunnerPlayer commandSource, RunnerPlayer player) {
+            var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}playerinfo\""; var cmdConfig = CommandsConfiguration.playerinfo;
+            if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
+            if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
             var geoResponse = await GetGeoData(player.IP);
             var response = new StringBuilder();
             if (!string.IsNullOrEmpty(player.Name)) response.AppendLine($"Name: {player.str()} ({player.Name.Length} chars)");
@@ -104,14 +119,17 @@ namespace Bluscream {
                 response.AppendLine($"SteamId64: {player.SteamID} ({banCount} bans)");
             }
             if (!string.IsNullOrEmpty(player.IP.ToString())) response.AppendLine($"IP: {player.IP}");
-            if (!string.IsNullOrEmpty(geoResponse.Isp)) response.AppendLine($"ISP: {geoResponse.Isp}");
-            if (!string.IsNullOrEmpty(geoResponse.Country)) response.AppendLine($"Country: {geoResponse.Country}");
-            if (!string.IsNullOrEmpty(geoResponse.RegionName)) response.AppendLine($"Region: {geoResponse.RegionName}");
-            if (!string.IsNullOrEmpty(geoResponse.City)) response.AppendLine($"City: {geoResponse.City} ({geoResponse.Zip})");
-            if (!string.IsNullOrEmpty(geoResponse.Timezone)) response.AppendLine($"Time: {TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.UtcNow, geoResponse.Timezone).ToString("HH:mm")} ({geoResponse.Timezone})");
+            if (geoResponse is not null) {
+                if (!string.IsNullOrEmpty(geoResponse.Isp)) response.AppendLine($"ISP: {geoResponse.Isp}");
+                if (!string.IsNullOrEmpty(geoResponse.Country)) response.AppendLine($"Country: {geoResponse.Country}");
+                if (!string.IsNullOrEmpty(geoResponse.RegionName)) response.AppendLine($"Region: {geoResponse.RegionName}");
+                if (!string.IsNullOrEmpty(geoResponse.City)) response.AppendLine($"City: {geoResponse.City} ({geoResponse.Zip})");
+                if (!string.IsNullOrEmpty(geoResponse.Timezone)) response.AppendLine($"Time: {TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.UtcNow, geoResponse.Timezone).ToString("HH:mm")} ({geoResponse.Timezone})");
+            }
             commandSource.Message(response.ToString());
         }
-
+        #endregion
+        #region Methods
         internal void LogToConsole(string msg) {
             if (string.IsNullOrWhiteSpace(msg)) return;
             Console.WriteLine(msg);
@@ -125,7 +143,11 @@ namespace Bluscream {
                 };
                 var payloadJson = JsonSerializer.Serialize(payload);
                 var content = new StringContent(payloadJson, Encoding.UTF8, "application/json");
-                var response = await this.httpClient.PostAsync(webhookUrl, content);
+                HttpResponseMessage response;
+                try { response = await this.httpClient.PostAsync(webhookUrl, content); } catch (Exception ex) {
+                    // BluscreamLib.Log($"Failed to POST webhook: {ex.Message}");
+                    return;
+                }
                 if (!response.IsSuccessStatusCode) {
                     Console.WriteLine($"Error sending webhook message. Status Code: {response.StatusCode}");
                     await Task.Delay(TimeSpan.FromSeconds(1));
@@ -186,9 +208,11 @@ namespace Bluscream {
             if (input.Contains("{to.fullstr()}")) input = input.Replace("{to.fullstr()}", target.fullstr());
             if (input.Contains("{player.IP}")) input = input.Replace("{player.IP}", player.IP.ToString());
             if (input.Contains("{to.IP}")) input = input.Replace("{to.IP}", target.IP.ToString());
-            if (input.Contains("{geoResponse.Country}")) input = input.Replace("{geoResponse.Country}", geoResponse.Country);
-            if (input.Contains("{geoResponse.CountryCode}")) input = input.Replace("{geoResponse.CountryCode}", geoResponse.CountryCode.ToLowerInvariant());
-            if (input.Contains("{geoResponse.ToJson()}")) input = input.Replace("{geoResponse.ToJson()}", IpApi.Serialize.ToJson(geoResponse));
+            if (geoResponse is not null) {
+                if (input.Contains("{geoResponse.Country}")) input = input.Replace("{geoResponse.Country}", geoResponse.Country);
+                if (input.Contains("{geoResponse.CountryCode}")) input = input.Replace("{geoResponse.CountryCode}", geoResponse.CountryCode.ToLowerInvariant());
+                if (input.Contains("{geoResponse.ToJson()}")) input = input.Replace("{geoResponse.ToJson()}", IpApi.Serialize.ToJson(geoResponse));
+            }
             if (input.Contains("{reason}")) input = input.Replace("{reason}", reportReason.ToString());
             if (input.Contains("{msg}")) input = input.Replace("{msg}", msg);
             if (input.Contains("{chatChannel}")) input = input.Replace("{chatChannel}", chatChannel.ToString());
@@ -206,10 +230,7 @@ namespace Bluscream {
                 var msg = FormatString(config.Discord.Message, player, target, geoResponse, reportReason, chatChannel, _msg);
                 await SendToWebhook(config.Discord.WebhookUrl, msg);
             }
-            try { var _ = this.Server.IsConnected; } catch (Exception ex) {
-                Console.WriteLine($"Got exception {ex.Message} while trying this.Server.IsConnected");
-                return;
-            }
+            try { var _ = this.Server.IsConnected; } catch (Exception ex) { return; }
             if (this.Server is null || !this.Server.IsConnected) return;
             if (config.Chat is not null && config.Chat.Enabled && !string.IsNullOrWhiteSpace(config.Chat.Message)) {
                 var msg = FormatString(config.Chat.Message, player, target, geoResponse, reportReason, chatChannel, _msg);
@@ -244,7 +265,8 @@ namespace Bluscream {
                 Announce(msg, config.Announce.Duration);
             }
         }
-
+        #endregion
+        #region Events
         public override void OnModulesLoaded() {
             this.CommandHandler.Register(this);
             HandleEvent(Configuration.OnApiModulesLoaded);
@@ -277,8 +299,9 @@ namespace Bluscream {
             HandleEvent(Configuration.OnApiDisconnected);
             return Task.CompletedTask;
         }
+        #endregion
     }
-
+    #region Enums
     public enum Duration {
         None,
         Short,
@@ -286,7 +309,12 @@ namespace Bluscream {
         Long,
         Infinite
     }
-
+    #endregion
+    #region Config
+    public class LoggerCommandsConfiguration : ModuleConfiguration {
+        public CommandConfiguration playerbans { get; set; } = new CommandConfiguration() { AllowedRoles = Extensions.ToRoleStringList(MoreRoles.Staff) };
+        public CommandConfiguration playerinfo { get; set; } = new CommandConfiguration() { AllowedRoles = Extensions.ToRoleStringList(Roles.Admin) };
+    }
     public class LogConfigurationEntrySettings {
         public bool Enabled { get; set; } = false;
         public string Message { get; set; } = string.Empty;
@@ -354,8 +382,9 @@ namespace Bluscream {
             Discord = new DiscordWebhookLogConfigurationEntrySettings() { Enabled = false, Message = "[{now}] {to.Name} was reported for {reason} :warning:" },
         };
     }
+    #endregion
 }
-
+#region Json
 namespace IpApi {
     public partial class Response {
         [JsonPropertyName("status")]
@@ -403,11 +432,11 @@ namespace IpApi {
     }
 
     public partial class Response {
-        public static Response FromJson(string json) => JsonSerializer.Deserialize<Response>(json, JsonExtensions.Converter.Settings);
+        public static Response FromJson(string json) => JsonSerializer.Deserialize<Response>(json, Converter.Settings);
     }
 
     public static class Serialize {
-        public static string ToJson(this Response self) => JsonSerializer.Serialize(self, JsonExtensions.Converter.Settings);
+        public static string ToJson(this Response self) => JsonSerializer.Serialize(self, Converter.Settings);
     }
 }
 
@@ -441,10 +470,11 @@ namespace SteamWebApi {
     }
 
     public partial class BanResponse {
-        public static BanResponse FromJson(string json) => JsonSerializer.Deserialize<BanResponse>(json, JsonExtensions.Converter.Settings);
+        public static BanResponse FromJson(string json) => JsonSerializer.Deserialize<BanResponse>(json, Converter.Settings);
     }
 
     public static class Serialize {
-        public static string ToJson(this BanResponse self) => JsonSerializer.Serialize(self, JsonExtensions.Converter.Settings);
+        public static string ToJson(this BanResponse self) => JsonSerializer.Serialize(self, Converter.Settings);
     }
 }
+#endregion

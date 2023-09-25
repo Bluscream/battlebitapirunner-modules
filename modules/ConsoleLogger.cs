@@ -2,11 +2,6 @@ using BattleBitAPI;
 using BattleBitAPI.Common;
 using BBRAPIModules;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace ConsoleLoggerBattleBitModules;
@@ -16,6 +11,7 @@ internal static class Extensions {
     internal static string fullstr(this RunnerPlayer player) => $"{player.str()} ({player.SteamID})";
 }
 
+[Module("ConsoleLogger", "1.0.0")]
 public class ConsoleLogger : BattleBitModule {
 
     public override void OnModulesLoaded() {

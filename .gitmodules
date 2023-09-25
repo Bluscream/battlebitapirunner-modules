@@ -13,3 +13,7 @@
 	path = bb-modules
 	url = https://github.com/TheDevMinerTV/bb-modules
 	branch = main
+[submodule "battlebit-rcon"]
+	path = battlebit-rcon
+	url = https://gitlab.com/BattleMetrics/battlebit-rcon
+	branch = master

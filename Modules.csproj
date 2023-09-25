@@ -15,14 +15,23 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="battlebit-rcon\**" />
+    <Compile Remove="BattleBitExamples\**" />
+    <Compile Remove="BattleBitZombies\**" />
     <Compile Remove="configurations\**" />
     <Compile Remove="configurations_\**" />
     <Compile Remove="dependencies\**" />
     <Compile Remove="modules_\**" />
+    <EmbeddedResource Remove="battlebit-rcon\**" />
+    <EmbeddedResource Remove="BattleBitExamples\**" />
+    <EmbeddedResource Remove="BattleBitZombies\**" />
     <EmbeddedResource Remove="configurations\**" />
     <EmbeddedResource Remove="configurations_\**" />
     <EmbeddedResource Remove="dependencies\**" />
     <EmbeddedResource Remove="modules_\**" />
+    <None Remove="battlebit-rcon\**" />
+    <None Remove="BattleBitExamples\**" />
+    <None Remove="BattleBitZombies\**" />
     <None Remove="configurations\**" />
     <None Remove="configurations_\**" />
     <None Remove="dependencies\**" />
@@ -41,16 +50,20 @@
     <None Include="BattleBitBaseModules\.vs\ProjectEvaluation\battlebitbasemodules.projects.v7.bin" />
     <None Include="BattleBitBaseModules\BattleBitBaseModules.csproj" />
     <None Include="BattleBitBaseModules\BattleBitBaseModules.sln" />
+    <None Include="bb-modules\telemetry.sln" />
+    <None Include="bb-modules\telemetry\telemetry.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Discord.Net" Version="3.12.0" />
+    <PackageReference Include="Humanizer" Version="2.14.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="SmartFormat.NET" Version="3.2.2" />
+    <PackageReference Include="TimeSpanParserUtil" Version="1.2.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BattleBitAPIRunner-beta\BBRAPIModules\BBRAPIModules.csproj" />
+    <ProjectReference Include="..\BattleBitAPIRunner-beta\BBRAPIModules\BBRAPIModules-beta.csproj" />
     <ProjectReference Include="BattleBitBaseModules\BattleBitBaseModules.csproj" />
   </ItemGroup>
 

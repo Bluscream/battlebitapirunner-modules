@@ -1,4 +1,4 @@
-﻿using BattleBitAPI.Common;
+using BattleBitAPI.Common;
 using BBRAPIModules;
 using Commands;
 using System;
@@ -9,9 +9,11 @@ namespace BattleBitBaseModules;
 
 /// <summary>
 /// Author: @RainOrigami modified by @_dx2
-/// Version: 1.4
+/// Version: 1.4.2
 /// </summary>
 [RequireModule(typeof(GameModeRotation))]
+[RequireModule(typeof(CommandHandler))]
+[Module("Adds a small tweak to the map rotation so that maps that were just played take more time to appear again, this works by counting how many matches happened since the maps were last played and before getting to the voting screen, the n least played ones are picked to appear on the voting screen . It also adds a command so that any player can know what maps are in the rotation.", "1.4.2")]
 public class MapRotation : BattleBitModule
 {
     [ModuleReference]
@@ -23,7 +25,6 @@ public class MapRotation : BattleBitModule
     public override async Task OnConnected()
     {
         await Task.Delay(100);
-        Configuration.Load();
         for (int i = Configuration.Maps.Length - 1; i >= 0; i--)
         {
             var map = FindMap(Configuration.Maps[i]);
@@ -37,13 +38,7 @@ public class MapRotation : BattleBitModule
             }
         }
 
-        var currentRotation = GameModeRotation.ActiveGamemodes.ConvertAll(name => name.ToLower());        
-        var currentRotationString = "";
-        foreach (var mode in currentRotation)
-        {
-            currentRotationString += mode + ", ";
-        }
-        Console.WriteLine("Current gamemodes are :" + currentRotationString);
+        var currentRotation = GameModeRotation.ActiveGamemodes.ConvertAll(name => name.ToLower());
 
         var currentMapNames = Configuration.Maps.ToList();
         var currentMaps = MapInfo.maps.ToList().FindAll(map => currentMapNames.Contains(map.Name));
@@ -62,7 +57,7 @@ public class MapRotation : BattleBitModule
 
                 outputString += map + ", ";
             }
-            Console.WriteLine(@$"The following maps do not support the current gamemode rotation at the current mapsize: 
+            Console.WriteLine(@$"{Server.ServerName}[WARNING]MapRotation: The following maps do not support the current gamemode rotation at the current mapsize: 
 {outputString}, please, change the gamemodes or run the command !MapCleanup ingame to remove them");
         }
 
@@ -86,13 +81,14 @@ public class MapRotation : BattleBitModule
             var currentMapIndex = Array.IndexOf(Configuration.Maps, Server.Map);
             if (currentMapIndex == -1)
             {
-                Console.WriteLine($"Current map({Server.Map}) not found in MapRotation ConfigList while reseting the counter(Did you type the name correctly?)");
+                Console.WriteLine($"{Server.ServerName} MapRotation: Current map({Server.Map}) not found in MapRotation ConfigList while reseting the counter(Did you type the name correctly?)");
             }
             else
             {
+                Console.WriteLine($"{Server.ServerName} MapRotation: Starting new match in {Server.Map}");
                 Configuration.MatchesSinceSelection[currentMapIndex] = 0;
             }
-            var currentGamemodes = Array.ConvertAll(Server.GamemodeRotation.GetGamemodeRotation().ToArray(),gm => GameModeRotation.FindGameMode(gm) ?? "") ?? Array.Empty<string>();
+            var currentGamemodes = Array.ConvertAll(Server.GamemodeRotation.GetGamemodeRotation().ToArray(), gm => GameModeRotation.FindGameMode(gm) ?? "") ?? Array.Empty<string>();
 
             var sortedMaps = Configuration.Maps.Zip(Configuration.MatchesSinceSelection)
                 .OrderByDescending(map => map.Second).ToList();
@@ -263,18 +259,19 @@ public class MapRotation : BattleBitModule
         var matchingNames = Array.FindAll(MapInfo.maps, m => m.Name.ToLower().StartsWith(mapName.ToLower()));
         if (!matchingNames.Any())
         {
-            Console.WriteLine($"{mapName} does not exist, removing from list.");
+            Console.WriteLine($"MapRotation: {mapName} does not exist, removing from list.");
             return null;
         }
         if (matchingNames.Length > 1)
         {
-            Console.WriteLine($"Multiple maps starts with {mapName}, removing from list.");
+            Console.WriteLine($"MapRotation: Multiple maps starts with {mapName}, removing from list.");
             return null;
         }
         return matchingNames[0];
     }
     private void ReinicializeCounters()
     {
+        Console.WriteLine($"{Server.ServerName} MapRotation: reinicializing maps counter");
         Configuration.MatchesSinceSelection = new int[Configuration.Maps.Length];
         Random r = new();
         for (int i = 0; i < Configuration.Maps.Length; i++)
@@ -324,7 +321,7 @@ public class MapRotation : BattleBitModule
             ("ELI", new [] {MapSize._16vs16,}),
             ("FRONTLINE", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
             }),
-        new MapInfo("Barsa", new[]{
+        new MapInfo("Basra", new[]{
             ("TDM", new [] {MapSize._8v8,MapSize._16vs16,}),
             ("CONQ", new [] {MapSize._64vs64,MapSize._127vs127,}),
             ("INFCONQ", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
@@ -516,6 +513,13 @@ public class MapRotation : BattleBitModule
             ("CONQ", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
             ("ELI", new [] {MapSize._16vs16,MapSize._32vs32,}),
         }),
+        new MapInfo("ZalfiBay", new[]{
+            ("CONQ", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
+            ("INFCONQ", new [] {MapSize._32vs32, MapSize._64vs64,MapSize._127vs127,}),
+            ("DOMI", new [] { MapSize._16vs16, MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
+            ("FRONTLINE", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
+            ("CTF", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
+        }),
     };
     }
 }
@@ -549,6 +553,7 @@ public class MapRotationConfiguration : ModuleConfiguration
         "Old_District",
         "Old_OilDunes",
         "Old_Eduardovo",
-        "Old_MultuIslands"
+        "Old_MultuIslands",
+        "ZalfiBay"
     };
 }

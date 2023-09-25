@@ -1,4 +1,4 @@
-﻿using BattleBitAPI.Common;
+using BattleBitAPI.Common;
 using BBRAPIModules;
 using MongoDB.Driver;
 using MongoDB.Bson;
@@ -26,7 +26,8 @@ using System.Text.Json;
 
 namespace MongoDBLogging
 {
-    public class MongoDBLogging : BattleBitModule
+    [Module("Provides the means for users to leverage MongoDB for Logging certain actions within their BattleBit Server. The module has out-of-the-box for ChatLogs, ConnectionLogs, PlayerReportLogs, ServerAPI logs", "1.1.4")]
+public class MongoDBLogging : BattleBitModule
     {
         public MongoDBLoggingConfiguration Configuration { get; set; }
         private IMongoCollection<BsonDocument> ServerAPILogs;
