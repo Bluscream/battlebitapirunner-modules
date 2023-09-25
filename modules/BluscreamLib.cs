@@ -539,7 +539,7 @@ namespace Bluscream {
     }
     public class CommandConfiguration {
         public bool Enabled { get; set; } = true;
-        public string? AllowedRoles { get; set; } = "All";
+        public List<string>? AllowedRoles { get; set; } = new() { "All" };
     }
     public class BluscreamLibConfiguration : ModuleConfiguration {
         public string TimeStampFormat { get; set; } = "HH:mm:ss";
@@ -658,6 +658,58 @@ public static class Extensions {
             }
             return string.Join(",", roleStrings);
         }
+        public static List<string> ToRoleStringList(Roles roles) {
+            var roleStrings = new List<string>();
+            if (roles == Roles.None) {
+                return roleStrings;
+            }
+            if (roles.HasFlag(Roles.Admin) && roles.HasFlag(Roles.Moderator) && roles.HasFlag(Roles.Special) && roles.HasFlag(Roles.Vip)) {
+                roleStrings.Add("All");
+                return roleStrings;
+            }
+            if (roles.HasFlag(Roles.Admin)) {
+                roleStrings.Add(nameof(Roles.Admin));
+            }
+            if (roles.HasFlag(Roles.Moderator)) {
+                roleStrings.Add(nameof(Roles.Moderator));
+            }
+            if (roles.HasFlag(Roles.Special)) {
+                roleStrings.Add(nameof(Roles.Special));
+            }
+            if (roles.HasFlag(Roles.Vip)) {
+                roleStrings.Add(nameof(Roles.Vip));
+            }
+            return roleStrings;
+        }
+        public static Roles ParseRoles(this string rolesString) {
+            if (string.IsNullOrEmpty(rolesString) || rolesString.Equals("All", StringComparison.OrdinalIgnoreCase)) {
+                return MoreRoles.All;
+            }
+            Roles result = Roles.None;
+            var separators = new[] { ',', '|' };
+            var roleStrings = rolesString.Split(separators, StringSplitOptions.RemoveEmptyEntries);
+            foreach (var roleString in roleStrings) {
+                if (Enum.TryParse<Roles>(roleString, true, out var role)) {
+                    result |= role;
+                }
+            }
+            return result;
+        }
+        public static Roles ParseRoles(List<string>? rolesList) {
+            if (rolesList is null || rolesList.Count == 0 || rolesList.Any(role => role.Equals("All", StringComparison.OrdinalIgnoreCase))) {
+                return MoreRoles.All;
+            }
+
+            Roles result = Roles.None;
+
+            foreach (var roleString in rolesList) {
+                if (Enum.TryParse<Roles>(roleString, true, out var role)) {
+                    result |= role;
+                }
+            }
+
+            return result;
+        }
 
         #endregion
         #region Server
@@ -671,7 +723,7 @@ public static class Extensions {
         public static string str(this RunnerPlayer player) => $"\"{player.Name}\"";
         public static string fullstr(this RunnerPlayer player) => $"{player.str()} ({player.SteamID})";
         public static Roles GetRoles(this RunnerPlayer player, Permissions.PlayerPermissions permissionsModule) => permissionsModule.GetPlayerRoles(player.SteamID);
-        public static bool HasAnyRoleOf(this RunnerPlayer player, Permissions.PlayerPermissions permissionsModule, Roles needsAnyRole) => (player.GetRoles(permissionsModule) & needsAnyRole) == 0;
+        public static bool HasAnyRoleOf(this RunnerPlayer player, Permissions.PlayerPermissions permissionsModule, Roles needsAnyRole) => (player.GetRoles(permissionsModule) & needsAnyRole) != 0;
         #endregion
         #region Map
         public static void ChangeTime(this RunnerServer Server, MapDayNight dayNight = MapDayNight.None) => ChangeMap(Server, dayNight: dayNight);
@@ -744,20 +796,6 @@ public static class Extensions {
             System.Data.DataRow row = table.NewRow();
             table.Rows.Add(row);
             return int.Parse((string)row["expression"]);
-        }
-        public static Roles ParseRoles(this string rolesString) {
-            if (string.IsNullOrEmpty(rolesString) || rolesString.Equals("All", StringComparison.OrdinalIgnoreCase)) {
-                return Roles.None | Roles.Admin | Roles.Moderator | Roles.Special | Roles.Vip;
-            }
-            Roles result = Roles.None;
-            var separators = new[] { ',', '|' };
-            var roleStrings = rolesString.Split(separators, StringSplitOptions.RemoveEmptyEntries);
-            foreach (var roleString in roleStrings) {
-                if (Enum.TryParse<Roles>(roleString, true, out var role)) {
-                    result |= role;
-                }
-            }
-            return result;
         }
 
         public static MapInfo? ToMap(this string mapName) => BluscreamLib.Maps.Where(m => m.Name.ToLowerInvariant() == mapName.ToLowerInvariant()).First();
