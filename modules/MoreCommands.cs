@@ -7,6 +7,7 @@ using System.Collections.Generic;
 
 using BattleBitAPI.Common;
 using BBRAPIModules;
+using System.Text;
 
 namespace Bluscream {
     [RequireModule(typeof(BluscreamLib))]
@@ -127,7 +128,7 @@ namespace Bluscream {
             var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}listmaps\""; var cmdConfig = MyCommandsConfiguration.listmaps;
             if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
             if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
-            commandSource.Message("<b>Available Maps:</b>\n\n" + string.Join("\n", BluscreamLib.Maps.Select(m => $"{m.Name}: {m.DisplayName}")));
+            commandSource.Message("<b>Available Maps:</b>\n\n" + string.Join(", ", BluscreamLib.Maps.Select(m => m.DisplayName)));
         }
         [Commands.CommandCallback("listmodes", Description = "Lists all gamemodes")]
         public void ListGameMods(RunnerPlayer commandSource) {
@@ -191,9 +192,25 @@ namespace Bluscream {
             if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
             this.Server.ExecuteCommand($"bot fire");
                 commandSource.Message($"Toggled bots firing");
-            }
+        }
 
-            [Commands.CommandCallback("pos", Description = "Current position (logs to file)")]
+        //[Commands.CommandCallback("tps", Description = "Information about server usage")]
+        //public void PosCommand(RunnerPlayer commandSource) {
+        //    var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}tps\""; var cmdConfig = MyCommandsConfiguration.tps;
+        //    if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
+        //    if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
+        //    var sb = new StringBuilder();
+        //    sb.AppendLine($"CPU: {cpu_ghz_used} / {cpu_ghz_total}");
+        //    sb.AppendLine($"Ram: {ram_used} / {ram_total}");
+        //    sb.AppendLine($"Upload: {bandwith_used_mbytes_per_second_upload}");
+        //    sb.AppendLine($"Download: {bandwith_used_mbytes_per_second_download}");
+        //    sb.AppendLine($"Ping (To Google): {ping_to_8_8_8_8}");
+        //    System.Net.IPAddress playerIp = commandSource.IP;
+        //    sb.AppendLine($"Ping (To You): {ping_to_playerIP}");
+        //    commandSource.Message(sb.ToString(), 5);
+        //}
+
+        [Commands.CommandCallback("pos", Description = "Current position (logs to file)")]
             public void PosCommand(RunnerPlayer commandSource) {
             var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}pos\""; var cmdConfig = MyCommandsConfiguration.pos;
             if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
