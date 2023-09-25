@@ -1,4 +1,4 @@
-// Version 2.0
+// Version 2.0.0.0.0.0.0.0.1
 using System;
 using System.Globalization;
 using System.Text.Json;
@@ -74,14 +74,14 @@ namespace Bluscream {
         public ModuleInfo(string name, string description, string version, string author, string websiteUrl, string updateUrl, string supportUrl) :
             this(name, description, version.ToVersion(), author, websiteUrl.ToUri(), updateUrl.ToUri(), supportUrl.ToUri()) { }
     }
-    [RequireModule(typeof(DevMinersBBModules.Telemetry))]
+    //[RequireModule(typeof(DevMinersBBModules.Telemetry))]
     [RequireModule(typeof(Permissions.PlayerPermissions))]
-    [Module("Bluscream's Library", "2.0.0")]
+    [Module("Bluscream's Library", "2.0.0.0.0.0.0.0.1")]
     public class BluscreamLib : BattleBitModule {
         public static ModuleInfo ModuleInfo = new() {
             Name = "Bluscream's Library",
             Description = "Generic library for common code used by multiple modules.",
-            Version = new Version(2, 0),
+            Version = new Version(2,0,0,1),
             Author = "Bluscream",
             WebsiteUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/"),
             UpdateUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/raw/master/modules/BluscreamLib.cs"),
@@ -947,10 +947,6 @@ public static class Extensions {
                 final = Path.Combine(final, path);
             }
             return new FileInfo(final);
-        }
-
-        public static void ShowInExplorer(this DirectoryInfo dir) {
-            Utils.StartProcess("explorer.exe", null, dir.FullName.Quote());
         }
 
         public static string PrintablePath(this FileSystemInfo file) => file.FullName.Replace(@"\\", @"\");

@@ -1,4 +1,4 @@
-// Version 2.0
+// Version 2.0.0.1
 using System;
 using System.IO;
 using System.Linq;
@@ -13,12 +13,12 @@ namespace Bluscream {
     [RequireModule(typeof(BluscreamLib))]
     [RequireModule(typeof(Commands.CommandHandler))]
     [RequireModule(typeof(Permissions.PlayerPermissions))]
-    [Module("More Commands", "2.0.0")]
+    [Module("More Commands", "2.0.0.1")]
     public class MoreCommands : BattleBitModule {
         public static ModuleInfo ModuleInfo = new() {
             Name = "More Commands",
             Description = "GenMore commands for the Battlebit Modular API",
-            Version = new Version(2, 0, 0),
+            Version = new Version(2, 0, 0, 1),
             Author = "Bluscream",
             WebsiteUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/"),
             UpdateUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/raw/master/modules/MoreCommands.cs"),
