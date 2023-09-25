@@ -1,4 +1,3 @@
-// Version 2.0.0.1
 using System;
 using System.IO;
 using System.Linq;

@@ -10,7 +10,6 @@ namespace BattleBitBaseModules;
 
 /// <summary>
 /// Author: @RainOrigami expanded by @_dx2
-/// Version: 1.1
 /// </summary>
 [RequireModule(typeof(CommandHandler))]
 [Module("This version of gamemode rotation allows you to set up a different set of gamemodes each match, forcing a diversity of gamemodes of the server.", "1.1")]

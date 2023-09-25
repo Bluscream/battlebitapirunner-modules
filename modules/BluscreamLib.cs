@@ -1,4 +1,3 @@
-// Version 2.0.0.0.0.0.0.0.1
 using System;
 using System.Globalization;
 using System.Text.Json;
@@ -76,7 +75,7 @@ namespace Bluscream {
     }
     //[RequireModule(typeof(DevMinersBBModules.Telemetry))]
     [RequireModule(typeof(Permissions.PlayerPermissions))]
-    [Module("Bluscream's Library", "2.0.0.0.0.0.0.0.1")]
+    [Module("Bluscream's Library", "2.0.0.1")]
     public class BluscreamLib : BattleBitModule {
         public static ModuleInfo ModuleInfo = new() {
             Name = "Bluscream's Library",

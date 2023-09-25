@@ -479,9 +479,9 @@
 | VoteBanDuration            | ['30']                                                                                                            | {}                             |
 # 1 Modules in BluscreamLib.cs
 
-| Description         | Version           |
-|:--------------------|:------------------|
-| Bluscream's Library | 2.0.0.0.0.0.0.0.1 |
+| Description         | Version   |
+|:--------------------|:----------|
+| Bluscream's Library | 2.0.0.1   |
 # 1 Modules in ConsoleLogger.cs
 
 | Description   | Version   |

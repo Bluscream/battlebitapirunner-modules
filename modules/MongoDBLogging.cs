@@ -11,7 +11,6 @@ using System.Text.Json;
 
 /// <summary>
 /// Author: @Axiom
-/// Version: 1.1.4
 /// Dependencies: MongoDB.Driver.Core, MongoDB.Driver, MongoDB.Bson, MongoDB.Libmongocrypt, DnsClient
 /// 1.1.4 Changes: 
 ///- {"server_ip", this.Server.GameIP.ToString()} & {"server", this.Server.ServerName} removed from all queries as you are storing at server level anyway. Use following to drop from your tables (if you want to)

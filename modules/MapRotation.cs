@@ -9,7 +9,6 @@ namespace BattleBitBaseModules;
 
 /// <summary>
 /// Author: @RainOrigami modified by @_dx2
-/// Version: 1.4.2
 /// </summary>
 [RequireModule(typeof(GameModeRotation))]
 [RequireModule(typeof(CommandHandler))]
