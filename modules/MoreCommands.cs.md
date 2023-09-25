@@ -1,0 +1,25 @@
+# 1 Modules in MoreCommands.cs
+
+| Description   | Version   |
+|:--------------|:----------|
+| More Commands | 2.0.0     |
+
+## Commands
+| Command       | Function Name     | Description                             | Allowed Roles   | Parameters                                                                                                     | Defaults                                                    |
+|:--------------|:------------------|:----------------------------------------|:----------------|:---------------------------------------------------------------------------------------------------------------|:------------------------------------------------------------|
+| map           | SetMap            | Changes the map                         |                 | ['RunnerPlayer commandSource', 'string? mapName = null', 'string? gameMode = null', 'string? dayNight = null'] | {'mapName': 'null', 'gameMode': 'null', 'dayNight': 'null'} |
+| gamemode      | SetGameMode       | Changes the gamemode                    |                 | ['RunnerPlayer commandSource', 'string gameMode', 'string? dayNight = null']                                   | {'dayNight': 'null'}                                        |
+| time          | SetMapTime        | Changes the map time                    |                 | ['RunnerPlayer commandSource', 'string dayNight']                                                              | {}                                                          |
+| maprestart    | RestartMap        | Restarts the current map                |                 | ['RunnerPlayer commandSource']                                                                                 | {}                                                          |
+| allowvotetime | SetMapVoteTime    | Changes the allowed map times for votes |                 | ['RunnerPlayer commandSource', 'string dayNightAll']                                                           | {}                                                          |
+| listmaps      | ListMaps          | Lists all maps                          |                 | ['RunnerPlayer commandSource']                                                                                 | {}                                                          |
+| listmodes     | ListGameMods      | Lists all gamemodes                     |                 | ['RunnerPlayer commandSource']                                                                                 | {}                                                          |
+| listsizes     | ListGameSizes     | Lists all game sizes                    |                 | ['RunnerPlayer commandSource']                                                                                 | {}                                                          |
+| listmodules   | ListModules       | Lists all loaded modules                |                 | ['RunnerPlayer commandSource']                                                                                 | {}                                                          |
+| start         | ForceStartRound   | Force starts the round                  |                 | ['RunnerPlayer commandSource']                                                                                 | {}                                                          |
+| end           | ForceEndRound     | Force ends the round                    |                 | ['RunnerPlayer commandSource']                                                                                 | {}                                                          |
+| exec          | ExecServerCommand | Executes a command on the server        |                 | ['RunnerPlayer commandSource', 'string command']                                                               | {}                                                          |
+| bots          | SpawnBotCommand   | Spawns bots                             |                 | ['RunnerPlayer commandSource', 'int amount = 1']                                                               | {'amount': '1'}                                             |
+| nobots        | KickBotsCommand   | Kicks all bots                          |                 | ['RunnerPlayer commandSource', 'int amount = 999']                                                             | {'amount': '999'}                                           |
+| fire          | BotsFireCommand   | Toggles bots firing                     |                 | ['RunnerPlayer commandSource']                                                                                 | {}                                                          |
+| pos           | PosCommand        | Current position (logs to file)         |                 | ['RunnerPlayer commandSource']                                                                                 | {}                                                          |
