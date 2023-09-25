@@ -40,10 +40,11 @@ namespace Bluscream {
         public CommandHandler CommandHandler { get; set; } = null!;
         [ModuleReference]
 #if DEBUG
-        public PlayerPermissions? PlayerPermissions { get; set; } = null!;
+        public Permissions.PlayerPermissions? PlayerPermissions { get; set; }
 #else
-        public dynamic? PlayerPermissions { get; set; } = null!;
+        public dynamic? PlayerPermissions { get; set; }
 #endif
+        public LoggerCommandsConfiguration CommandsConfiguration { get; set; }
 
         public ChatLoggerConfiguration Configuration { get; set; } = null!;
         internal HttpClient httpClient = new HttpClient();
@@ -82,8 +83,11 @@ namespace Bluscream {
         }
         #endregion
         #region Commands
-        [CommandCallback("playerbans", Description = "Lists bans of a player", AllowedRoles = MoreRoles.Staff)]
+        [CommandCallback("playerbans", Description = "Lists bans of a player")]
         public async void GetPlayerBans(RunnerPlayer commandSource, RunnerPlayer _player) {
+            var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}playerbans\""; var cmdConfig = CommandsConfiguration.playerbans;
+            if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
+            if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
             var response = new StringBuilder();
             if (!string.IsNullOrEmpty(_player.Name)) response.AppendLine($"Name: {_player.str()} ({_player.Name.Length} chars)");
             if (!string.IsNullOrEmpty(_player.SteamID.ToString())) {
@@ -102,8 +106,11 @@ namespace Bluscream {
             commandSource.Message(response.ToString());
         }
 
-        [CommandCallback("playerinfo", Description = "Displays info about a player", AllowedRoles = Roles.Admin)]
+        [CommandCallback("playerinfo", Description = "Displays info about a player")]
         public async void GetPlayerInfo(RunnerPlayer commandSource, RunnerPlayer player) {
+            var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}playerinfo\""; var cmdConfig = CommandsConfiguration.playerinfo;
+            if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
+            if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
             var geoResponse = await GetGeoData(player.IP);
             var response = new StringBuilder();
             if (!string.IsNullOrEmpty(player.Name)) response.AppendLine($"Name: {player.str()} ({player.Name.Length} chars)");
@@ -304,6 +311,10 @@ namespace Bluscream {
     }
     #endregion
     #region Config
+    public class LoggerCommandsConfiguration : ModuleConfiguration {
+        public CommandConfiguration playerbans { get; set; } = new CommandConfiguration() { AllowedRoles = Extensions.ToRoleStringList(MoreRoles.Staff) };
+        public CommandConfiguration playerinfo { get; set; } = new CommandConfiguration() { AllowedRoles = Extensions.ToRoleStringList(Roles.Admin) };
+    }
     public class LogConfigurationEntrySettings {
         public bool Enabled { get; set; } = false;
         public string Message { get; set; } = string.Empty;

@@ -5,21 +5,19 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Text.Json;
 using System.IO;
-using BattleBitAPI.Common;
-using BBRAPIModules;
-using Commands;
-using Bans;
-using TimeSpanParserUtil;
-using Humanizer;
-using Bluscream;
-using static Bluscream.BluscreamLib;
 using System.Text;
 using System.Net;
-using Permissions;
+using TimeSpanParserUtil;
+using Humanizer;
+using BBRAPIModules;
+
+using Bluscream;
+using static Bluscream.BluscreamLib;
+using Bans;
 
 namespace Bluscream {
     [RequireModule(typeof(BluscreamLib))]
-    [RequireModule(typeof(CommandHandler))]
+    [RequireModule(typeof(Commands.CommandHandler))]
     [Module("Basic temp banning", "1.0.0")]
     public class TempBans : BattleBitModule {
         public static ModuleInfo ModuleInfo = new() {
@@ -32,16 +30,16 @@ namespace Bluscream {
             SupportUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/issues/new?title=TempBans")
         };
         [ModuleReference]
-        public CommandHandler CommandHandler { get; set; }
+        public Commands.CommandHandler CommandHandler { get; set; }
         [ModuleReference]
 #if DEBUG
-        public PlayerPermissions? PlayerPermissions { get; set; } = null!;
+        public Permissions.PlayerPermissions? PlayerPermissions { get; set; } = null!;
 #else
         public dynamic? PlayerPermissions { get; set; } = null!;
 #endif
+        public CommandsConfiguration CommandsConfiguration { get; set; }
 
         public static TempBansConfiguration Configuration { get; set; }
-        public CommandsConfiguration CommandsConfiguration { get; set; }
 
         public static FileInfo BanListFile { get; set; }
         public static BanList Bans { get; set; }
@@ -70,9 +68,9 @@ namespace Bluscream {
         }
         #endregion
         #region Commands
-        [CommandCallback("tempban", Description = "Bans a player for a specified time period")]
+        [Commands.CommandCallback("tempban", Description = "Bans a player for a specified time period")]
         public void TempBanCommand(RunnerPlayer commandSource, RunnerPlayer target, string duration, string? reason = null, string? note = null) {
-            var cmdName = $"\"{CommandHandler.CommandConfiguration.CommandPrefix}tempban\""; var cmdConfig = CommandsConfiguration.tempban;
+            var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}tempban\""; var cmdConfig = CommandsConfiguration.tempban;
             if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
             if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
             var span = TimeSpanParser.Parse(duration);
@@ -82,9 +80,9 @@ namespace Bluscream {
             }
             commandSource.Message($"{target.str()} has been banned for {ban.Remaining.Humanize()}");
         }
-        [CommandCallback("tempbanid", Description = "Bans a player for a specified time period by Steam ID 64")]
+        [Commands.CommandCallback("tempbanid", Description = "Bans a player for a specified time period by Steam ID 64")]
         public void TempBanIdCommand(RunnerPlayer commandSource, string targetSteamId64, string duration, string? reason = null, string? note = null) {
-            var cmdName = $"\"{CommandHandler.CommandConfiguration.CommandPrefix}tempbanid\""; var cmdConfig = CommandsConfiguration.tempbanid;
+            var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}tempbanid\""; var cmdConfig = CommandsConfiguration.tempbanid;
             if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
             if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
             var success = ulong.TryParse(targetSteamId64, out var result);
@@ -99,9 +97,9 @@ namespace Bluscream {
             commandSource.Message($"{ban.Target} has been banned for {ban.Remaining.Humanize()}");
         }
 
-            [CommandCallback("untempban", Description = "Unbans a player that is temporary banned")]
+            [Commands.CommandCallback("untempban", Description = "Unbans a player that is temporary banned")]
         public void UnTempBanCommand(RunnerPlayer commandSource, RunnerPlayer target) {
-            var cmdName = $"\"{CommandHandler.CommandConfiguration.CommandPrefix}untempban\""; var cmdConfig = CommandsConfiguration.untempban;
+            var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}untempban\""; var cmdConfig = CommandsConfiguration.untempban;
             if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
             if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
             var ban = Bans.Get(target);
@@ -111,9 +109,9 @@ namespace Bluscream {
             Bans.Remove(ban);
         }
 
-        [CommandCallback("listtempbans", Description = "Lists players that are temporarily banned")]
+        [Commands.CommandCallback("listtempbans", Description = "Lists players that are temporarily banned")]
         public void ListTempBannedCommand(RunnerPlayer commandSource) {
-            var cmdName = $"\"{CommandHandler.CommandConfiguration.CommandPrefix}listtempbans\""; var cmdConfig = CommandsConfiguration.listtempbans;
+            var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}listtempbans\""; var cmdConfig = CommandsConfiguration.listtempbans;
             if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
             if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
             commandSource.Message($"{Bans.Get().Count} Bans\n\n" + string.Join("\n", Bans.Get().Select(b=>$"{b.Target} by {b.Invoker}: {b.Remaining.Humanize()}")));
@@ -180,10 +178,10 @@ namespace Bluscream {
     //    public static bool TempBanPlayer(this RunnerPlayer player, DateTime dateTime) => TempBans.TempBanPlayer(player, dateTime);
     // }
     public class CommandsConfiguration : ModuleConfiguration {
-        public CommandConfiguration tempban { get; set; } = new CommandConfiguration() { Enabled = true, AllowedRoles = Extensions.ToRoleStringList(MoreRoles.Staff) };
-        public CommandConfiguration tempbanid { get; set; } = new CommandConfiguration() { Enabled = true, AllowedRoles = Extensions.ToRoleStringList(MoreRoles.Staff) };
-        public CommandConfiguration untempban { get; set; } = new CommandConfiguration() { Enabled = true, AllowedRoles = Extensions.ToRoleStringList(MoreRoles.Staff) };
-        public CommandConfiguration listtempbans { get; set; } = new CommandConfiguration() { Enabled = true, AllowedRoles = Extensions.ToRoleStringList(MoreRoles.Staff) };
+        public CommandConfiguration tempban { get; set; } = new CommandConfiguration() { AllowedRoles = Extensions.ToRoleStringList(MoreRoles.Staff) };
+        public CommandConfiguration tempbanid { get; set; } = new CommandConfiguration() { AllowedRoles = Extensions.ToRoleStringList(MoreRoles.Staff) };
+        public CommandConfiguration untempban { get; set; } = new CommandConfiguration() { AllowedRoles = Extensions.ToRoleStringList(MoreRoles.Staff) };
+        public CommandConfiguration listtempbans { get; set; } = new CommandConfiguration() { AllowedRoles = Extensions.ToRoleStringList(MoreRoles.Staff) };
     }
     public class TempBansConfiguration : ModuleConfiguration {
         public bool LogToConsole { get; set; } = true;
