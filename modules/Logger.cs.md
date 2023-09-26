@@ -2,13 +2,12 @@
 
 | Description   | Version   |
 |:--------------|:----------|
-| Logger        | 2.0.0     |
+| Logger        | 2.0.1     |
 
 ## Commands
-| Command    | Function Name   | Description                  | Allowed Roles   | Parameters                                             | Defaults   |
-|:-----------|:----------------|:-----------------------------|:----------------|:-------------------------------------------------------|:-----------|
-| playerbans | async           | Lists bans of a player       |                 | ['RunnerPlayer commandSource', 'RunnerPlayer _player'] | {}         |
-| playerinfo | async           | Displays info about a player |                 | ['RunnerPlayer commandSource', 'RunnerPlayer player']  | {}         |
+| Command    | Function Name   | Description            | Allowed Roles   | Parameters                                             | Defaults   |
+|:-----------|:----------------|:-----------------------|:----------------|:-------------------------------------------------------|:-----------|
+| playerbans | async           | Lists bans of a player |                 | ['RunnerPlayer commandSource', 'RunnerPlayer _player'] | {}         |
 
 ## Public Methods
 | Function Name        | Parameters                                                                           | Defaults                       |
@@ -21,7 +20,6 @@
 |                      |                                                                                      |                                |
 |                      |                                                                                      |                                |
 | void                 | ['RunnerPlayer commandSource', 'RunnerPlayer _player']                               | {}                             |
-| void                 | ['RunnerPlayer commandSource', 'RunnerPlayer player']                                | {}                             |
 | void                 | ['']                                                                                 | {}                             |
 | Task                 | ['']                                                                                 | {}                             |
 | async                | ['RunnerPlayer player']                                                              | {}                             |
@@ -32,7 +30,7 @@
 |                      |                                                                                      |                                |
 |                      |                                                                                      |                                |
 | playerbans           | ['']                                                                                 | {'AllowedRoles': 'Extensions'} |
-| playerinfo           | ['']                                                                                 | {'AllowedRoles': 'Extensions'} |
+|                      |                                                                                      |                                |
 |                      |                                                                                      |                                |
 |                      |                                                                                      |                                |
 |                      |                                                                                      |                                |
@@ -59,25 +57,6 @@
 | OnPlayerChatMessage  | ['']                                                                                 | {}                             |
 | OnPlayerChatCommand  | ['']                                                                                 | {}                             |
 | OnPlayerReported     | ['']                                                                                 | {}                             |
-|                      |                                                                                      |                                |
-|                      |                                                                                      |                                |
-|                      |                                                                                      |                                |
-|                      |                                                                                      |                                |
-|                      |                                                                                      |                                |
-|                      |                                                                                      |                                |
-|                      |                                                                                      |                                |
-|                      |                                                                                      |                                |
-|                      |                                                                                      |                                |
-|                      |                                                                                      |                                |
-|                      |                                                                                      |                                |
-|                      |                                                                                      |                                |
-|                      |                                                                                      |                                |
-|                      |                                                                                      |                                |
-|                      |                                                                                      |                                |
-|                      |                                                                                      |                                |
-| Response             | ['string json']                                                                      | {}                             |
-|                      |                                                                                      |                                |
-| string               | ['this Response self']                                                               | {}                             |
 |                      |                                                                                      |                                |
 |                      |                                                                                      |                                |
 |                      |                                                                                      |                                |

@@ -10,8 +10,36 @@ using BattleBitAPI.Common;
 using BBRAPIModules;
 
 using Commands;
+using System.Globalization;
+using System.IO;
+using Bluscream;
 
 namespace Bluscream {
+    public class ModuleInfo {
+        public bool Loaded { get; set; }
+        public bool Enabled { get; set; }
+        public string Name { get; set; }
+        public string? Description { get; set; }
+        public Version Version { get; set; }
+        public string Author { get; set; }
+        public Uri? WebsiteUrl { get; set; }
+        public Uri? UpdateUrl { get; set; }
+        public Uri? SupportUrl { get; set; }
+        public ModuleInfo() { }
+        public ModuleInfo(string name, string description, Version version, string author, Uri websiteUrl, Uri updateUrl, Uri supportUrl) {
+            Name = name;
+            Description = description;
+            Version = version;
+            Author = author;
+            WebsiteUrl = websiteUrl;
+            UpdateUrl = updateUrl;
+            SupportUrl = supportUrl;
+        }
+        public ModuleInfo(string name, string description, Version version, string author, string websiteUrl, string updateUrl, string supportUrl) :
+            this(name, description, version, author, new Uri(websiteUrl), new Uri(updateUrl), new Uri(supportUrl)) { }
+        public ModuleInfo(string name, string description, string version, string author, string websiteUrl, string updateUrl, string supportUrl) :
+            this(name, description, new Version(version), author, new Uri(websiteUrl), new Uri(updateUrl), new Uri(supportUrl)) { }
+    }
     [RequireModule(typeof(CommandHandler))]
     [Module("IP and geolocation data provider API for other modules", "2.0.0")]
     public class GeoApi : BattleBitModule {
@@ -28,7 +56,7 @@ namespace Bluscream {
         public CommandHandler CommandHandler { get; set; }
 
         public IpApiConfiguration Configuration { get; set; }
-        public GeoApiCommandsConfiguration CommandsConfiguration { get; set; }
+        // public GeoApiCommandsConfiguration CommandsConfiguration { get; set; }
         internal static HttpClient httpClient = new HttpClient();
         private bool GettingGeoData = false;
 
@@ -48,9 +76,9 @@ namespace Bluscream {
         }
         private async Task RemoveAllGeoData(RunnerServer? server = null, TimeSpan? delay = null) {
             server = server ?? this.Server;
-            if (delay is not null && delay != TimeSpan.Zero) Task.Delay(delay.Value); // Todo: Make configurable
+            if (delay is not null && delay != TimeSpan.Zero) await Task.Delay(delay.Value); // Todo: Make configurable
             foreach (var player in server.AllPlayers) {
-                RemoveGeoData(player);
+                await RemoveGeoData(player);
             }
         }
         private async Task AddGeoData(RunnerPlayer player) {
@@ -59,8 +87,8 @@ namespace Bluscream {
             if (geoData is null) return;
             _Players.Add(player, geoData);
         }
-        private void RemoveGeoData(RunnerPlayer player, TimeSpan? delay = null) {
-            if (delay is not null && delay != TimeSpan.Zero) Task.Delay(delay.Value); // Todo: Make configurable
+        private async Task RemoveGeoData(RunnerPlayer player, TimeSpan? delay = null) {
+            if (delay is not null && delay != TimeSpan.Zero) await Task.Delay(delay.Value); // Todo: Make configurable
             if (_Players.ContainsKey(player))
                 _Players.Remove(player);
         }
@@ -80,7 +108,7 @@ namespace Bluscream {
             var url = Configuration.IpApiUrl.Replace("{ip}", ip.ToString());
             HttpResponseMessage httpResponse;
             try { httpResponse = await GeoApi.httpClient.GetAsync(url); } catch (Exception ex) {
-                BluscreamLib.Log($"Failed to get geo data for {ip}: {ex.Message}");
+                Log($"Failed to get geo data for {ip}: {ex.Message}");
                 return null;
             }
             var json = await httpResponse.Content.ReadAsStringAsync();
@@ -106,7 +134,7 @@ namespace Bluscream {
             return Task.CompletedTask;
         }
         public override Task OnPlayerDisconnected(RunnerPlayer player) {
-            RemoveGeoData(player, Configuration.RemoveDelay);
+            RemoveGeoData(player, Configuration.RemoveDelay).Wait();
             return Task.CompletedTask;
         }
         #endregion
@@ -117,7 +145,7 @@ namespace Bluscream {
             var geoResponse = GetGeoData(player)?.Result;
             if (geoResponse is null) { commandSource.Message($"Failed to get Geo Data for player {player.str()}"); return; }
             var response = new StringBuilder();
-            if (!string.IsNullOrEmpty(player.Name)) response.AppendLine($"Name: {player.str()} ({player.Name.Length} chars)");
+            response.AppendLine($"Name: {player.str()} ({player.Name.Length} chars)");
             if (!string.IsNullOrEmpty(player.IP.ToString())) response.Append($"IP: {player.IP}");
             if (geoResponse is not null) {
                 if (geoResponse.Proxy == true) response.Append($" (Proxy/VPN)");
@@ -140,14 +168,19 @@ namespace Bluscream {
         }
         #endregion
     }
-    public class GeoApiCommandsConfiguration : ModuleConfiguration {
-        public CommandConfiguration playerinfo { get; set; } = new CommandConfiguration() { AllowedRoles = new() { "Admin" } };
-        public CommandConfiguration players { get; set; } = new CommandConfiguration() { AllowedRoles = new () { "All" } };
-    }
+    //public class GeoApiCommandsConfiguration : ModuleConfiguration {
+    //    public CommandConfiguration playerinfo { get; set; } = new CommandConfiguration() { AllowedRoles = new() { "Admin" } };
+    //    public CommandConfiguration players { get; set; } = new CommandConfiguration() { AllowedRoles = new () { "All" } };
+    //}
     public class IpApiConfiguration : ModuleConfiguration {
         public string IpApiUrl { get; set; } = "http://ip-api.com/json/{ip}?fields=status,message,continent,continentCode,country,countryCode,region,regionName,city,district,zip,lat,lon,timezone,offset,currency,isp,org,as,asname,reverse,mobile,proxy,hosting,query";
         public TimeSpan RemoveDelay { get; set; } = TimeSpan.FromMinutes(1);
     }
+    #region extensions
+    public static class Extensions {
+        public static string str(this RunnerPlayer player) => $"\"{player.Name}\"";
+    }
+    #endregion
 }
 #region json
 namespace IpApi {
@@ -250,11 +283,158 @@ namespace IpApi {
     }
 
     public partial class Response {
-        public static Response FromJson(string json) => JsonSerializer.Deserialize<Response>(json, Converter.Settings);
+        public static Response FromJson(string json) => JsonUtils.FromJson<Response>(json);
     }
-
     public static class Serialize {
-        public static string ToJson(this Response self) => JsonSerializer.Serialize(self, Converter.Settings);
+        public static string ToJson(this Response self) => JsonUtils.ToJson(self);
+    }
+}
+#endregion
+#region json
+namespace Bluscream {
+    public static class JsonUtils {
+        public static T FromJson<T>(string jsonText) => JsonSerializer.Deserialize<T>(jsonText, Converter.Settings);
+        public static T FromJsonFile<T>(FileInfo file) => FromJson<T>(File.ReadAllText(file.FullName));
+        public static string ToJson<T>(this T self) => JsonSerializer.Serialize(self, Converter.Settings);
+        public static void ToFile<T>(this T self, FileInfo file) => File.WriteAllText(file.FullName, ToJson(self));
+    }
+    public static class Converter {
+        public static readonly JsonSerializerOptions Settings = new(JsonSerializerDefaults.General) {
+            Converters =
+            {
+        new DateOnlyConverter(),
+        new TimeOnlyConverter(),
+        IsoDateTimeOffsetConverter.Singleton
+    },
+        };
+    }
+    public class ParseStringConverter : JsonConverter<long> {
+        public override bool CanConvert(Type t) => t == typeof(long);
+
+        public override long Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
+            var value = reader.GetString();
+            long l;
+            if (Int64.TryParse(value, out l)) {
+                return l;
+            }
+            throw new Exception("Cannot unmarshal type long");
+        }
+
+        public override void Write(Utf8JsonWriter writer, long value, JsonSerializerOptions options) {
+            JsonSerializer.Serialize(writer, value.ToString(), options);
+            return;
+        }
+
+        public static readonly ParseStringConverter Singleton = new ParseStringConverter();
+    }
+    public class DateOnlyConverter : JsonConverter<DateOnly> {
+        private readonly string serializationFormat;
+        public DateOnlyConverter() : this(null) { }
+
+        public DateOnlyConverter(string? serializationFormat) {
+            this.serializationFormat = serializationFormat ?? "yyyy-MM-dd";
+        }
+
+        public override DateOnly Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
+            var value = reader.GetString();
+            return DateOnly.Parse(value!);
+        }
+
+        public override void Write(Utf8JsonWriter writer, DateOnly value, JsonSerializerOptions options)
+            => writer.WriteStringValue(value.ToString(serializationFormat));
+    }
+    public class TimeOnlyConverter : JsonConverter<TimeOnly> {
+        private readonly string serializationFormat;
+
+        public TimeOnlyConverter() : this(null) { }
+
+        public TimeOnlyConverter(string? serializationFormat) {
+            this.serializationFormat = serializationFormat ?? "HH:mm:ss.fff";
+        }
+
+        public override TimeOnly Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
+            var value = reader.GetString();
+            return TimeOnly.Parse(value!);
+        }
+
+        public override void Write(Utf8JsonWriter writer, TimeOnly value, JsonSerializerOptions options)
+            => writer.WriteStringValue(value.ToString(serializationFormat));
+    }
+    public class IsoDateTimeOffsetConverter : JsonConverter<DateTimeOffset> {
+        public override bool CanConvert(Type t) => t == typeof(DateTimeOffset);
+
+        private const string DefaultDateTimeFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ss.FFFFFFFK";
+
+        private DateTimeStyles _dateTimeStyles = DateTimeStyles.RoundtripKind;
+        private string? _dateTimeFormat;
+        private CultureInfo? _culture;
+
+        public DateTimeStyles DateTimeStyles {
+            get => _dateTimeStyles;
+            set => _dateTimeStyles = value;
+        }
+
+        public string? DateTimeFormat {
+            get => _dateTimeFormat ?? string.Empty;
+            set => _dateTimeFormat = (string.IsNullOrEmpty(value)) ? null : value;
+        }
+
+        public CultureInfo Culture {
+            get => _culture ?? CultureInfo.CurrentCulture;
+            set => _culture = value;
+        }
+
+        public override void Write(Utf8JsonWriter writer, DateTimeOffset value, JsonSerializerOptions options) {
+            string text;
+
+
+            if ((_dateTimeStyles & DateTimeStyles.AdjustToUniversal) == DateTimeStyles.AdjustToUniversal
+                || (_dateTimeStyles & DateTimeStyles.AssumeUniversal) == DateTimeStyles.AssumeUniversal) {
+                value = value.ToUniversalTime();
+            }
+
+            text = value.ToString(_dateTimeFormat ?? DefaultDateTimeFormat, Culture);
+
+            writer.WriteStringValue(text);
+        }
+
+        public override DateTimeOffset Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
+            string? dateText = reader.GetString();
+
+            if (string.IsNullOrEmpty(dateText) == false) {
+                if (!string.IsNullOrEmpty(_dateTimeFormat)) {
+                    return DateTimeOffset.ParseExact(dateText, _dateTimeFormat, Culture, _dateTimeStyles);
+                } else {
+                    return DateTimeOffset.Parse(dateText, Culture, _dateTimeStyles);
+                }
+            } else {
+                return default(DateTimeOffset);
+            }
+        }
+
+        public static readonly IsoDateTimeOffsetConverter Singleton = new IsoDateTimeOffsetConverter();
+    }
+    public class IPAddressConverter : JsonConverter<IPAddress> {
+        public override IPAddress Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
+            return IPAddress.Parse(reader.GetString());
+        }
+
+        public override void Write(Utf8JsonWriter writer, IPAddress value, JsonSerializerOptions options) {
+            writer.WriteStringValue(value.ToString());
+        }
+    }
+    public class IPEndPointConverter : JsonConverter<IPEndPoint> {
+        public override IPEndPoint Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
+            var ipEndPointString = reader.GetString();
+            var endPointParts = ipEndPointString.Split(':');
+            var ip = IPAddress.Parse(endPointParts[0]);
+            var port = int.Parse(endPointParts[1]);
+            return new IPEndPoint(ip, port);
+        }
+
+        public override void Write(Utf8JsonWriter writer, IPEndPoint value, JsonSerializerOptions options) {
+            writer.WriteStringValue(value.ToString());
+        }
     }
 }
 #endregion
