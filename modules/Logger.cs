@@ -24,12 +24,12 @@ namespace Bluscream {
     [RequireModule(typeof(BluscreamLib))]
     [RequireModule(typeof(Permissions.PlayerPermissions))]
     [RequireModule(typeof(Commands.CommandHandler))]
-    [Module("Logger", "2.0.0")]
+    [Module("Logger", "2.0.1")]
     public class Logger : BattleBitModule {
         public static ModuleInfo ModuleInfo = new() {
             Name = "Logger",
             Description = "Extensive customizable logging for the BattleBit Modular API",
-            Version = new Version(2,0,0),
+            Version = new Version(2,0,1),
             Author = "Bluscream",
             WebsiteUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/"),
             UpdateUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/raw/master/modules/Logger.cs"),
@@ -276,7 +276,8 @@ namespace Bluscream {
             return Task.CompletedTask;
         }
         public override async Task OnPlayerConnected(RunnerPlayer player) {
-            var geoResponse = await GetGeoData(player.IP);
+            Response? geoResponse = null;
+            if (Configuration.UseIpApi) geoResponse = await GetGeoData(player.IP);
             HandleEvent(Configuration.OnPlayerConnected, player: player, geoResponse: geoResponse);
         }
         public override Task<bool> OnPlayerTypedMessage(RunnerPlayer player, ChatChannel channel, string msg) {
@@ -335,6 +336,7 @@ namespace Bluscream {
     public class ChatLoggerConfiguration : ModuleConfiguration {
         public string SteamWebApiKey { get; set; } = string.Empty;
         public string TimeStampFormat { get; set; } = "HH:mm:ss";
+        public bool UseIpApi { get; set; } = true;
         public Dictionary<string, string[]> randomReplacements = new Dictionary<string, string[]>() {
             { "joined", new string[] { "joined", "connected", "hailed" } },
         };
@@ -388,26 +390,26 @@ namespace Bluscream {
 namespace IpApi {
     public partial class Response {
         [JsonPropertyName("status")]
-        public string Status { get; set; } = null!;
+        public string? Status { get; set; }
 
         [JsonPropertyName("country")]
-        public string Country { get; set; } = null!;
+        public string? Country { get; set; }
 
         [JsonPropertyName("countryCode")]
-        public string CountryCode { get; set; } = null!;
+        public string? CountryCode { get; set; }
 
         [JsonPropertyName("region")]
-        public string Region { get; set; } = null!;
+        public string? Region { get; set; }
 
         [JsonPropertyName("regionName")]
-        public string RegionName { get; set; } = null!;
+        public string? RegionName { get; set; }
 
         [JsonPropertyName("city")]
-        public string City { get; set; } = null!;
+        public string? City { get; set; }
 
         [JsonPropertyName("zip")]
-        [JsonConverter(typeof(ParseStringConverter))]
-        public long Zip { get; set; }
+        //[JsonConverter(typeof(ParseStringConverter))]
+        public string? Zip { get; set; }
 
         [JsonPropertyName("lat")]
         public double Lat { get; set; }
@@ -416,19 +418,19 @@ namespace IpApi {
         public double Lon { get; set; }
 
         [JsonPropertyName("timezone")]
-        public string Timezone { get; set; } = null!;
+        public string? Timezone { get; set; }
 
         [JsonPropertyName("isp")]
-        public string Isp { get; set; } = null!;
+        public string? Isp { get; set; }
 
         [JsonPropertyName("org")]
-        public string Org { get; set; } = null!;
+        public string? Org { get; set; }
 
         [JsonPropertyName("as")]
-        public string As { get; set; } = null!;
+        public string? As { get; set; }
 
         [JsonPropertyName("query")]
-        public string Query { get; set; } = null!;
+        public string? Query { get; set; }
     }
 
     public partial class Response {

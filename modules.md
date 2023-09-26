@@ -424,11 +424,11 @@
 |                     |                                                                                    |            |
 |                     |                                                                                    |            |
 |                     |                                                                                    |            |
-# 1 Modules in Telemetry.cs
+# 1 Modules in ModuleUsageStats.cs
 
-| Description   | Version   |
-|:--------------|:----------|
-| Telemetry     | 1.1.0     |
+| Description                                                     | Version   |
+|:----------------------------------------------------------------|:----------|
+| Uploads the currently loaded module list to a telemetry server. | 2.0.0     |
 # 1 Modules in AdvancedVoting.cs
 
 | Description               | Version   |
@@ -481,7 +481,7 @@
 
 | Description         | Version   |
 |:--------------------|:----------|
-| Bluscream's Library | 2.0.0.1   |
+| Bluscream's Library | 2.0.1     |
 # 1 Modules in ConsoleLogger.cs
 
 | Description   | Version   |
