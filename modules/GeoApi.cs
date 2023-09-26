@@ -12,12 +12,12 @@ using BBRAPIModules;
 using Bluscream;
 
 namespace Bluscream {
-    [Module("IP and geolocation data provider API for other modules", "2.0.0")]
+    [Module("IP and geolocation data provider API for other modules", "2.0.1")]
     public class GeoApi : BattleBitModule {
         //public static ModuleInfo ModuleInfo = new() {
         //    Name = "GeoApi",
         //    Description = "IP and geolocation data provider API for other modules",
-        //    Version = new Version(2, 0, 0),
+        //    Version = new Version(2, 0, 1),
         //    Author = "Bluscream",
         //    WebsiteUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/"),
         //    UpdateUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/raw/master/modules/GeoApi.cs"),
