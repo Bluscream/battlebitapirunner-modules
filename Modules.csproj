@@ -42,6 +42,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="modules\BluscreamLib.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="modules\ChatLogger.cs.disable" />
   </ItemGroup>
 
