@@ -12,7 +12,6 @@ using System.Net.Http;
 using BattleBitAPI.Common;
 using BBRAPIModules;
 using Commands;
-using IpApi;
 using static Bluscream.BluscreamLib;
 using static Bluscream.Extensions;
 using Bluscream;
@@ -50,17 +49,6 @@ namespace Bluscream {
         internal HttpClient httpClient = new HttpClient();
         internal Random random = Random.Shared;
         #region Api
-        internal async Task<IpApi.Response> GetGeoData(IPAddress ip) {
-            var url = $"http://ip-api.com/json/{ip}";
-            HttpResponseMessage httpResponse;
-            try { httpResponse = await this.httpClient.GetAsync(url); } catch (Exception ex) {
-                // BluscreamLib.Log($"Failed to get geo data: {ex.Message}");
-                return null;
-            }
-            var json = await httpResponse.Content.ReadAsStringAsync();
-            var response = IpApi.Response.FromJson(json);
-            return response;
-        }
         internal async Task<SteamWebApi.BanResponse> GetSteamBans(ulong steamId64) {
             if (string.IsNullOrWhiteSpace(Configuration.SteamWebApiKey)) {
                 Console.WriteLine("Steam Web API Key is not set up in config, can't continue!");
@@ -102,29 +90,6 @@ namespace Bluscream {
                 response.AppendLine($"Community Banned: {player.CommunityBanned.ToYesNo()}");
                 response.AppendLine($"Trade Banned: {(player.EconomyBan != "none").ToYesNo()}");
                 response.AppendLine($"Game Banned: {(player.NumberOfGameBans > 0).ToYesNo()} ({player.NumberOfGameBans} times)");
-            }
-            commandSource.Message(response.ToString());
-        }
-
-        [CommandCallback("playerinfo", Description = "Displays info about a player")]
-        public async void GetPlayerInfo(RunnerPlayer commandSource, RunnerPlayer player) {
-            var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}playerinfo\""; var cmdConfig = CommandsConfiguration.playerinfo;
-            if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
-            if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
-            var geoResponse = await GetGeoData(player.IP);
-            var response = new StringBuilder();
-            if (!string.IsNullOrEmpty(player.Name)) response.AppendLine($"Name: {player.str()} ({player.Name.Length} chars)");
-            if (!string.IsNullOrEmpty(player.SteamID.ToString())) {
-                var banCount = await GetBanCount(player.SteamID);
-                response.AppendLine($"SteamId64: {player.SteamID} ({banCount} bans)");
-            }
-            if (!string.IsNullOrEmpty(player.IP.ToString())) response.AppendLine($"IP: {player.IP}");
-            if (geoResponse is not null) {
-                if (!string.IsNullOrEmpty(geoResponse.Isp)) response.AppendLine($"ISP: {geoResponse.Isp}");
-                if (!string.IsNullOrEmpty(geoResponse.Country)) response.AppendLine($"Country: {geoResponse.Country}");
-                if (!string.IsNullOrEmpty(geoResponse.RegionName)) response.AppendLine($"Region: {geoResponse.RegionName}");
-                if (!string.IsNullOrEmpty(geoResponse.City)) response.AppendLine($"City: {geoResponse.City} ({geoResponse.Zip})");
-                if (!string.IsNullOrEmpty(geoResponse.Timezone)) response.AppendLine($"Time: {TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.UtcNow, geoResponse.Timezone).ToString("HH:mm")} ({geoResponse.Timezone})");
             }
             commandSource.Message(response.ToString());
         }
@@ -314,7 +279,6 @@ namespace Bluscream {
     #region Config
     public class LoggerCommandsConfiguration : ModuleConfiguration {
         public CommandConfiguration playerbans { get; set; } = new CommandConfiguration() { AllowedRoles = Extensions.ToRoleStringList(MoreRoles.Staff) };
-        public CommandConfiguration playerinfo { get; set; } = new CommandConfiguration() { AllowedRoles = Extensions.ToRoleStringList(Roles.Admin) };
     }
     public class LogConfigurationEntrySettings {
         public bool Enabled { get; set; } = false;
@@ -387,61 +351,6 @@ namespace Bluscream {
     #endregion
 }
 #region Json
-namespace IpApi {
-    public partial class Response {
-        [JsonPropertyName("status")]
-        public string? Status { get; set; }
-
-        [JsonPropertyName("country")]
-        public string? Country { get; set; }
-
-        [JsonPropertyName("countryCode")]
-        public string? CountryCode { get; set; }
-
-        [JsonPropertyName("region")]
-        public string? Region { get; set; }
-
-        [JsonPropertyName("regionName")]
-        public string? RegionName { get; set; }
-
-        [JsonPropertyName("city")]
-        public string? City { get; set; }
-
-        [JsonPropertyName("zip")]
-        //[JsonConverter(typeof(ParseStringConverter))]
-        public string? Zip { get; set; }
-
-        [JsonPropertyName("lat")]
-        public double Lat { get; set; }
-
-        [JsonPropertyName("lon")]
-        public double Lon { get; set; }
-
-        [JsonPropertyName("timezone")]
-        public string? Timezone { get; set; }
-
-        [JsonPropertyName("isp")]
-        public string? Isp { get; set; }
-
-        [JsonPropertyName("org")]
-        public string? Org { get; set; }
-
-        [JsonPropertyName("as")]
-        public string? As { get; set; }
-
-        [JsonPropertyName("query")]
-        public string? Query { get; set; }
-    }
-
-    public partial class Response {
-        public static Response FromJson(string json) => JsonSerializer.Deserialize<Response>(json, Converter.Settings);
-    }
-
-    public static class Serialize {
-        public static string ToJson(this Response self) => JsonSerializer.Serialize(self, Converter.Settings);
-    }
-}
-
 namespace SteamWebApi {
     public partial class BanResponse {
         [JsonPropertyName("players")]
