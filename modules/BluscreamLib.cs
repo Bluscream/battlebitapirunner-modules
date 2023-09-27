@@ -112,24 +112,29 @@ namespace Bluscream {
         #region EventHandlers
         public BluscreamLib() {
             Log("Constructor called");
+        }
+        public override Task OnConnected() {
+            var MapsFile = new FileInfo(Config.MapsFile);
             try {
                 Maps = MapList.FromUrl(Config.MapsUrl);
-                Maps.ToFile(Config.MapsFile);
+                Maps.ToFile(MapsFile);
+                Log($"Updated {MapsFile.Name} from {Config.MapsUrl}");
             } catch (Exception ex) {
-                Log($"Unable to get new {Config.MapsFile.Name}: {ex.Message}");
+                Log($"Unable to get new {MapsFile.Name}: {ex.Message}");
                 Log($"Using {Config.MapsFile} if it exists");
-                Maps = MapList.FromFile(Config.MapsFile);
+                Maps = MapsFile.Exists ? MapList.FromFile(MapsFile) : new();
             }
+            var GameModesFile = new FileInfo(Config.GameModesFile);
             try {
                 GameModes = GameModeList.FromUrl(Config.GameModesUrl);
-                GameModes.ToFile(Config.GameModesFile);
+                GameModes.ToFile(GameModesFile);
+                Log($"Updated {GameModesFile.Name} from {Config.GameModesUrl}");
             } catch (Exception ex) {
-                Log($"Unable to get new {Config.GameModesFile.Name}: {ex.Message}");
+                Log($"Unable to get new {GameModesFile.Name}: {ex.Message}");
                 Log($"Using {Config.GameModesFile} if it exists");
-                GameModes = GameModeList.FromFile(Config.GameModesFile);
+                GameModes = GameModesFile.Exists ? GameModeList.FromFile(GameModesFile) : new();
             }
-        }
-        public override void OnModulesLoaded() {
+            return Task.CompletedTask;
         }
         #endregion
         #region Methods
@@ -209,8 +214,8 @@ namespace Bluscream {
         }
         #endregion
         #region Data
-        public static IReadOnlyList<string> GameModeNames { get { return GameModes.Where(m => m.Available).Select(m => m.Name).ToList(); } }
-        public static IReadOnlyList<string> GameModeDisplayNames { get { return Maps.Where(m => m.Available).Select(m => m.DisplayName).ToList(); } }
+        public static IReadOnlyList<string> GameModeNames { get { return GameModes.Where(m => m.Available == true).Select(m => m.Name).ToList(); } }
+        public static IReadOnlyList<string> GameModeDisplayNames { get { return Maps.Where(m => m.Available == true).Select(m => m.DisplayName).ToList(); } }
         public static IReadOnlyList<GameModeInfo> GameModes = new GameModeInfo[] {
         new GameModeInfo() {
             Name = "TDM",
@@ -293,17 +298,17 @@ namespace Bluscream {
             DisplayName = "Capture The Flag"
         },
     };
-        public static IReadOnlyList<string> MapNames { get { return Maps.Where(m => m.Available).Select(m => m.Name).ToList(); } }
-        public static IReadOnlyList<string> MapDisplayNames { get { return Maps.Where(m => m.Available).Select(m => m.DisplayName).ToList(); } }
-        public static IReadOnlyList<MapInfo> Maps { get; set; } = MapList.FromFile(new FileInfo("data/maps.json"));
+        public static IReadOnlyList<string> MapNames { get { return Maps.Where(m => m.Available == true).Select(m => m.Name).ToList(); } }
+        public static IReadOnlyList<string> MapDisplayNames { get { return Maps.Where(m => m.Available == true).Select(m => m.DisplayName).ToList(); } }
+        public static IReadOnlyList<MapInfo> Maps { get; set; }
         #endregion
         #region Configuration
-        public static Configuration Config { get; set; } = null!;
+        public static Configuration Config { get; set; }
         public class Configuration : ModuleConfiguration {
             public string TimeStampFormat { get; set; } = "HH:mm:ss";
-            public FileInfo MapsFile { get; set; } = new FileInfo("data/maps.json");
+            public string MapsFile { get; set; } = "data/maps.json";
             public Uri MapsUrl { get; set; } = new Uri("https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/maps.json");
-            public FileInfo GameModesFile { get; set; } = new FileInfo("data/gamemodes.json");
+            public string GameModesFile { get; set; } = "data/gamemodes.json";
             public Uri GameModesUrl { get; set; } = new Uri("https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/gamemodes.json");
         }
         #endregion
@@ -1093,9 +1098,9 @@ namespace Bluscream {
     #endregion
     #region Data
     public abstract class BaseInfo {
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("Available")]
-        public bool Available { get; set; }
+        public bool? Available { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("Name")]
@@ -1113,13 +1118,13 @@ namespace Bluscream {
     public class SupportedGamemode {
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("GameMode")]
-        public string _GameMode { get; set; } = null!;
+        public string GameMode { get; set; } = null!;
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("SupportedMapSizes")]
         public List<MapSize>? SupportedMapSizes { get; set; }
 
-        public GameModeInfo? GameMode { get { return BluscreamLib.GameModes.First(g => g.Name == _GameMode); } }
+        public GameModeInfo? GetGameMode() => BluscreamLib.GameModes.First(g => g.Name == GameMode);
     }
     public class MapInfo : BaseInfo {
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
@@ -1135,20 +1140,20 @@ namespace Bluscream {
 
         public static MapInfo FromName(string name) => BluscreamLib.Maps.First(m => m.Name == name);
     }
-    public class MapList : List<MapInfo> {
-        public void ToFile(FileInfo file) => JsonUtils.ToFile(this, file);
-        public static MapList FromFile(FileInfo file) => JsonUtils.FromJsonFile<MapList>(file);
-        public static MapList FromUrl(Uri url) => JsonUtils.FromUrl<MapList>(url);
+    public static class MapList {
+        public static List<MapInfo> FromFile(FileInfo file) => JsonUtils.FromJsonFile<List<MapInfo>>(file);
+        public static List<MapInfo> FromUrl(string url) => FromUrl(new Uri(url));
+        public static List<MapInfo> FromUrl(Uri url) => JsonUtils.FromUrl<List<MapInfo>>(url);
     }
     #endregion
     #region GameModes
     public class GameModeInfo : BaseInfo {
         public static GameModeInfo FromName(string name) => BluscreamLib.GameModes.First(m => m.Name == name);
     }
-    public class GameModeList : List<GameModeInfo> {
-        public void ToFile(FileInfo file) => JsonUtils.ToFile(this, file);
-        public static GameModeList FromFile(FileInfo file) => JsonUtils.FromJsonFile<GameModeList>(file);
-        public static GameModeList FromUrl(Uri url) => JsonUtils.FromUrl<GameModeList>(url);
+    public static class GameModeList {
+        public static List<GameModeInfo> FromFile(FileInfo file) => JsonUtils.FromJsonFile<List<GameModeInfo>>(file);
+        public static List<GameModeInfo> FromUrl(string url) => FromUrl(new Uri(url));
+        public static List<GameModeInfo> FromUrl(Uri url) => JsonUtils.FromUrl<List<GameModeInfo>>(url);
     }
     #endregion
     #endregion
