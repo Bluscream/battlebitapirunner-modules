@@ -1,14 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Metrics;
-using System.Reflection.Metadata.Ecma335;
 using System.Text.Json.Serialization;
 using BBRAPIModules;
 
 using Commands;
-using Humanizer;
-using static Bluscream.GeoApi;
-using static Bluscream.VPNBlocker;
 
 namespace Bluscream {
     [RequireModule(typeof(Bluscream.BluscreamLib))]
@@ -69,25 +64,28 @@ namespace Bluscream {
             return null;
         }
         public bool CheckWhitelistRoles(RunnerPlayer player, BlockConfiguration config) {
-            if (PlayerPermissions is not null && player.HasAnyRoleOf(PlayerPermissions, Extensions.ParseRoles(config.WhitelistedRoles))) {
-                Log($"Player {player.str()} would have been kicked for {config.Name}, but has a whitelisted Role!");
+            Log($"CheckWhitelistRoles({player.fullstr()}, {config.ToJson()})");
+            var whitelistedRoles = config.WhitelistedRoles.ParseRoles();
+            if (PlayerPermissions is not null && Extensions.HasNoRoleOf(player, PlayerPermissions, whitelistedRoles)) {
+                Log($"Player {player.str()} would have been kicked for {config.Name}, but has a whitelisted role ({whitelistedRoles.ToJson()})");
                 return true;
             }
             return false;
         }
         public bool CheckPlayer(RunnerPlayer player, IpApi.Response geoData) {
+            Log($"CheckPlayer({player.fullstr()}, {geoData.ToJson()})");
             if (PlayerPermissions is not null && CheckWhitelistRoles(player, Config.BlockProxies)) return false;
             if (Config.BlockProxies.Enabled && (geoData.Proxy) == true) { player.Kick(FormatString(Config.BlockProxies.KickMessage, player, geoData)); return true; }
-            if (PlayerPermissions is not null && player.HasAnyRoleOf(PlayerPermissions, Extensions.ParseRoles(Config.BlockServers.WhitelistedRoles))) return false;
+            if (PlayerPermissions is not null && CheckWhitelistRoles(player, Config.BlockServers)) return false;
             if (Config.BlockServers.Enabled && (geoData.Hosting) == true) { player.Kick(FormatString(Config.BlockServers.KickMessage, player, geoData)); return true; }
-            if (PlayerPermissions is not null && player.HasAnyRoleOf(PlayerPermissions, Extensions.ParseRoles(Config.BlockMobile.WhitelistedRoles))) return false;
+            if (PlayerPermissions is not null && CheckWhitelistRoles(player, Config.BlockMobile)) return false;
             if (Config.BlockMobile.Enabled && (geoData.Mobile) == true) { player.Kick(FormatString(Config.BlockMobile.KickMessage, player, geoData)); return true; }
 
-            if (PlayerPermissions is not null && player.HasAnyRoleOf(PlayerPermissions, Extensions.ParseRoles(Config.ISPs.WhitelistedRoles))) return false;
+            if (PlayerPermissions is not null && CheckWhitelistRoles(player, Config.ISPs)) return false;
             if (Config.ISPs.Enabled && geoData.Isp is not null && (CheckStringListEntry(Config.ISPs, geoData.Isp) == true)) { player.Kick(FormatString(Config.ISPs.KickMessage, player, geoData)); return true; }
-            if (PlayerPermissions is not null && player.HasAnyRoleOf(PlayerPermissions, Extensions.ParseRoles(Config.Continents.WhitelistedRoles))) return false;
+            if (PlayerPermissions is not null && CheckWhitelistRoles(player, Config.Continents)) return false;
             if (Config.Continents.Enabled && geoData.Continent is not null && (CheckStringListEntry(Config.Continents, geoData.Continent) == true)) { player.Kick(FormatString(Config.Continents.KickMessage, player, geoData)); return true; }
-            if (PlayerPermissions is not null && player.HasAnyRoleOf(PlayerPermissions, Extensions.ParseRoles(Config.Countries.WhitelistedRoles))) return false;
+            if (PlayerPermissions is not null && CheckWhitelistRoles(player, Config.Countries)) return false;
             if (Config.Countries.Enabled && geoData.Country is not null && (CheckStringListEntry(Config.Countries, geoData.Country) == true)) { player.Kick(FormatString(Config.Countries.KickMessage, player, geoData)); return true; }
 
             return false;
@@ -125,16 +123,16 @@ namespace Bluscream {
         }
 
         private void GeoApi_OnPlayerDataReceived(RunnerPlayer player, IpApi.Response geoData) {
-            Log($"Recieved geoData for \"{this.Server.ServerName}\" in {geoData?.Country ?? "Unknown Country"}");
+            CheckPlayer(player, geoData);
         }
         #endregion
 
         #region Commands
         [CommandCallback("blockplayer", Description = "Toggles blocking for a specific player's item")]
         public void ToggleBlockPlayerCommand(BBRAPIModules.RunnerPlayer commandSource, RunnerPlayer target, string list = "") {
-            var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}blockplayer\""; var cmdConfig = CommandsConfigurationInstance.blockplayer;
+            var cmdName = $"\"{CommandHandler.CommandConfiguration.CommandPrefix}blockplayer\""; var cmdConfig = CommandsConfigurationInstance.blockplayer;
             if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
-            if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
+            if (PlayerPermissions is not null && Extensions.HasNoRoleOf(commandSource, PlayerPermissions, cmdConfig.AllowedRoles.ParseRoles())) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
             var geoData = GeoApi?.GetData(target)?.Result;
             if (geoData is null) { commandSource.Message($"Could not fetch geoData for {target.str()}"); return; }
             switch (list.ToLowerInvariant()) {
@@ -152,7 +150,7 @@ namespace Bluscream {
         public void ToggleBlockCommand(BBRAPIModules.RunnerPlayer commandSource, string? list = null, string? entry = null) {
             var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}block\""; var cmdConfig = CommandsConfigurationInstance.block;
             if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
-            if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
+            if (PlayerPermissions is not null && Extensions.HasNoRoleOf(commandSource, PlayerPermissions, cmdConfig.AllowedRoles.ParseRoles())) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
             if (list is null) {
                 commandSource.Message($"VPNBlocker Config:\n" +
                     $"\nBlockProxies: {Config.BlockProxies.Enabled.ToEnabledDisabled()}" +
@@ -198,11 +196,10 @@ namespace Bluscream {
             public List<string> List { get; set; } = new List<string>();
         }
         public class BlockConfiguration {
-            [JsonIgnore]
-            internal string Name = string.Empty;
+            public string Name = string.Empty;
             public bool Enabled { get; set; } = false;
             public string KickMessage { get; set; } = "Kicked by VPNBlocker!";
-            public List<string> WhitelistedRoles { get; set; } = MoreRoles.Member.ToRoleStringList();
+            public List<string> WhitelistedRoles { get; set; } = new() { "Admin", "Moderator", "Special", "Vip" };
         }
         public Configuration Config { get; set; }
         public class Configuration : ModuleConfiguration {
@@ -217,10 +214,4 @@ namespace Bluscream {
         }
         #endregion
     }
-
-    #region Extensions
-    //public static partial class Extensions {
-    //    public static string ToWhitelistBlacklistString(this BlockMode mode) => mode == BlockMode.Whitelist ? "Whitelist" : "Blacklist";
-    //}
-    #endregion
 }

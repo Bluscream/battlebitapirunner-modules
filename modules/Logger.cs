@@ -8,6 +8,7 @@ using System.Net.Http;
 
 using BBRAPIModules;
 using BattleBitAPI.Common;
+using System.Linq;
 
 namespace Bluscream {
     #region Requires
@@ -118,19 +119,28 @@ namespace Bluscream {
             }
         }
 
-        internal string FormatString(string input, RunnerPlayer? player = null, RunnerPlayer? target = null, IpApi.Response? geoData = null, SteamWebApi.Response? steamData = null, ReportReason? reportReason = null, ChatChannel? chatChannel = null, string msg = null) {
-            var now = string.IsNullOrWhiteSpace(Config.TimeStampFormat) ? "" : new DateTimeWithZone(DateTime.Now, Config.TimeZone).LocalTime.ToString(Config.TimeStampFormat);
+        internal string FormatString(string input, RunnerServer? server = null, RunnerPlayer? player = null, RunnerPlayer? target = null, IpApi.Response? geoData = null, SteamWebApi.Response? steamData = null, ReportReason? reportReason = null, ChatChannel? chatChannel = null, string msg = null) {
+            var now = string.IsNullOrWhiteSpace(Config.TimeStampFormat) ? "" : new DateTimeWithZone(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById(Config.TimeZone)).LocalTime.ToString(Config.TimeStampFormat);
             input = input.Replace("{now}", now);
-            input = input.Replace("{player.Name}", player?.Name);
-            input = input.Replace("{target.Name}", target?.Name);
-            input = input.Replace("{player.SteamID}", player?.SteamID.ToString());
-            input = input.Replace("{target.SteamID}", target?.SteamID.ToString());
-            input = input.Replace("{player.str()}", player?.str());
-            input = input.Replace("{target.str()}", target?.str());
-            input = input.Replace("{player.fullstr()}", player?.fullstr());
-            input = input.Replace("{target.fullstr()}", target?.fullstr());
-            input = input.Replace("{player.IP}", player?.IP.ToString());
-            input = input.Replace("{target.IP}", target?.IP.ToString());
+            if (player is not null) {
+                input = input.Replace("{player.Name}", player?.Name);
+                input = input.Replace("{player.SteamID}", player?.SteamID.ToString());
+                input = input.Replace("{player.str()}", player?.str());
+                input = input.Replace("{player.fullstr()}", player?.fullstr());
+                input = input.Replace("{player.IP}", player?.IP.ToString());
+            }
+            if (player is not null) {
+                input = input.Replace("{target.Name}", target?.Name);
+                input = input.Replace("{target.SteamID}", target?.SteamID.ToString());
+                input = input.Replace("{target.str()}", target?.str());
+                input = input.Replace("{target.fullstr()}", target?.fullstr());
+                input = input.Replace("{target.IP}", target?.IP.ToString());
+            }
+            if (server is not null) {
+                try { input = input.Replace("{server.Name}", server?.ServerName); } catch { }
+                try { input = input.Replace("{server.AllPlayers.Count()}", server?.AllPlayers.Count().ToString()); } catch { }
+                try { input = input.Replace("{server.str()}", server?.str()); } catch { }
+            }
             if (geoData is not null) {
                 input = input.Replace("{geoData.City}", geoData.City);
                 input = input.Replace("{geoData.RegionName}", geoData.RegionName);
@@ -153,16 +163,16 @@ namespace Bluscream {
 
         internal async void HandleEvent(LogConfigurationEntry config, RunnerPlayer? player = null, RunnerPlayer? target = null, IpApi.Response? geoData = null, SteamWebApi.Response? steamData = null, ReportReason? reportReason = null, ChatChannel? chatChannel = null, string _msg = null) {
             if (config.Console is not null && config.Console.Enabled && !string.IsNullOrWhiteSpace(config.Console.Message)) {
-                LogToConsole(FormatString(config.Console.Message, player, target, geoData, steamData, reportReason, chatChannel, _msg));
+                LogToConsole(FormatString(config.Console.Message, server: this.Server, player: player, target: target, geoData: geoData, steamData: steamData, reportReason: reportReason, chatChannel: chatChannel, msg: _msg));
             }
             if (config.Discord is not null && config.Discord.Enabled && !string.IsNullOrWhiteSpace(config.Discord.WebhookUrl) && !string.IsNullOrWhiteSpace(config.Discord.Message)) {
-                var msg = FormatString(config.Discord.Message, player, target, geoData, steamData, reportReason, chatChannel, _msg);
+                var msg = FormatString(config.Discord.Message, server: this.Server, player: player, target: target, geoData: geoData, steamData: steamData, reportReason: reportReason, chatChannel: chatChannel, msg: _msg);
                 await SendToWebhook(config.Discord.WebhookUrl, msg);
             }
             try { var a = this.Server.IsConnected; } catch { return; }
             if (this.Server is null || !this.Server.IsConnected) return;
             if (config.Chat is not null && config.Chat.Enabled && !string.IsNullOrWhiteSpace(config.Chat.Message)) {
-                var msg = FormatString(config.Chat.Message, player, target, geoData, steamData, reportReason, chatChannel, _msg);
+                var msg = FormatString(config.Chat.Message, server: this.Server, player: player, target: target, geoData: geoData, steamData: steamData, reportReason: reportReason, chatChannel: chatChannel, msg: _msg);
                 if (this.PlayerPermissions is not null && config.Chat.Roles != Roles.None) {
                     try {
                         foreach (var _player in this.Server.AllPlayers) {
@@ -176,7 +186,7 @@ namespace Bluscream {
                 } else SayToAll(msg);
             }
             if (config.Modal is not null && config.Modal.Enabled && !string.IsNullOrWhiteSpace(config.Modal.Message)) {
-                var msg = FormatString(config.Modal.Message, player, target, geoData, steamData, reportReason, chatChannel, _msg);
+                var msg = FormatString(config.Modal.Message, server: this.Server, player: player, target: target, geoData: geoData, steamData: steamData, reportReason: reportReason, chatChannel: chatChannel, msg: _msg);
                 foreach (var _player in this.Server.AllPlayers) {
                     if (this.PlayerPermissions is not null) {
                         var playerRoles = this.PlayerPermissions.GetPlayerRoles(_player.SteamID);
@@ -186,11 +196,11 @@ namespace Bluscream {
                 }
             }
             if (config.UILog is not null && config.UILog.Enabled && !string.IsNullOrWhiteSpace(config.UILog.Message)) {
-                var msg = FormatString(config.UILog.Message, player, target, geoData, steamData, reportReason, chatChannel, _msg);
+                var msg = FormatString(config.UILog.Message, server: this.Server, player: player, target: target, geoData: geoData, steamData: steamData, reportReason: reportReason, chatChannel: chatChannel, msg: _msg);
                 UILogOnServer(msg, config.UILog.Duration);
             }
             if (config.Announce is not null && config.Announce.Enabled && !string.IsNullOrWhiteSpace(config.Announce.Message)) {
-                var msg = FormatString(config.Announce.Message, player, target, geoData, steamData, reportReason, chatChannel, _msg);
+                var msg = FormatString(config.Announce.Message, server: this.Server, player: player, target: target, geoData: geoData, steamData: steamData, reportReason: reportReason, chatChannel: chatChannel, msg: _msg);
                 Announce(msg, config.Announce.Duration);
             }
         }
@@ -266,7 +276,7 @@ namespace Bluscream {
         public Configuration Config { get; set; } = null!;
         public class Configuration : ModuleConfiguration {
             public string TimeStampFormat { get; set; } = "HH:mm:ss";
-            public TimeZoneInfo TimeZone { get; set; } = TimeZoneInfo.Local;
+            public string TimeZone { get; set; } = System.TimeZone.CurrentTimeZone.StandardName;
             public Dictionary<string, string[]> randomReplacements = new Dictionary<string, string[]>() {
             { "joined", new string[] { "joined", "connected", "hailed" } },
         };
@@ -278,9 +288,9 @@ namespace Bluscream {
             };
             public LogConfigurationEntry OnApiConnected { get; set; } = new LogConfigurationEntry() {
                 Chat = new LogConfigurationEntrySettings() { Enabled = false, Message = "[{now}] Server connected to API", Roles = Roles.Admin },
-                Console = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] Server connected to API" },
+                Console = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] {server.str()} connected to API" },
                 UILog = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] Server connected to API" },
-                Discord = new DiscordWebhookLogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] Server connected to API" },
+                Discord = new DiscordWebhookLogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] {server.str()} connected to API" },
             };
             public LogConfigurationEntry OnApiDisconnected { get; set; } = new LogConfigurationEntry() {
                 Console = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] Server disconnected from API", Roles = Roles.Admin },

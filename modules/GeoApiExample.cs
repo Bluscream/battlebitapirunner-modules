@@ -51,7 +51,6 @@ namespace Bluscream {
         }
 
         private void GeoApi_OnPlayerDataReceived(RunnerPlayer player, IpApi.Response geoData) {
-            Log($"Recieved geoData for {player.str()} in {geoData?.Country ?? "Unknown Country"}");
         }
 
         public override System.Threading.Tasks.Task OnConnected() {
@@ -81,9 +80,9 @@ namespace Bluscream {
         #region Commands
         [CommandCallback("playerinfo", Description = "Displays info about a player")]
         public void GetPlayerInfo(BBRAPIModules.RunnerPlayer commandSource, BBRAPIModules.RunnerPlayer? player = null) {
-            var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}playerinfo\""; var cmdConfig = CommandsConfigurationInstance.playerinfo;
+            var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}playerinfo\""; var cmdConfig = CommandsConfig.playerinfo;
             if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
-            if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
+            if (PlayerPermissions is not null && Extensions.HasNoRoleOf(commandSource, PlayerPermissions, cmdConfig.AllowedRoles.ParseRoles())) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
             if (GeoApi is null) { commandSource.Message("GeoApi not found, do you have it installed?"); return; }
             player = player ?? commandSource;
             var geoResponse = GeoApi?.GetData(player)?.Result;
@@ -105,7 +104,7 @@ namespace Bluscream {
         #endregion
 
         #region Configuration
-        public CommandsConfiguration CommandsConfigurationInstance { get; set; }
+        public CommandsConfiguration CommandsConfig { get; set; }
         public class CommandsConfiguration : ModuleConfiguration {
             public CommandConfiguration playerinfo { get; set; } = new CommandConfiguration() { AllowedRoles = Extensions.ToRoleStringList(MoreRoles.Staff) };
         }

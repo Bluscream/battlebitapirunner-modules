@@ -68,7 +68,7 @@ namespace Bluscream {
         }
         public async Task<IpApi.Response?> _GetData(RunnerPlayer player) => await _GetData(player.IP);
         public async Task<IpApi.Response?> _GetData(IPAddress ip) {
-            var url = Configuration.IpApiUrl.Replace("{ip}", ip.ToString());
+            var url = Config.IpApiUrl.Replace("{ip}", ip.ToString());
             HttpResponseMessage httpResponse;
             try { httpResponse = await GeoApi.httpClient.GetAsync(url); } catch (Exception ex) {
                 Log($"Failed to get geo data for {ip}: {ex.Message}");
@@ -105,10 +105,12 @@ namespace Bluscream {
             return Task.CompletedTask;
         }
         #endregion
+        #region Configuration
         public class Configuration : ModuleConfiguration {
             public string IpApiUrl { get; set; } = "http://ip-api.com/json/{ip}?fields=status,message,continent,continentCode,country,countryCode,region,regionName,city,district,zip,lat,lon,timezone,offset,currency,isp,org,as,asname,reverse,mobile,proxy,hosting,query";
             public TimeSpan RemoveDelay { get; set; } = TimeSpan.FromMinutes(1);
         }
+        #endregion
     }
 }
 #region json
