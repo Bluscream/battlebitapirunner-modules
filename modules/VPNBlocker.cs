@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text.Json.Serialization;
 using BBRAPIModules;
 
 using Commands;
@@ -64,7 +63,7 @@ namespace Bluscream {
             return null;
         }
         public bool CheckWhitelistRoles(RunnerPlayer player, BlockConfiguration config) {
-            Log($"CheckWhitelistRoles({player.fullstr()}, {config.ToJson()})");
+            //Log($"CheckWhitelistRoles({player.fullstr()}, {config.ToJson()})");
             var whitelistedRoles = config.WhitelistedRoles.ParseRoles();
             if (PlayerPermissions is not null && Extensions.HasNoRoleOf(player, PlayerPermissions, whitelistedRoles)) {
                 Log($"Player {player.str()} would have been kicked for {config.Name}, but has a whitelisted role ({whitelistedRoles.ToJson()})");
@@ -73,7 +72,7 @@ namespace Bluscream {
             return false;
         }
         public bool CheckPlayer(RunnerPlayer player, IpApi.Response geoData) {
-            Log($"CheckPlayer({player.fullstr()}, {geoData.ToJson()})");
+            //Log($"CheckPlayer({player.fullstr()}, {geoData.ToJson()})");
             if (PlayerPermissions is not null && CheckWhitelistRoles(player, Config.BlockProxies)) return false;
             if (Config.BlockProxies.Enabled && (geoData.Proxy) == true) { player.Kick(FormatString(Config.BlockProxies.KickMessage, player, geoData)); return true; }
             if (PlayerPermissions is not null && CheckWhitelistRoles(player, Config.BlockServers)) return false;

@@ -1,19 +1,28 @@
-[submodule "BattleBitBaseModules"]
-	path = BattleBitBaseModules
-	url = https://github.com/RainOrigami/BattleBitBaseModules
-[submodule "BattleBitZombies"]
-	path = BattleBitZombies
-	url = https://github.com/RainOrigami/BattleBitZombies
-	branch = main
-[submodule "BattleBitExamples"]
-	path = BattleBitExamples
-	url = https://github.com/RainOrigami/BattleBitExamples
-	branch = main
 [submodule "bb-modules"]
 	path = bb-modules
 	url = https://github.com/TheDevMinerTV/bb-modules
 	branch = main
-[submodule "battlebit-rcon"]
-	path = battlebit-rcon
-	url = https://gitlab.com/BattleMetrics/battlebit-rcon
+[submodule "RainOrigami-BattleBitBaseModules"]
+	path = RainOrigami-BattleBitBaseModules
+	url = https://github.com/bluscreams-battlebit-module-forks/RainOrigami-BattleBitBaseModules
+	branch = main
+[submodule "RainOrigami-BattleBitExamples"]
+	path = RainOrigami-BattleBitExamples
+	url = https://github.com/bluscreams-battlebit-module-forks/RainOrigami-BattleBitExamples
+	branch = main
+[submodule "TheDevMinerTV-bb-modules"]
+	path = TheDevMinerTV-bb-modules
+	url = https://github.com/bluscreams-battlebit-module-forks/TheDevMinerTV-bb-modules
+	branch = main
+[submodule "BattleMetrics-battlebit-rcon"]
+	path = BattleMetrics-battlebit-rcon
+	url = https://github.com/bluscreams-battlebit-module-forks/BattleMetrics-battlebit-rcon
 	branch = master
+[submodule "RainOrigami-BattleBitZombies"]
+	path = RainOrigami-BattleBitZombies
+	url = https://github.com/bluscreams-battlebit-module-forks/RainOrigami-BattleBitZombies
+	branch = main
+[submodule "DasIschBims-BattleBitLifeSteal"]
+	path = DasIschBims-BattleBitLifeSteal
+	url = https://github.com/bluscreams-battlebit-module-forks/DasIschBims-BattleBitLifeSteal
+	branch = main
