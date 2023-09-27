@@ -1,0 +1,28 @@
+{
+  "GameModes": [
+    [
+      "TDM",
+      "AAS",
+      "RUSH",
+      "CONQ",
+      "DOMI",
+      "ELI",
+      "INFCONQ",
+      "FRONTLINE",
+      "GunGameFFA",
+      "FFA",
+      "GunGameTeam",
+      "SuicideRush",
+      "CatchGame",
+      "Infected",
+      "CashRun",
+      "VoxelFortify",
+      "VoxelTrench",
+      "CaptureTheFlag"
+    ],
+    [
+      "CONQ",
+      "DOMI"
+    ]
+  ]
+}

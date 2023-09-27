@@ -1,0 +1,7 @@
+{
+  "TimeStampFormat": "HH:mm:ss",
+  "MapsFile": "data/maps.json",
+  "MapsUrl": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/maps.json",
+  "GameModesFile": "data/gamemodes.json",
+  "GameModesUrl": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/gamemodes.json"
+}

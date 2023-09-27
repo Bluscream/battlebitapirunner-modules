@@ -1,0 +1,14 @@
+{
+  "block": {
+    "Enabled": true,
+    "AllowedRoles": [
+      "Admin"
+    ]
+  },
+  "blockplayer": {
+    "Enabled": true,
+    "AllowedRoles": [
+      "Admin"
+    ]
+  }
+}

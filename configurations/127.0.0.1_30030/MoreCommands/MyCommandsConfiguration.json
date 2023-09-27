@@ -1,0 +1,98 @@
+{
+  "map": {
+    "Enabled": true,
+    "AllowedRoles": [
+      "Admin",
+      "Moderator"
+    ]
+  },
+  "gamemode": {
+    "Enabled": true,
+    "AllowedRoles": [
+      "Admin",
+      "Moderator"
+    ]
+  },
+  "time": {
+    "Enabled": true,
+    "AllowedRoles": [
+      "Admin",
+      "Moderator"
+    ]
+  },
+  "maprestart": {
+    "Enabled": true,
+    "AllowedRoles": [
+      "Admin",
+      "Moderator"
+    ]
+  },
+  "allowvotetime": {
+    "Enabled": true,
+    "AllowedRoles": [
+      "Admin"
+    ]
+  },
+  "listmaps": {
+    "Enabled": true,
+    "AllowedRoles": [
+      "All"
+    ]
+  },
+  "listmodes": {
+    "Enabled": true,
+    "AllowedRoles": [
+      "All"
+    ]
+  },
+  "listsizes": {
+    "Enabled": true,
+    "AllowedRoles": [
+      "All"
+    ]
+  },
+  "start": {
+    "Enabled": true,
+    "AllowedRoles": [
+      "Admin",
+      "Moderator"
+    ]
+  },
+  "end": {
+    "Enabled": true,
+    "AllowedRoles": [
+      "Admin",
+      "Moderator"
+    ]
+  },
+  "exec": {
+    "Enabled": true,
+    "AllowedRoles": [
+      "Admin"
+    ]
+  },
+  "bots": {
+    "Enabled": true,
+    "AllowedRoles": [
+      "Admin"
+    ]
+  },
+  "nobots": {
+    "Enabled": true,
+    "AllowedRoles": [
+      "Admin"
+    ]
+  },
+  "fire": {
+    "Enabled": true,
+    "AllowedRoles": [
+      "Admin"
+    ]
+  },
+  "pos": {
+    "Enabled": true,
+    "AllowedRoles": [
+      "Admin"
+    ]
+  }
+}

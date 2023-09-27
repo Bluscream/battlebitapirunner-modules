@@ -1,0 +1,8 @@
+{
+  "LogToConsole": true,
+  "BanFilePath": "./data/bans.json",
+  "DefaultServers": [
+    "*"
+  ],
+  "KickNoticeTemplate": "You are banned on {servername}!\n\nBanned by: {invoker}\nReason: \"{reason}\"\nUntil: {until} UTC\n\nTry again in {remaining}"
+}

@@ -1,0 +1,9 @@
+{
+  "playerbans": {
+    "Enabled": true,
+    "AllowedRoles": [
+      "Admin",
+      "Moderator"
+    ]
+  }
+}

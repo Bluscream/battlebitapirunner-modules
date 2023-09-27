@@ -1,0 +1,30 @@
+{
+  "tempban": {
+    "Enabled": true,
+    "AllowedRoles": [
+      "Admin",
+      "Moderator"
+    ]
+  },
+  "tempbanid": {
+    "Enabled": true,
+    "AllowedRoles": [
+      "Admin",
+      "Moderator"
+    ]
+  },
+  "untempban": {
+    "Enabled": true,
+    "AllowedRoles": [
+      "Admin",
+      "Moderator"
+    ]
+  },
+  "listtempbans": {
+    "Enabled": true,
+    "AllowedRoles": [
+      "Admin",
+      "Moderator"
+    ]
+  }
+}

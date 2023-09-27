@@ -1,0 +1,9 @@
+{
+  "playerinfo": {
+    "Enabled": true,
+    "AllowedRoles": [
+      "Admin",
+      "Moderator"
+    ]
+  }
+}
