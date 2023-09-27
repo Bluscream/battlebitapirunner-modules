@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics.Metrics;
 using System.Reflection.Metadata.Ecma335;
+using System.Text.Json.Serialization;
 using BBRAPIModules;
 
 using Commands;
+using Humanizer;
 using static Bluscream.GeoApi;
 using static Bluscream.VPNBlocker;
 
@@ -57,35 +59,56 @@ namespace Bluscream {
                 Replace("{player.SteamID}", player.SteamID.ToString()).
                 Replace("{player.IP}", player.IP.ToString());
         }
+        public bool? CheckStringListEntry(BlockListConfiguration config, string entry) {
+            switch (Enum.Parse(typeof(BlockMode), config.BlockMode)) {
+                case BlockMode.Blacklist:
+                    return config.List.Contains(entry);
+                case BlockMode.Whitelist:
+                    return !config.List.Contains(entry);
+            }
+            return null;
+        }
+        public bool CheckWhitelistRoles(RunnerPlayer player, BlockConfiguration config) {
+            if (PlayerPermissions is not null && player.HasAnyRoleOf(PlayerPermissions, Extensions.ParseRoles(config.WhitelistedRoles))) {
+                Log($"Player {player.str()} would have been kicked for {config.Name}, but has a whitelisted Role!");
+                return true;
+            }
+            return false;
+        }
         public bool CheckPlayer(RunnerPlayer player, IpApi.Response geoData) {
+            if (PlayerPermissions is not null && CheckWhitelistRoles(player, Config.BlockProxies)) return false;
             if (Config.BlockProxies.Enabled && (geoData.Proxy) == true) { player.Kick(FormatString(Config.BlockProxies.KickMessage, player, geoData)); return true; }
+            if (PlayerPermissions is not null && player.HasAnyRoleOf(PlayerPermissions, Extensions.ParseRoles(Config.BlockServers.WhitelistedRoles))) return false;
             if (Config.BlockServers.Enabled && (geoData.Hosting) == true) { player.Kick(FormatString(Config.BlockServers.KickMessage, player, geoData)); return true; }
+            if (PlayerPermissions is not null && player.HasAnyRoleOf(PlayerPermissions, Extensions.ParseRoles(Config.BlockMobile.WhitelistedRoles))) return false;
             if (Config.BlockMobile.Enabled && (geoData.Mobile) == true) { player.Kick(FormatString(Config.BlockMobile.KickMessage, player, geoData)); return true; }
 
-            if (Config.ISPs.Enabled && geoData.Isp is not null && Config.ISPs.List.Contains(geoData.Isp)) { player.Kick(FormatString(Config.ISPs.KickMessage, player, geoData)); return true; }
-            if (Config.Continents.Enabled && geoData.Continent is not null && Config.Continents.List.Contains(geoData.Continent)) { player.Kick(FormatString(Config.Continents.KickMessage, player, geoData)); return true; }
-            if (Config.Countries.Enabled && geoData.Country is not null && Config.Countries.List.Contains(geoData.Country)) { player.Kick(FormatString(Config.Countries.KickMessage, player, geoData)); return true; }
+            if (PlayerPermissions is not null && player.HasAnyRoleOf(PlayerPermissions, Extensions.ParseRoles(Config.ISPs.WhitelistedRoles))) return false;
+            if (Config.ISPs.Enabled && geoData.Isp is not null && (CheckStringListEntry(Config.ISPs, geoData.Isp) == true)) { player.Kick(FormatString(Config.ISPs.KickMessage, player, geoData)); return true; }
+            if (PlayerPermissions is not null && player.HasAnyRoleOf(PlayerPermissions, Extensions.ParseRoles(Config.Continents.WhitelistedRoles))) return false;
+            if (Config.Continents.Enabled && geoData.Continent is not null && (CheckStringListEntry(Config.Continents, geoData.Continent) == true)) { player.Kick(FormatString(Config.Continents.KickMessage, player, geoData)); return true; }
+            if (PlayerPermissions is not null && player.HasAnyRoleOf(PlayerPermissions, Extensions.ParseRoles(Config.Countries.WhitelistedRoles))) return false;
+            if (Config.Countries.Enabled && geoData.Country is not null && (CheckStringListEntry(Config.Countries, geoData.Country) == true)) { player.Kick(FormatString(Config.Countries.KickMessage, player, geoData)); return true; }
 
             return false;
         }
         public void ToggleBoolEntry(BBRAPIModules.RunnerPlayer commandSource, BlockConfiguration config) {
             config.Enabled = !config.Enabled;
-            commandSource.Message($"{nameof(config)} is now {config.Enabled}");
+            commandSource.Message($"{config.Name} is now {config.Enabled}");
             Config.Save();
         }
         public void ToggleStringListEntry(BBRAPIModules.RunnerPlayer commandSource, BlockListConfiguration config, string? entry = null) {
-            var listName = nameof(config);
             if (string.IsNullOrWhiteSpace(entry)) {
-                commandSource.Message($"{config.List.Count} {config.BlockMode}ed {listName}:\n\n" + string.Join(", ", config.List));
+                commandSource.Message($"{config.List.Count} {config.BlockMode}ed {config.Name}:\n\n" + string.Join(", ", config.List));
                 return;
             }
 
             if (config.List.Contains(entry)) {
                 config.List.Remove(entry);
-                commandSource.Message($"Removed {entry.Quote()} from the list of {config.BlockMode}ed {listName}!");
+                commandSource.Message($"Removed {entry.Quote()} from the list of {config.BlockMode}ed {config.Name}!");
             } else {
                 config.List.Add(entry);
-                commandSource.Message($"Added {entry.Quote()} to the list of {config.BlockMode}ed {listName}!");
+                commandSource.Message($"Added {entry.Quote()} to the list of {config.BlockMode}ed {config.Name}!");
             }
             Config.Save();
         }
@@ -107,9 +130,27 @@ namespace Bluscream {
         #endregion
 
         #region Commands
-        [CommandCallback("block", Description = "Toggles blocking for a specific item (proxies, servers, mobile, failed, isp, continent, country")]
+        [CommandCallback("blockplayer", Description = "Toggles blocking for a specific player's item")]
+        public void ToggleBlockPlayerCommand(BBRAPIModules.RunnerPlayer commandSource, RunnerPlayer target, string list = "") {
+            var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}blockplayer\""; var cmdConfig = CommandsConfigurationInstance.blockplayer;
+            if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
+            if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
+            var geoData = GeoApi?.GetData(target)?.Result;
+            if (geoData is null) { commandSource.Message($"Could not fetch geoData for {target.str()}"); return; }
+            switch (list.ToLowerInvariant()) {
+                case "isp":
+                    ToggleStringListEntry(commandSource, Config.ISPs, geoData.Isp); break;
+                case "continent":
+                    ToggleStringListEntry(commandSource, Config.Continents, geoData.Continent); break;
+                case "country":
+                    ToggleStringListEntry(commandSource, Config.Countries, geoData.Country); break;
+                default:
+                    commandSource.Message("Available options:\n\nisp, continent, country"); break;
+            }
+        }
+        [CommandCallback("block", Description = "Toggles blocking for a specific item")]
         public void ToggleBlockCommand(BBRAPIModules.RunnerPlayer commandSource, string? list = null, string? entry = null) {
-            var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}playerinfo\""; var cmdConfig = CommandsConfigurationInstance.block_country;
+            var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}block\""; var cmdConfig = CommandsConfigurationInstance.block;
             if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
             if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
             if (list is null) {
@@ -136,13 +177,12 @@ namespace Bluscream {
                 case "isp":
                     ToggleStringListEntry(commandSource, Config.ISPs, entry); break;
                 case "continent":
-                    ToggleStringListEntry(commandSource, Config.ISPs, entry); break;
+                    ToggleStringListEntry(commandSource, Config.Continents, entry); break;
                 case "country":
-                    ToggleStringListEntry(commandSource, Config.ISPs, entry); break;
+                    ToggleStringListEntry(commandSource, Config.Countries, entry); break;
                 default:
                     commandSource.Message("Available options:\n\nproxy, server, mobile, failed, isp, continent, country"); break;
             }
-            
         }
         #endregion
 
@@ -150,33 +190,37 @@ namespace Bluscream {
         #region Configuration
         public CommandsConfiguration CommandsConfigurationInstance { get; set; }
         public class CommandsConfiguration : ModuleConfiguration {
-            public CommandConfiguration block_country { get; set; } = new CommandConfiguration() { AllowedRoles = Extensions.ToRoleStringList(BattleBitAPI.Common.Roles.Admin) };
+            public CommandConfiguration block { get; set; } = new CommandConfiguration() { AllowedRoles = Extensions.ToRoleStringList(BattleBitAPI.Common.Roles.Admin) };
+            public CommandConfiguration blockplayer { get; set; } = new CommandConfiguration() { AllowedRoles = Extensions.ToRoleStringList(BattleBitAPI.Common.Roles.Admin) };
         }
         public class BlockListConfiguration : BlockConfiguration {
-            public BlockMode BlockMode { get; set; } = BlockMode.Blacklist;
+            public string BlockMode { get; set; } = "Blacklist";
             public List<string> List { get; set; } = new List<string>();
         }
         public class BlockConfiguration {
+            [JsonIgnore]
+            internal string Name = string.Empty;
             public bool Enabled { get; set; } = false;
             public string KickMessage { get; set; } = "Kicked by VPNBlocker!";
+            public List<string> WhitelistedRoles { get; set; } = MoreRoles.Member.ToRoleStringList();
         }
         public Configuration Config { get; set; }
         public class Configuration : ModuleConfiguration {
             public TimeSpan FailTimeout { get; set; } = TimeSpan.FromMinutes(1);
-            public BlockConfiguration BlockProxies { get; set; } = new BlockConfiguration() { Enabled = true, KickMessage = "Proxies and VPNs are not allowed on this server, disable your VPN and try again!" };
-            public BlockConfiguration BlockServers { get; set; } = new BlockConfiguration() { Enabled = true, KickMessage = "Non-Residential IPs are not allowed on this server!" };
-            public BlockConfiguration BlockMobile { get; set; } = new BlockConfiguration() { Enabled = true, KickMessage = "Mobile Networks are not allowed on this server!" };
-            public BlockConfiguration BlockFailed { get; set; } = new BlockConfiguration() { Enabled = true, KickMessage = "Your IP failed to be validated, try again" };
-            public BlockListConfiguration ISPs { get; set; } = new BlockListConfiguration() { Enabled = true, KickMessage = "Sorry, your ISP \"{geoData.Isp}\" is not allowed on this server!", BlockMode = BlockMode.Blacklist };
-            public BlockListConfiguration Continents { get; set; } = new BlockListConfiguration() { Enabled = true, KickMessage = "Sorry, your continent \"{geoData.Continent}\" is not allowed on this server!", BlockMode = BlockMode.Blacklist };
-            public BlockListConfiguration Countries { get; set; } = new BlockListConfiguration() { Enabled = true, KickMessage = "Sorry, your country \"{geoData.Country}\" is not allowed on this server!", BlockMode = BlockMode.Blacklist };
+            public BlockConfiguration BlockProxies { get; set; } = new BlockConfiguration() { Name = "BlockProxies", Enabled = true, KickMessage = "Proxies and VPNs are not allowed on this server, disable your VPN and try again!" };
+            public BlockConfiguration BlockServers { get; set; } = new BlockConfiguration() { Name = "BlockServers", Enabled = true, KickMessage = "Non-Residential IPs are not allowed on this server!" };
+            public BlockConfiguration BlockMobile { get; set; } = new BlockConfiguration() { Name = "BlockMobile", Enabled = false, KickMessage = "Mobile Networks are not allowed on this server!" };
+            public BlockConfiguration BlockFailed { get; set; } = new BlockConfiguration() { Name = "BlockFailed", Enabled = true, KickMessage = "Your IP {player.IP} failed to be validated, try again" };
+            public BlockListConfiguration ISPs { get; set; } = new BlockListConfiguration() { Name = "ISPs", Enabled = true, KickMessage = "Sorry, your ISP \"{geoData.Isp}\" is not allowed on this server!", List = new() { "Cloudflare, Inc." } };
+            public BlockListConfiguration Continents { get; set; } = new BlockListConfiguration() { Name = "Continents", Enabled = true, KickMessage = "Sorry, your continent \"{geoData.Continent}\" is not allowed on this server!" };
+            public BlockListConfiguration Countries { get; set; } = new BlockListConfiguration() { Name = "Countries", Enabled = true, KickMessage = "Sorry, your country \"{geoData.Country}\" is not allowed on this server!" };
         }
         #endregion
     }
 
     #region Extensions
-    public static partial class Extensions {
-        public static string ToWhitelistBlacklistString(this BlockMode mode) => mode == BlockMode.Whitelist ? "Whitelist" : "Blacklist";
-    }
+    //public static partial class Extensions {
+    //    public static string ToWhitelistBlacklistString(this BlockMode mode) => mode == BlockMode.Whitelist ? "Whitelist" : "Blacklist";
+    //}
     #endregion
 }
