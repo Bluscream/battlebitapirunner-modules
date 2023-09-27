@@ -24,7 +24,6 @@ namespace Bluscream {
         //    SupportUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/issues/new?title=GeoApi")
         //};
         public IpApiConfiguration Configuration { get; set; }
-        // public GeoApiCommandsConfiguration CommandsConfiguration { get; set; }
         internal static HttpClient httpClient = new HttpClient();
         private bool GettingGeoData = false;
 
@@ -104,10 +103,6 @@ namespace Bluscream {
         }
         #endregion
     }
-    //public class GeoApiCommandsConfiguration : ModuleConfiguration {
-    //    public CommandConfiguration playerinfo { get; set; } = new CommandConfiguration() { AllowedRoles = new() { "Admin" } };
-    //    public CommandConfiguration players { get; set; } = new CommandConfiguration() { AllowedRoles = new () { "All" } };
-    //}
     public class IpApiConfiguration : ModuleConfiguration {
         public string IpApiUrl { get; set; } = "http://ip-api.com/json/{ip}?fields=status,message,continent,continentCode,country,countryCode,region,regionName,city,district,zip,lat,lon,timezone,offset,currency,isp,org,as,asname,reverse,mobile,proxy,hosting,query";
         public TimeSpan RemoveDelay { get; set; } = TimeSpan.FromMinutes(1);

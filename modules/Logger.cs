@@ -1,7 +1,5 @@
 using System;
 using System.Linq;
-using System.Net;
-using System.Globalization;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -20,7 +18,7 @@ using Permissions;
 #endif
 
 namespace Bluscream {
-    [RequireModule(typeof(BluscreamLib))]
+    [RequireModule(typeof(Bluscream.BluscreamLib))]
     [RequireModule(typeof(Permissions.PlayerPermissions))]
     [RequireModule(typeof(Commands.CommandHandler))]
     [Module("Logger", "2.0.1")]
@@ -48,52 +46,6 @@ namespace Bluscream {
         public ChatLoggerConfiguration Configuration { get; set; } = null!;
         internal HttpClient httpClient = new HttpClient();
         internal Random random = Random.Shared;
-        #region Api
-        internal async Task<SteamWebApi.BanResponse> GetSteamBans(ulong steamId64) {
-            if (string.IsNullOrWhiteSpace(Configuration.SteamWebApiKey)) {
-                Console.WriteLine("Steam Web API Key is not set up in config, can't continue!");
-                return null!;
-            }
-            var url = $"http://api.steampowered.com/ISteamUser/GetPlayerBans/v1/?steamids={steamId64}&key={Configuration.SteamWebApiKey}";
-            var httpResponse = await this.httpClient.GetAsync(url);
-            var json = await httpResponse.Content.ReadAsStringAsync();
-            var response = SteamWebApi.BanResponse.FromJson(json);
-            return response;
-        }
-        internal async Task<long> GetBanCount(ulong steamId64) {
-            var bans = await GetSteamBans(steamId64);
-            if (bans is null) return -1;
-            var player = bans.Players.First();
-            var banCount = player.NumberOfVacBans + player.NumberOfGameBans;
-            if (player.CommunityBanned) banCount++;
-            if (player.EconomyBan != "none") banCount++;
-            return banCount;
-        }
-        #endregion
-        #region Commands
-        [CommandCallback("playerbans", Description = "Lists bans of a player")]
-        public async void GetPlayerBans(RunnerPlayer commandSource, RunnerPlayer _player) {
-            var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}playerbans\""; var cmdConfig = CommandsConfiguration.playerbans;
-            if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
-            if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
-            var response = new StringBuilder();
-            if (!string.IsNullOrEmpty(_player.Name)) response.AppendLine($"Name: {_player.str()} ({_player.Name.Length} chars)");
-            if (!string.IsNullOrEmpty(_player.SteamID.ToString())) {
-                var bans = await GetSteamBans(_player.SteamID);
-                if (bans is null) {
-                    commandSource.Message("Steam bans request failed, check connection and config!");
-                    return;
-                }
-                var player = bans.Players.First();
-                response.AppendLine($"VAC Banned: {player.VacBanned.ToYesNo()} ({player.NumberOfVacBans} times)");
-                if (player.VacBanned) response.AppendLine($"Last VAC Ban: {player.DaysSinceLastBan} days ago");
-                response.AppendLine($"Community Banned: {player.CommunityBanned.ToYesNo()}");
-                response.AppendLine($"Trade Banned: {(player.EconomyBan != "none").ToYesNo()}");
-                response.AppendLine($"Game Banned: {(player.NumberOfGameBans > 0).ToYesNo()} ({player.NumberOfGameBans} times)");
-            }
-            commandSource.Message(response.ToString());
-        }
-        #endregion
         #region Methods
         internal void LogToConsole(string msg) {
             if (string.IsNullOrWhiteSpace(msg)) return;
@@ -241,8 +193,7 @@ namespace Bluscream {
             return Task.CompletedTask;
         }
         public override async Task OnPlayerConnected(RunnerPlayer player) {
-            Response? geoResponse = null;
-            if (Configuration.UseIpApi) geoResponse = await GetGeoData(player.IP);
+            var geoResponse = await GetGeoData(player.IP);
             HandleEvent(Configuration.OnPlayerConnected, player: player, geoResponse: geoResponse);
         }
         public override Task<bool> OnPlayerTypedMessage(RunnerPlayer player, ChatChannel channel, string msg) {
@@ -298,9 +249,7 @@ namespace Bluscream {
         public DiscordWebhookLogConfigurationEntrySettings Discord { get; set; } = null!;
     }
     public class ChatLoggerConfiguration : ModuleConfiguration {
-        public string SteamWebApiKey { get; set; } = string.Empty;
         public string TimeStampFormat { get; set; } = "HH:mm:ss";
-        public bool UseIpApi { get; set; } = true;
         public Dictionary<string, string[]> randomReplacements = new Dictionary<string, string[]>() {
             { "joined", new string[] { "joined", "connected", "hailed" } },
         };
@@ -350,42 +299,3 @@ namespace Bluscream {
     }
     #endregion
 }
-#region Json
-namespace SteamWebApi {
-    public partial class BanResponse {
-        [JsonPropertyName("players")]
-        public List<Player> Players { get; set; } = null!;
-    }
-
-    public partial class Player {
-        [JsonPropertyName("SteamId")]
-        public string SteamId { get; set; } = null!;
-
-        [JsonPropertyName("CommunityBanned")]
-        public bool CommunityBanned { get; set; }
-
-        [JsonPropertyName("VACBanned")]
-        public bool VacBanned { get; set; }
-
-        [JsonPropertyName("NumberOfVACBans")]
-        public long NumberOfVacBans { get; set; }
-
-        [JsonPropertyName("DaysSinceLastBan")]
-        public long DaysSinceLastBan { get; set; }
-
-        [JsonPropertyName("NumberOfGameBans")]
-        public long NumberOfGameBans { get; set; }
-
-        [JsonPropertyName("EconomyBan")]
-        public string EconomyBan { get; set; } = null!;
-    }
-
-    public partial class BanResponse {
-        public static BanResponse FromJson(string json) => JsonSerializer.Deserialize<BanResponse>(json, Converter.Settings);
-    }
-
-    public static class Serialize {
-        public static string ToJson(this BanResponse self) => JsonSerializer.Serialize(self, Converter.Settings);
-    }
-}
-#endregion

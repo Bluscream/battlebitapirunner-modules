@@ -255,7 +255,7 @@ namespace Bans {
         }
 
         public List<BanEntry> Purge() {
-            var removed = Entries.Where(b => b.Remaining.TotalSeconds < 1).ToList();
+            var removed = Entries.Where(b => b.Remaining.TotalSeconds <= 0).ToList();
             foreach (var banEntry in removed) {
                 Entries.Remove(banEntry);
             }

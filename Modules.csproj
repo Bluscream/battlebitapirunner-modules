@@ -22,7 +22,6 @@
     <Compile Remove="configurations\**" />
     <Compile Remove="configurations_\**" />
     <Compile Remove="dependencies\**" />
-    <Compile Remove="modules_\**" />
     <EmbeddedResource Remove="battlebit-rcon\**" />
     <EmbeddedResource Remove="BattleBitBaseModules\**" />
     <EmbeddedResource Remove="BattleBitExamples\**" />
@@ -30,7 +29,6 @@
     <EmbeddedResource Remove="configurations\**" />
     <EmbeddedResource Remove="configurations_\**" />
     <EmbeddedResource Remove="dependencies\**" />
-    <EmbeddedResource Remove="modules_\**" />
     <None Remove="battlebit-rcon\**" />
     <None Remove="BattleBitBaseModules\**" />
     <None Remove="BattleBitExamples\**" />
@@ -38,11 +36,6 @@
     <None Remove="configurations\**" />
     <None Remove="configurations_\**" />
     <None Remove="dependencies\**" />
-    <None Remove="modules_\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Remove="modules\BluscreamLib.cs" />
   </ItemGroup>
 
   <ItemGroup>

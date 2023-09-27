@@ -1187,7 +1187,10 @@ public static class JsonUtils {
     public static T FromJson<T>(string jsonText) => JsonSerializer.Deserialize<T>(jsonText, Converter.Settings);
     public static T FromJsonFile<T>(FileInfo file) => FromJson<T>(File.ReadAllText(file.FullName));
     public static string ToJson<T>(this T self) => JsonSerializer.Serialize(self, Converter.Settings);
-    public static void ToFile<T>(this T self, FileInfo file) => File.WriteAllText(file.FullName, ToJson(self));
+        public static void ToFile<T>(this T self, FileInfo file) {
+            file?.Directory?.Create();
+            File.WriteAllText(file?.FullName, ToJson(self));
+        }
 }
 public static class Converter {
     public static readonly JsonSerializerOptions Settings = new(JsonSerializerDefaults.General) {
