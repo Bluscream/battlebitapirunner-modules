@@ -429,69 +429,11 @@
 | Description                                                     | Version   |
 |:----------------------------------------------------------------|:----------|
 | Uploads the currently loaded module list to a telemetry server. | 2.0.0     |
-# 1 Modules in AdvancedVoting.cs
-
-| Description               | Version   |
-|:--------------------------|:----------|
-| More chat voting commands | 2.0.0     |
-
-## Commands
-| Command      | Function Name   | Description                   | Allowed Roles   | Parameters                                                             | Defaults   |
-|:-------------|:----------------|:------------------------------|:----------------|:-----------------------------------------------------------------------|:-----------|
-| votemap      | void            | Starts a vote for a map       |                 | ['RunnerPlayer commandSource', 'string mapName']                       | {}         |
-| votegamemode | void            | Starts a vote for a gamemode  |                 | ['RunnerPlayer commandSource', 'string gameModeName']                  | {}         |
-| votemaptime  | void            | Starts a vote for map time    |                 | ['RunnerPlayer commandSource', 'string dayTime']                       | {}         |
-| voterestart  | void            | Starts a vote for map restart |                 | ['RunnerPlayer commandSource']                                         | {}         |
-| voteban      | void            | Starts a voteban for a player |                 | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string reason'] | {}         |
-
-## Public Methods
-| Function Name              | Parameters                                                                                                        | Defaults                       |
-|:---------------------------|:------------------------------------------------------------------------------------------------------------------|:-------------------------------|
-|                            |                                                                                                                   |                                |
-| ModuleInfo                 | ['']                                                                                                              | {'ModuleInfo': 'new'}          |
-|                            |                                                                                                                   |                                |
-|                            |                                                                                                                   |                                |
-|                            |                                                                                                                   |                                |
-|                            |                                                                                                                   |                                |
-|                            |                                                                                                                   |                                |
-|                            |                                                                                                                   |                                |
-|                            |                                                                                                                   |                                |
-| void                       | ['']                                                                                                              | {}                             |
-| StartMapVoteCommand        | ['RunnerPlayer commandSource', 'string mapName']                                                                  | {}                             |
-| StartGameModeVoteCommand   | ['RunnerPlayer commandSource', 'string gameModeName']                                                             | {}                             |
-| StartMapTimeVoteCommand    | ['RunnerPlayer commandSource', 'string dayTime']                                                                  | {}                             |
-| StartMapRestartVoteCommand | ['RunnerPlayer commandSource']                                                                                    | {}                             |
-| StartVoteBanCommand        | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string reason']                                            | {}                             |
-| string                     | ['string input', 'int winnerVotes', 'int totalVotes', 'RunnerServer server']                                      | {}                             |
-| StartVote                  | ['RunnerPlayer commandSource', 'string text', 'string options', 'Action<int', 'int', 'string> voteEndedCallback'] | {}                             |
-| async                      | ['RunnerPlayer player', 'ChatChannel channel', 'string msg']                                                      | {}                             |
-|                            |                                                                                                                   |                                |
-|                            |                                                                                                                   |                                |
-|                            |                                                                                                                   |                                |
-|                            |                                                                                                                   |                                |
-| votemap                    | ['']                                                                                                              | {'AllowedRoles': 'Extensions'} |
-| votegamemode               | ['']                                                                                                              | {'AllowedRoles': 'Extensions'} |
-| votemaptime                | ['']                                                                                                              | {'AllowedRoles': 'Extensions'} |
-| voterestart                | ['']                                                                                                              | {'AllowedRoles': 'Extensions'} |
-| voteban                    | ['']                                                                                                              | {'AllowedRoles': 'Extensions'} |
-|                            |                                                                                                                   |                                |
-|                            |                                                                                                                   |                                |
-| VoteBanDuration            | ['30']                                                                                                            | {}                             |
 # 1 Modules in BluscreamLib.cs
 
 | Description         | Version   |
 |:--------------------|:----------|
 | Bluscream's Library | 2.0.1     |
-# 1 Modules in ConsoleLogger.cs
-
-| Description   | Version   |
-|:--------------|:----------|
-| ConsoleLogger | 2.0.0     |
-# 1 Modules in DiscordStatus.cs
-
-| Description                                                                                                                     |   Version |
-|:--------------------------------------------------------------------------------------------------------------------------------|----------:|
-| Connects each server to a Discord Bot, and updates the Discord Bot's status with the server's player-count and map information. |       1.2 |
 # 1 Modules in GameModeRotation.cs
 
 | Description                                                                                                                                     |   Version |
@@ -521,190 +463,37 @@
 
 | Description                                            | Version   |
 |:-------------------------------------------------------|:----------|
-| IP and geolocation data provider API for other modules | 2.0.0     |
+| IP and geolocation data provider API for other modules | 2.0.1     |
+# 1 Modules in GeoApiExample.cs
+
+| Description                 | Version   |
+|:----------------------------|:----------|
+| Example of using the GeoApi | 2.0.0     |
 
 ## Commands
-| Command    | Function Name   | Description                                  | Allowed Roles   | Parameters                                                    | Defaults           |
-|:-----------|:----------------|:---------------------------------------------|:----------------|:--------------------------------------------------------------|:-------------------|
-| playerinfo | void            | Displays info about a player                 | Admin           | ['RunnerPlayer commandSource', 'RunnerPlayer? player = null'] | {'player': 'null'} |
-| playerlist | void            | Lists players and their respective countries |                 | ['RunnerPlayer commandSource']                                | {}                 |
+| Command    | Function Name   | Description                                  | Allowed Roles             | Parameters                                                                                | Defaults           |
+|:-----------|:----------------|:---------------------------------------------|:--------------------------|:------------------------------------------------------------------------------------------|:-------------------|
+| playerinfo | void            | Displays info about a player                 | BattleBitAPI.Common.Admin | ['BBRAPIModules.RunnerPlayer commandSource', 'BBRAPIModules.RunnerPlayer? player = null'] | {'player': 'null'} |
+| playerlist | void            | Lists players and their respective countries |                           | ['BBRAPIModules.RunnerPlayer commandSource']                                              | {}                 |
 
 ## Public Methods
-| Function Name   | Parameters                                                                                                                              | Defaults              |
-|:----------------|:----------------------------------------------------------------------------------------------------------------------------------------|:----------------------|
-|                 |                                                                                                                                         |                       |
-|                 |                                                                                                                                         |                       |
-|                 |                                                                                                                                         |                       |
-|                 |                                                                                                                                         |                       |
-|                 |                                                                                                                                         |                       |
-|                 |                                                                                                                                         |                       |
-|                 |                                                                                                                                         |                       |
-|                 |                                                                                                                                         |                       |
-|                 |                                                                                                                                         |                       |
-|                 |                                                                                                                                         |                       |
-|                 |                                                                                                                                         |                       |
-| description     | ['string name', 'string description', 'Version version', 'string author', 'Uri websiteUrl', 'Uri updateUrl', 'Uri supportUrl']          | {}                    |
-| description     | ['string name', 'string description', 'Version version', 'string author', 'string websiteUrl', 'string updateUrl', 'string supportUrl'] | {}                    |
-| description     | ['string name', 'string description', 'string version', 'string author', 'string websiteUrl', 'string updateUrl', 'string supportUrl']  | {}                    |
-|                 |                                                                                                                                         |                       |
-| ModuleInfo      | ['']                                                                                                                                    | {'ModuleInfo': 'new'} |
-|                 |                                                                                                                                         |                       |
-|                 |                                                                                                                                         |                       |
-|                 |                                                                                                                                         |                       |
-| void            | ['object _msg', 'string source = "GeoApi"']                                                                                             | {}                    |
-| Task            | ['RunnerPlayer player']                                                                                                                 | {}                    |
-| Task            | ['RunnerPlayer player']                                                                                                                 | {}                    |
-| Task            | ['IPAddress ip']                                                                                                                        | {}                    |
-| void            | ['']                                                                                                                                    | {}                    |
-| Task            | ['']                                                                                                                                    | {}                    |
-| Task            | ['']                                                                                                                                    | {}                    |
-| Task            | ['RunnerPlayer player']                                                                                                                 | {}                    |
-| Task            | ['RunnerPlayer player']                                                                                                                 | {}                    |
-| GetPlayerInfo   | ['RunnerPlayer commandSource', 'RunnerPlayer? player = null']                                                                           | {'player': 'null'}    |
-| ListPlayers     | ['RunnerPlayer commandSource']                                                                                                          | {}                    |
-|                 |                                                                                                                                         |                       |
-|                 |                                                                                                                                         |                       |
-| RemoveDelay     | ['1']                                                                                                                                   | {}                    |
-|                 |                                                                                                                                         |                       |
-| string          | ['this RunnerPlayer player']                                                                                                            | {}                    |
-|                 |                                                                                                                                         |                       |
-|                 |                                                                                                                                         |                       |
-|                 |                                                                                                                                         |                       |
-|                 |                                                                                                                                         |                       |
-|                 |                                                                                                                                         |                       |
-|                 |                                                                                                                                         |                       |
-|                 |                                                                                                                                         |                       |
-|                 |                                                                                                                                         |                       |
-|                 |                                                                                                                                         |                       |
-|                 |                                                                                                                                         |                       |
-|                 |                                                                                                                                         |                       |
-|                 |                                                                                                                                         |                       |
-|                 |                                                                                                                                         |                       |
-|                 |                                                                                                                                         |                       |
-|                 |                                                                                                                                         |                       |
-|                 |                                                                                                                                         |                       |
-|                 |                                                                                                                                         |                       |
-|                 |                                                                                                                                         |                       |
-|                 |                                                                                                                                         |                       |
-|                 |                                                                                                                                         |                       |
-|                 |                                                                                                                                         |                       |
-|                 |                                                                                                                                         |                       |
-|                 |                                                                                                                                         |                       |
-|                 |                                                                                                                                         |                       |
-|                 |                                                                                                                                         |                       |
-|                 |                                                                                                                                         |                       |
-| Response        | ['string json']                                                                                                                         | {}                    |
-|                 |                                                                                                                                         |                       |
-| string          | ['this Response self']                                                                                                                  | {}                    |
-|                 |                                                                                                                                         |                       |
-| T               | ['string jsonText']                                                                                                                     | {}                    |
-| T               | ['FileInfo file']                                                                                                                       | {}                    |
-| string          | ['this T self']                                                                                                                         | {}                    |
-| void            | ['this T self', 'FileInfo file']                                                                                                        | {}                    |
-|                 |                                                                                                                                         |                       |
-| readonly        | ['JsonSerializerDefaults.General']                                                                                                      | {'Settings': 'new'}   |
-|                 |                                                                                                                                         |                       |
-| bool            | ['Type t']                                                                                                                              | {}                    |
-| long            | ['ref Utf8JsonReader reader', 'Type typeToConvert', 'JsonSerializerOptions options']                                                    | {}                    |
-| void            | ['Utf8JsonWriter writer', 'long value', 'JsonSerializerOptions options']                                                                | {}                    |
-| readonly        | ['']                                                                                                                                    | {'Singleton': 'new'}  |
-|                 |                                                                                                                                         |                       |
-|                 |                                                                                                                                         |                       |
-|                 |                                                                                                                                         |                       |
-| DateOnly        | ['ref Utf8JsonReader reader', 'Type typeToConvert', 'JsonSerializerOptions options']                                                    | {}                    |
-| void            | ['Utf8JsonWriter writer', 'DateOnly value', 'JsonSerializerOptions options']                                                            | {}                    |
-|                 |                                                                                                                                         |                       |
-|                 |                                                                                                                                         |                       |
-|                 |                                                                                                                                         |                       |
-| TimeOnly        | ['ref Utf8JsonReader reader', 'Type typeToConvert', 'JsonSerializerOptions options']                                                    | {}                    |
-| void            | ['Utf8JsonWriter writer', 'TimeOnly value', 'JsonSerializerOptions options']                                                            | {}                    |
-|                 |                                                                                                                                         |                       |
-| bool            | ['Type t']                                                                                                                              | {}                    |
-|                 |                                                                                                                                         |                       |
-|                 |                                                                                                                                         |                       |
-|                 |                                                                                                                                         |                       |
-| void            | ['Utf8JsonWriter writer', 'DateTimeOffset value', 'JsonSerializerOptions options']                                                      | {}                    |
-| DateTimeOffset  | ['ref Utf8JsonReader reader', 'Type typeToConvert', 'JsonSerializerOptions options']                                                    | {}                    |
-| readonly        | ['']                                                                                                                                    | {'Singleton': 'new'}  |
-|                 |                                                                                                                                         |                       |
-| IPAddress       | ['ref Utf8JsonReader reader', 'Type typeToConvert', 'JsonSerializerOptions options']                                                    | {}                    |
-| void            | ['Utf8JsonWriter writer', 'IPAddress value', 'JsonSerializerOptions options']                                                           | {}                    |
-|                 |                                                                                                                                         |                       |
-| IPEndPoint      | ['ref Utf8JsonReader reader', 'Type typeToConvert', 'JsonSerializerOptions options']                                                    | {}                    |
-| void            | ['Utf8JsonWriter writer', 'IPEndPoint value', 'JsonSerializerOptions options']                                                          | {}                    |
+| Function Name   | Parameters                                                                                | Defaults           |
+|:----------------|:------------------------------------------------------------------------------------------|:-------------------|
+|                 |                                                                                           |                    |
+|                 |                                                                                           |                    |
+|                 |                                                                                           |                    |
+|                 |                                                                                           |                    |
+| void            | ['']                                                                                      | {}                 |
+| System          | ['']                                                                                      | {}                 |
+| System          | ['BBRAPIModules.RunnerPlayer player']                                                     | {}                 |
+| System          | ['BBRAPIModules.RunnerPlayer player']                                                     | {}                 |
+| GetPlayerInfo   | ['BBRAPIModules.RunnerPlayer commandSource', 'BBRAPIModules.RunnerPlayer? player = null'] | {'player': 'null'} |
+| ListPlayers     | ['BBRAPIModules.RunnerPlayer commandSource']                                              | {}                 |
 # 1 Modules in Logger.cs
 
 | Description   | Version   |
 |:--------------|:----------|
 | Logger        | 2.0.1     |
-
-## Commands
-| Command    | Function Name   | Description            | Allowed Roles   | Parameters                                             | Defaults   |
-|:-----------|:----------------|:-----------------------|:----------------|:-------------------------------------------------------|:-----------|
-| playerbans | async           | Lists bans of a player |                 | ['RunnerPlayer commandSource', 'RunnerPlayer _player'] | {}         |
-
-## Public Methods
-| Function Name        | Parameters                                                                           | Defaults                       |
-|:---------------------|:-------------------------------------------------------------------------------------|:-------------------------------|
-|                      |                                                                                      |                                |
-| ModuleInfo           | ['']                                                                                 | {'ModuleInfo': 'new'}          |
-|                      |                                                                                      |                                |
-|                      |                                                                                      |                                |
-|                      |                                                                                      |                                |
-|                      |                                                                                      |                                |
-|                      |                                                                                      |                                |
-| void                 | ['RunnerPlayer commandSource', 'RunnerPlayer _player']                               | {}                             |
-| void                 | ['']                                                                                 | {}                             |
-| Task                 | ['']                                                                                 | {}                             |
-| async                | ['RunnerPlayer player']                                                              | {}                             |
-| Task                 | ['RunnerPlayer player', 'ChatChannel channel', 'string msg']                         | {}                             |
-| Task                 | ['RunnerPlayer player']                                                              | {}                             |
-| Task                 | ['RunnerPlayer from', 'RunnerPlayer to', 'ReportReason reason', 'string additional'] | {}                             |
-| Task                 | ['']                                                                                 | {}                             |
-|                      |                                                                                      |                                |
-|                      |                                                                                      |                                |
-| playerbans           | ['']                                                                                 | {'AllowedRoles': 'Extensions'} |
-|                      |                                                                                      |                                |
-|                      |                                                                                      |                                |
-|                      |                                                                                      |                                |
-|                      |                                                                                      |                                |
-|                      |                                                                                      |                                |
-|                      |                                                                                      |                                |
-|                      |                                                                                      |                                |
-|                      |                                                                                      |                                |
-|                      |                                                                                      |                                |
-|                      |                                                                                      |                                |
-|                      |                                                                                      |                                |
-|                      |                                                                                      |                                |
-|                      |                                                                                      |                                |
-|                      |                                                                                      |                                |
-|                      |                                                                                      |                                |
-|                      |                                                                                      |                                |
-|                      |                                                                                      |                                |
-|                      |                                                                                      |                                |
-| Dictionary           | ['']                                                                                 | {'randomReplacements': 'new'}  |
-| OnApiModulesLoaded   | ['']                                                                                 | {}                             |
-| OnApiConnected       | ['']                                                                                 | {}                             |
-| OnApiDisconnected    | ['']                                                                                 | {}                             |
-| OnPlayerConnected    | ['']                                                                                 | {}                             |
-| OnPlayerDisconnected | ['']                                                                                 | {}                             |
-| OnPlayerChatMessage  | ['']                                                                                 | {}                             |
-| OnPlayerChatCommand  | ['']                                                                                 | {}                             |
-| OnPlayerReported     | ['']                                                                                 | {}                             |
-|                      |                                                                                      |                                |
-|                      |                                                                                      |                                |
-|                      |                                                                                      |                                |
-|                      |                                                                                      |                                |
-|                      |                                                                                      |                                |
-|                      |                                                                                      |                                |
-|                      |                                                                                      |                                |
-|                      |                                                                                      |                                |
-|                      |                                                                                      |                                |
-|                      |                                                                                      |                                |
-|                      |                                                                                      |                                |
-| BanResponse          | ['string json']                                                                      | {}                             |
-|                      |                                                                                      |                                |
-| string               | ['this BanResponse self']                                                            | {}                             |
 # 1 Modules in MapRotation.cs
 
 | Description                                                                                                                                                                                                                                                                                                                                                                               | Version   |
@@ -748,11 +537,6 @@
 |                 |                                                   |            |
 |                 |                                                   |            |
 |                 |                                                   |            |
-# 1 Modules in MongoDBLogging.cs
-
-| Description                                                                                                                                                                                              | Version   |
-|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:----------|
-| Provides the means for users to leverage MongoDB for Logging certain actions within their BattleBit Server. The module has out-of-the-box for ChatLogs, ConnectionLogs, PlayerReportLogs, ServerAPI logs | 1.1.4     |
 # 1 Modules in MoreCommands.cs
 
 | Description   | Version   |
@@ -823,21 +607,38 @@
 | pos                     | ['']                                                                                                           | {'AllowedRoles': 'Extensions'}                              |
 |                         |                                                                                                                |                                                             |
 |                         |                                                                                                                |                                                             |
-# 1 Modules in ReconOnly.cs
+# 1 Modules in SteamApi.cs
 
-| Description                                                   |   Version |
-|:--------------------------------------------------------------|----------:|
-| This module forces players to become the Recon (Sniper) role. |       1.2 |
-# 1 Modules in RegionManager.cs
+| Description                                       | Version   |
+|:--------------------------------------------------|:----------|
+| Steam Web API data provider API for other modules | 2.0.0     |
+# 1 Modules in SteamApiExample.cs
 
-| Description   | Version   |
-|:--------------|:----------|
-| RegionManager | 1.0.0     |
-# 1 Modules in Snipers.cs
+| Description                          | Version   |
+|:-------------------------------------|:----------|
+| Example usage of the SteamApi module | 2.0.0     |
 
-| Description   | Version   |
-|:--------------|:----------|
-| Snipers       | 1.1.0     |
+## Commands
+| Command    | Function Name   | Description                  | Allowed Roles   | Parameters                                             | Defaults   |
+|:-----------|:----------------|:-----------------------------|:----------------|:-------------------------------------------------------|:-----------|
+| playerbans | async           | Lists steam bans of a player |                 | ['RunnerPlayer commandSource', 'RunnerPlayer _player'] | {}         |
+
+## Public Methods
+| Function Name   | Parameters                                             | Defaults                       |
+|:----------------|:-------------------------------------------------------|:-------------------------------|
+|                 |                                                        |                                |
+| ModuleInfo      | ['']                                                   | {'ModuleInfo': 'new'}          |
+|                 |                                                        |                                |
+|                 |                                                        |                                |
+|                 |                                                        |                                |
+|                 |                                                        |                                |
+|                 |                                                        |                                |
+| void            | ['RunnerPlayer commandSource', 'RunnerPlayer _player'] | {}                             |
+| void            | ['']                                                   | {}                             |
+| Task            | ['RunnerPlayer player']                                | {}                             |
+| Task            | ['RunnerPlayer player']                                | {}                             |
+|                 |                                                        |                                |
+| playerbans      | ['']                                                   | {'AllowedRoles': 'Extensions'} |
 # 1 Modules in TempBans.cs
 
 | Description        | Version   |
@@ -916,6 +717,84 @@
 | Remove                | ['BanEntry entry']                                                                                                                                           | {}                                                                       |
 | Load                  | ['']                                                                                                                                                         | {}                                                                       |
 | Save                  | ['']                                                                                                                                                         | {}                                                                       |
+# 1 Modules in AdvancedVoting.cs
+
+| Description               | Version   |
+|:--------------------------|:----------|
+| More chat voting commands | 2.0.0     |
+
+## Commands
+| Command      | Function Name   | Description                   | Allowed Roles   | Parameters                                                             | Defaults   |
+|:-------------|:----------------|:------------------------------|:----------------|:-----------------------------------------------------------------------|:-----------|
+| votemap      | void            | Starts a vote for a map       |                 | ['RunnerPlayer commandSource', 'string mapName']                       | {}         |
+| votegamemode | void            | Starts a vote for a gamemode  |                 | ['RunnerPlayer commandSource', 'string gameModeName']                  | {}         |
+| votemaptime  | void            | Starts a vote for map time    |                 | ['RunnerPlayer commandSource', 'string dayTime']                       | {}         |
+| voterestart  | void            | Starts a vote for map restart |                 | ['RunnerPlayer commandSource']                                         | {}         |
+| voteban      | void            | Starts a voteban for a player |                 | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string reason'] | {}         |
+
+## Public Methods
+| Function Name              | Parameters                                                                                                        | Defaults                       |
+|:---------------------------|:------------------------------------------------------------------------------------------------------------------|:-------------------------------|
+|                            |                                                                                                                   |                                |
+| ModuleInfo                 | ['']                                                                                                              | {'ModuleInfo': 'new'}          |
+|                            |                                                                                                                   |                                |
+|                            |                                                                                                                   |                                |
+|                            |                                                                                                                   |                                |
+|                            |                                                                                                                   |                                |
+|                            |                                                                                                                   |                                |
+|                            |                                                                                                                   |                                |
+|                            |                                                                                                                   |                                |
+| void                       | ['']                                                                                                              | {}                             |
+| StartMapVoteCommand        | ['RunnerPlayer commandSource', 'string mapName']                                                                  | {}                             |
+| StartGameModeVoteCommand   | ['RunnerPlayer commandSource', 'string gameModeName']                                                             | {}                             |
+| StartMapTimeVoteCommand    | ['RunnerPlayer commandSource', 'string dayTime']                                                                  | {}                             |
+| StartMapRestartVoteCommand | ['RunnerPlayer commandSource']                                                                                    | {}                             |
+| StartVoteBanCommand        | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string reason']                                            | {}                             |
+| string                     | ['string input', 'int winnerVotes', 'int totalVotes', 'RunnerServer server']                                      | {}                             |
+| StartVote                  | ['RunnerPlayer commandSource', 'string text', 'string options', 'Action<int', 'int', 'string> voteEndedCallback'] | {}                             |
+| async                      | ['RunnerPlayer player', 'ChatChannel channel', 'string msg']                                                      | {}                             |
+|                            |                                                                                                                   |                                |
+|                            |                                                                                                                   |                                |
+|                            |                                                                                                                   |                                |
+|                            |                                                                                                                   |                                |
+| votemap                    | ['']                                                                                                              | {'AllowedRoles': 'Extensions'} |
+| votegamemode               | ['']                                                                                                              | {'AllowedRoles': 'Extensions'} |
+| votemaptime                | ['']                                                                                                              | {'AllowedRoles': 'Extensions'} |
+| voterestart                | ['']                                                                                                              | {'AllowedRoles': 'Extensions'} |
+| voteban                    | ['']                                                                                                              | {'AllowedRoles': 'Extensions'} |
+|                            |                                                                                                                   |                                |
+|                            |                                                                                                                   |                                |
+| VoteBanDuration            | ['30']                                                                                                            | {}                             |
+# 1 Modules in ConsoleLogger.cs
+
+| Description   | Version   |
+|:--------------|:----------|
+| ConsoleLogger | 2.0.0     |
+# 1 Modules in DiscordStatus.cs
+
+| Description                                                                                                                     |   Version |
+|:--------------------------------------------------------------------------------------------------------------------------------|----------:|
+| Connects each server to a Discord Bot, and updates the Discord Bot's status with the server's player-count and map information. |       1.2 |
+# 1 Modules in MongoDBLogging.cs
+
+| Description                                                                                                                                                                                              | Version   |
+|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:----------|
+| Provides the means for users to leverage MongoDB for Logging certain actions within their BattleBit Server. The module has out-of-the-box for ChatLogs, ConnectionLogs, PlayerReportLogs, ServerAPI logs | 1.1.4     |
+# 1 Modules in ReconOnly.cs
+
+| Description                                                   |   Version |
+|:--------------------------------------------------------------|----------:|
+| This module forces players to become the Recon (Sniper) role. |       1.2 |
+# 1 Modules in RegionManager.cs
+
+| Description   | Version   |
+|:--------------|:----------|
+| RegionManager | 1.0.0     |
+# 1 Modules in Snipers.cs
+
+| Description   | Version   |
+|:--------------|:----------|
+| Snipers       | 1.1.0     |
 # 0 Modules in .NETCoreApp,Version=v7.0.AssemblyAttributes.cs
 
 | Description   | Version   |

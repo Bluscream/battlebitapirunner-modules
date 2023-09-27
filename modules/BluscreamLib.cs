@@ -15,35 +15,21 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Web;
-using System.Security.Principal;
 using System.Net;
 
 using BattleBitAPI.Common;
 using BBRAPIModules;
 
 using Bluscream;
+using BattleBitAPI.Server;
+using System.Net.Http;
 
 namespace Bluscream {
+    #region Defines
     public static class MoreRoles {
         public const Roles Staff = Roles.Admin | Roles.Moderator;
         public const Roles Member = Roles.Admin | Roles.Moderator | Roles.Special | Roles.Vip;
         public const Roles All = Roles.Admin | Roles.Moderator | Roles.Special | Roles.Vip | Roles.None;
-    }
-    public abstract class BaseInfo {
-        public bool Available { get; internal set; } = true;
-        public string Name { get; internal set; } = "None";
-        public string DisplayName { get; internal set; } = "Unknown";
-        public string Description { get; internal set; } = "Unknown";
-    }
-    public class GameModeInfo : BaseInfo {
-        public static GameModeInfo FromName(string name) => BluscreamLib.GameModes.First(m => m.Name == name);
-    }
-    public class MapInfo : BaseInfo {
-        public (string Name, MapSize[] Sizes)[]? SupportedGamemodes { get; internal set; }
-        public Uri? PreviewImageUrl { get; internal set; }
-        public Uri? MinimapImageUrl { get; internal set; }
-
-        public static MapInfo FromName(string name) => BluscreamLib.Maps.First(m => m.Name == name);
     }
     public enum MapDayNight : byte {
         Day,
@@ -75,30 +61,78 @@ namespace Bluscream {
         public ModuleInfo(string name, string description, string version, string author, string websiteUrl, string updateUrl, string supportUrl) :
             this(name, description, version.ToVersion(), author, websiteUrl.ToUri(), updateUrl.ToUri(), supportUrl.ToUri()) { }
     }
+    public struct DateTimeWithZone {
+        private readonly DateTime utcDateTime;
+        private readonly TimeZoneInfo timeZone;
+
+        public DateTimeWithZone(DateTime dateTime, TimeZoneInfo timeZone) {
+            var dateTimeUnspec = DateTime.SpecifyKind(dateTime, DateTimeKind.Unspecified);
+            utcDateTime = TimeZoneInfo.ConvertTimeToUtc(dateTimeUnspec, timeZone);
+            this.timeZone = timeZone;
+        }
+
+        public DateTime UniversalTime { get { return utcDateTime; } }
+
+        public TimeZoneInfo TimeZone { get { return timeZone; } }
+
+        public DateTime LocalTime {
+            get {
+                return TimeZoneInfo.ConvertTime(utcDateTime, timeZone);
+            }
+        }
+    }
+    #region Configuration
+    public class CommandConfiguration {
+        public bool Enabled { get; set; } = true;
+        public List<string>? AllowedRoles { get; set; } = new() { };
+    }
+    #endregion
+    #endregion
+    #region Requires
     [RequireModule(typeof(DevMinersBBModules.ModuleUsageStats))]
     [RequireModule(typeof(Permissions.PlayerPermissions))]
-    [Module("Bluscream's Library", "2.0.1")]
+    #endregion
+    [Module("Bluscream's Library", "2.0.2")]
     public class BluscreamLib : BattleBitModule {
         public static ModuleInfo ModuleInfo = new() {
             Name = "Bluscream's Library",
             Description = "Generic library for common code used by multiple modules.",
-            Version = new Version(2,0,1),
+            Version = new Version(2,0,2),
             Author = "Bluscream",
             WebsiteUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/"),
             UpdateUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/raw/master/modules/BluscreamLib.cs"),
             SupportUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/issues/new?title=BluscreamLib")
         };
-//         [ModuleReference]
-// #if DEBUG
-//         public Permissions.PlayerPermissions? PlayerPermissions { get; set; } = null!;
-// #else
-//         public dynamic? PlayerPermissions { get; set; } = null!;
-// #endif
-
-        public BluscreamLibConfiguration Configuration { get; set; } = null!;
-
+        //         [ModuleReference]
+        // #if DEBUG
+        //         public Permissions.PlayerPermissions? PlayerPermissions { get; set; } = null!;
+        // #else
+        //         public dynamic? PlayerPermissions { get; set; } = null!;
+        // #endif
+        #region EventHandlers
+        public BluscreamLib() {
+            Log("Constructor called");
+            try {
+                Maps = MapList.FromUrl(Config.MapsUrl);
+                Maps.ToFile(Config.MapsFile);
+            } catch (Exception ex) {
+                Log($"Unable to get new {Config.MapsFile.Name}: {ex.Message}");
+                Log($"Using {Config.MapsFile} if it exists");
+                Maps = MapList.FromFile(Config.MapsFile);
+            }
+            try {
+                GameModes = GameModeList.FromUrl(Config.GameModesUrl);
+                GameModes.ToFile(Config.GameModesFile);
+            } catch (Exception ex) {
+                Log($"Unable to get new {Config.GameModesFile.Name}: {ex.Message}");
+                Log($"Using {Config.GameModesFile} if it exists");
+                GameModes = GameModeList.FromFile(Config.GameModesFile);
+            }
+        }
+        public override void OnModulesLoaded() {
+        }
+        #endregion
         #region Methods
-
         public static string GetStringValue(KeyValuePair<string, string?>? match) {
             if (!match.HasValue) return string.Empty;
             if (!string.IsNullOrWhiteSpace(match.Value.Value)) return match.Value.Value;
@@ -261,407 +295,72 @@ namespace Bluscream {
     };
         public static IReadOnlyList<string> MapNames { get { return Maps.Where(m => m.Available).Select(m => m.Name).ToList(); } }
         public static IReadOnlyList<string> MapDisplayNames { get { return Maps.Where(m => m.Available).Select(m => m.DisplayName).ToList(); } }
-        public static IReadOnlyList<MapInfo> Maps = new MapInfo[] {
-        new MapInfo() {
-            Name = "Azagor",
-            Description = "A desert island with a small town.",
-            PreviewImageUrl = new Uri("https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/2/2c/AzagorBanner.png/revision/latest"),
-            SupportedGamemodes = new[] {
-                ("TDM", new[] { MapSize._8v8, MapSize._16vs16, }),
-                ("RUSH", new[] { MapSize._16vs16, MapSize._32vs32, }),
-                ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("INFCONQ", new[] { MapSize._64vs64, MapSize._127vs127, }),
-                ("DOMI", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("ELI", new[] { MapSize._16vs16, }),
-                ("FRONTLINE", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }) }
-        },
-        new MapInfo() {
-            Name = "Basra",
-            Description = "An archipelago with a grounded container ship in the map's center. The northern island is a military base, while the southern island has a tourist resort and public airport.",
-            PreviewImageUrl = new Uri("https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/8/86/Basra.png/revision/latest"),
-            SupportedGamemodes = new[] {
-                ("TDM", new[] { MapSize._8v8, MapSize._16vs16, }),
-                ("CONQ", new[] { MapSize._64vs64, MapSize._127vs127, }),
-                ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("ELI", new[] { MapSize._8v8, MapSize._16vs16, }),
-                ("FRONTLINE", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }) }
-        },
-        new MapInfo() {
-            Name = "Construction",
-            Description = "	A coastal, industrial construction site with a symmetrical layout.",
-            PreviewImageUrl = new Uri("https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/6/6b/Construction_.png/revision/latest"),
-            SupportedGamemodes = new[] {
-                ("TDM", new[] { MapSize._8v8, MapSize._16vs16, }),
-                ("CONQ", new[] { MapSize._32vs32, }),
-                ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("DOMI", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("ELI", new[] { MapSize._8v8, MapSize._16vs16, }),
-                ("CashRun", new[] { MapSize._16vs16, }) }
-        },
-        new MapInfo() {
-            Name = "District",
-            Description = "A rain-shrouded map in a hilly region with factories and military fortifications.",
-            PreviewImageUrl = new Uri("https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/e/e5/DistrictBanner.png/revision/latest"),
-            SupportedGamemodes = new[] {
-                ("RUSH", new[] { MapSize._16vs16, MapSize._32vs32, }),
-                ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("DOMI", new[] { MapSize._16vs16, MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("FRONTLINE", new[] { MapSize._32vs32, MapSize._64vs64, }),
-                ("CTF", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }) }
-        },
-        new MapInfo() {
-            Name = "Dustydew",
-            DisplayName = "Dusty Dew",
-            Description = "An arid, mountainous region with scattered settlements.",
-            PreviewImageUrl = new Uri("https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/e/e0/DustyDewBanner.png/revision/latest"),
-            SupportedGamemodes = new[] {
-                ("TDM", new[] { MapSize._8v8, MapSize._16vs16, }),
-                ("RUSH", new[] { MapSize._16vs16, MapSize._32vs32, }),
-                ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("INFCONQ", new[] { MapSize._16vs16, MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("DOMI", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("ELI", new[] { MapSize._8v8, MapSize._16vs16, }),
-                ("GunGameFFA", new[] { MapSize._8v8, }),
-                ("GunGameTeam", new[] { MapSize._8v8, MapSize._16vs16, }),
-                ("FFA", new[] { MapSize._8v8, }) }
-        },
-        new MapInfo() {
-            Name = "Eduardovo",
-            Description = "A forested rural map with farms and abandoned factories.",
-            PreviewImageUrl = new Uri("https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/7/7b/EduardovoBanner.png/revision/latest"),
-            SupportedGamemodes = new[] {
-                ("TDM", new[] { MapSize._16vs16, }),
-                ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("DOMI", new[] { MapSize._16vs16, MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("FRONTLINE", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("GunGameFFA", new[] { MapSize._16vs16, }),
-                ("CashRun", new[] { MapSize._16vs16, MapSize._32vs32, }) }
-        },
-        new MapInfo() {
-            Name = "Frugis",
-            Description = "Urban map featuring cozy, small streets and parks. Most buildings are three floors high and surrounded by curved streets. Inspired by Paris, France.",
-            PreviewImageUrl = new Uri("https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/3/3d/Frugis-test.png/revision/latest"),
-            SupportedGamemodes = new[] {
-                ("TDM", new[] { MapSize._8v8, MapSize._16vs16, }),
-                ("RUSH", new[] { MapSize._16vs16, MapSize._32vs32, }),
-                ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("DOMI", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("FRONTLINE", new[] { MapSize._32vs32, }),
-                ("GunGameFFA", new[] { MapSize._8v8, MapSize._16vs16, }),
-                ("GunGameTeam", new[] { MapSize._8v8, MapSize._16vs16, }),
-                ("CashRun", new[] { MapSize._16vs16, MapSize._32vs32, }),
-                ("CTF", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }) }
-        },
-        new MapInfo() {
-            Name = "Isle",
-            Description = "An island with an early-warning radar system used to detect nuclear missile launches. Flanked by opposing aircraft carriers, used by both factions as bases.",
-            PreviewImageUrl = new Uri("https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/9/98/ISLE_loading_screen_image.png/revision/latest"),
-            SupportedGamemodes = new[] {
-                ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("DOMI", new[] { MapSize._16vs16, MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("FRONTLINE", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("CTF", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }) }
-        },
-        new MapInfo() {
-            Name = "Lonovo",
-            Description = "A city with extensive railway yards under the cover of night.",
-            PreviewImageUrl = new Uri("https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/a/ae/LonovoBanner.png/revision/latest"),
-            SupportedGamemodes = new[] {
-                ("TDM", new[] { MapSize._8v8, MapSize._16vs16, }),
-                ("RUSH", new[] { MapSize._32vs32, }),
-                ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("DOMI", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("ELI", new[] { MapSize._16vs16, }),
-                ("GunGameFFA", new[] { MapSize._8v8, }),
-                ("GunGameTeam", new[] { MapSize._8v8, MapSize._16vs16, }),
-                ("FFA", new[] { MapSize._8v8, }),
-                ("CashRun", new[] { MapSize._16vs16, MapSize._32vs32, }) }
-        },
-        new MapInfo() {
-            Name = "MultuIslands",
-            DisplayName = "Multu Islands",
-            Description = "A small island chain with a fortified military base.",
-            PreviewImageUrl = new Uri("https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/3/3f/MultuIslandsBanner.png/revision/latest"),
-            SupportedGamemodes = new[] {
-                ("RUSH", new[] { MapSize._8v8, MapSize._16vs16, MapSize._32vs32, }),
-                ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("DOMI", new[] { MapSize._16vs16, MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("CTF", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }) }
-        },
-        new MapInfo() {
-            Name = "Namak",
-            Description = "	A small yet dense urban map dominated by high-rise buildings overlooking the streets. Inspired by Tokyo, Japan.",
-            PreviewImageUrl = new Uri("https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/0/03/Namak_loading.png/revision/latest"),
-            SupportedGamemodes = new[] {
-                ("RUSH", new[] { MapSize._16vs16, MapSize._32vs32, }),
-                ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, }),
-                ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("DOMI", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }) }
-        },
-        new MapInfo() {
-            Name = "OilDunes",
-            DisplayName = "Oil Dunes",
-            Description = "A sprawling oil extraction operation in flat, desert region.",
-            PreviewImageUrl = new Uri("https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/c/c2/OilDunes_loading_screen.png/revision/latest"),
-            SupportedGamemodes = new[] {
-                ("CONQ", new[] { MapSize._32vs32, }),
-                ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, }),
-                ("DOMI", new[] { MapSize._16vs16, MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("CashRun", new[] { MapSize._16vs16, MapSize._32vs32, }) }
-        },
-        new MapInfo() {
-            Name = "River",
-            Description = "A container shipping port on a river.",
-            PreviewImageUrl = new Uri("https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/0/04/River-loadingscreen.png/revision/latest"),
-            SupportedGamemodes = new[] {
-                ("TDM", new[] { MapSize._8v8, MapSize._16vs16, }),
-                ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("DOMI", new[] { MapSize._16vs16, MapSize._32vs32, MapSize._64vs64, }),
-                ("ELI", new[] { MapSize._8v8, MapSize._16vs16, }),
-                ("FRONTLINE", new[] { MapSize._32vs32, MapSize._64vs64, }),
-                ("GunGameFFA", new[] { MapSize._8v8, }),
-                ("GunGameTeam", new[] { MapSize._8v8, MapSize._16vs16, }),
-                ("FFA", new[] { MapSize._8v8, }),
-                ("CashRun", new[] { MapSize._16vs16, MapSize._32vs32, }) }
-        },
-        new MapInfo() {
-            Name = "Salhan",
-            Description = "A desert valley containing an oil refinery and a small town.",
-            PreviewImageUrl = new Uri("https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/0/0d/SalhanBanner.png/revision/latest"),
-            SupportedGamemodes = new[] {
-                ("TDM", new[] { MapSize._8v8, MapSize._16vs16, }),
-                ("RUSH", new[] { MapSize._8v8, MapSize._16vs16, MapSize._32vs32, }),
-                ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("DOMI", new[] { MapSize._16vs16, MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("ELI", new[] { MapSize._8v8, MapSize._16vs16, }),
-                ("FRONTLINE", new[] { MapSize._32vs32, }),
-                ("CashRun", new[] { MapSize._16vs16, MapSize._32vs32, }) }
-        },
-        new MapInfo() {
-            Name = "SandySunset",
-            DisplayName = "SandySunset",
-            Description = "Big desert hills and canyons encircle a crowded town concentrated around one major road.",
-            PreviewImageUrl = new Uri("https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/3/33/SandySunsetBanner.png/revision/latest"),
-            SupportedGamemodes = new[] {
-                ("TDM", new[] { MapSize._8v8, MapSize._16vs16, }),
-                ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("DOMI", new[] { MapSize._16vs16, MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("FRONTLINE", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("CashRun", new[] { MapSize._16vs16, MapSize._32vs32, }),
-                ("CTF", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }) }
-        },
-        new MapInfo() {
-            Name = "TensaTown",
-            DisplayName  = "Tensa Town",
-            Description = "A dense map with narrow residential streets and many low-lying buildings.",
-            PreviewImageUrl = new Uri("https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/1/1d/TensaTown_Loadingscreen.png/revision/latest"),
-            SupportedGamemodes = new[] {
-                ("TDM", new[] { MapSize._8v8, MapSize._16vs16, }),
-                ("RUSH", new[] { MapSize._16vs16, MapSize._32vs32, }),
-                ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("DOMI", new[] { MapSize._16vs16, MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("ELI", new[] { MapSize._8v8, MapSize._16vs16, }),
-                ("FRONTLINE", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("CashRun", new[] { MapSize._16vs16, MapSize._32vs32, }),
-                ("CTF", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }) }
-        },
-        new MapInfo() {
-            Name = "Valley",
-            Description = "A nuclear power plant surrounded by wind turbines and prominent hills.",
-            PreviewImageUrl = new Uri("https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/b/b4/Valley_Loading_screen.png/revision/latest"),
-            SupportedGamemodes = new[] {
-                ("TDM", new[] { MapSize._8v8, MapSize._16vs16, }),
-                ("RUSH", new[] { MapSize._16vs16, MapSize._32vs32, }),
-                ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("DOMI", new[] { MapSize._16vs16, MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("FRONTLINE", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("CashRun", new[] { MapSize._16vs16, MapSize._32vs32, }) }
-        },
-        new MapInfo() {
-            Name = "Wakistan",
-            Description = "Wide valley with long bridges that connect two cliffs. Inspired by the mountain Tebulosmta in Georgia.",
-            PreviewImageUrl = new Uri("https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/b/b5/WakistanBanner.png/revision/latest"),
-            SupportedGamemodes = new[] {
-                ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("DOMI", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("FRONTLINE", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }) }
-        },
-        new MapInfo() {
-            Name = "WineParadise",
-            DisplayName = "Wine Paradise",
-            Description = "A seaside village surrounded by rural countryside and vineyards.",
-            PreviewImageUrl = new Uri("https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/5/5e/WineParadiseBanner.png/revision/latest"),
-            SupportedGamemodes = new[] {
-                ("TDM", new[] { MapSize._8v8, MapSize._16vs16, }),
-                ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("INFCONQ", new[] { MapSize._32vs32, }),
-                ("DOMI", new[] { MapSize._16vs16, MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("GunGameFFA", new[] { MapSize._8v8, MapSize._16vs16, }),
-                ("GunGameTeam", new[] { MapSize._8v8, MapSize._16vs16, }),
-                ("FFA", new[] { MapSize._8v8, MapSize._16vs16, }),
-                ("CashRun", new[] { MapSize._16vs16, MapSize._32vs32, }) }
-        },
-        new MapInfo() {
-            Name = "Old_District",
-            DisplayName = "Old District",
-            Description = "Old version of the map District.",
-            SupportedGamemodes = new[] {
-                ("TDM", new[] { MapSize._8v8, MapSize._16vs16, }),
-                ("RUSH", new[] { MapSize._16vs16, MapSize._32vs32, }),
-                ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64 }),
-                ("INFCONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("DOMI", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("ELI", new[] { MapSize._16vs16, }),
-                ("CashRun", new[] { MapSize._16vs16, MapSize._32vs32, }) }
-        },
-        new MapInfo() {
-            Name = "Old_Eduardovo",
-            DisplayName = "Old Eduardovo",
-            Description = "Old version of the map Eduardovo.",
-            SupportedGamemodes = new[] {
-                ("TDM", new[] { MapSize._8v8, MapSize._16vs16, MapSize._32vs32, }),
-                ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("ELI", new[] { MapSize._16vs16, MapSize._32vs32, }),
-                ("FRONTLINE", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }) }
-        },
-        new MapInfo() {
-            Name = "Old_MultuIslands",
-            DisplayName = "Old Multu Islands",
-            Description = "Old version of the map Multu Islands.",
-            SupportedGamemodes = new[] {
-                ("TDM", new[] { MapSize._8v8, MapSize._16vs16 }),
-                ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }) }
-        },
-        new MapInfo() {
-            Name = "Old_Namak",
-            DisplayName = "Old Namak",
-            Description = "Old version of the map Namak.",
-            SupportedGamemodes = new[] {
-                ("TDM", new[] { MapSize._8v8, MapSize._16vs16 }),
-                ("CONQ", new[] { MapSize._16vs16, MapSize._32vs32, MapSize._64vs64, }),
-                ("DOMI", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("GunGameFFA", new[] { MapSize._8v8 }),
-                ("GunGameTeam", new[] { MapSize._8v8, MapSize._16vs16, }),
-                ("FFA", new[] { MapSize._8v8 }) }
-        },
-        new MapInfo() {
-            Name = "Old_OilDunes",
-            DisplayName = "Old Oil Dunes",
-            SupportedGamemodes = new[] {
-                ("TDM", new[] { MapSize._16vs16, MapSize._32vs32 }),
-                ("CONQ", new[] { MapSize._32vs32, MapSize._64vs64, MapSize._127vs127, }),
-                ("ELI", new[] { MapSize._16vs16, MapSize._32vs32, }) }
-        },
-        new MapInfo() {
-            Name = "ZalfiBay",
-            DisplayName = "Zalfi Bay",
-            SupportedGamemodes = new[] {
-                ("CONQ", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-                ("INFCONQ", new [] {MapSize._32vs32, MapSize._64vs64,MapSize._127vs127,}),
-                ("DOMI", new [] { MapSize._16vs16, MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-                ("FRONTLINE", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-                ("CTF", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}) }
-        },
-        new MapInfo() {
-            Available = false,
-            Name = "Polygon",
-            Description = "Tutorial map"
+        public static IReadOnlyList<MapInfo> Maps { get; set; } = MapList.FromFile(new FileInfo("data/maps.json"));
+        #endregion
+        #region Configuration
+        public static Configuration Config { get; set; } = null!;
+        public class Configuration : ModuleConfiguration {
+            public string TimeStampFormat { get; set; } = "HH:mm:ss";
+            public FileInfo MapsFile { get; set; } = new FileInfo("data/maps.json");
+            public Uri MapsUrl { get; set; } = new Uri("https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/maps.json");
+            public FileInfo GameModesFile { get; set; } = new FileInfo("data/gamemodes.json");
+            public Uri GameModesUrl { get; set; } = new Uri("https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/gamemodes.json");
         }
-    };
         #endregion
     }
-    public class CommandConfiguration {
-        public bool Enabled { get; set; } = true;
-        public List<string>? AllowedRoles { get; set; } = new() { "All" };
-    }
-    public class BluscreamLibConfiguration : ModuleConfiguration {
-        public string TimeStampFormat { get; set; } = "HH:mm:ss";
-    }
-}
-#region Utils
-namespace Bluscream {
-public static partial class Utils {
-        public static FileInfo getOwnPath() {
-            return new FileInfo(Path.GetDirectoryName(Environment.ProcessPath));
-        }
-
-        public static bool IsAlreadyRunning(string appName) {
-            System.Threading.Mutex m = new System.Threading.Mutex(false, appName);
-            if (m.WaitOne(1, false) == false) {
-                return true;
+    #region Utils
+    public static partial class Utils {
+            public static FileInfo getOwnPath() {
+                return new FileInfo(Path.GetDirectoryName(Environment.ProcessPath));
             }
-            return false;
-        }
 
-        internal static void Exit() {
-            Environment.Exit(0);
-            var currentP = Process.GetCurrentProcess();
-            currentP.Kill();
-        }
+            public static bool IsAlreadyRunning(string appName) {
+                System.Threading.Mutex m = new System.Threading.Mutex(false, appName);
+                if (m.WaitOne(1, false) == false) {
+                    return true;
+                }
+                return false;
+            }
 
-        public static IPEndPoint ParseIPEndPoint(string endPoint) {
-            string[] ep = endPoint.Split(':');
-            if (ep.Length < 2) return null;
-            IPAddress ip;
-            if (ep.Length > 2) {
-                if (!IPAddress.TryParse(string.Join(":", ep, 0, ep.Length - 1), out ip)) {
+            internal static void Exit() {
+                Environment.Exit(0);
+                var currentP = Process.GetCurrentProcess();
+                currentP.Kill();
+            }
+
+            public static IPEndPoint ParseIPEndPoint(string endPoint) {
+                string[] ep = endPoint.Split(':');
+                if (ep.Length < 2) return null;
+                IPAddress ip;
+                if (ep.Length > 2) {
+                    if (!IPAddress.TryParse(string.Join(":", ep, 0, ep.Length - 1), out ip)) {
+                        return null;
+                    }
+                } else {
+                    if (!IPAddress.TryParse(ep[0], out ip)) {
+                        return null;
+                    }
+                }
+                int port;
+                if (!int.TryParse(ep[ep.Length - 1], NumberStyles.None, NumberFormatInfo.CurrentInfo, out port)) {
                     return null;
                 }
-            } else {
-                if (!IPAddress.TryParse(ep[0], out ip)) {
-                    return null;
-                }
+                return new IPEndPoint(ip, port);
             }
-            int port;
-            if (!int.TryParse(ep[ep.Length - 1], NumberStyles.None, NumberFormatInfo.CurrentInfo, out port)) {
-                return null;
-            }
-            return new IPEndPoint(ip, port);
         }
-    }
-}
-#endregion
-#region Extensions
-namespace Bluscream {
-public static class Extensions {
+    #endregion
+    #region Extensions
+    public static class Extensions {
+        #region Events
+        public delegate void PlayerKickedHandler(RunnerPlayer player, string? reason);
+        public static event PlayerKickedHandler OnPlayerKicked = delegate { };
+        #endregion
         #region Roles
-        public static string ToRoleString(this Roles roles) {
-            if (roles == Roles.None) {
-                return string.Empty;
-            }
-            if (roles.HasFlag(Roles.Admin) && roles.HasFlag(Roles.Moderator) && roles.HasFlag(Roles.Special) && roles.HasFlag(Roles.Vip)) {
-                return "All";
-            }
-            var roleStrings = new List<string>();
-            if (roles.HasFlag(Roles.Admin)) {
-                roleStrings.Add(nameof(Roles.Admin));
-            }
-            if (roles.HasFlag(Roles.Moderator)) {
-                roleStrings.Add(nameof(Roles.Moderator));
-            }
-            if (roles.HasFlag(Roles.Special)) {
-                roleStrings.Add(nameof(Roles.Special));
-            }
-            if (roles.HasFlag(Roles.Vip)) {
-                roleStrings.Add(nameof(Roles.Vip));
-            }
-            return string.Join(",", roleStrings);
-        }
-        public static List<string> ToRoleStringList(Roles roles) {
+        public static string ToRoleString(this Roles roles) => string.Join(",", roles.ToRoleStringList());
+        public static List<string> ToRoleStringList(this Roles roles) {
             var roleStrings = new List<string>();
             if (roles == Roles.None) {
+                roleStrings.Add("None");
                 return roleStrings;
             }
             if (roles.HasFlag(Roles.Admin) && roles.HasFlag(Roles.Moderator) && roles.HasFlag(Roles.Special) && roles.HasFlag(Roles.Vip)) {
@@ -683,8 +382,11 @@ public static class Extensions {
             return roleStrings;
         }
         public static Roles ParseRoles(this string rolesString) {
-            if (string.IsNullOrEmpty(rolesString) || rolesString.Equals("All", StringComparison.OrdinalIgnoreCase)) {
-                return MoreRoles.All;
+            if (string.IsNullOrEmpty(rolesString)) {
+                return Roles.None;
+            }
+            if (rolesString.Equals("All", StringComparison.OrdinalIgnoreCase)) {
+                return MoreRoles.Member;
             }
             Roles result = Roles.None;
             var separators = new[] { ',', '|' };
@@ -696,24 +398,36 @@ public static class Extensions {
             }
             return result;
         }
-        public static Roles ParseRoles(List<string>? rolesList) {
-            if (rolesList is null || rolesList.Count == 0 || rolesList.Any(role => role.Equals("All", StringComparison.OrdinalIgnoreCase))) {
-                return MoreRoles.All;
+        public static Roles ParseRoles(this List<string>? rolesList) {
+            if (rolesList is null || rolesList.Count == 0) {
+                return Roles.None;
             }
-
+            if (rolesList.Any(role => role.Equals("All", StringComparison.OrdinalIgnoreCase))) {
+                return MoreRoles.Member;
+            }
             Roles result = Roles.None;
-
             foreach (var roleString in rolesList) {
                 if (Enum.TryParse<Roles>(roleString, true, out var role)) {
                     result |= role;
                 }
             }
-
             return result;
         }
-
         #endregion
         #region Server
+        public static string str(this RunnerServer server) => $"\"{server.ServerName}\" ({server.AllPlayers.Count()} players)";
+        public static void SayToTeamChat(this RunnerServer server, Team team, string message) {
+                foreach (var player in server.AllPlayers) {
+                    if (player.Team == team)
+                        player.SayToChat(message);
+                }
+            }
+        public static void SayToSquadChat(this RunnerServer server, Team team, Squads squad, string message) {
+            foreach (var player in server.AllPlayers) {
+                if (player.Team == team && player.Squad.Name == squad)
+                    player.SayToChat(message);
+            }
+        }
         public static RunnerPlayer GetPlayerBySteamId64(this RunnerServer server, ulong steamId64) => server.AllPlayers.Where(p=>p.SteamID==steamId64).First();
         public static string GetPlayerNameBySteamId64(this RunnerServer server, ulong steamId64) {
             var player = server.GetPlayerBySteamId64(steamId64);
@@ -723,8 +437,39 @@ public static class Extensions {
         #region Player
         public static string str(this RunnerPlayer player) => $"\"{player.Name}\"";
         public static string fullstr(this RunnerPlayer player) => $"{player.str()} ({player.SteamID})";
+        public static void Kick(this BattleBitAPI.Player<RunnerPlayer> player, string? reason = null) => Kick(player as RunnerPlayer, reason);
+        public static void Kick(this RunnerPlayer player, string? reason = null) {
+            player.Kick(reason);
+            OnPlayerKicked?.Invoke(player, reason);
+        }
+        #region Permissions
         public static Roles GetRoles(this RunnerPlayer player, Permissions.PlayerPermissions permissionsModule) => permissionsModule.GetPlayerRoles(player.SteamID);
-        public static bool HasAnyRoleOf(this RunnerPlayer player, Permissions.PlayerPermissions permissionsModule, Roles needsAnyRole) => (player.GetRoles(permissionsModule) & needsAnyRole) != 0;
+        public static bool HasRole(this RunnerPlayer player, Permissions.PlayerPermissions permissionsModule, Roles role) => permissionsModule.HasPlayerRole(player.SteamID, role);
+        public static bool HasAnyRoleOf(this RunnerPlayer player, Permissions.PlayerPermissions permissionsModule, Roles needsAnyRole) => needsAnyRole > 0 && (player.GetRoles(permissionsModule) & needsAnyRole) != 0;
+        public static bool HasNoRoleOf(this RunnerPlayer player, Permissions.PlayerPermissions permissionsModule, Roles needsNoRole) => needsNoRole > 0 && (player.GetRoles(permissionsModule) & needsNoRole) == 0;
+        public static bool HasAllRolesOf(this RunnerPlayer player, Permissions.PlayerPermissions permissionsModule, Roles needsAllRole) => needsAllRole > 0 && (player.GetRoles(permissionsModule) & needsAllRole) == needsAllRole;
+        public static bool HasOnlyThisRole(this RunnerPlayer player, Permissions.PlayerPermissions permissionsModule, Roles role) => role > 0 && player.GetRoles(permissionsModule) == role;
+        public static bool HasOnlyTheseRoles(this RunnerPlayer player, Permissions.PlayerPermissions permissionsModule, Roles roles) => player.HasOnlyTheseRoles(permissionsModule, roles);
+        #endregion
+        public static void SayToTeamChat(this RunnerPlayer player, RunnerServer server, string message) => server.SayToTeamChat(player.Team, message);
+        public static void SayToSquadChat(this RunnerPlayer player, RunnerServer server, string message) => server.SayToSquadChat(player.Team, player.SquadName, message);
+        #endregion
+        #region GameServer
+        public static void SayToTeamChat(this GameServer<RunnerPlayer> server, Team team, string message) {
+            foreach (var player in server.AllPlayers) {
+                if (player.Team == team)
+                    player.SayToChat(message);
+            }
+        }
+        public static void SayToSquadChat(this GameServer<RunnerPlayer> server, Team team, Squads squad, string message) {
+            foreach (var player in server.AllPlayers) {
+                if (player.Team == team && player.Squad.Name == squad)
+                    player.SayToChat(message);
+            }
+        }
+            #endregion
+        #region Squad
+        public static void SayToChat(this Squad<RunnerPlayer> squad, string message) => squad.Server.SayToSquadChat(squad.Team, squad.Name, message);
         #endregion
         #region Map
         public static void ChangeTime(this RunnerServer Server, MapDayNight dayNight = MapDayNight.None) => ChangeMap(Server, dayNight: dayNight);
@@ -770,28 +515,28 @@ public static class Extensions {
         }
         #endregion
         #region String
-        public static bool EvalToBool(string expression) {
+        public static bool EvalToBool(this string expression) {
             System.Data.DataTable table = new System.Data.DataTable();
             table.Columns.Add("expression", string.Empty.GetType(), expression);
             System.Data.DataRow row = table.NewRow();
             table.Rows.Add(row);
             return bool.Parse((string)row["expression"]);
         }
-        public static double EvalToDouble(string expression) {
+        public static double EvalToDouble(this string expression) {
             System.Data.DataTable table = new System.Data.DataTable();
             table.Columns.Add("expression", string.Empty.GetType(), expression);
             System.Data.DataRow row = table.NewRow();
             table.Rows.Add(row);
             return double.Parse((string)row["expression"]);
         }
-        public static string EvalToString(string expression) {
+        public static string EvalToString(this string expression) {
             System.Data.DataTable table = new System.Data.DataTable();
             table.Columns.Add("expression", string.Empty.GetType(), expression);
             System.Data.DataRow row = table.NewRow();
             table.Rows.Add(row);
             return (string)row["expression"];
         }
-        public static int EvalToInt(string expression) {
+        public static int EvalToInt(this string expression) {
             System.Data.DataTable table = new System.Data.DataTable();
             table.Columns.Add("expression", string.Empty.GetType(), expression);
             System.Data.DataRow row = table.NewRow();
@@ -1178,143 +923,161 @@ public static class Extensions {
         }
 
         #endregion Task
-    }
-}
-#endregion
-#region json
-namespace Bluscream {
-public static class JsonUtils {
-    public static T FromJson<T>(string jsonText) => JsonSerializer.Deserialize<T>(jsonText, Converter.Settings);
-    public static T FromJsonFile<T>(FileInfo file) => FromJson<T>(File.ReadAllText(file.FullName));
-    public static string ToJson<T>(this T self) => JsonSerializer.Serialize(self, Converter.Settings);
-    public static void ToFile<T>(this T self, FileInfo file) => File.WriteAllText(file.FullName, ToJson(self));
-}
-public static class Converter {
-    public static readonly JsonSerializerOptions Settings = new(JsonSerializerDefaults.General) {
-        Converters =
-        {
-        new DateOnlyConverter(),
-        new TimeOnlyConverter(),
-        IsoDateTimeOffsetConverter.Singleton
-    },
-    };
-}
-public class ParseStringConverter : JsonConverter<long> {
-    public override bool CanConvert(Type t) => t == typeof(long);
-
-    public override long Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
-        var value = reader.GetString();
-        long l;
-        if (Int64.TryParse(value, out l)) {
-            return l;
+        #region EventHandler
+        static public void RaiseEvent(this EventHandler @event, object sender, EventArgs e) {
+            if (@event != null)
+                @event(sender, e);
         }
-        throw new Exception("Cannot unmarshal type long");
-    }
-
-    public override void Write(Utf8JsonWriter writer, long value, JsonSerializerOptions options) {
-        JsonSerializer.Serialize(writer, value.ToString(), options);
-        return;
-    }
-
-    public static readonly ParseStringConverter Singleton = new ParseStringConverter();
-}
-public class DateOnlyConverter : JsonConverter<DateOnly> {
-    private readonly string serializationFormat;
-    public DateOnlyConverter() : this(null) { }
-
-    public DateOnlyConverter(string? serializationFormat) {
-        this.serializationFormat = serializationFormat ?? "yyyy-MM-dd";
-    }
-
-    public override DateOnly Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
-        var value = reader.GetString();
-        return DateOnly.Parse(value!);
-    }
-
-    public override void Write(Utf8JsonWriter writer, DateOnly value, JsonSerializerOptions options)
-        => writer.WriteStringValue(value.ToString(serializationFormat));
-}
-public class TimeOnlyConverter : JsonConverter<TimeOnly> {
-    private readonly string serializationFormat;
-
-    public TimeOnlyConverter() : this(null) { }
-
-    public TimeOnlyConverter(string? serializationFormat) {
-        this.serializationFormat = serializationFormat ?? "HH:mm:ss.fff";
-    }
-
-    public override TimeOnly Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
-        var value = reader.GetString();
-        return TimeOnly.Parse(value!);
-    }
-
-    public override void Write(Utf8JsonWriter writer, TimeOnly value, JsonSerializerOptions options)
-        => writer.WriteStringValue(value.ToString(serializationFormat));
-}
-public class IsoDateTimeOffsetConverter : JsonConverter<DateTimeOffset> {
-    public override bool CanConvert(Type t) => t == typeof(DateTimeOffset);
-
-    private const string DefaultDateTimeFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ss.FFFFFFFK";
-
-    private DateTimeStyles _dateTimeStyles = DateTimeStyles.RoundtripKind;
-    private string? _dateTimeFormat;
-    private CultureInfo? _culture;
-
-    public DateTimeStyles DateTimeStyles {
-        get => _dateTimeStyles;
-        set => _dateTimeStyles = value;
-    }
-
-    public string? DateTimeFormat {
-        get => _dateTimeFormat ?? string.Empty;
-        set => _dateTimeFormat = (string.IsNullOrEmpty(value)) ? null : value;
-    }
-
-    public CultureInfo Culture {
-        get => _culture ?? CultureInfo.CurrentCulture;
-        set => _culture = value;
-    }
-
-    public override void Write(Utf8JsonWriter writer, DateTimeOffset value, JsonSerializerOptions options) {
-        string text;
-
-
-        if ((_dateTimeStyles & DateTimeStyles.AdjustToUniversal) == DateTimeStyles.AdjustToUniversal
-            || (_dateTimeStyles & DateTimeStyles.AssumeUniversal) == DateTimeStyles.AssumeUniversal) {
-            value = value.ToUniversalTime();
+        static public void RaiseEvent<T>(this EventHandler<T> @event, object sender, T e)
+            where T : EventArgs {
+            if (@event != null)
+                @event(sender, e);
         }
-
-        text = value.ToString(_dateTimeFormat ?? DefaultDateTimeFormat, Culture);
-
-        writer.WriteStringValue(text);
+        #endregion
     }
-
-    public override DateTimeOffset Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
-        string? dateText = reader.GetString();
-
-        if (string.IsNullOrEmpty(dateText) == false) {
-            if (!string.IsNullOrEmpty(_dateTimeFormat)) {
-                return DateTimeOffset.ParseExact(dateText, _dateTimeFormat, Culture, _dateTimeStyles);
-            } else {
-                return DateTimeOffset.Parse(dateText, Culture, _dateTimeStyles);
+    #endregion
+    #region json
+    public static class JsonUtils {
+        public static T FromUrl<T>(Uri url) {
+            using (var client = new HttpClient()) {
+                var response = client.GetAsync(url.ToString()).Result;
+                return FromJson<T>(response.Content.ReadAsStringAsync().Result);
             }
-        } else {
-            return default(DateTimeOffset);
+        }
+        public static T FromJson<T>(string jsonText) => JsonSerializer.Deserialize<T>(jsonText, Converter.Settings);
+        public static T FromJsonFile<T>(FileInfo file) => FromJson<T>(File.ReadAllText(file.FullName));
+        public static string ToJson<T>(this T self) => JsonSerializer.Serialize(self, Converter.Settings);
+            public static void ToFile<T>(this T self, FileInfo file) {
+                file?.Directory?.Create();
+                File.WriteAllText(file?.FullName, ToJson(self));
+            }
+    }
+    public static class Converter {
+        public static readonly JsonSerializerOptions Settings = new(JsonSerializerDefaults.General) {
+            Converters =
+            {
+            new DateOnlyConverter(),
+            new TimeOnlyConverter(),
+            IsoDateTimeOffsetConverter.Singleton
+        },
+        };
+    }
+    public class ParseStringConverter : JsonConverter<long> {
+        public override bool CanConvert(Type t) => t == typeof(long);
+
+        public override long Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
+            var value = reader.GetString();
+            long l;
+            if (Int64.TryParse(value, out l)) {
+                return l;
+            }
+            throw new Exception("Cannot unmarshal type long");
+        }
+
+        public override void Write(Utf8JsonWriter writer, long value, JsonSerializerOptions options) {
+            JsonSerializer.Serialize(writer, value.ToString(), options);
+            return;
+        }
+
+        public static readonly ParseStringConverter Singleton = new ParseStringConverter();
+    }
+    public class DateOnlyConverter : JsonConverter<DateOnly> {
+        private readonly string serializationFormat;
+        public DateOnlyConverter() : this(null) { }
+
+        public DateOnlyConverter(string? serializationFormat) {
+            this.serializationFormat = serializationFormat ?? "yyyy-MM-dd";
+        }
+
+        public override DateOnly Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
+            var value = reader.GetString();
+            return DateOnly.Parse(value!);
+        }
+
+        public override void Write(Utf8JsonWriter writer, DateOnly value, JsonSerializerOptions options)
+            => writer.WriteStringValue(value.ToString(serializationFormat));
+    }
+    public class TimeOnlyConverter : JsonConverter<TimeOnly> {
+        private readonly string serializationFormat;
+
+        public TimeOnlyConverter() : this(null) { }
+
+        public TimeOnlyConverter(string? serializationFormat) {
+            this.serializationFormat = serializationFormat ?? "HH:mm:ss.fff";
+        }
+
+        public override TimeOnly Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
+            var value = reader.GetString();
+            return TimeOnly.Parse(value!);
+        }
+
+        public override void Write(Utf8JsonWriter writer, TimeOnly value, JsonSerializerOptions options)
+            => writer.WriteStringValue(value.ToString(serializationFormat));
+    }
+    public class IsoDateTimeOffsetConverter : JsonConverter<DateTimeOffset> {
+        public override bool CanConvert(Type t) => t == typeof(DateTimeOffset);
+
+        private const string DefaultDateTimeFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ss.FFFFFFFK";
+
+        private DateTimeStyles _dateTimeStyles = DateTimeStyles.RoundtripKind;
+        private string? _dateTimeFormat;
+        private CultureInfo? _culture;
+
+        public DateTimeStyles DateTimeStyles {
+            get => _dateTimeStyles;
+            set => _dateTimeStyles = value;
+        }
+
+        public string? DateTimeFormat {
+            get => _dateTimeFormat ?? string.Empty;
+            set => _dateTimeFormat = (string.IsNullOrEmpty(value)) ? null : value;
+        }
+
+        public CultureInfo Culture {
+            get => _culture ?? CultureInfo.CurrentCulture;
+            set => _culture = value;
+        }
+
+        public override void Write(Utf8JsonWriter writer, DateTimeOffset value, JsonSerializerOptions options) {
+            string text;
+
+
+            if ((_dateTimeStyles & DateTimeStyles.AdjustToUniversal) == DateTimeStyles.AdjustToUniversal
+                || (_dateTimeStyles & DateTimeStyles.AssumeUniversal) == DateTimeStyles.AssumeUniversal) {
+                value = value.ToUniversalTime();
+            }
+
+            text = value.ToString(_dateTimeFormat ?? DefaultDateTimeFormat, Culture);
+
+            writer.WriteStringValue(text);
+        }
+
+        public override DateTimeOffset Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
+            string? dateText = reader.GetString();
+
+            if (string.IsNullOrEmpty(dateText) == false) {
+                if (!string.IsNullOrEmpty(_dateTimeFormat)) {
+                    return DateTimeOffset.ParseExact(dateText, _dateTimeFormat, Culture, _dateTimeStyles);
+                } else {
+                    return DateTimeOffset.Parse(dateText, Culture, _dateTimeStyles);
+                }
+            } else {
+                return default(DateTimeOffset);
+            }
+        }
+
+        public static readonly IsoDateTimeOffsetConverter Singleton = new IsoDateTimeOffsetConverter();
+    }
+    public class IPAddressConverter : JsonConverter<IPAddress> {
+        public override IPAddress Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
+            return IPAddress.Parse(reader.GetString());
+        }
+
+        public override void Write(Utf8JsonWriter writer, IPAddress value, JsonSerializerOptions options) {
+            writer.WriteStringValue(value.ToString());
         }
     }
-
-    public static readonly IsoDateTimeOffsetConverter Singleton = new IsoDateTimeOffsetConverter();
-}
-public class IPAddressConverter : JsonConverter<IPAddress> {
-    public override IPAddress Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
-        return IPAddress.Parse(reader.GetString());
-    }
-
-    public override void Write(Utf8JsonWriter writer, IPAddress value, JsonSerializerOptions options) {
-        writer.WriteStringValue(value.ToString());
-    }
-}
-public class IPEndPointConverter : JsonConverter<IPEndPoint> {
+    public class IPEndPointConverter : JsonConverter<IPEndPoint> {
     public override IPEndPoint Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
         var ipEndPointString = reader.GetString();
         var endPointParts = ipEndPointString.Split(':');
@@ -1327,5 +1090,66 @@ public class IPEndPointConverter : JsonConverter<IPEndPoint> {
         writer.WriteStringValue(value.ToString());
     }
 }
+    #endregion
+    #region Data
+    public abstract class BaseInfo {
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        [JsonPropertyName("Available")]
+        public bool Available { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonPropertyName("Name")]
+        public string? Name { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonPropertyName("Description")]
+        public string? Description { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonPropertyName("DisplayName")]
+        public string? DisplayName { get; set; }
+    }
+    #region Maps
+    public class SupportedGamemode {
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonPropertyName("GameMode")]
+        public string _GameMode { get; set; } = null!;
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonPropertyName("SupportedMapSizes")]
+        public List<MapSize>? SupportedMapSizes { get; set; }
+
+        public GameModeInfo? GameMode { get { return BluscreamLib.GameModes.First(g => g.Name == _GameMode); } }
+    }
+    public class MapInfo : BaseInfo {
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonPropertyName("SupportedGamemodes")]
+        public List<SupportedGamemode>? SupportedGamemodes { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonPropertyName("PreviewImageUrl")]
+        public Uri? PreviewImageUrl { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public Uri? MinimapImageUrl { get; internal set; }
+
+        public static MapInfo FromName(string name) => BluscreamLib.Maps.First(m => m.Name == name);
+    }
+    public class MapList : List<MapInfo> {
+        public void ToFile(FileInfo file) => JsonUtils.ToFile(this, file);
+        public static MapList FromFile(FileInfo file) => JsonUtils.FromJsonFile<MapList>(file);
+        public static MapList FromUrl(Uri url) => JsonUtils.FromUrl<MapList>(url);
+    }
+    #endregion
+    #region GameModes
+    public class GameModeInfo : BaseInfo {
+        public static GameModeInfo FromName(string name) => BluscreamLib.GameModes.First(m => m.Name == name);
+    }
+    public class GameModeList : List<GameModeInfo> {
+        public void ToFile(FileInfo file) => JsonUtils.ToFile(this, file);
+        public static GameModeList FromFile(FileInfo file) => JsonUtils.FromJsonFile<GameModeList>(file);
+        public static GameModeList FromUrl(Uri url) => JsonUtils.FromUrl<GameModeList>(url);
+    }
+    #endregion
+    #endregion
 }
-#endregion
