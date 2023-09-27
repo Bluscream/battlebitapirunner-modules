@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using System.Text;
 
 using BBRAPIModules;
@@ -21,6 +20,7 @@ namespace Bluscream {
             UpdateUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/raw/master/modules/SteamApiExample.cs"),
             SupportUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/issues/new?title=SteamApiExample")
         };
+
         #region References
         [ModuleReference]
         public CommandHandler CommandHandler { get; set; } = null!;
@@ -34,19 +34,36 @@ namespace Bluscream {
 #endif
         #endregion
 
-        public CommandsConfiguration SteamApiExampleCommandsConfiguration { get; set; }
+        #region Methods
+        private static void Log(object _msg, string source = "GeoApiExample") => BluscreamLib.Log(_msg, source);
+        #endregion
+
+        #region Events
+        public override void OnModulesLoaded() {
+            if (SteamApi is null) {
+                Log($"SteamApi could not be found! Is it installed?");
+            } else {
+                this.CommandHandler.Register(this);
+                SteamApi.OnPlayerDataReceived += SteamApi_OnDataReceived;
+            }
+        }
+
+        private void SteamApi_OnDataReceived(RunnerPlayer player, SteamWebApi.Response steamData) {
+            Log($"\"{player.Name}\" has been banned {SteamApi.GetBanCount(player).Result} times on steam.");
+        }
+        #endregion
 
         #region Commands
         [CommandCallback("playerbans", Description = "Lists steam bans of a player")]
         public async void GetPlayerBans(RunnerPlayer commandSource, RunnerPlayer? _player = null) {
-            var cmdName = $"\"{CommandHandler.CommandConfiguration.CommandPrefix}playerbans\""; var cmdConfig = SteamApiExampleCommandsConfiguration.playerbans;
+            var cmdName = $"\"{CommandHandler.CommandConfiguration.CommandPrefix}playerbans\""; var cmdConfig = CommandsConfigurationInstance.playerbans;
             if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
             if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
             _player = _player ?? commandSource;
             var response = new StringBuilder();
             if (!string.IsNullOrEmpty(_player.Name)) response.AppendLine($"Name: {_player.str()} ({_player.Name.Length} chars)");
             if (!string.IsNullOrEmpty(_player.SteamID.ToString())) {
-                var bans = (await SteamApi?.GetData(_player) ).Bans;
+                var bans = (await SteamApi?.GetData(_player)).Bans;
                 if (bans is null) {
                     commandSource.Message("Steam bans request failed, check connection and config!");
                     return;
@@ -61,26 +78,8 @@ namespace Bluscream {
         }
         #endregion
 
-        #region Events
-        public override void OnModulesLoaded() {
-            if (SteamApi is null) {
-                BluscreamLib.Log($"SteamApi could not be found! Is it installed?");
-            } else {
-                this.CommandHandler.Register(this);
-            }
-        }
-        public override Task OnPlayerConnected(RunnerPlayer player) {
-            Task.Delay(TimeSpan.FromSeconds(1)).Wait();
-            BluscreamLib.Log($"\"{player.Name}\" has been banned {SteamApi.GetBanCount(player).Result} times on steam.");
-            return Task.CompletedTask;
-        }
-        public override Task OnPlayerDisconnected(RunnerPlayer player) {
-            BluscreamLib.Log($"\"{player.Name}\" was banned {SteamApi.GetBanCount(player).Result} times on steam.");
-            return Task.CompletedTask;
-        }
-        #endregion
-
         #region Configuration
+        public CommandsConfiguration CommandsConfigurationInstance { get; set; }
         public class CommandsConfiguration : ModuleConfiguration {
             public CommandConfiguration playerbans { get; set; } = new CommandConfiguration() { AllowedRoles = Extensions.ToRoleStringList(MoreRoles.Staff) };
         }

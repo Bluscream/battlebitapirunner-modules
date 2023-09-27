@@ -635,7 +635,7 @@ public static partial class Utils {
 #endregion
 #region Extensions
 namespace Bluscream {
-public static class Extensions {
+public static partial class Extensions {
         #region Roles
         public static string ToRoleString(this Roles roles) {
             if (roles == Roles.None) {

@@ -11,28 +11,28 @@ using System.Linq;
 
 namespace Bluscream {
     [RequireModule(typeof(BluscreamLib))]
-    [Module("Steam Web API data provider API for other modules", "2.0.0")]
+    [Module("Steam Web API data provider API for other modules", "2.0.2")]
     public class SteamApi : BattleBitModule {
         public static ModuleInfo ModuleInfo = new() {
             Name = "SteamApi",
             Description = "Steam Web API data provider API for other modules",
-            Version = new Version(2, 0, 0),
+            Version = new Version(2, 0, 2),
             Author = "Bluscream",
             WebsiteUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/"),
             UpdateUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/raw/master/modules/SteamApi.cs"),
             SupportUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/issues/new?title=SteamApi")
         };
+
         public Configuration Configuration { get; set; }
         internal static HttpClient httpClient = new HttpClient();
+        public delegate void DataReceivedHandler(RunnerPlayer player, SteamWebApi.Response steamData);
+        public event DataReceivedHandler OnPlayerDataReceived;
 
         public IReadOnlyDictionary<RunnerPlayer, SteamWebApi.Response> Players { get { return _Players; } }
         private Dictionary<RunnerPlayer, SteamWebApi.Response> _Players { get; set; } = new Dictionary<RunnerPlayer, SteamWebApi.Response>();
+
         #region Methods
-        public static void Log(object _msg, string source = "SteamApi") {
-            var msg = _msg.ToString();
-            if (string.IsNullOrWhiteSpace(msg)) return;
-            Console.WriteLine($"[{DateTime.Now.ToString("HH:mm:ss")}] {source} > {msg.Trim()}");
-        }
+        private static void Log(object _msg, string source = "SteamApi") => BluscreamLib.Log(_msg, source);
         private async Task AddAllData(RunnerServer? server = null) {
             server = server ?? this.Server;
             foreach (var player in server.AllPlayers) {
@@ -48,9 +48,10 @@ namespace Bluscream {
         }
         private async Task AddData(RunnerPlayer player) {
             if (Players.ContainsKey(player)) return;
-            SteamWebApi.Response? geoData = await _GetData(player);
-            if (geoData is null) return;
-            _Players.Add(player, geoData);
+            SteamWebApi.Response? steamData = await _GetData(player);
+            if (steamData is null) return;
+            _Players.Add(player, steamData);
+            OnPlayerDataReceived?.Invoke(player, steamData);
         }
         private async Task RemoveData(RunnerPlayer player, TimeSpan? delay = null) {
             if (delay is not null && delay != TimeSpan.Zero) await Task.Delay(delay.Value); // Todo: Make configurable
@@ -58,6 +59,7 @@ namespace Bluscream {
                 _Players.Remove(player);
         }
         #endregion
+
         #region Api
         public async Task<long> GetBanCount(RunnerPlayer player) {
             var bans = (await GetData(player)!).Bans;
@@ -91,6 +93,7 @@ namespace Bluscream {
             return new SteamWebApi.Response() { Bans = response.Players.First() };
         }
         #endregion
+
         #region Events
         public override Task OnConnected() {
             Task.Run(() => {
