@@ -1,1 +1,100 @@
-[{"Available":true,"Name":"TDM","DisplayName":"Team Deathmatch","Description":"Kill the enemy team"},{"Available":true,"Name":"AAS","DisplayName":"AAS"},{"Available":true,"Name":"RUSH","DisplayName":"Rush","Description":"Plant or defuse bombs"},{"Available":true,"Name":"CONQ","DisplayName":"Conquest","Description":"Capture and hold positions"},{"Available":true,"Name":"DOMI","DisplayName":"Domination"},{"Available":true,"Name":"ELI","DisplayName":"Elimination"},{"Available":true,"Name":"INFCONQ","DisplayName":"Infantry Conquest","Description":"Conquest without strong vehicles"},{"Available":true,"Name":"FRONTLINE","DisplayName":"Frontline"},{"Available":true,"Name":"GunGameFFA","DisplayName":"Gun Game (Free For All)","Description":"Get through the loadouts as fast as possible"},{"Available":true,"Name":"FFA","DisplayName":"Free For All","Description":"Team Deathmatch without teams"},{"Available":true,"Name":"GunGameTeam","DisplayName":"Gun Game (Team)","Description":"Get through the loadouts as fast as possible"},{"Available":true,"Name":"SuicideRush","DisplayName":"Suicide Rush"},{"Available":true,"Name":"CatchGame","DisplayName":"Catch Game"},{"Available":true,"Name":"Infected","DisplayName":"Infected","Description":"Zombies"},{"Available":true,"Name":"CashRun","DisplayName":"Cash Run"},{"Available":true,"Name":"VoxelFortify","DisplayName":"Voxel Fortify"},{"Available":true,"Name":"VoxelTrench","DisplayName":"Voxel Trench"},{"Available":true,"Name":"CaptureTheFlag","DisplayName":"Capture The Flag"}]
+[
+    {
+        "Available": true,
+        "Name": "TDM",
+        "DisplayName": "Team Deathmatch",
+        "Description": "Kill the enemy team"
+    },
+    {
+        "Available": true,
+        "Name": "AAS",
+        "DisplayName": "AAS"
+    },
+    {
+        "Available": true,
+        "Name": "RUSH",
+        "DisplayName": "Rush",
+        "Description": "Plant or defuse bombs"
+    },
+    {
+        "Available": true,
+        "Name": "CONQ",
+        "DisplayName": "Conquest",
+        "Description": "Capture and hold positions"
+    },
+    {
+        "Available": true,
+        "Name": "DOMI",
+        "DisplayName": "Domination"
+    },
+    {
+        "Available": true,
+        "Name": "ELI",
+        "DisplayName": "Elimination"
+    },
+    {
+        "Available": true,
+        "Name": "INFCONQ",
+        "DisplayName": "Infantry Conquest",
+        "Description": "Conquest without strong vehicles"
+    },
+    {
+        "Available": true,
+        "Name": "FRONTLINE",
+        "DisplayName": "Frontline"
+    },
+    {
+        "Available": true,
+        "Name": "GunGameFFA",
+        "DisplayName": "Gun Game (Free For All)",
+        "Description": "Get through the loadouts as fast as possible"
+    },
+    {
+        "Available": true,
+        "Name": "FFA",
+        "DisplayName": "Free For All",
+        "Description": "Team Deathmatch without teams"
+    },
+    {
+        "Available": true,
+        "Name": "GunGameTeam",
+        "DisplayName": "Gun Game (Team)",
+        "Description": "Get through the loadouts as fast as possible"
+    },
+    {
+        "Available": true,
+        "Name": "SuicideRush",
+        "DisplayName": "Suicide Rush"
+    },
+    {
+        "Available": true,
+        "Name": "CatchGame",
+        "DisplayName": "Catch Game"
+    },
+    {
+        "Available": true,
+        "Name": "Infected",
+        "DisplayName": "Infected",
+        "Description": "Zombies"
+    },
+    {
+        "Available": true,
+        "Name": "CashRun",
+        "DisplayName": "Cash Run"
+    },
+    {
+        "Available": true,
+        "Name": "VoxelFortify",
+        "DisplayName": "Voxel Fortify"
+    },
+    {
+        "Available": true,
+        "Name": "VoxelTrench",
+        "DisplayName": "Voxel Trench"
+    },
+    {
+        "Available": true,
+        "Name": "CaptureTheFlag",
+        "DisplayName": "Capture The Flag"
+    }
+]

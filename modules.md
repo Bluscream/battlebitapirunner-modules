@@ -433,7 +433,41 @@
 
 | Description         | Version   |
 |:--------------------|:----------|
-| Bluscream's Library | 2.0.1     |
+| Bluscream's Library | 2.0.2     |
+# 1 Modules in CommandHandler.cs
+
+| Description                                | Version   |
+|:-------------------------------------------|:----------|
+| Basic in-game chat command handler library | 1.0.0     |
+
+## Commands
+| Command   | Function Name   | Description                       | Allowed Roles   | Parameters                                | Defaults      |
+|:----------|:----------------|:----------------------------------|:----------------|:------------------------------------------|:--------------|
+| help      | void            | Shows this help message           |                 | ['RunnerPlayer player', 'int page = 1']   | {'page': '1'} |
+| cmdhelp   | void            | Shows help for a specific command |                 | ['RunnerPlayer player', 'string command'] | {}            |
+| modules   | void            | Lists all loaded modules          |                 | ['RunnerPlayer commandSource']            | {}            |
+
+## Public Methods
+| Function Name      | Parameters                                                       | Defaults      |
+|:-------------------|:-----------------------------------------------------------------|:--------------|
+|                    |                                                                  |               |
+|                    |                                                                  |               |
+|                    |                                                                  |               |
+|                    |                                                                  |               |
+|                    |                                                                  |               |
+|                    |                                                                  |               |
+|                    |                                                                  |               |
+| void               | ['']                                                             | {}            |
+| Register           | ['BattleBitModule module']                                       | {}            |
+| Task               | ['RunnerPlayer player', 'ChatChannel channel', 'string message'] | {}            |
+| HelpCommand        | ['RunnerPlayer player', 'int page = 1']                          | {'page': '1'} |
+| CommandHelpCommand | ['RunnerPlayer player', 'string command']                        | {}            |
+| ListModules        | ['RunnerPlayer commandSource']                                   | {}            |
+|                    |                                                                  |               |
+|                    |                                                                  |               |
+|                    |                                                                  |               |
+|                    |                                                                  |               |
+|                    |                                                                  |               |
 # 1 Modules in GameModeRotation.cs
 
 | Description                                                                                                                                     |   Version |
@@ -461,34 +495,37 @@
 |                 |                                              |            |
 # 1 Modules in GeoApi.cs
 
-| Description                                            | Version   |
-|:-------------------------------------------------------|:----------|
-| IP and geolocation data provider API for other modules | 2.0.1     |
+| Description                                        | Version   |
+|:---------------------------------------------------|:----------|
+| IP and geolocation data provider for other modules | 2.0.2     |
 # 1 Modules in GeoApiExample.cs
 
 | Description                 | Version   |
 |:----------------------------|:----------|
-| Example of using the GeoApi | 2.0.0     |
+| Example of using the GeoApi | 2.0.2     |
 
 ## Commands
-| Command    | Function Name   | Description                                  | Allowed Roles             | Parameters                                                                                | Defaults           |
-|:-----------|:----------------|:---------------------------------------------|:--------------------------|:------------------------------------------------------------------------------------------|:-------------------|
-| playerinfo | void            | Displays info about a player                 | BattleBitAPI.Common.Admin | ['BBRAPIModules.RunnerPlayer commandSource', 'BBRAPIModules.RunnerPlayer? player = null'] | {'player': 'null'} |
-| playerlist | void            | Lists players and their respective countries |                           | ['BBRAPIModules.RunnerPlayer commandSource']                                              | {}                 |
+| Command    | Function Name   | Description                  | Allowed Roles   | Parameters                                                                                | Defaults           |
+|:-----------|:----------------|:-----------------------------|:----------------|:------------------------------------------------------------------------------------------|:-------------------|
+| playerinfo | void            | Displays info about a player |                 | ['BBRAPIModules.RunnerPlayer commandSource', 'BBRAPIModules.RunnerPlayer? player = null'] | {'player': 'null'} |
 
 ## Public Methods
-| Function Name   | Parameters                                                                                | Defaults           |
-|:----------------|:------------------------------------------------------------------------------------------|:-------------------|
-|                 |                                                                                           |                    |
-|                 |                                                                                           |                    |
-|                 |                                                                                           |                    |
-|                 |                                                                                           |                    |
-| void            | ['']                                                                                      | {}                 |
-| System          | ['']                                                                                      | {}                 |
-| System          | ['BBRAPIModules.RunnerPlayer player']                                                     | {}                 |
-| System          | ['BBRAPIModules.RunnerPlayer player']                                                     | {}                 |
-| GetPlayerInfo   | ['BBRAPIModules.RunnerPlayer commandSource', 'BBRAPIModules.RunnerPlayer? player = null'] | {'player': 'null'} |
-| ListPlayers     | ['BBRAPIModules.RunnerPlayer commandSource']                                              | {}                 |
+| Function Name   | Parameters                                                                                | Defaults                       |
+|:----------------|:------------------------------------------------------------------------------------------|:-------------------------------|
+|                 |                                                                                           |                                |
+| ModuleInfo      | ['']                                                                                      | {'ModuleInfo': 'new'}          |
+|                 |                                                                                           |                                |
+|                 |                                                                                           |                                |
+|                 |                                                                                           |                                |
+|                 |                                                                                           |                                |
+| void            | ['']                                                                                      | {}                             |
+| System          | ['']                                                                                      | {}                             |
+| System          | ['BBRAPIModules.RunnerPlayer player']                                                     | {}                             |
+| System          | ['BBRAPIModules.RunnerPlayer player']                                                     | {}                             |
+| GetPlayerInfo   | ['BBRAPIModules.RunnerPlayer commandSource', 'BBRAPIModules.RunnerPlayer? player = null'] | {'player': 'null'}             |
+|                 |                                                                                           |                                |
+|                 |                                                                                           |                                |
+| playerinfo      | ['']                                                                                      | {'AllowedRoles': 'Extensions'} |
 # 1 Modules in Logger.cs
 
 | Description   | Version   |
@@ -537,6 +574,11 @@
 |                 |                                                   |            |
 |                 |                                                   |            |
 |                 |                                                   |            |
+# 1 Modules in ModuleUsageStats.cs
+
+| Description                                                     | Version   |
+|:----------------------------------------------------------------|:----------|
+| Uploads the currently loaded module list to a telemetry server. | 2.0.0     |
 # 1 Modules in MoreCommands.cs
 
 | Description   | Version   |
@@ -607,11 +649,26 @@
 | pos                     | ['']                                                                                                           | {'AllowedRoles': 'Extensions'}                              |
 |                         |                                                                                                                |                                                             |
 |                         |                                                                                                                |                                                             |
+# 1 Modules in PlayerFinder.cs
+
+| Description                                                       | Version   |
+|:------------------------------------------------------------------|:----------|
+| Library functions for finding players by partial names or SteamID | 1.0.0     |
+# 1 Modules in PlayerPermissions.cs
+
+| Description                                     | Version   |
+|:------------------------------------------------|:----------|
+| Library for persistent server roles for players | 1.0.0     |
+# 1 Modules in RichText.cs
+
+| Description                        | Version   |
+|:-----------------------------------|:----------|
+| Library for easily using Rich Text | 1.0.0     |
 # 1 Modules in SteamApi.cs
 
 | Description                                       | Version   |
 |:--------------------------------------------------|:----------|
-| Steam Web API data provider API for other modules | 2.0.0     |
+| Steam Web API data provider API for other modules | 2.0.2     |
 # 1 Modules in SteamApiExample.cs
 
 | Description                          | Version   |
@@ -619,26 +676,24 @@
 | Example usage of the SteamApi module | 2.0.0     |
 
 ## Commands
-| Command    | Function Name   | Description                  | Allowed Roles   | Parameters                                             | Defaults   |
-|:-----------|:----------------|:-----------------------------|:----------------|:-------------------------------------------------------|:-----------|
-| playerbans | async           | Lists steam bans of a player |                 | ['RunnerPlayer commandSource', 'RunnerPlayer _player'] | {}         |
+| Command    | Function Name   | Description                  | Allowed Roles   | Parameters                                                     | Defaults            |
+|:-----------|:----------------|:-----------------------------|:----------------|:---------------------------------------------------------------|:--------------------|
+| playerbans | async           | Lists steam bans of a player |                 | ['RunnerPlayer commandSource', 'RunnerPlayer? _player = null'] | {'_player': 'null'} |
 
 ## Public Methods
-| Function Name   | Parameters                                             | Defaults                       |
-|:----------------|:-------------------------------------------------------|:-------------------------------|
-|                 |                                                        |                                |
-| ModuleInfo      | ['']                                                   | {'ModuleInfo': 'new'}          |
-|                 |                                                        |                                |
-|                 |                                                        |                                |
-|                 |                                                        |                                |
-|                 |                                                        |                                |
-|                 |                                                        |                                |
-| void            | ['RunnerPlayer commandSource', 'RunnerPlayer _player'] | {}                             |
-| void            | ['']                                                   | {}                             |
-| Task            | ['RunnerPlayer player']                                | {}                             |
-| Task            | ['RunnerPlayer player']                                | {}                             |
-|                 |                                                        |                                |
-| playerbans      | ['']                                                   | {'AllowedRoles': 'Extensions'} |
+| Function Name   | Parameters                                                     | Defaults                       |
+|:----------------|:---------------------------------------------------------------|:-------------------------------|
+|                 |                                                                |                                |
+| ModuleInfo      | ['']                                                           | {'ModuleInfo': 'new'}          |
+|                 |                                                                |                                |
+|                 |                                                                |                                |
+|                 |                                                                |                                |
+|                 |                                                                |                                |
+| void            | ['']                                                           | {}                             |
+| void            | ['RunnerPlayer commandSource', 'RunnerPlayer? _player = null'] | {'_player': 'null'}            |
+|                 |                                                                |                                |
+|                 |                                                                |                                |
+| playerbans      | ['']                                                           | {'AllowedRoles': 'Extensions'} |
 # 1 Modules in TempBans.cs
 
 | Description        | Version   |
@@ -717,6 +772,59 @@
 | Remove                | ['BanEntry entry']                                                                                                                                           | {}                                                                       |
 | Load                  | ['']                                                                                                                                                         | {}                                                                       |
 | Save                  | ['']                                                                                                                                                         | {}                                                                       |
+# 1 Modules in VPNBlocker.cs
+
+| Description                                            | Version   |
+|:-------------------------------------------------------|:----------|
+| Using the GeoApi to block certain players from joining | 2.0.2     |
+
+## Commands
+| Command     | Function Name   | Description                                   | Allowed Roles   | Parameters                                                                                  | Defaults                          |
+|:------------|:----------------|:----------------------------------------------|:----------------|:--------------------------------------------------------------------------------------------|:----------------------------------|
+| blockplayer | void            | Toggles blocking for a specific player's item |                 | ['BBRAPIModules.RunnerPlayer commandSource', 'RunnerPlayer target', 'string list = ""']     | {}                                |
+| block       | void            | Toggles blocking for a specific item          |                 | ['BBRAPIModules.RunnerPlayer commandSource', 'string? list = null', 'string? entry = null'] | {'list': 'null', 'entry': 'null'} |
+
+## Public Methods
+| Function Name            | Parameters                                                                                            | Defaults                           |
+|:-------------------------|:------------------------------------------------------------------------------------------------------|:-----------------------------------|
+|                          |                                                                                                       |                                    |
+| ModuleInfo               | ['']                                                                                                  | {'ModuleInfo': 'new'}              |
+|                          |                                                                                                       |                                    |
+|                          |                                                                                                       |                                    |
+|                          |                                                                                                       |                                    |
+|                          |                                                                                                       |                                    |
+|                          |                                                                                                       |                                    |
+| FormatString             | ['string format', 'RunnerPlayer player', 'IpApi.Response geoData']                                    | {}                                 |
+| entry                    | ['BlockListConfiguration config', 'string entry']                                                     | {}                                 |
+| CheckWhitelistRoles      | ['RunnerPlayer player', 'BlockConfiguration config']                                                  | {}                                 |
+| CheckPlayer              | ['RunnerPlayer player', 'IpApi.Response geoData']                                                     | {}                                 |
+| ToggleBoolEntry          | ['BBRAPIModules.RunnerPlayer commandSource', 'BlockConfiguration config']                             | {}                                 |
+| ToggleStringListEntry    | ['BBRAPIModules.RunnerPlayer commandSource', 'BlockListConfiguration config', 'string? entry = null'] | {'entry': 'null'}                  |
+| void                     | ['']                                                                                                  | {}                                 |
+| ToggleBlockPlayerCommand | ['BBRAPIModules.RunnerPlayer commandSource', 'RunnerPlayer target', 'string list = ""']               | {}                                 |
+| ToggleBlockCommand       | ['BBRAPIModules.RunnerPlayer commandSource', 'string? list = null', 'string? entry = null']           | {'list': 'null', 'entry': 'null'}  |
+|                          |                                                                                                       |                                    |
+|                          |                                                                                                       |                                    |
+| block                    | ['']                                                                                                  | {'AllowedRoles': 'Extensions'}     |
+| blockplayer              | ['']                                                                                                  | {'AllowedRoles': 'Extensions'}     |
+|                          |                                                                                                       |                                    |
+|                          |                                                                                                       |                                    |
+| List                     | ['']                                                                                                  | {}                                 |
+|                          |                                                                                                       |                                    |
+|                          |                                                                                                       |                                    |
+|                          |                                                                                                       |                                    |
+|                          |                                                                                                       |                                    |
+|                          |                                                                                                       |                                    |
+|                          |                                                                                                       |                                    |
+|                          |                                                                                                       |                                    |
+| FailTimeout              | ['1']                                                                                                 | {}                                 |
+| BlockProxies             | ['']                                                                                                  | {'Enabled': 'true'}                |
+| BlockServers             | ['']                                                                                                  | {'Enabled': 'true'}                |
+| BlockMobile              | ['']                                                                                                  | {'Enabled': 'false'}               |
+| BlockFailed              | ['']                                                                                                  | {'Enabled': 'true'}                |
+| ISPs                     | ['']                                                                                                  | {'Enabled': 'true', 'List': 'new'} |
+| Continents               | ['']                                                                                                  | {'Enabled': 'true'}                |
+| Countries                | ['']                                                                                                  | {'Enabled': 'true'}                |
 # 1 Modules in AdvancedVoting.cs
 
 | Description               | Version   |
