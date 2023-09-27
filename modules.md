@@ -17,457 +17,22 @@
 |---------------|-----------|
 # 1 Modules in BattleMetricsRCON.cs
 
-| Description       | Version   |
-|:------------------|:----------|
-| BattleMetricsRCON | 1.0.0     |
+| Description                                                                                                              | Version   |
+|:-------------------------------------------------------------------------------------------------------------------------|:----------|
+| This implements a WebSocket based protocol for the BattleBit Community API to allow for a BattleMetrics RCON connection. | 1.1.3     |
 # 0 Modules in RCONServer.cs
 
 | Description   | Version   |
 |---------------|-----------|
-# 1 Modules in Allowlist.cs
-
-| Description                                                        | Version   |
-|:-------------------------------------------------------------------|:----------|
-| Block players who are not on the allowlist from joining the server | 1.0.0     |
-
-## Commands
-| Command      | Function Name   | Description                         | Allowed Roles   | Parameters                                      | Defaults   |
-|:-------------|:----------------|:------------------------------------|:----------------|:------------------------------------------------|:-----------|
-| allow add    | void            | Adds a player to the allowlist      | Moderator       | ['RunnerPlayer commandSource', 'ulong steamID'] | {}         |
-| allow remove | void            | Removes a player from the allowlist | Moderator       | ['RunnerPlayer commandSource', 'ulong steamID'] | {}         |
-
-## Public Methods
-| Function Name   | Parameters                                       | Defaults   |
-|:----------------|:-------------------------------------------------|:-----------|
-|                 |                                                  |            |
-|                 |                                                  |            |
-|                 |                                                  |            |
-| Task            | ['ulong steamID', 'PlayerJoiningArguments args'] | {}         |
-| AllowAdd        | ['RunnerPlayer commandSource', 'ulong steamID']  | {}         |
-| AllowRemove     | ['RunnerPlayer commandSource', 'ulong steamID']  | {}         |
-|                 |                                                  |            |
-|                 |                                                  |            |
-# 1 Modules in Announcements.cs
-
-| Description                                                                                 | Version   |
-|:--------------------------------------------------------------------------------------------|:----------|
-| Periodically execute announcements and messages based on configurable delays and conditions | 1.0.0     |
-# 1 Modules in BasicProgression.cs
-
-| Description                                      | Version   |
-|:-------------------------------------------------|:----------|
-| Provide basic persistent progression for players | 1.0.0     |
-# 1 Modules in BasicServerSettings.cs
-
-| Description                     | Version   |
-|:--------------------------------|:----------|
-| Configure basic server settings | 1.0.0     |
-# 1 Modules in CommandHandler.cs
-
-| Description                                | Version   |
-|:-------------------------------------------|:----------|
-| Basic in-game chat command handler library | 1.0.0     |
-
-## Commands
-| Command   | Function Name   | Description                       | Allowed Roles   | Parameters                                | Defaults      |
-|:----------|:----------------|:----------------------------------|:----------------|:------------------------------------------|:--------------|
-| help      | void            | Shows this help message           |                 | ['RunnerPlayer player', 'int page = 1']   | {'page': '1'} |
-| cmdhelp   | void            | Shows help for a specific command |                 | ['RunnerPlayer player', 'string command'] | {}            |
-| modules   | void            | Lists all loaded modules          |                 | ['RunnerPlayer commandSource']            | {}            |
-
-## Public Methods
-| Function Name      | Parameters                                                       | Defaults      |
-|:-------------------|:-----------------------------------------------------------------|:--------------|
-|                    |                                                                  |               |
-|                    |                                                                  |               |
-|                    |                                                                  |               |
-|                    |                                                                  |               |
-|                    |                                                                  |               |
-|                    |                                                                  |               |
-|                    |                                                                  |               |
-| void               | ['']                                                             | {}            |
-| Register           | ['BattleBitModule module']                                       | {}            |
-| Task               | ['RunnerPlayer player', 'ChatChannel channel', 'string message'] | {}            |
-| HelpCommand        | ['RunnerPlayer player', 'int page = 1']                          | {'page': '1'} |
-| CommandHelpCommand | ['RunnerPlayer player', 'string command']                        | {}            |
-| ListModules        | ['RunnerPlayer commandSource']                                   | {}            |
-|                    |                                                                  |               |
-|                    |                                                                  |               |
-|                    |                                                                  |               |
-|                    |                                                                  |               |
-|                    |                                                                  |               |
-# 1 Modules in DiscordWebhooks.cs
-
-| Description                                                                               | Version   |
-|:------------------------------------------------------------------------------------------|:----------|
-| Send some basic events to Discord and allow for other modules to send messages to Discord | 1.0.0     |
-# 1 Modules in LoadingScreenText.cs
-
-| Description                                      | Version   |
-|:-------------------------------------------------|:----------|
-| Configure the loading screen text of your server | 1.0.0     |
-# 1 Modules in ModeratorTools.cs
-
-| Description           | Version   |
-|:----------------------|:----------|
-| Basic moderator tools | 1.0.0     |
-
-## Commands
-| Command       | Function Name   | Description                                    | Allowed Roles    | Parameters                                                                                       | Defaults                              |
-|:--------------|:----------------|:-----------------------------------------------|:-----------------|:-------------------------------------------------------------------------------------------------|:--------------------------------------|
-| Say           | void            | Prints a message to all players                | Admin, Moderator | ['RunnerPlayer commandSource', 'string message']                                                 | {}                                    |
-| SayToPlayer   | void            | Prints a message to all players                | Admin, Moderator | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string message']                          | {}                                    |
-| AnnounceShort | void            | Prints a short announce to all players         | Admin, Moderator | ['RunnerPlayer commandSource', 'string message']                                                 | {}                                    |
-| AnnounceLong  | void            | Prints a long announce to all players          | Admin, Moderator | ['RunnerPlayer commandSource', 'string message']                                                 | {}                                    |
-| Message       | void            | Messages a specific player                     | Admin, Moderator | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string message', 'float? timeout = null'] | {'timeout': 'null'}                   |
-| Clear         | void            | Clears the chat                                | Admin, Moderator | ['RunnerPlayer commandSource']                                                                   | {}                                    |
-| Kick          | void            | Kicks a player                                 | Admin, Moderator | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? reason = null']                   | {'reason': 'null'}                    |
-| Ban           | void            | Bans a player                                  | Admin, Moderator | ['RunnerPlayer commandSource', 'RunnerPlayer target']                                            | {}                                    |
-| Kill          | void            | Kills a player                                 | Admin, Moderator | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? message = null']                  | {'message': 'null'}                   |
-| Gag           | void            | Gags a player                                  | Admin, Moderator | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? message = null']                  | {'message': 'null'}                   |
-| Ungag         | void            | Ungags a player                                | Admin, Moderator | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? message = null']                  | {'message': 'null'}                   |
-| Mute          | void            | Mutes a player                                 | Admin, Moderator | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? message = null']                  | {'message': 'null'}                   |
-| Unmute        | void            | Unmutes a player                               | Admin, Moderator | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? message = null']                  | {'message': 'null'}                   |
-| Silence       | void            | Mutes and gags a player                        | Admin, Moderator | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? message = null']                  | {'message': 'null'}                   |
-| Unsilence     | void            | Unmutes and ungags a player                    | Admin, Moderator | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? message = null']                  | {'message': 'null'}                   |
-| LockSpawn     | void            | Prevents a player or all players from spawning | Admin, Moderator | ['RunnerPlayer commandSource', 'RunnerPlayer? target = null', 'string? message = null']          | {'target': 'null', 'message': 'null'} |
-| UnlockSpawn   | void            | Allows a player or all players to spawn        | Admin, Moderator | ['RunnerPlayer commandSource', 'RunnerPlayer? target = null', 'string? message = null']          | {'target': 'null', 'message': 'null'} |
-| tp2me         | void            | Teleports a player to you                      | Admin, Moderator | ['RunnerPlayer commandSource', 'RunnerPlayer target']                                            | {}                                    |
-| tpme2         | void            | Teleports you to a player                      | Admin, Moderator | ['RunnerPlayer commandSource', 'RunnerPlayer target']                                            | {}                                    |
-| tp            | void            | Teleports a player to another player           | Admin, Moderator | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'RunnerPlayer destination']                | {}                                    |
-| tp2pos        | void            | Teleports a player to a position               | Admin, Moderator | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'int x', 'int y', 'int z']                 | {}                                    |
-| tpme2pos      | void            | Teleports you to a position                    | Admin, Moderator | ['RunnerPlayer commandSource', 'int x', 'int y', 'int z']                                        | {}                                    |
-| freeze        | void            | Freezes a player                               | Admin, Moderator | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? message = null']                  | {'message': 'null'}                   |
-| unfreeze      | void            | Unfreezes a player                             | Admin, Moderator | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? message = null']                  | {'message': 'null'}                   |
-| Inspect       | void            | Inspects a player or stops inspection          | Admin, Moderator | ['RunnerPlayer commandSource', 'RunnerPlayer? target = null']                                    | {'target': 'null'}                    |
-
-## Public Methods
-| Function Name          | Parameters                                                                                       | Defaults                              |
-|:-----------------------|:-------------------------------------------------------------------------------------------------|:--------------------------------------|
-|                        |                                                                                                  |                                       |
-|                        |                                                                                                  |                                       |
-| void                   | ['']                                                                                             | {}                                    |
-| Task                   | ['']                                                                                             | {}                                    |
-| Say                    | ['RunnerPlayer commandSource', 'string message']                                                 | {}                                    |
-| SayToPlayer            | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string message']                          | {}                                    |
-| AnnounceShort          | ['RunnerPlayer commandSource', 'string message']                                                 | {}                                    |
-| AnnounceLong           | ['RunnerPlayer commandSource', 'string message']                                                 | {}                                    |
-| Message                | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string message', 'float? timeout = null'] | {'timeout': 'null'}                   |
-| Clear                  | ['RunnerPlayer commandSource']                                                                   | {}                                    |
-| Kick                   | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? reason = null']                   | {'reason': 'null'}                    |
-| Ban                    | ['RunnerPlayer commandSource', 'RunnerPlayer target']                                            | {}                                    |
-| Kill                   | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? message = null']                  | {'message': 'null'}                   |
-| Gag                    | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? message = null']                  | {'message': 'null'}                   |
-| Ungag                  | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? message = null']                  | {'message': 'null'}                   |
-| Mute                   | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? message = null']                  | {'message': 'null'}                   |
-| Unmute                 | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? message = null']                  | {'message': 'null'}                   |
-| Silence                | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? message = null']                  | {'message': 'null'}                   |
-| Unsilence              | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? message = null']                  | {'message': 'null'}                   |
-| LockSpawn              | ['RunnerPlayer commandSource', 'RunnerPlayer? target = null', 'string? message = null']          | {'target': 'null', 'message': 'null'} |
-| UnlockSpawn            | ['RunnerPlayer commandSource', 'RunnerPlayer? target = null', 'string? message = null']          | {'target': 'null', 'message': 'null'} |
-| TeleportPlayerToMe     | ['RunnerPlayer commandSource', 'RunnerPlayer target']                                            | {}                                    |
-| TeleportMeToPlayer     | ['RunnerPlayer commandSource', 'RunnerPlayer target']                                            | {}                                    |
-| TeleportPlayerToPlayer | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'RunnerPlayer destination']                | {}                                    |
-| TeleportPlayerToPos    | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'int x', 'int y', 'int z']                 | {}                                    |
-| TeleportMeToPos        | ['RunnerPlayer commandSource', 'int x', 'int y', 'int z']                                        | {}                                    |
-| Freeze                 | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? message = null']                  | {'message': 'null'}                   |
-| Unfreeze               | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? message = null']                  | {'message': 'null'}                   |
-| Inspect                | ['RunnerPlayer commandSource', 'RunnerPlayer? target = null']                                    | {'target': 'null'}                    |
-| Task                   | ['RunnerPlayer player', 'ChatChannel channel', 'string msg']                                     | {}                                    |
-| Task                   | ['RunnerPlayer player', 'OnPlayerSpawnArguments request']                                        | {}                                    |
-# 1 Modules in ModuleUpdates.cs
-
-| Description                                                      | Version   |
-|:-----------------------------------------------------------------|:----------|
-| Check for and download module updates from the module repository | 1.0.0     |
-# 1 Modules in MOTD.cs
-
-| Description                                              | Version   |
-|:---------------------------------------------------------|:----------|
-| Show a message of the day to players who join the server | 1.0.0     |
-
-## Commands
-| Command   | Function Name   | Description    | Allowed Roles   | Parameters                                    | Defaults   |
-|:----------|:----------------|:---------------|:----------------|:----------------------------------------------|:-----------|
-| setmotd   | void            | Sets the MOTD  | Admin           | ['RunnerPlayer commandSource', 'string motd'] | {}         |
-| motd      | void            | Shows the MOTD |                 | ['RunnerPlayer commandSource']                | {}         |
-
-## Public Methods
-| Function Name   | Parameters                                    | Defaults   |
-|:----------------|:----------------------------------------------|:-----------|
-|                 |                                               |            |
-|                 |                                               |            |
-|                 |                                               |            |
-| void            | ['']                                          | {}         |
-| Task            | ['GameState oldState', 'GameState newState']  | {}         |
-| Task            | ['RunnerPlayer player']                       | {}         |
-| SetMOTD         | ['RunnerPlayer commandSource', 'string motd'] | {}         |
-| ShowMOTD        | ['RunnerPlayer commandSource']                | {}         |
-|                 |                                               |            |
-|                 |                                               |            |
-|                 |                                               |            |
-# 1 Modules in PermissionsCommands.cs
-
-| Description                                                   | Version   |
-|:--------------------------------------------------------------|:----------|
-| Provide addperm and removeperm commands for PlayerPermissions | 1.0.0     |
-
-## Commands
-| Command    | Function Name   | Description                          | Allowed Roles    | Parameters                                                                | Defaults                 |
-|:-----------|:----------------|:-------------------------------------|:-----------------|:--------------------------------------------------------------------------|:-------------------------|
-| addperm    | void            | Adds a permission to a player        | Admin            | ['RunnerPlayer commandSource', 'RunnerPlayer player', 'Roles permission'] | {}                       |
-| removeperm | void            | Removes a permission from a player   | Admin            | ['RunnerPlayer commandSource', 'RunnerPlayer player', 'Roles permission'] | {}                       |
-| clearperms | void            | Removes all permission from a player | Admin            | ['RunnerPlayer commandSource', 'RunnerPlayer player']                     | {}                       |
-| listperms  | void            | Lists player permissions             | Admin, Moderator | ['RunnerPlayer commandSource', 'RunnerPlayer? targetPlayer = null']       | {'targetPlayer': 'null'} |
-
-## Public Methods
-| Function Name           | Parameters                                                                | Defaults                 |
-|:------------------------|:--------------------------------------------------------------------------|:-------------------------|
-|                         |                                                                           |                          |
-|                         |                                                                           |                          |
-|                         |                                                                           |                          |
-| void                    | ['']                                                                      | {}                       |
-| AddPermissionCommand    | ['RunnerPlayer commandSource', 'RunnerPlayer player', 'Roles permission'] | {}                       |
-| RemovePermissionCommand | ['RunnerPlayer commandSource', 'RunnerPlayer player', 'Roles permission'] | {}                       |
-| ClearPermissionCommand  | ['RunnerPlayer commandSource', 'RunnerPlayer player']                     | {}                       |
-| ListPermissionCommand   | ['RunnerPlayer commandSource', 'RunnerPlayer? targetPlayer = null']       | {'targetPlayer': 'null'} |
-# 1 Modules in PlayerFinder.cs
-
-| Description                                                       | Version   |
-|:------------------------------------------------------------------|:----------|
-| Library functions for finding players by partial names or SteamID | 1.0.0     |
-# 1 Modules in PlayerPermissions.cs
-
-| Description                                     | Version   |
-|:------------------------------------------------|:----------|
-| Library for persistent server roles for players | 1.0.0     |
-# 1 Modules in ProfanityFilter.cs
-
-| Description                             | Version   |
-|:----------------------------------------|:----------|
-| Bad word filter to remove chat messages | 1.0.0     |
-# 1 Modules in RichText.cs
-
-| Description                        | Version   |
-|:-----------------------------------|:----------|
-| Library for easily using Rich Text | 1.0.0     |
-# 1 Modules in Rotation.cs
-
-| Description                                            | Version   |
-|:-------------------------------------------------------|:----------|
-| Configure the map and game mode rotation of the server | 1.0.0     |
-# 1 Modules in SpectateControl.cs
-
-| Description                           | Version   |
-|:--------------------------------------|:----------|
-| Allow only specific Roles to spectate | 1.0.0     |
-# 1 Modules in Voting.cs
-
-| Description               | Version   |
-|:--------------------------|:----------|
-| Simple chat voting system | 1.0.0     |
-
-## Commands
-| Command   | Function Name   | Description         | Allowed Roles   | Parameters                                                      | Defaults   |
-|:----------|:----------------|:--------------------|:----------------|:----------------------------------------------------------------|:-----------|
-| vote      | void            | Votes for an option | Moderator       | ['RunnerPlayer commandSource', 'string text', 'string options'] | {}         |
-
-## Public Methods
-| Function Name    | Parameters                                                      | Defaults   |
-|:-----------------|:----------------------------------------------------------------|:-----------|
-|                  |                                                                 |            |
-|                  |                                                                 |            |
-|                  |                                                                 |            |
-|                  |                                                                 |            |
-| void             | ['']                                                            | {}         |
-| StartVoteCommand | ['RunnerPlayer commandSource', 'string text', 'string options'] | {}         |
-| async            | ['RunnerPlayer player', 'ChatChannel channel', 'string msg']    | {}         |
-|                  |                                                                 |            |
-|                  |                                                                 |            |
-# 0 Modules in .NETCoreApp,Version=v6.0.AssemblyAttributes.cs
+# 0 Modules in LifeStealGunGame.cs
 
 | Description   | Version   |
 |---------------|-----------|
-# 0 Modules in BattleBitBaseModules.AssemblyInfo.cs
-
-| Description   | Version   |
-|---------------|-----------|
-# 0 Modules in .NETCoreApp,Version=v6.0.AssemblyAttributes.cs
-
-| Description   | Version   |
-|---------------|-----------|
-# 0 Modules in BattleBitBaseModules.AssemblyInfo.cs
-
-| Description   | Version   |
-|---------------|-----------|
-# 0 Modules in ExampleModule.cs
-
-| Description   | Version   |
-|---------------|-----------|
-# 0 Modules in ExampleModule2.cs
-
-| Description   | Version   |
-|---------------|-----------|
-# 0 Modules in ExampleModuleIntegration.cs
-
-| Description   | Version   |
-|---------------|-----------|
-# 0 Modules in Zombies.cs
-
-| Description   | Version   |
-|---------------|-----------|
-
-## Commands
-| Command    | Function Name   | Description                                     | Allowed Roles   | Parameters                                     | Defaults   |
-|:-----------|:----------------|:------------------------------------------------|:----------------|:-----------------------------------------------|:-----------|
-| fullgear   | void            | Gives you full gear                             | Admin           | ['RunnerPlayer player']                        | {}         |
-| addtickets | void            | Adds tickets to zombies                         | Admin           | ['RunnerPlayer player', 'int tickets']         | {}         |
-| list       | void            | List all players and their status               |                 | ['RunnerPlayer player']                        | {}         |
-| zombie     | void            | Check whether you're a zombie or not            |                 | ['RunnerPlayer player']                        | {}         |
-| switch     | async           | Switch a player to the other team.              | Moderator       | ['RunnerPlayer source', 'RunnerPlayer target'] | {}         |
-| afk        | async           | Make zombies win because humans camp or are AFK | Moderator       | ['RunnerPlayer caller']                        | {}         |
-| resetbuild | void            | Reset the build phase.                          | Moderator       | ['RunnerPlayer caller']                        | {}         |
-| map        | void            | Current map name                                |                 | ['RunnerPlayer caller']                        | {}         |
-| pos        | void            | Current position                                | Admin           | ['RunnerPlayer caller']                        | {}         |
-
-## Public Methods
-| Function Name       | Parameters                                                                         | Defaults   |
-|:--------------------|:-----------------------------------------------------------------------------------|:-----------|
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-| bool                | ['Vector2[] polygon', 'Vector2 point']                                             | {}         |
-| void                | ['']                                                                               | {}         |
-| async               | ['']                                                                               | {}         |
-| Task                | ['RunnerPlayer player', 'GameRole requestedRole']                                  | {}         |
-| async               | ['RunnerPlayer player']                                                            | {}         |
-| Task                | ['RunnerPlayer player', 'Team requestedTeam']                                      | {}         |
-| Task                | ['ulong steamID', 'PlayerJoiningArguments args']                                   | {}         |
-| async               | ['RunnerPlayer player', 'OnPlayerSpawnArguments request']                          | {}         |
-| async               | ['RunnerPlayer player']                                                            | {}         |
-| Task                | ['RunnerPlayer player']                                                            | {}         |
-| Task                | ['OnPlayerKillArguments<RunnerPlayer> args']                                       | {}         |
-| async               | ['RunnerPlayer player']                                                            | {}         |
-| Task                | ['long oldSessionID', 'long newSessionID']                                         | {}         |
-| Task                | ['RunnerPlayer player', 'ChatChannel channel', 'string msg']                       | {}         |
-| async               | ['Squad<RunnerPlayer> squad', 'int newPoints']                                     | {}         |
-| FullGearCommand     | ['RunnerPlayer player']                                                            | {}         |
-| AddTicketsCommand   | ['RunnerPlayer player', 'int tickets']                                             | {}         |
-| ListCommand         | ['RunnerPlayer player']                                                            | {}         |
-| ZombieCommand       | ['RunnerPlayer player']                                                            | {}         |
-| void                | ['RunnerPlayer source', 'RunnerPlayer target']                                     | {}         |
-| void                | ['RunnerPlayer caller']                                                            | {}         |
-| ResetBuildCommand   | ['RunnerPlayer caller']                                                            | {}         |
-| MapCommand          | ['RunnerPlayer caller']                                                            | {}         |
-| PosCommand          | ['RunnerPlayer caller']                                                            | {}         |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-| loadout             | ['RunnerPlayer player', 'ZombiePersistence loadout']                               | {}         |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-| requestedPercentage | ['string name', 'float requestedPercentage', 'Action<RunnerPlayer> applyToPlayer'] | {}         |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-| Reset               | ['']                                                                               | {}         |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-|                     |                                                                                    |            |
-# 1 Modules in ModuleUsageStats.cs
-
-| Description                                                     | Version   |
-|:----------------------------------------------------------------|:----------|
-| Uploads the currently loaded module list to a telemetry server. | 2.0.0     |
 # 1 Modules in BluscreamLib.cs
 
 | Description         | Version   |
 |:--------------------|:----------|
 | Bluscream's Library | 2.0.2     |
-# 1 Modules in CommandHandler.cs
-
-| Description                                | Version   |
-|:-------------------------------------------|:----------|
-| Basic in-game chat command handler library | 1.0.0     |
-
-## Commands
-| Command   | Function Name   | Description                       | Allowed Roles   | Parameters                                | Defaults      |
-|:----------|:----------------|:----------------------------------|:----------------|:------------------------------------------|:--------------|
-| help      | void            | Shows this help message           |                 | ['RunnerPlayer player', 'int page = 1']   | {'page': '1'} |
-| cmdhelp   | void            | Shows help for a specific command |                 | ['RunnerPlayer player', 'string command'] | {}            |
-| modules   | void            | Lists all loaded modules          |                 | ['RunnerPlayer commandSource']            | {}            |
-
-## Public Methods
-| Function Name      | Parameters                                                       | Defaults      |
-|:-------------------|:-----------------------------------------------------------------|:--------------|
-|                    |                                                                  |               |
-|                    |                                                                  |               |
-|                    |                                                                  |               |
-|                    |                                                                  |               |
-|                    |                                                                  |               |
-|                    |                                                                  |               |
-|                    |                                                                  |               |
-| void               | ['']                                                             | {}            |
-| Register           | ['BattleBitModule module']                                       | {}            |
-| Task               | ['RunnerPlayer player', 'ChatChannel channel', 'string message'] | {}            |
-| HelpCommand        | ['RunnerPlayer player', 'int page = 1']                          | {'page': '1'} |
-| CommandHelpCommand | ['RunnerPlayer player', 'string command']                        | {}            |
-| ListModules        | ['RunnerPlayer commandSource']                                   | {}            |
-|                    |                                                                  |               |
-|                    |                                                                  |               |
-|                    |                                                                  |               |
-|                    |                                                                  |               |
-|                    |                                                                  |               |
 # 1 Modules in GameModeRotation.cs
 
 | Description                                                                                                                                     |   Version |
@@ -574,11 +139,6 @@
 |                 |                                                   |            |
 |                 |                                                   |            |
 |                 |                                                   |            |
-# 1 Modules in ModuleUsageStats.cs
-
-| Description                                                     | Version   |
-|:----------------------------------------------------------------|:----------|
-| Uploads the currently loaded module list to a telemetry server. | 2.0.0     |
 # 1 Modules in MoreCommands.cs
 
 | Description   | Version   |
@@ -649,21 +209,6 @@
 | pos                     | ['']                                                                                                           | {'AllowedRoles': 'Extensions'}                              |
 |                         |                                                                                                                |                                                             |
 |                         |                                                                                                                |                                                             |
-# 1 Modules in PlayerFinder.cs
-
-| Description                                                       | Version   |
-|:------------------------------------------------------------------|:----------|
-| Library functions for finding players by partial names or SteamID | 1.0.0     |
-# 1 Modules in PlayerPermissions.cs
-
-| Description                                     | Version   |
-|:------------------------------------------------|:----------|
-| Library for persistent server roles for players | 1.0.0     |
-# 1 Modules in RichText.cs
-
-| Description                        | Version   |
-|:-----------------------------------|:----------|
-| Library for easily using Rich Text | 1.0.0     |
 # 1 Modules in SteamApi.cs
 
 | Description                                       | Version   |
@@ -919,3 +464,392 @@
 
 | Description   | Version   |
 |---------------|-----------|
+# 1 Modules in Allowlist.cs
+
+| Description                                                        | Version   |
+|:-------------------------------------------------------------------|:----------|
+| Block players who are not on the allowlist from joining the server | 1.0.0     |
+
+## Commands
+| Command      | Function Name   | Description                         | Allowed Roles   | Parameters                                      | Defaults   |
+|:-------------|:----------------|:------------------------------------|:----------------|:------------------------------------------------|:-----------|
+| allow add    | void            | Adds a player to the allowlist      | Moderator       | ['RunnerPlayer commandSource', 'ulong steamID'] | {}         |
+| allow remove | void            | Removes a player from the allowlist | Moderator       | ['RunnerPlayer commandSource', 'ulong steamID'] | {}         |
+
+## Public Methods
+| Function Name   | Parameters                                       | Defaults   |
+|:----------------|:-------------------------------------------------|:-----------|
+|                 |                                                  |            |
+|                 |                                                  |            |
+|                 |                                                  |            |
+| Task            | ['ulong steamID', 'PlayerJoiningArguments args'] | {}         |
+| AllowAdd        | ['RunnerPlayer commandSource', 'ulong steamID']  | {}         |
+| AllowRemove     | ['RunnerPlayer commandSource', 'ulong steamID']  | {}         |
+|                 |                                                  |            |
+|                 |                                                  |            |
+# 1 Modules in Announcements.cs
+
+| Description                                                                                 | Version   |
+|:--------------------------------------------------------------------------------------------|:----------|
+| Periodically execute announcements and messages based on configurable delays and conditions | 1.0.0     |
+# 1 Modules in BasicProgression.cs
+
+| Description                                      | Version   |
+|:-------------------------------------------------|:----------|
+| Provide basic persistent progression for players | 1.0.0     |
+# 1 Modules in BasicServerSettings.cs
+
+| Description                     | Version   |
+|:--------------------------------|:----------|
+| Configure basic server settings | 1.0.0     |
+# 1 Modules in CommandHandler.cs
+
+| Description                                | Version   |
+|:-------------------------------------------|:----------|
+| Basic in-game chat command handler library | 1.0.0     |
+
+## Commands
+| Command   | Function Name   | Description                       | Allowed Roles   | Parameters                                | Defaults      |
+|:----------|:----------------|:----------------------------------|:----------------|:------------------------------------------|:--------------|
+| help      | void            | Shows this help message           |                 | ['RunnerPlayer player', 'int page = 1']   | {'page': '1'} |
+| cmdhelp   | void            | Shows help for a specific command |                 | ['RunnerPlayer player', 'string command'] | {}            |
+| modules   | void            | Lists all loaded modules          | Admin           | ['RunnerPlayer commandSource']            | {}            |
+
+## Public Methods
+| Function Name      | Parameters                                                       | Defaults      |
+|:-------------------|:-----------------------------------------------------------------|:--------------|
+|                    |                                                                  |               |
+|                    |                                                                  |               |
+|                    |                                                                  |               |
+|                    |                                                                  |               |
+|                    |                                                                  |               |
+|                    |                                                                  |               |
+|                    |                                                                  |               |
+| void               | ['']                                                             | {}            |
+| Register           | ['BattleBitModule module']                                       | {}            |
+| Task               | ['RunnerPlayer player', 'ChatChannel channel', 'string message'] | {}            |
+| HelpCommand        | ['RunnerPlayer player', 'int page = 1']                          | {'page': '1'} |
+| CommandHelpCommand | ['RunnerPlayer player', 'string command']                        | {}            |
+| ListModules        | ['RunnerPlayer commandSource']                                   | {}            |
+|                    |                                                                  |               |
+|                    |                                                                  |               |
+|                    |                                                                  |               |
+|                    |                                                                  |               |
+|                    |                                                                  |               |
+# 1 Modules in DiscordWebhooks.cs
+
+| Description                                                                               | Version   |
+|:------------------------------------------------------------------------------------------|:----------|
+| Send some basic events to Discord and allow for other modules to send messages to Discord | 1.0.0     |
+# 1 Modules in LoadingScreenText.cs
+
+| Description                                      | Version   |
+|:-------------------------------------------------|:----------|
+| Configure the loading screen text of your server | 1.0.0     |
+# 1 Modules in ModeratorTools.cs
+
+| Description           | Version   |
+|:----------------------|:----------|
+| Basic moderator tools | 1.0.0     |
+
+## Commands
+| Command       | Function Name   | Description                                    | Allowed Roles   | Parameters                                                                                       | Defaults                              |
+|:--------------|:----------------|:-----------------------------------------------|:----------------|:-------------------------------------------------------------------------------------------------|:--------------------------------------|
+| Say           | void            | Prints a message to all players                | Moderator       | ['RunnerPlayer commandSource', 'string message']                                                 | {}                                    |
+| SayToPlayer   | void            | Prints a message to all players                | Moderator       | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string message']                          | {}                                    |
+| AnnounceShort | void            | Prints a short announce to all players         | Moderator       | ['RunnerPlayer commandSource', 'string message']                                                 | {}                                    |
+| AnnounceLong  | void            | Prints a long announce to all players          | Moderator       | ['RunnerPlayer commandSource', 'string message']                                                 | {}                                    |
+| Message       | void            | Messages a specific player                     | Moderator       | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string message', 'float? timeout = null'] | {'timeout': 'null'}                   |
+| Clear         | void            | Clears the chat                                | Moderator       | ['RunnerPlayer commandSource']                                                                   | {}                                    |
+| Kick          | void            | Kicks a player                                 | Moderator       | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? reason = null']                   | {'reason': 'null'}                    |
+| Ban           | void            | Bans a player                                  | Moderator       | ['RunnerPlayer commandSource', 'RunnerPlayer target']                                            | {}                                    |
+| Kill          | void            | Kills a player                                 | Moderator       | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? message = null']                  | {'message': 'null'}                   |
+| Gag           | void            | Gags a player                                  | Moderator       | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? message = null']                  | {'message': 'null'}                   |
+| Ungag         | void            | Ungags a player                                | Moderator       | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? message = null']                  | {'message': 'null'}                   |
+| Mute          | void            | Mutes a player                                 | Moderator       | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? message = null']                  | {'message': 'null'}                   |
+| Unmute        | void            | Unmutes a player                               | Moderator       | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? message = null']                  | {'message': 'null'}                   |
+| Silence       | void            | Mutes and gags a player                        | Moderator       | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? message = null']                  | {'message': 'null'}                   |
+| Unsilence     | void            | Unmutes and ungags a player                    | Moderator       | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? message = null']                  | {'message': 'null'}                   |
+| LockSpawn     | void            | Prevents a player or all players from spawning | Moderator       | ['RunnerPlayer commandSource', 'RunnerPlayer? target = null', 'string? message = null']          | {'target': 'null', 'message': 'null'} |
+| UnlockSpawn   | void            | Allows a player or all players to spawn        | Moderator       | ['RunnerPlayer commandSource', 'RunnerPlayer? target = null', 'string? message = null']          | {'target': 'null', 'message': 'null'} |
+| tp2me         | void            | Teleports a player to you                      | Moderator       | ['RunnerPlayer commandSource', 'RunnerPlayer target']                                            | {}                                    |
+| tpme2         | void            | Teleports you to a player                      | Moderator       | ['RunnerPlayer commandSource', 'RunnerPlayer target']                                            | {}                                    |
+| tp            | void            | Teleports a player to another player           | Moderator       | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'RunnerPlayer destination']                | {}                                    |
+| tp2pos        | void            | Teleports a player to a position               | Moderator       | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'int x', 'int y', 'int z']                 | {}                                    |
+| tpme2pos      | void            | Teleports you to a position                    | Moderator       | ['RunnerPlayer commandSource', 'int x', 'int y', 'int z']                                        | {}                                    |
+| freeze        | void            | Freezes a player                               | Moderator       | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? message = null']                  | {'message': 'null'}                   |
+| unfreeze      | void            | Unfreezes a player                             | Moderator       | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? message = null']                  | {'message': 'null'}                   |
+| Inspect       | void            | Inspects a player or stops inspection          | Moderator       | ['RunnerPlayer commandSource', 'RunnerPlayer? target = null']                                    | {'target': 'null'}                    |
+
+## Public Methods
+| Function Name          | Parameters                                                                                       | Defaults                              |
+|:-----------------------|:-------------------------------------------------------------------------------------------------|:--------------------------------------|
+|                        |                                                                                                  |                                       |
+|                        |                                                                                                  |                                       |
+| void                   | ['']                                                                                             | {}                                    |
+| Task                   | ['']                                                                                             | {}                                    |
+| Say                    | ['RunnerPlayer commandSource', 'string message']                                                 | {}                                    |
+| SayToPlayer            | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string message']                          | {}                                    |
+| AnnounceShort          | ['RunnerPlayer commandSource', 'string message']                                                 | {}                                    |
+| AnnounceLong           | ['RunnerPlayer commandSource', 'string message']                                                 | {}                                    |
+| Message                | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string message', 'float? timeout = null'] | {'timeout': 'null'}                   |
+| Clear                  | ['RunnerPlayer commandSource']                                                                   | {}                                    |
+| Kick                   | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? reason = null']                   | {'reason': 'null'}                    |
+| Ban                    | ['RunnerPlayer commandSource', 'RunnerPlayer target']                                            | {}                                    |
+| Kill                   | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? message = null']                  | {'message': 'null'}                   |
+| Gag                    | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? message = null']                  | {'message': 'null'}                   |
+| Ungag                  | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? message = null']                  | {'message': 'null'}                   |
+| Mute                   | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? message = null']                  | {'message': 'null'}                   |
+| Unmute                 | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? message = null']                  | {'message': 'null'}                   |
+| Silence                | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? message = null']                  | {'message': 'null'}                   |
+| Unsilence              | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? message = null']                  | {'message': 'null'}                   |
+| LockSpawn              | ['RunnerPlayer commandSource', 'RunnerPlayer? target = null', 'string? message = null']          | {'target': 'null', 'message': 'null'} |
+| UnlockSpawn            | ['RunnerPlayer commandSource', 'RunnerPlayer? target = null', 'string? message = null']          | {'target': 'null', 'message': 'null'} |
+| TeleportPlayerToMe     | ['RunnerPlayer commandSource', 'RunnerPlayer target']                                            | {}                                    |
+| TeleportMeToPlayer     | ['RunnerPlayer commandSource', 'RunnerPlayer target']                                            | {}                                    |
+| TeleportPlayerToPlayer | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'RunnerPlayer destination']                | {}                                    |
+| TeleportPlayerToPos    | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'int x', 'int y', 'int z']                 | {}                                    |
+| TeleportMeToPos        | ['RunnerPlayer commandSource', 'int x', 'int y', 'int z']                                        | {}                                    |
+| Freeze                 | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? message = null']                  | {'message': 'null'}                   |
+| Unfreeze               | ['RunnerPlayer commandSource', 'RunnerPlayer target', 'string? message = null']                  | {'message': 'null'}                   |
+| Inspect                | ['RunnerPlayer commandSource', 'RunnerPlayer? target = null']                                    | {'target': 'null'}                    |
+| Task                   | ['RunnerPlayer player', 'ChatChannel channel', 'string msg']                                     | {}                                    |
+| Task                   | ['RunnerPlayer player', 'OnPlayerSpawnArguments request']                                        | {}                                    |
+# 1 Modules in ModuleUpdates.cs
+
+| Description                                                      | Version   |
+|:-----------------------------------------------------------------|:----------|
+| Check for and download module updates from the module repository | 1.0.0     |
+# 1 Modules in MOTD.cs
+
+| Description                                              | Version   |
+|:---------------------------------------------------------|:----------|
+| Show a message of the day to players who join the server | 1.0.0     |
+
+## Commands
+| Command   | Function Name   | Description    | Allowed Roles   | Parameters                                    | Defaults   |
+|:----------|:----------------|:---------------|:----------------|:----------------------------------------------|:-----------|
+| setmotd   | void            | Sets the MOTD  | Admin           | ['RunnerPlayer commandSource', 'string motd'] | {}         |
+| motd      | void            | Shows the MOTD |                 | ['RunnerPlayer commandSource']                | {}         |
+
+## Public Methods
+| Function Name   | Parameters                                    | Defaults   |
+|:----------------|:----------------------------------------------|:-----------|
+|                 |                                               |            |
+|                 |                                               |            |
+|                 |                                               |            |
+| void            | ['']                                          | {}         |
+| Task            | ['GameState oldState', 'GameState newState']  | {}         |
+| Task            | ['RunnerPlayer player']                       | {}         |
+| SetMOTD         | ['RunnerPlayer commandSource', 'string motd'] | {}         |
+| ShowMOTD        | ['RunnerPlayer commandSource']                | {}         |
+|                 |                                               |            |
+|                 |                                               |            |
+|                 |                                               |            |
+# 1 Modules in PermissionsCommands.cs
+
+| Description                                                   | Version   |
+|:--------------------------------------------------------------|:----------|
+| Provide addperm and removeperm commands for PlayerPermissions | 1.0.0     |
+
+## Commands
+| Command    | Function Name   | Description                          | Allowed Roles    | Parameters                                                                | Defaults                 |
+|:-----------|:----------------|:-------------------------------------|:-----------------|:--------------------------------------------------------------------------|:-------------------------|
+| addperm    | void            | Adds a permission to a player        | Admin            | ['RunnerPlayer commandSource', 'RunnerPlayer player', 'Roles permission'] | {}                       |
+| removeperm | void            | Removes a permission from a player   | Admin            | ['RunnerPlayer commandSource', 'RunnerPlayer player', 'Roles permission'] | {}                       |
+| clearperms | void            | Removes all permission from a player | Admin            | ['RunnerPlayer commandSource', 'RunnerPlayer player']                     | {}                       |
+| listperms  | void            | Lists player permissions             | Admin, Moderator | ['RunnerPlayer commandSource', 'RunnerPlayer? targetPlayer = null']       | {'targetPlayer': 'null'} |
+
+## Public Methods
+| Function Name           | Parameters                                                                | Defaults                 |
+|:------------------------|:--------------------------------------------------------------------------|:-------------------------|
+|                         |                                                                           |                          |
+|                         |                                                                           |                          |
+|                         |                                                                           |                          |
+| void                    | ['']                                                                      | {}                       |
+| AddPermissionCommand    | ['RunnerPlayer commandSource', 'RunnerPlayer player', 'Roles permission'] | {}                       |
+| RemovePermissionCommand | ['RunnerPlayer commandSource', 'RunnerPlayer player', 'Roles permission'] | {}                       |
+| ClearPermissionCommand  | ['RunnerPlayer commandSource', 'RunnerPlayer player']                     | {}                       |
+| ListPermissionCommand   | ['RunnerPlayer commandSource', 'RunnerPlayer? targetPlayer = null']       | {'targetPlayer': 'null'} |
+# 1 Modules in PlayerFinder.cs
+
+| Description                                                       | Version   |
+|:------------------------------------------------------------------|:----------|
+| Library functions for finding players by partial names or SteamID | 1.0.0     |
+# 1 Modules in PlayerPermissions.cs
+
+| Description                                     | Version   |
+|:------------------------------------------------|:----------|
+| Library for persistent server roles for players | 1.0.0     |
+# 1 Modules in ProfanityFilter.cs
+
+| Description                             | Version   |
+|:----------------------------------------|:----------|
+| Bad word filter to remove chat messages | 1.0.0     |
+# 1 Modules in RichText.cs
+
+| Description                        | Version   |
+|:-----------------------------------|:----------|
+| Library for easily using Rich Text | 1.0.0     |
+# 1 Modules in Rotation.cs
+
+| Description                                            | Version   |
+|:-------------------------------------------------------|:----------|
+| Configure the map and game mode rotation of the server | 1.0.0     |
+# 1 Modules in SpectateControl.cs
+
+| Description                           | Version   |
+|:--------------------------------------|:----------|
+| Allow only specific Roles to spectate | 1.0.0     |
+# 1 Modules in Voting.cs
+
+| Description               | Version   |
+|:--------------------------|:----------|
+| Simple chat voting system | 1.0.0     |
+
+## Commands
+| Command   | Function Name   | Description         | Allowed Roles   | Parameters                                                      | Defaults   |
+|:----------|:----------------|:--------------------|:----------------|:----------------------------------------------------------------|:-----------|
+| vote      | void            | Votes for an option | Moderator       | ['RunnerPlayer commandSource', 'string text', 'string options'] | {}         |
+
+## Public Methods
+| Function Name    | Parameters                                                      | Defaults   |
+|:-----------------|:----------------------------------------------------------------|:-----------|
+|                  |                                                                 |            |
+|                  |                                                                 |            |
+|                  |                                                                 |            |
+|                  |                                                                 |            |
+| void             | ['']                                                            | {}         |
+| StartVoteCommand | ['RunnerPlayer commandSource', 'string text', 'string options'] | {}         |
+| async            | ['RunnerPlayer player', 'ChatChannel channel', 'string msg']    | {}         |
+|                  |                                                                 |            |
+|                  |                                                                 |            |
+# 0 Modules in ExampleModule.cs
+
+| Description   | Version   |
+|---------------|-----------|
+# 0 Modules in ExampleModule2.cs
+
+| Description   | Version   |
+|---------------|-----------|
+# 0 Modules in ExampleModuleIntegration.cs
+
+| Description   | Version   |
+|---------------|-----------|
+# 0 Modules in Zombies.cs
+
+| Description   | Version   |
+|---------------|-----------|
+
+## Commands
+| Command    | Function Name   | Description                                     | Allowed Roles   | Parameters                                     | Defaults   |
+|:-----------|:----------------|:------------------------------------------------|:----------------|:-----------------------------------------------|:-----------|
+| fullgear   | void            | Gives you full gear                             | Admin           | ['RunnerPlayer player']                        | {}         |
+| addtickets | void            | Adds tickets to zombies                         | Admin           | ['RunnerPlayer player', 'int tickets']         | {}         |
+| list       | void            | List all players and their status               |                 | ['RunnerPlayer player']                        | {}         |
+| zombie     | void            | Check whether you're a zombie or not            |                 | ['RunnerPlayer player']                        | {}         |
+| switch     | async           | Switch a player to the other team.              | Moderator       | ['RunnerPlayer source', 'RunnerPlayer target'] | {}         |
+| afk        | async           | Make zombies win because humans camp or are AFK | Moderator       | ['RunnerPlayer caller']                        | {}         |
+| resetbuild | void            | Reset the build phase.                          | Moderator       | ['RunnerPlayer caller']                        | {}         |
+| map        | void            | Current map name                                |                 | ['RunnerPlayer caller']                        | {}         |
+| pos        | void            | Current position                                | Admin           | ['RunnerPlayer caller']                        | {}         |
+
+## Public Methods
+| Function Name       | Parameters                                                                         | Defaults   |
+|:--------------------|:-----------------------------------------------------------------------------------|:-----------|
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+| bool                | ['Vector2[] polygon', 'Vector2 point']                                             | {}         |
+| void                | ['']                                                                               | {}         |
+| async               | ['']                                                                               | {}         |
+| Task                | ['RunnerPlayer player', 'GameRole requestedRole']                                  | {}         |
+| async               | ['RunnerPlayer player']                                                            | {}         |
+| Task                | ['RunnerPlayer player', 'Team requestedTeam']                                      | {}         |
+| Task                | ['ulong steamID', 'PlayerJoiningArguments args']                                   | {}         |
+| async               | ['RunnerPlayer player', 'OnPlayerSpawnArguments request']                          | {}         |
+| async               | ['RunnerPlayer player']                                                            | {}         |
+| Task                | ['RunnerPlayer player']                                                            | {}         |
+| Task                | ['OnPlayerKillArguments<RunnerPlayer> args']                                       | {}         |
+| async               | ['RunnerPlayer player']                                                            | {}         |
+| Task                | ['long oldSessionID', 'long newSessionID']                                         | {}         |
+| Task                | ['RunnerPlayer player', 'ChatChannel channel', 'string msg']                       | {}         |
+| async               | ['Squad<RunnerPlayer> squad', 'int newPoints']                                     | {}         |
+| FullGearCommand     | ['RunnerPlayer player']                                                            | {}         |
+| AddTicketsCommand   | ['RunnerPlayer player', 'int tickets']                                             | {}         |
+| ListCommand         | ['RunnerPlayer player']                                                            | {}         |
+| ZombieCommand       | ['RunnerPlayer player']                                                            | {}         |
+| void                | ['RunnerPlayer source', 'RunnerPlayer target']                                     | {}         |
+| void                | ['RunnerPlayer caller']                                                            | {}         |
+| ResetBuildCommand   | ['RunnerPlayer caller']                                                            | {}         |
+| MapCommand          | ['RunnerPlayer caller']                                                            | {}         |
+| PosCommand          | ['RunnerPlayer caller']                                                            | {}         |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+| loadout             | ['RunnerPlayer player', 'ZombiePersistence loadout']                               | {}         |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+| requestedPercentage | ['string name', 'float requestedPercentage', 'Action<RunnerPlayer> applyToPlayer'] | {}         |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+| Reset               | ['']                                                                               | {}         |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+|                     |                                                                                    |            |
+# 1 Modules in ModuleUsageStats.cs
+
+| Description                                                     | Version   |
+|:----------------------------------------------------------------|:----------|
+| Uploads the currently loaded module list to a telemetry server. | 2.0.0     |

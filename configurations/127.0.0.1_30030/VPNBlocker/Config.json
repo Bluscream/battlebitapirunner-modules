@@ -1,0 +1,88 @@
+{
+  "FailTimeout": "00:01:00",
+  "BlockProxies": {
+    "Name": "BlockProxies",
+    "Enabled": true,
+    "KickMessage": "Proxies and VPNs are not allowed on this server, disable your VPN and try again!",
+    "WhitelistedRoles": [
+      "Admin",
+      "Moderator",
+      "Special",
+      "Vip"
+    ]
+  },
+  "BlockServers": {
+    "Name": "BlockServers",
+    "Enabled": true,
+    "KickMessage": "Non-Residential IPs are not allowed on this server!",
+    "WhitelistedRoles": [
+      "Admin",
+      "Moderator",
+      "Special",
+      "Vip"
+    ]
+  },
+  "BlockMobile": {
+    "Name": "BlockMobile",
+    "Enabled": false,
+    "KickMessage": "Mobile Networks are not allowed on this server!",
+    "WhitelistedRoles": [
+      "Admin",
+      "Moderator",
+      "Special",
+      "Vip"
+    ]
+  },
+  "BlockFailed": {
+    "Name": "BlockFailed",
+    "Enabled": true,
+    "KickMessage": "Your IP {player.IP} failed to be validated, try again",
+    "WhitelistedRoles": [
+      "Admin",
+      "Moderator",
+      "Special",
+      "Vip"
+    ]
+  },
+  "ISPs": {
+    "Name": "ISPs",
+    "BlockMode": "Blacklist",
+    "List": [
+      "Cloudflare, Inc."
+    ],
+    "Enabled": true,
+    "KickMessage": "Sorry, your ISP \"{geoData.Isp}\" is not allowed on this server!",
+    "WhitelistedRoles": [
+      "Admin",
+      "Moderator",
+      "Special",
+      "Vip"
+    ]
+  },
+  "Continents": {
+    "Name": "Continents",
+    "BlockMode": "Blacklist",
+    "List": [],
+    "Enabled": true,
+    "KickMessage": "Sorry, your continent \"{geoData.Continent}\" is not allowed on this server!",
+    "WhitelistedRoles": [
+      "Admin",
+      "Moderator",
+      "Special",
+      "Vip"
+    ]
+  },
+  "Countries": {
+    "Name": "Countries",
+    "BlockMode": "Blacklist",
+    "List": [],
+    "Enabled": true,
+    "KickMessage": "Sorry, your country \"{geoData.Country}\" is not allowed on this server!",
+    "WhitelistedRoles": [
+      "Admin",
+      "Moderator",
+      "Special",
+      "Vip"
+    ]
+  }
+}

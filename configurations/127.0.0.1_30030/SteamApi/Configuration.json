@@ -1,0 +1,5 @@
+{
+  "SteamWebApiKey": "",
+  "GetPlayerBansUrl": "http://api.steampowered.com/ISteamUser/GetPlayerBans/v1/?steamids={steamId64}&key={Configuration.SteamWebApiKey}",
+  "RemoveDelay": "00:01:00"
+}

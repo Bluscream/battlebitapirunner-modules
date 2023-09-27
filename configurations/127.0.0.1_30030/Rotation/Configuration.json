@@ -1,0 +1,43 @@
+{
+  "GameModes": [
+    "TDM",
+    "AAS",
+    "RUSH",
+    "CONQ",
+    "DOMI",
+    "ELI",
+    "INFCONQ",
+    "FRONTLINE",
+    "GunGameFFA",
+    "FFA",
+    "GunGameTeam",
+    "SuicideRush",
+    "CatchGame",
+    "Infected",
+    "CashRun",
+    "VoxelFortify",
+    "VoxelTrench",
+    "CaptureTheFlag"
+  ],
+  "Maps": [
+    "Azagor",
+    "Basra",
+    "Construction",
+    "District",
+    "Dustydew",
+    "Eduardovo",
+    "Frugis",
+    "Isle",
+    "Lonovo",
+    "MultuIslands",
+    "Namak",
+    "OilDunes",
+    "River",
+    "Salhan",
+    "SandySunset",
+    "TensaTown",
+    "Valley",
+    "Wakistan",
+    "WineParadise"
+  ]
+}

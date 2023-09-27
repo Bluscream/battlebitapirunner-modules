@@ -1,0 +1,251 @@
+{
+  "randomReplacements": {
+    "joined": [
+      "joined",
+      "connected",
+      "hailed"
+    ]
+  },
+  "TimeStampFormat": "HH:mm:ss",
+  "TimeZone": "W. Europe Standard Time",
+  "OnApiModulesLoaded": {
+    "Chat": {
+      "Enabled": false,
+      "Message": "[{now}] API Modules loaded",
+      "Roles": 1,
+      "Duration": 0
+    },
+    "Console": {
+      "Enabled": true,
+      "Message": "[{now}] API Modules loaded",
+      "Roles": 0,
+      "Duration": 0
+    },
+    "UILog": {
+      "Enabled": true,
+      "Message": "[{now}] API Modules loaded",
+      "Roles": 0,
+      "Duration": 0
+    },
+    "Announce": null,
+    "Modal": null,
+    "File": null,
+    "Discord": {
+      "WebhookUrl": "",
+      "Enabled": true,
+      "Message": "[{now}] API Modules loaded",
+      "Roles": 0,
+      "Duration": 0
+    }
+  },
+  "OnApiConnected": {
+    "Chat": {
+      "Enabled": false,
+      "Message": "[{now}] Server connected to API",
+      "Roles": 1,
+      "Duration": 0
+    },
+    "Console": {
+      "Enabled": true,
+      "Message": "[{now}] {server.str()} connected to API",
+      "Roles": 0,
+      "Duration": 0
+    },
+    "UILog": {
+      "Enabled": true,
+      "Message": "[{now}] Server connected to API",
+      "Roles": 0,
+      "Duration": 0
+    },
+    "Announce": null,
+    "Modal": null,
+    "File": null,
+    "Discord": {
+      "WebhookUrl": "",
+      "Enabled": true,
+      "Message": "[{now}] {server.str()} connected to API",
+      "Roles": 0,
+      "Duration": 0
+    }
+  },
+  "OnApiDisconnected": {
+    "Chat": null,
+    "Console": {
+      "Enabled": true,
+      "Message": "[{now}] Server disconnected from API",
+      "Roles": 1,
+      "Duration": 0
+    },
+    "UILog": null,
+    "Announce": null,
+    "Modal": null,
+    "File": null,
+    "Discord": {
+      "WebhookUrl": "",
+      "Enabled": true,
+      "Message": "[{now}] Server disconnected from API",
+      "Roles": 0,
+      "Duration": 0
+    }
+  },
+  "OnPlayerConnected": {
+    "Chat": {
+      "Enabled": false,
+      "Message": "[+] {player.Name} {random.joined} from {geoData.Country}",
+      "Roles": 15,
+      "Duration": 0
+    },
+    "Console": {
+      "Enabled": true,
+      "Message": "[{now}] [+] {player.Name} ({player.SteamID})) | {geoData.ToJson()}",
+      "Roles": 0,
+      "Duration": 0
+    },
+    "UILog": {
+      "Enabled": true,
+      "Message": "{player.Name} [+]",
+      "Roles": 0,
+      "Duration": 0
+    },
+    "Announce": null,
+    "Modal": null,
+    "File": null,
+    "Discord": {
+      "WebhookUrl": "",
+      "Enabled": true,
+      "Message": "[{now}] `{player.str()}` connected from {geoData.Country} :flag_{geoData.CountryCode}:",
+      "Roles": 0,
+      "Duration": 0
+    }
+  },
+  "OnPlayerDisconnected": {
+    "Chat": {
+      "Enabled": false,
+      "Message": "[-] {player.Name} left",
+      "Roles": 15,
+      "Duration": 0
+    },
+    "Console": {
+      "Enabled": true,
+      "Message": "[{now}] [-] {player.Name} ({player.SteamID})) [{player.IP}]",
+      "Roles": 0,
+      "Duration": 0
+    },
+    "UILog": {
+      "Enabled": true,
+      "Message": "{player.Name} [-]",
+      "Roles": 0,
+      "Duration": 0
+    },
+    "Announce": null,
+    "Modal": null,
+    "File": null,
+    "Discord": {
+      "WebhookUrl": "",
+      "Enabled": true,
+      "Message": "[{now}] `{player.str()}` disconnected :arrow_left:",
+      "Roles": 0,
+      "Duration": 0
+    }
+  },
+  "OnPlayerKicked": {
+    "Chat": {
+      "Enabled": false,
+      "Message": "[-] {player.Name} was kicked for {msg}",
+      "Roles": 15,
+      "Duration": 0
+    },
+    "Console": {
+      "Enabled": true,
+      "Message": "[{now}] [-] {player.Name} ({player.SteamID})) [{player.IP}] kicked for {msg}",
+      "Roles": 0,
+      "Duration": 0
+    },
+    "UILog": null,
+    "Announce": null,
+    "Modal": null,
+    "File": null,
+    "Discord": {
+      "WebhookUrl": "",
+      "Enabled": true,
+      "Message": "[{now}] `{player.str()}` kicked :leg:",
+      "Roles": 0,
+      "Duration": 0
+    }
+  },
+  "OnPlayerChatMessage": {
+    "Chat": null,
+    "Console": {
+      "Enabled": true,
+      "Message": "[{now}] {player.str()} says \"{msg}\" in {chatChannel}",
+      "Roles": 0,
+      "Duration": 0
+    },
+    "UILog": null,
+    "Announce": null,
+    "Modal": null,
+    "File": null,
+    "Discord": {
+      "WebhookUrl": "",
+      "Enabled": true,
+      "Message": "[{now}] `{player.Name}` says \"{msg}\" in {chatChannel} :speech_balloon:",
+      "Roles": 0,
+      "Duration": 0
+    }
+  },
+  "OnPlayerChatCommand": {
+    "Chat": null,
+    "Console": {
+      "Enabled": true,
+      "Message": "[{now}] {player.str()} issued command \"{msg}\" in {chatChannel}",
+      "Roles": 0,
+      "Duration": 0
+    },
+    "UILog": null,
+    "Announce": null,
+    "Modal": null,
+    "File": null,
+    "Discord": {
+      "WebhookUrl": "",
+      "Enabled": true,
+      "Message": "[{now}] `{player.Name}` issued command \"{msg}\" in {chatChannel}",
+      "Roles": 0,
+      "Duration": 0
+    }
+  },
+  "OnPlayerReported": {
+    "Chat": {
+      "Enabled": false,
+      "Message": "{target.Name} was reported for {reason}",
+      "Roles": 15,
+      "Duration": 0
+    },
+    "Console": {
+      "Enabled": true,
+      "Message": "[{now}] {player.str()} reported {target.str()} for {reason}: \"{msg}\"",
+      "Roles": 0,
+      "Duration": 0
+    },
+    "UILog": {
+      "Enabled": true,
+      "Message": "{target.Name} was reported ({reason})",
+      "Roles": 0,
+      "Duration": 0
+    },
+    "Announce": null,
+    "Modal": {
+      "Enabled": false,
+      "Message": "{target.fullstr()}\nwas reported by\n{player.fullstr()}\n\nReason: {reason}\n\n\"{msg}\"",
+      "Roles": 3,
+      "Duration": 0
+    },
+    "File": null,
+    "Discord": {
+      "WebhookUrl": "",
+      "Enabled": false,
+      "Message": "[{now}] {target.Name} was reported for {reason} :warning:",
+      "Roles": 0,
+      "Duration": 0
+    }
+  }
+}
