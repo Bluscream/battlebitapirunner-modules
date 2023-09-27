@@ -86,19 +86,27 @@ namespace Bluscream {
         #endregion
         #region Events
         public override Task OnConnected() {
-            AddAllGeoData(this.Server).Wait();
+            Task.Run(() => {
+                AddAllGeoData(this.Server).Wait();
+            });
             return Task.CompletedTask;
         }
         public override Task OnDisconnected() {
-            RemoveAllGeoData(this.Server, Configuration.RemoveDelay).Wait();
+            Task.Run(() => {
+                RemoveAllGeoData(this.Server, Configuration.RemoveDelay).Wait();
+            });
             return Task.CompletedTask;
         }
         public override Task OnPlayerConnected(RunnerPlayer player) {
-            AddGeoData(player).Wait();
+            Task.Run(() => {
+                AddGeoData(player).Wait();
+            });
             return Task.CompletedTask;
         }
         public override Task OnPlayerDisconnected(RunnerPlayer player) {
-            RemoveGeoData(player, Configuration.RemoveDelay).Wait();
+            Task.Run(() => {
+                RemoveGeoData(player, Configuration.RemoveDelay).Wait();
+            });
             return Task.CompletedTask;
         }
         #endregion

@@ -38,10 +38,11 @@ namespace Bluscream {
 
         #region Commands
         [CommandCallback("playerbans", Description = "Lists steam bans of a player")]
-        public async void GetPlayerBans(RunnerPlayer commandSource, RunnerPlayer _player) {
+        public async void GetPlayerBans(RunnerPlayer commandSource, RunnerPlayer? _player = null) {
             var cmdName = $"\"{CommandHandler.CommandConfiguration.CommandPrefix}playerbans\""; var cmdConfig = SteamApiExampleCommandsConfiguration.playerbans;
             if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
             if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
+            _player = _player ?? commandSource;
             var response = new StringBuilder();
             if (!string.IsNullOrEmpty(_player.Name)) response.AppendLine($"Name: {_player.str()} ({_player.Name.Length} chars)");
             if (!string.IsNullOrEmpty(_player.SteamID.ToString())) {

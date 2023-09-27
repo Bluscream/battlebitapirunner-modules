@@ -22,6 +22,7 @@ using BattleBitAPI.Common;
 using BBRAPIModules;
 
 using Bluscream;
+using BattleBitAPI.Server;
 
 namespace Bluscream {
     public static class MoreRoles {
@@ -714,6 +715,18 @@ public static class Extensions {
 
         #endregion
         #region Server
+        public static void SayToTeamChat(this RunnerServer server, Team team, string message) {
+            foreach (var player in server.AllPlayers) {
+                if (player.Team == team)
+                    player.SayToChat(message);
+            }
+        }
+        public static void SayToSquadChat(this RunnerServer server, Team team, Squads squad, string message) {
+            foreach (var player in server.AllPlayers) {
+                if (player.Team == team && player.Squad.Name == squad)
+                    player.SayToChat(message);
+            }
+        }
         public static RunnerPlayer GetPlayerBySteamId64(this RunnerServer server, ulong steamId64) => server.AllPlayers.Where(p=>p.SteamID==steamId64).First();
         public static string GetPlayerNameBySteamId64(this RunnerServer server, ulong steamId64) {
             var player = server.GetPlayerBySteamId64(steamId64);
@@ -725,6 +738,25 @@ public static class Extensions {
         public static string fullstr(this RunnerPlayer player) => $"{player.str()} ({player.SteamID})";
         public static Roles GetRoles(this RunnerPlayer player, Permissions.PlayerPermissions permissionsModule) => permissionsModule.GetPlayerRoles(player.SteamID);
         public static bool HasAnyRoleOf(this RunnerPlayer player, Permissions.PlayerPermissions permissionsModule, Roles needsAnyRole) => (player.GetRoles(permissionsModule) & needsAnyRole) != 0;
+        public static void SayToTeamChat(this RunnerPlayer player, RunnerServer server, string message) => server.SayToTeamChat(player.Team, message);
+        public static void SayToSquadChat(this RunnerPlayer player, RunnerServer server, string message) => server.SayToSquadChat(player.Team, player.SquadName, message);
+        #endregion
+        #region GameServer
+        public static void SayToTeamChat(this GameServer<RunnerPlayer> server, Team team, string message) {
+            foreach (var player in server.AllPlayers) {
+                if (player.Team == team)
+                    player.SayToChat(message);
+            }
+        }
+        public static void SayToSquadChat(this GameServer<RunnerPlayer> server, Team team, Squads squad, string message) {
+            foreach (var player in server.AllPlayers) {
+                if (player.Team == team && player.Squad.Name == squad)
+                    player.SayToChat(message);
+            }
+        }
+        #endregion
+        #region Squad
+        public static void SayToChat(this Squad<RunnerPlayer> squad, string message) => squad.Server.SayToSquadChat(squad.Team, squad.Name, message);
         #endregion
         #region Map
         public static void ChangeTime(this RunnerServer Server, MapDayNight dayNight = MapDayNight.None) => ChangeMap(Server, dayNight: dayNight);

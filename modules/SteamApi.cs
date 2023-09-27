@@ -93,19 +93,27 @@ namespace Bluscream {
         #endregion
         #region Events
         public override Task OnConnected() {
-            AddAllData(this.Server).Wait();
+            Task.Run(() => {
+                AddAllData(this.Server).Wait();
+            });
             return Task.CompletedTask;
         }
         public override Task OnDisconnected() {
-            RemoveAllData(this.Server, Configuration.RemoveDelay).Wait();
+            Task.Run(() => {
+                RemoveAllData(this.Server, Configuration.RemoveDelay).Wait();
+            });
             return Task.CompletedTask;
         }
         public override Task OnPlayerConnected(RunnerPlayer player) {
-            AddData(player).Wait();
+            Task.Run(() => {
+                AddData(player).Wait();
+            });
             return Task.CompletedTask;
         }
         public override Task OnPlayerDisconnected(RunnerPlayer player) {
-            RemoveData(player, Configuration.RemoveDelay).Wait();
+            Task.Run(() => {
+                RemoveData(player, Configuration.RemoveDelay).Wait();
+            });
             return Task.CompletedTask;
         }
         #endregion
