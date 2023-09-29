@@ -211,13 +211,18 @@ namespace IpApi {
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("query")]
         public string? Query { get; set; }
-    }
 
-    public partial class Response {
         public static Response FromJson(string json) => JsonUtils.FromJson<Response>(json);
     }
     public static class Serialize {
         public static string ToJson(this Response self) => JsonUtils.ToJson(self);
+    }
+}
+#endregion
+#region MaxMindDB
+namespace MaxMindDB {
+    public class DataBase {
+        
     }
 }
 #endregion
