@@ -28,6 +28,11 @@
 
 | Description   | Version   |
 |---------------|-----------|
+# 1 Modules in BattleBitCrazy.cs
+
+| Description             | Version   |
+|:------------------------|:----------|
+| Crazy? I was crazy once | 1.0.0     |
 # 1 Modules in BluscreamLib.cs
 
 | Description         | Version   |
@@ -91,6 +96,11 @@
 |                 |                                                                                           |                                |
 |                 |                                                                                           |                                |
 | playerinfo      | ['']                                                                                      | {'AllowedRoles': 'Extensions'} |
+# 1 Modules in GeoLimiter.cs
+
+| Description                                 | Version   |
+|:--------------------------------------------|:----------|
+| Kick users based on their country of origin | 1.0.0     |
 # 1 Modules in Logger.cs
 
 | Description   | Version   |
@@ -209,6 +219,11 @@
 | pos                     | ['']                                                                                                           | {'AllowedRoles': 'Extensions'}                              |
 |                         |                                                                                                                |                                                             |
 |                         |                                                                                                                |                                                             |
+# 1 Modules in ReservedSlots.cs
+
+| Description    | Version   |
+|:---------------|:----------|
+| Reserved Slots | 1.0.0     |
 # 1 Modules in SteamApi.cs
 
 | Description                                       | Version   |
@@ -317,6 +332,11 @@
 | Remove                | ['BanEntry entry']                                                                                                                                           | {}                                                                       |
 | Load                  | ['']                                                                                                                                                         | {}                                                                       |
 | Save                  | ['']                                                                                                                                                         | {}                                                                       |
+# 1 Modules in VacLimiter.cs
+
+| Description              | Version   |
+|:-------------------------|:----------|
+| Kick users with VAC bans | 1.0.0     |
 # 1 Modules in VPNBlocker.cs
 
 | Description                                            | Version   |
