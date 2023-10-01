@@ -75,9 +75,9 @@ namespace Bluscream {
                 }
                 if (!response.IsSuccessStatusCode) {
                     Console.WriteLine($"Error sending webhook message. Status Code: {response.StatusCode}");
-                    var waitSeconds = 1;
+                    double waitSeconds = 1;
                     if (response.Headers.TryGetValues("X-RateLimit-Reset-After", out var values)) {
-                        waitSeconds = int.Parse(values.First());
+                        waitSeconds = double.Parse(values.First());
                     }
                     await Task.Delay(TimeSpan.FromSeconds(waitSeconds));
                 }
