@@ -9,6 +9,7 @@ using System.Net.Http;
 using BBRAPIModules;
 using BattleBitAPI.Common;
 using System.Linq;
+using Newtonsoft.Json.Linq;
 
 namespace Bluscream {
     #region Requires
@@ -74,7 +75,11 @@ namespace Bluscream {
                 }
                 if (!response.IsSuccessStatusCode) {
                     Console.WriteLine($"Error sending webhook message. Status Code: {response.StatusCode}");
-                    await Task.Delay(TimeSpan.FromSeconds(1));
+                    var waitSeconds = 1;
+                    if (response.Headers.TryGetValues("X-RateLimit-Reset-After", out var values)) {
+                        waitSeconds = int.Parse(values.First());
+                    }
+                    await Task.Delay(TimeSpan.FromSeconds(waitSeconds));
                 }
                 success = response.IsSuccessStatusCode;
             }

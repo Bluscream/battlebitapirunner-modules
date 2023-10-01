@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using BBRAPIModules;
-
 using Commands;
+using Permissions;
 
 namespace Bluscream {
     [RequireModule(typeof(Bluscream.BluscreamLib))]
     [RequireModule(typeof(Bluscream.GeoApi))]
     [RequireModule(typeof(Commands.CommandHandler))]
+    [RequireModule(typeof(Permissions.PlayerPermissions))]
     [Module("Using the GeoApi to block certain players from joining", "2.0.2")]
     public class VPNBlocker : BattleBitModule {
         public static ModuleInfo ModuleInfo = new() {
@@ -22,17 +23,13 @@ namespace Bluscream {
 
         #region References
         [ModuleReference]
-        public Commands.CommandHandler CommandHandler { get; set; }
+        public Commands.CommandHandler CommandHandler { get; set; } = null!;
 
         [ModuleReference]
-#if DEBUG
-        public Permissions.PlayerPermissions? PlayerPermissions { get; set; }
-#else
-        public dynamic? PlayerPermissions { get; set; }
-#endif
+        public Permissions.PlayerPermissions PlayerPermissions { get; set; } = null!;
 
         [ModuleReference]
-        public Bluscream.GeoApi? GeoApi { get; set; }
+        public Bluscream.GeoApi GeoApi { get; set; } = null!;
         #endregion
 
         #region Enums
