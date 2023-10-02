@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
       with:
         repository: 'Bluscream/battlebitapirunner-modules'
 
@@ -22,7 +22,7 @@ jobs:
         dotnet-version: '6.0.x'
 
     - name: Checkout BattleBitAPIRunner
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       with:
         repository: 'BattleBit-Community-Servers/BattleBitAPIRunner'
         path: 'BattleBitAPIRunner'
