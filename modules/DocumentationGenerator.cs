@@ -127,7 +127,7 @@ namespace Bluscream {
                 return FindServerConfigDirs(parentDirectory).FirstOrDefault(dir => regex.IsMatch(dir.Name));
             }
             public List<DirectoryInfo> FindServerConfigDirs(DirectoryInfo parentDirectory) {
-                var regex = new Regex($"^_\\d+$");
+                var regex = new Regex($"^[\\w.]+_\\d+$");
                 return parentDirectory.GetDirectories().Where(dir => regex.IsMatch(dir.Name)).ToList();
             }
             public List<FileInfo> GetServerConfigs(DirectoryInfo parentDirectory, string configName) {
