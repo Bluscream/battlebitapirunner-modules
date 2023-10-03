@@ -34,8 +34,13 @@ namespace Bluscream {
 
         public class CommandInfo {
             public string? Name { get; set; }
+            public string? MethodName { get; set; }
             public string? Description { get; set; }
             public List<string> Permissions { get; set; } = new();
+        }
+        public class ModuleFileMetaData {
+            public FileInfo? Path { get; set; }
+            public List<ModuleMetaData> Modules { get; set; } = new();
         }
 
         public class ModuleMetaData {
@@ -46,23 +51,28 @@ namespace Bluscream {
         }
 
         public class ModuleParser {
-            public List<ModuleMetaData> ParseModules(DirectoryInfo directory) {
-                var moduleInfos = new List<ModuleMetaData>();
-
+            [Obsolete]
+            public List<ModuleFileMetaData> ParseModules(DirectoryInfo directory) {
+                var moduleInfos = new List<ModuleFileMetaData>();
                 foreach (var file in directory.GetFiles("*.cs")) {
-                    var assembly = Mono.Cecil.AssemblyDefinition.ReadAssembly(file.FullName);
-                    foreach (var module in assembly.Modules) {
-                        var moduleInfo = new ModuleMetaData {
-                            Name = module.Name,
-                            Version = module.Assembly.Name.Version.ToString(),
-                            Commands = GetCommands(module),
-                            ConfigStructures = GetConfigStructures(module)
-                        };
-
-                        moduleInfos.Add(moduleInfo);
-                    }
+                    moduleInfos.Add(new() { Path = file, Modules = ParseModule(file) });
                 }
+                return moduleInfos;
+            }
 
+            [Obsolete]
+            public List<ModuleMetaData> ParseModule(FileInfo file) {
+                var moduleInfos = new List<ModuleMetaData>();
+                var assembly = Mono.Cecil.AssemblyDefinition.ReadAssembly(file.FullName);
+                foreach (var module in assembly.Modules) {
+                    var moduleInfo = new ModuleMetaData {
+                        Name = module.Name,
+                        Version = module.Assembly.Name.Version.ToString(),
+                        Commands = GetCommands(module),
+                        ConfigStructures = GetConfigStructures(module)
+                    };
+                    moduleInfos.Add(moduleInfo);
+                }
                 return moduleInfos;
             }
             public List<CommandInfo> GetCommands(Mono.Cecil.ModuleDefinition module) {
@@ -74,7 +84,7 @@ namespace Bluscream {
                             .FirstOrDefault(a => a.AttributeType.Name == "CommandCallbackAttribute");
 
                         if (commandAttribute != null) {
-                            var commandInfo = new CommandInfo {
+                            var commandInfo = new CommandInfo() {
                                 Name = (string)commandAttribute.ConstructorArguments[0].Value,
                                 Description = (string)commandAttribute.Properties.FirstOrDefault(p => p.Name == "Description").Argument.Value,
                                 Permissions = ((string[])commandAttribute.Properties.FirstOrDefault(p => p.Name == "Permissions").Argument.Value).ToList()
