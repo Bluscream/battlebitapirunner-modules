@@ -1385,27 +1385,46 @@
     "SupportedGamemodes": [
       {
         "GameMode": "RUSH",
-        "SupportedMapSizes": [ 16, 32 ]
+        "SupportedMapSizes": [
+          16,
+          32
+        ]
       },
       {
         "GameMode": "CONQ",
-        "SupportedMapSizes": [ 32, 64, 90 ]
+        "SupportedMapSizes": [
+          32,
+          64,
+          90
+        ]
       },
       {
         "GameMode": "INFCONQ",
-        "SupportedMapSizes": [ 32, 64, 90 ]
+        "SupportedMapSizes": [
+          32,
+          64,
+          90
+        ]
       },
       {
         "GameMode": "DOMI",
-        "SupportedMapSizes": [ 32, 64, 90 ]
+        "SupportedMapSizes": [
+          32,
+          64,
+          90
+        ]
       },
       {
         "GameMode": "CTF",
-        "SupportedMapSizes": [ 32, 64, 90 ]
+        "SupportedMapSizes": [
+          32,
+          64,
+          90
+        ]
       }
-  },
-  {
-    "Name": "Polygon",
-    "Description": "Tutorial map"
-  }
-]
+    },
+    {
+      "Name": "Polygon",
+      "Description": "Tutorial map"
+    }
+  ]
