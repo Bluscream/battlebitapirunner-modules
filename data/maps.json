@@ -1,64 +1,9 @@
 [
   {
-    "SupportedGamemodes": [
-      {
-        "GameMode": "TDM",
-        "SupportedMapSizes": [
-          8,
-          16
-        ]
-      },
-      {
-        "GameMode": "RUSH",
-        "SupportedMapSizes": [
-          16,
-          32
-        ]
-      },
-      {
-        "GameMode": "CONQ",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "INFCONQ",
-        "SupportedMapSizes": [
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "DOMI",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "ELI",
-        "SupportedMapSizes": [
-          16
-        ]
-      },
-      {
-        "GameMode": "FRONTLINE",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      }
-    ],
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/2/2c/AzagorBanner.png",
     "Available": true,
+    "Description": "A desert island with a small town.",
     "Name": "Azagor",
-    "Description": "A desert island with a small town."
-  },
-  {
+    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/2/2c/AzagorBanner.png",
     "SupportedGamemodes": [
       {
         "GameMode": "TDM",
@@ -68,14 +13,29 @@
         ]
       },
       {
+        "GameMode": "RUSH",
+        "SupportedMapSizes": [
+          16,
+          32
+        ]
+      },
+      {
         "GameMode": "CONQ",
         "SupportedMapSizes": [
+          32,
           64,
           90
         ]
       },
       {
         "GameMode": "INFCONQ",
+        "SupportedMapSizes": [
+          64,
+          90
+        ]
+      },
+      {
+        "GameMode": "DOMI",
         "SupportedMapSizes": [
           32,
           64,
@@ -85,7 +45,6 @@
       {
         "GameMode": "ELI",
         "SupportedMapSizes": [
-          8,
           16
         ]
       },
@@ -97,13 +56,13 @@
           90
         ]
       }
-    ],
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/8/86/Basra.png",
+    ]
+  },
+  {
     "Available": true,
+    "Description": "An archipelago with a grounded container ship in the map's center. The northern island is a military base, while the southern island has a tourist resort and public airport.",
     "Name": "Basra",
-    "Description": "An archipelago with a grounded container ship in the map's center. The northern island is a military base, while the southern island has a tourist resort and public airport."
-  },
-  {
+    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/8/86/Basra.png",
     "SupportedGamemodes": [
       {
         "GameMode": "TDM",
@@ -115,19 +74,12 @@
       {
         "GameMode": "CONQ",
         "SupportedMapSizes": [
-          32
-        ]
-      },
-      {
-        "GameMode": "INFCONQ",
-        "SupportedMapSizes": [
-          32,
           64,
           90
         ]
       },
       {
-        "GameMode": "DOMI",
+        "GameMode": "INFCONQ",
         "SupportedMapSizes": [
           32,
           64,
@@ -142,32 +94,32 @@
         ]
       },
       {
-        "GameMode": "CashRun",
+        "GameMode": "FRONTLINE",
         "SupportedMapSizes": [
-          16
+          32,
+          64,
+          90
         ]
       }
-    ],
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/6/6b/Construction_.png",
+    ]
+  },
+  {
     "Available": true,
+    "Description": "\tA coastal, industrial construction site with a symmetrical layout.",
     "Name": "Construction",
-    "Description": "\tA coastal, industrial construction site with a symmetrical layout."
-  },
-  {
+    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/6/6b/Construction_.png",
     "SupportedGamemodes": [
       {
-        "GameMode": "RUSH",
+        "GameMode": "TDM",
         "SupportedMapSizes": [
-          16,
-          32
+          8,
+          16
         ]
       },
       {
         "GameMode": "CONQ",
         "SupportedMapSizes": [
-          32,
-          64,
-          90
+          32
         ]
       },
       {
@@ -181,42 +133,32 @@
       {
         "GameMode": "DOMI",
         "SupportedMapSizes": [
-          16,
           32,
           64,
           90
         ]
       },
       {
-        "GameMode": "FRONTLINE",
+        "GameMode": "ELI",
         "SupportedMapSizes": [
-          32,
-          64
+          8,
+          16
         ]
       },
       {
-        "GameMode": "CTF",
+        "GameMode": "CashRun",
         "SupportedMapSizes": [
-          32,
-          64,
-          90
+          16
         ]
       }
-    ],
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/e/e5/DistrictBanner.png",
+    ]
+  },
+  {
     "Available": true,
+    "Description": "A rain-shrouded map in a hilly region with factories and military fortifications.",
     "Name": "District",
-    "Description": "A rain-shrouded map in a hilly region with factories and military fortifications."
-  },
-  {
+    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/e/e5/DistrictBanner.png",
     "SupportedGamemodes": [
-      {
-        "GameMode": "TDM",
-        "SupportedMapSizes": [
-          8,
-          16
-        ]
-      },
       {
         "GameMode": "RUSH",
         "SupportedMapSizes": [
@@ -235,7 +177,6 @@
       {
         "GameMode": "INFCONQ",
         "SupportedMapSizes": [
-          16,
           32,
           64,
           90
@@ -244,50 +185,48 @@
       {
         "GameMode": "DOMI",
         "SupportedMapSizes": [
+          16,
           32,
           64,
           90
         ]
       },
       {
-        "GameMode": "ELI",
+        "GameMode": "FRONTLINE",
         "SupportedMapSizes": [
-          8,
-          16
+          32,
+          64
         ]
       },
       {
-        "GameMode": "GunGameFFA",
+        "GameMode": "CTF",
         "SupportedMapSizes": [
-          8
-        ]
-      },
-      {
-        "GameMode": "GunGameTeam",
-        "SupportedMapSizes": [
-          8,
-          16
-        ]
-      },
-      {
-        "GameMode": "FFA",
-        "SupportedMapSizes": [
-          8
+          32,
+          64,
+          90
         ]
       }
-    ],
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/e/e0/DustyDewBanner.png",
+    ]
+  },
+  {
     "Available": true,
-    "Name": "Dustydew",
+    "Description": "An arid, mountainous region with scattered settlements.",
     "DisplayName": "Dusty Dew",
-    "Description": "An arid, mountainous region with scattered settlements."
-  },
-  {
+    "Name": "Dustydew",
+    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/e/e0/DustyDewBanner.png",
     "SupportedGamemodes": [
       {
         "GameMode": "TDM",
         "SupportedMapSizes": [
+          8,
           16
+        ]
+      },
+      {
+        "GameMode": "RUSH",
+        "SupportedMapSizes": [
+          16,
+          32
         ]
       },
       {
@@ -301,6 +240,7 @@
       {
         "GameMode": "INFCONQ",
         "SupportedMapSizes": [
+          16,
           32,
           64,
           90
@@ -309,53 +249,49 @@
       {
         "GameMode": "DOMI",
         "SupportedMapSizes": [
-          16,
           32,
           64,
           90
         ]
       },
       {
-        "GameMode": "FRONTLINE",
+        "GameMode": "ELI",
         "SupportedMapSizes": [
-          32,
-          64,
-          90
+          8,
+          16
         ]
       },
       {
         "GameMode": "GunGameFFA",
         "SupportedMapSizes": [
+          8
+        ]
+      },
+      {
+        "GameMode": "GunGameTeam",
+        "SupportedMapSizes": [
+          8,
           16
         ]
       },
       {
-        "GameMode": "CashRun",
+        "GameMode": "FFA",
         "SupportedMapSizes": [
-          16,
-          32
+          8
         ]
       }
-    ],
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/7/7b/EduardovoBanner.png",
+    ]
+  },
+  {
     "Available": true,
+    "Description": "A forested rural map with farms and abandoned factories.",
     "Name": "Eduardovo",
-    "Description": "A forested rural map with farms and abandoned factories."
-  },
-  {
+    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/7/7b/EduardovoBanner.png",
     "SupportedGamemodes": [
       {
         "GameMode": "TDM",
         "SupportedMapSizes": [
-          8,
           16
-        ]
-      },
-      {
-        "GameMode": "RUSH",
-        "SupportedMapSizes": [
-          16,
-          32
         ]
       },
       {
@@ -377,6 +313,7 @@
       {
         "GameMode": "DOMI",
         "SupportedMapSizes": [
+          16,
           32,
           64,
           90
@@ -385,20 +322,14 @@
       {
         "GameMode": "FRONTLINE",
         "SupportedMapSizes": [
-          32
+          32,
+          64,
+          90
         ]
       },
       {
         "GameMode": "GunGameFFA",
         "SupportedMapSizes": [
-          8,
-          16
-        ]
-      },
-      {
-        "GameMode": "GunGameTeam",
-        "SupportedMapSizes": [
-          8,
           16
         ]
       },
@@ -408,23 +339,29 @@
           16,
           32
         ]
-      },
-      {
-        "GameMode": "CTF",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
       }
-    ],
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/3/3d/Frugis-test.png",
+    ]
+  },
+  {
     "Available": true,
+    "Description": "Urban map featuring cozy, small streets and parks. Most buildings are three floors high and surrounded by curved streets. Inspired by Paris, France.",
     "Name": "Frugis",
-    "Description": "Urban map featuring cozy, small streets and parks. Most buildings are three floors high and surrounded by curved streets. Inspired by Paris, France."
-  },
-  {
+    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/3/3d/Frugis-test.png",
     "SupportedGamemodes": [
+      {
+        "GameMode": "TDM",
+        "SupportedMapSizes": [
+          8,
+          16
+        ]
+      },
+      {
+        "GameMode": "RUSH",
+        "SupportedMapSizes": [
+          16,
+          32
+        ]
+      },
       {
         "GameMode": "CONQ",
         "SupportedMapSizes": [
@@ -444,7 +381,6 @@
       {
         "GameMode": "DOMI",
         "SupportedMapSizes": [
-          16,
           32,
           64,
           90
@@ -453,9 +389,28 @@
       {
         "GameMode": "FRONTLINE",
         "SupportedMapSizes": [
-          32,
-          64,
-          90
+          32
+        ]
+      },
+      {
+        "GameMode": "GunGameFFA",
+        "SupportedMapSizes": [
+          8,
+          16
+        ]
+      },
+      {
+        "GameMode": "GunGameTeam",
+        "SupportedMapSizes": [
+          8,
+          16
+        ]
+      },
+      {
+        "GameMode": "CashRun",
+        "SupportedMapSizes": [
+          16,
+          32
         ]
       },
       {
@@ -466,27 +421,14 @@
           90
         ]
       }
-    ],
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/9/98/ISLE_loading_screen_image.png",
+    ]
+  },
+  {
     "Available": true,
+    "Description": "An island with an early-warning radar system used to detect nuclear missile launches. Flanked by opposing aircraft carriers, used by both factions as bases.",
     "Name": "Isle",
-    "Description": "An island with an early-warning radar system used to detect nuclear missile launches. Flanked by opposing aircraft carriers, used by both factions as bases."
-  },
-  {
+    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/9/98/ISLE_loading_screen_image.png",
     "SupportedGamemodes": [
-      {
-        "GameMode": "TDM",
-        "SupportedMapSizes": [
-          8,
-          16
-        ]
-      },
-      {
-        "GameMode": "RUSH",
-        "SupportedMapSizes": [
-          32
-        ]
-      },
       {
         "GameMode": "CONQ",
         "SupportedMapSizes": [
@@ -506,56 +448,46 @@
       {
         "GameMode": "DOMI",
         "SupportedMapSizes": [
+          16,
           32,
           64,
           90
         ]
       },
       {
-        "GameMode": "ELI",
+        "GameMode": "FRONTLINE",
         "SupportedMapSizes": [
-          16
+          32,
+          64,
+          90
         ]
       },
       {
-        "GameMode": "GunGameFFA",
+        "GameMode": "CTF",
         "SupportedMapSizes": [
-          8
-        ]
-      },
-      {
-        "GameMode": "GunGameTeam",
-        "SupportedMapSizes": [
-          8,
-          16
-        ]
-      },
-      {
-        "GameMode": "FFA",
-        "SupportedMapSizes": [
-          8
-        ]
-      },
-      {
-        "GameMode": "CashRun",
-        "SupportedMapSizes": [
-          16,
-          32
+          32,
+          64,
+          90
         ]
       }
-    ],
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/a/ae/LonovoBanner.png",
+    ]
+  },
+  {
     "Available": true,
+    "Description": "A city with extensive railway yards under the cover of night.",
     "Name": "Lonovo",
-    "Description": "A city with extensive railway yards under the cover of night."
-  },
-  {
+    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/a/ae/LonovoBanner.png",
     "SupportedGamemodes": [
+      {
+        "GameMode": "TDM",
+        "SupportedMapSizes": [
+          8,
+          16
+        ]
+      },
       {
         "GameMode": "RUSH",
         "SupportedMapSizes": [
-          8,
-          16,
           32
         ]
       },
@@ -578,32 +510,56 @@
       {
         "GameMode": "DOMI",
         "SupportedMapSizes": [
-          16,
           32,
           64,
           90
         ]
       },
       {
-        "GameMode": "CTF",
+        "GameMode": "ELI",
         "SupportedMapSizes": [
-          32,
-          64,
-          90
+          16
+        ]
+      },
+      {
+        "GameMode": "GunGameFFA",
+        "SupportedMapSizes": [
+          8
+        ]
+      },
+      {
+        "GameMode": "GunGameTeam",
+        "SupportedMapSizes": [
+          8,
+          16
+        ]
+      },
+      {
+        "GameMode": "FFA",
+        "SupportedMapSizes": [
+          8
+        ]
+      },
+      {
+        "GameMode": "CashRun",
+        "SupportedMapSizes": [
+          16,
+          32
         ]
       }
-    ],
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/3/3f/MultuIslandsBanner.png",
+    ]
+  },
+  {
     "Available": true,
-    "Name": "MultuIslands",
+    "Description": "A small island chain with a fortified military base.",
     "DisplayName": "Multu Islands",
-    "Description": "A small island chain with a fortified military base."
-  },
-  {
+    "Name": "MultuIslands",
+    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/3/3f/MultuIslandsBanner.png",
     "SupportedGamemodes": [
       {
         "GameMode": "RUSH",
         "SupportedMapSizes": [
+          8,
           16,
           32
         ]
@@ -612,7 +568,8 @@
         "GameMode": "CONQ",
         "SupportedMapSizes": [
           32,
-          64
+          64,
+          90
         ]
       },
       {
@@ -626,78 +583,78 @@
       {
         "GameMode": "DOMI",
         "SupportedMapSizes": [
+          16,
+          32,
+          64,
+          90
+        ]
+      },
+      {
+        "GameMode": "CTF",
+        "SupportedMapSizes": [
           32,
           64,
           90
         ]
       }
-    ],
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/0/03/Namak_loading.png",
+    ]
+  },
+  {
     "Available": true,
+    "Description": "\tA small yet dense urban map dominated by high-rise buildings overlooking the streets. Inspired by Tokyo, Japan.",
     "Name": "Namak",
-    "Description": "\tA small yet dense urban map dominated by high-rise buildings overlooking the streets. Inspired by Tokyo, Japan."
-  },
-  {
+    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/0/03/Namak_loading.png",
     "SupportedGamemodes": [
       {
-        "GameMode": "CONQ",
+        "GameMode": "RUSH",
         "SupportedMapSizes": [
+          16,
           32
         ]
       },
       {
-        "GameMode": "INFCONQ",
+        "GameMode": "CONQ",
         "SupportedMapSizes": [
           32,
           64
         ]
       },
       {
-        "GameMode": "DOMI",
+        "GameMode": "INFCONQ",
         "SupportedMapSizes": [
-          16,
           32,
           64,
           90
         ]
       },
       {
-        "GameMode": "CashRun",
+        "GameMode": "DOMI",
         "SupportedMapSizes": [
-          16,
-          32
+          32,
+          64,
+          90
         ]
       }
-    ],
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/c/c2/OilDunes_loading_screen.png",
+    ]
+  },
+  {
     "Available": true,
-    "Name": "OilDunes",
+    "Description": "A sprawling oil extraction operation in flat, desert region.",
     "DisplayName": "Oil Dunes",
-    "Description": "A sprawling oil extraction operation in flat, desert region."
-  },
-  {
+    "Name": "OilDunes",
+    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/c/c2/OilDunes_loading_screen.png",
     "SupportedGamemodes": [
-      {
-        "GameMode": "TDM",
-        "SupportedMapSizes": [
-          8,
-          16
-        ]
-      },
       {
         "GameMode": "CONQ",
         "SupportedMapSizes": [
-          32,
-          64,
-          90
+          32
         ]
       },
       {
         "GameMode": "INFCONQ",
         "SupportedMapSizes": [
           32,
-          64,
-          90
+          64
         ]
       },
       {
@@ -705,40 +662,8 @@
         "SupportedMapSizes": [
           16,
           32,
-          64
-        ]
-      },
-      {
-        "GameMode": "ELI",
-        "SupportedMapSizes": [
-          8,
-          16
-        ]
-      },
-      {
-        "GameMode": "FRONTLINE",
-        "SupportedMapSizes": [
-          32,
-          64
-        ]
-      },
-      {
-        "GameMode": "GunGameFFA",
-        "SupportedMapSizes": [
-          8
-        ]
-      },
-      {
-        "GameMode": "GunGameTeam",
-        "SupportedMapSizes": [
-          8,
-          16
-        ]
-      },
-      {
-        "GameMode": "FFA",
-        "SupportedMapSizes": [
-          8
+          64,
+          90
         ]
       },
       {
@@ -748,27 +673,19 @@
           32
         ]
       }
-    ],
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/0/04/River-loadingscreen.png",
+    ]
+  },
+  {
     "Available": true,
+    "Description": "A container shipping port on a river.",
     "Name": "River",
-    "Description": "A container shipping port on a river."
-  },
-  {
+    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/0/04/River-loadingscreen.png",
     "SupportedGamemodes": [
       {
         "GameMode": "TDM",
         "SupportedMapSizes": [
           8,
           16
-        ]
-      },
-      {
-        "GameMode": "RUSH",
-        "SupportedMapSizes": [
-          8,
-          16,
-          32
         ]
       },
       {
@@ -792,8 +709,7 @@
         "SupportedMapSizes": [
           16,
           32,
-          64,
-          90
+          64
         ]
       },
       {
@@ -806,7 +722,27 @@
       {
         "GameMode": "FRONTLINE",
         "SupportedMapSizes": [
-          32
+          32,
+          64
+        ]
+      },
+      {
+        "GameMode": "GunGameFFA",
+        "SupportedMapSizes": [
+          8
+        ]
+      },
+      {
+        "GameMode": "GunGameTeam",
+        "SupportedMapSizes": [
+          8,
+          16
+        ]
+      },
+      {
+        "GameMode": "FFA",
+        "SupportedMapSizes": [
+          8
         ]
       },
       {
@@ -816,19 +752,27 @@
           32
         ]
       }
-    ],
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/0/0d/SalhanBanner.png",
+    ]
+  },
+  {
     "Available": true,
+    "Description": "A desert valley containing an oil refinery and a small town.",
     "Name": "Salhan",
-    "Description": "A desert valley containing an oil refinery and a small town."
-  },
-  {
+    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/0/0d/SalhanBanner.png",
     "SupportedGamemodes": [
       {
         "GameMode": "TDM",
         "SupportedMapSizes": [
           8,
           16
+        ]
+      },
+      {
+        "GameMode": "RUSH",
+        "SupportedMapSizes": [
+          8,
+          16,
+          32
         ]
       },
       {
@@ -857,11 +801,16 @@
         ]
       },
       {
+        "GameMode": "ELI",
+        "SupportedMapSizes": [
+          8,
+          16
+        ]
+      },
+      {
         "GameMode": "FRONTLINE",
         "SupportedMapSizes": [
-          32,
-          64,
-          90
+          32
         ]
       },
       {
@@ -870,36 +819,21 @@
           16,
           32
         ]
-      },
-      {
-        "GameMode": "CTF",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
       }
-    ],
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/3/33/SandySunsetBanner.png",
+    ]
+  },
+  {
     "Available": true,
-    "Name": "SandySunset",
+    "Description": "Big desert hills and canyons encircle a crowded town concentrated around one major road.",
     "DisplayName": "SandySunset",
-    "Description": "Big desert hills and canyons encircle a crowded town concentrated around one major road."
-  },
-  {
+    "Name": "SandySunset",
+    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/3/33/SandySunsetBanner.png",
     "SupportedGamemodes": [
       {
         "GameMode": "TDM",
         "SupportedMapSizes": [
           8,
           16
-        ]
-      },
-      {
-        "GameMode": "RUSH",
-        "SupportedMapSizes": [
-          16,
-          32
         ]
       },
       {
@@ -928,13 +862,6 @@
         ]
       },
       {
-        "GameMode": "ELI",
-        "SupportedMapSizes": [
-          8,
-          16
-        ]
-      },
-      {
         "GameMode": "FRONTLINE",
         "SupportedMapSizes": [
           32,
@@ -957,14 +884,14 @@
           90
         ]
       }
-    ],
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/1/1d/TensaTown_Loadingscreen.png",
+    ]
+  },
+  {
     "Available": true,
-    "Name": "TensaTown",
+    "Description": "A dense map with narrow residential streets and many low-lying buildings.",
     "DisplayName": "Tensa Town",
-    "Description": "A dense map with narrow residential streets and many low-lying buildings."
-  },
-  {
+    "Name": "TensaTown",
+    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/1/1d/TensaTown_Loadingscreen.png",
     "SupportedGamemodes": [
       {
         "GameMode": "TDM",
@@ -1006,6 +933,13 @@
         ]
       },
       {
+        "GameMode": "ELI",
+        "SupportedMapSizes": [
+          8,
+          16
+        ]
+      },
+      {
         "GameMode": "FRONTLINE",
         "SupportedMapSizes": [
           32,
@@ -1019,14 +953,84 @@
           16,
           32
         ]
+      },
+      {
+        "GameMode": "CTF",
+        "SupportedMapSizes": [
+          32,
+          64,
+          90
+        ]
       }
-    ],
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/b/b4/Valley_Loading_screen.png",
+    ]
+  },
+  {
     "Available": true,
+    "Description": "A nuclear power plant surrounded by wind turbines and prominent hills.",
     "Name": "Valley",
-    "Description": "A nuclear power plant surrounded by wind turbines and prominent hills."
+    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/b/b4/Valley_Loading_screen.png",
+    "SupportedGamemodes": [
+      {
+        "GameMode": "TDM",
+        "SupportedMapSizes": [
+          8,
+          16
+        ]
+      },
+      {
+        "GameMode": "RUSH",
+        "SupportedMapSizes": [
+          16,
+          32
+        ]
+      },
+      {
+        "GameMode": "CONQ",
+        "SupportedMapSizes": [
+          32,
+          64,
+          90
+        ]
+      },
+      {
+        "GameMode": "INFCONQ",
+        "SupportedMapSizes": [
+          32,
+          64,
+          90
+        ]
+      },
+      {
+        "GameMode": "DOMI",
+        "SupportedMapSizes": [
+          16,
+          32,
+          64,
+          90
+        ]
+      },
+      {
+        "GameMode": "FRONTLINE",
+        "SupportedMapSizes": [
+          32,
+          64,
+          90
+        ]
+      },
+      {
+        "GameMode": "CashRun",
+        "SupportedMapSizes": [
+          16,
+          32
+        ]
+      }
+    ]
   },
   {
+    "Available": true,
+    "Description": "Wide valley with long bridges that connect two cliffs. Inspired by the mountain Tebulosmta in Georgia.",
+    "Name": "Wakistan",
+    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/b/b5/WakistanBanner.png",
     "SupportedGamemodes": [
       {
         "GameMode": "CONQ",
@@ -1060,13 +1064,14 @@
           90
         ]
       }
-    ],
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/b/b5/WakistanBanner.png",
-    "Available": true,
-    "Name": "Wakistan",
-    "Description": "Wide valley with long bridges that connect two cliffs. Inspired by the mountain Tebulosmta in Georgia."
+    ]
   },
   {
+    "Available": true,
+    "Description": "A seaside village surrounded by rural countryside and vineyards.",
+    "DisplayName": "Wine Paradise",
+    "Name": "WineParadise",
+    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/5/5e/WineParadiseBanner.png",
     "SupportedGamemodes": [
       {
         "GameMode": "TDM",
@@ -1126,14 +1131,13 @@
           32
         ]
       }
-    ],
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/5/5e/WineParadiseBanner.png",
-    "Available": true,
-    "Name": "WineParadise",
-    "DisplayName": "Wine Paradise",
-    "Description": "A seaside village surrounded by rural countryside and vineyards."
+    ]
   },
   {
+    "Available": true,
+    "Description": "Old version of the map District.",
+    "DisplayName": "District (Old)",
+    "Name": "Old_District",
     "SupportedGamemodes": [
       {
         "GameMode": "TDM",
@@ -1185,13 +1189,13 @@
           32
         ]
       }
-    ],
-    "Available": true,
-    "Name": "Old_District",
-    "DisplayName": "District (Old)",
-    "Description": "Old version of the map District."
+    ]
   },
   {
+    "Available": true,
+    "Description": "Old version of the map Eduardovo.",
+    "DisplayName": "Eduardovo (Old)",
+    "Name": "Old_Eduardovo",
     "SupportedGamemodes": [
       {
         "GameMode": "TDM",
@@ -1224,13 +1228,13 @@
           90
         ]
       }
-    ],
-    "Available": true,
-    "Name": "Old_Eduardovo",
-    "DisplayName": "Eduardovo (Old)",
-    "Description": "Old version of the map Eduardovo."
+    ]
   },
   {
+    "Available": true,
+    "Description": "Old version of the map Multu Islands.",
+    "DisplayName": "Multu Islands (Old)",
+    "Name": "Old_MultuIslands",
     "SupportedGamemodes": [
       {
         "GameMode": "TDM",
@@ -1247,13 +1251,13 @@
           90
         ]
       }
-    ],
-    "Available": true,
-    "Name": "Old_MultuIslands",
-    "DisplayName": "Multu Islands (Old)",
-    "Description": "Old version of the map Multu Islands."
+    ]
   },
   {
+    "Available": true,
+    "Description": "Old version of the map Namak.",
+    "DisplayName": "Namak (Old)",
+    "Name": "Old_Namak",
     "SupportedGamemodes": [
       {
         "GameMode": "TDM",
@@ -1297,13 +1301,13 @@
           8
         ]
       }
-    ],
-    "Available": true,
-    "Name": "Old_Namak",
-    "DisplayName": "Namak (Old)",
-    "Description": "Old version of the map Namak."
+    ]
   },
   {
+    "Available": true,
+    "Description": "Old version of the map Oil Dunes.",
+    "DisplayName": "Oil Dunes (Old)",
+    "Name": "Old_OilDunes",
     "SupportedGamemodes": [
       {
         "GameMode": "TDM",
@@ -1327,13 +1331,13 @@
           32
         ]
       }
-    ],
-    "Available": true,
-    "Name": "Old_OilDunes",
-    "DisplayName": "Oil Dunes (Old)",
-    "Description": "Old version of the map Oil Dunes."
+    ]
   },
   {
+    "Available": true,
+    "DisplayName": "Zalfi Bay",
+    "Name": "ZalfiBay",
+    "PreviewImageUrl": "https://media.discordapp.net/attachments/438070589547216898/1152760075300110428/image.png",
     "SupportedGamemodes": [
       {
         "GameMode": "CONQ",
@@ -1376,13 +1380,12 @@
           90
         ]
       }
-    ],
-    "Available": true,
-    "Name": "ZalfiBay",
-    "DisplayName": "Zalfi Bay"
+    ]
   },
   {
+    "Available": false,
     "Name": "Kodiak",
+    "PreviewImageUrl": "https://media.discordapp.net/attachments/438070589547216898/1158943835561394257/image.png",
     "SupportedGamemodes": [
       {
         "GameMode": "RUSH",
@@ -1426,7 +1429,8 @@
     ]
   },
   {
-    "Name": "Polygon",
-    "Description": "Tutorial map"
+    "Available": false,
+    "Description": "Tutorial map",
+    "Name": "Polygon"
   }
 ]
