@@ -1,1443 +1,1606 @@
 [
   {
-    "Available": true,
-    "Description": "A desert island with a small town.",
-    "Name": "Azagor",
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/2/2c/AzagorBanner.png",
-    "SupportedGamemodes": [
-      {
-        "GameMode": "TDM",
-        "SupportedMapSizes": [
-          8,
-          16
-        ]
+      "Available": true,
+      "Description": "A desert island with a small town.",
+      "ImageUrls": {
+          "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/azagor/DiscordIcon.png",
+          "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/azagor/EndGame.png",
+          "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/azagor/LoadingScreen.png",
+          "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/azagor/MainMap.png",
+          "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/azagor/ServerList.png"
       },
-      {
-        "GameMode": "RUSH",
-        "SupportedMapSizes": [
-          16,
-          32
-        ]
-      },
-      {
-        "GameMode": "CONQ",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "INFCONQ",
-        "SupportedMapSizes": [
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "DOMI",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "ELI",
-        "SupportedMapSizes": [
-          16
-        ]
-      },
-      {
-        "GameMode": "FRONTLINE",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      }
-    ]
+      "Name": "Azagor",
+      "SupportedGamemodes": [
+          {
+              "GameMode": "TDM",
+              "SupportedMapSizes": [
+                  8,
+                  16
+              ]
+          },
+          {
+              "GameMode": "RUSH",
+              "SupportedMapSizes": [
+                  16,
+                  32
+              ]
+          },
+          {
+              "GameMode": "CONQ",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "INFCONQ",
+              "SupportedMapSizes": [
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "DOMI",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "ELI",
+              "SupportedMapSizes": [
+                  16
+              ]
+          },
+          {
+              "GameMode": "FRONTLINE",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          }
+      ]
   },
   {
-    "Available": true,
-    "Description": "An archipelago with a grounded container ship in the map's center. The northern island is a military base, while the southern island has a tourist resort and public airport.",
-    "Name": "Basra",
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/8/86/Basra.png",
-    "SupportedGamemodes": [
-      {
-        "GameMode": "TDM",
-        "SupportedMapSizes": [
-          8,
-          16
-        ]
+      "Available": true,
+      "Description": "An archipelago with a grounded container ship in the map's center. The northern island is a military base, while the southern island has a tourist resort and public airport.",
+      "ImageUrls": {
+          "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/basra/DiscordIcon.png",
+          "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/basra/EndGame.png",
+          "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/basra/LoadingScreen.png",
+          "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/basra/MainMap.png",
+          "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/basra/ServerList.png"
       },
-      {
-        "GameMode": "CONQ",
-        "SupportedMapSizes": [
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "INFCONQ",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "ELI",
-        "SupportedMapSizes": [
-          8,
-          16
-        ]
-      },
-      {
-        "GameMode": "FRONTLINE",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      }
-    ]
+      "Name": "Basra",
+      "SupportedGamemodes": [
+          {
+              "GameMode": "TDM",
+              "SupportedMapSizes": [
+                  8,
+                  16
+              ]
+          },
+          {
+              "GameMode": "CONQ",
+              "SupportedMapSizes": [
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "INFCONQ",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "ELI",
+              "SupportedMapSizes": [
+                  8,
+                  16
+              ]
+          },
+          {
+              "GameMode": "FRONTLINE",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          }
+      ]
   },
   {
-    "Available": true,
-    "Description": "\tA coastal, industrial construction site with a symmetrical layout.",
-    "Name": "Construction",
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/6/6b/Construction_.png",
-    "SupportedGamemodes": [
-      {
-        "GameMode": "TDM",
-        "SupportedMapSizes": [
-          8,
-          16
-        ]
+      "Available": true,
+      "Description": "\tA coastal, industrial construction site with a symmetrical layout.",
+      "ImageUrls": {
+          "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/construction/DiscordIcon.png",
+          "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/construction/EndGame.png",
+          "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/construction/LoadingScreen.png",
+          "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/construction/MainMap.png",
+          "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/construction/ServerList.png"
       },
-      {
-        "GameMode": "CONQ",
-        "SupportedMapSizes": [
-          32
-        ]
-      },
-      {
-        "GameMode": "INFCONQ",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "DOMI",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "ELI",
-        "SupportedMapSizes": [
-          8,
-          16
-        ]
-      },
-      {
-        "GameMode": "CashRun",
-        "SupportedMapSizes": [
-          16
-        ]
-      }
-    ]
+      "Name": "Construction",
+      "SupportedGamemodes": [
+          {
+              "GameMode": "TDM",
+              "SupportedMapSizes": [
+                  8,
+                  16
+              ]
+          },
+          {
+              "GameMode": "CONQ",
+              "SupportedMapSizes": [
+                  32
+              ]
+          },
+          {
+              "GameMode": "INFCONQ",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "DOMI",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "ELI",
+              "SupportedMapSizes": [
+                  8,
+                  16
+              ]
+          },
+          {
+              "GameMode": "CashRun",
+              "SupportedMapSizes": [
+                  16
+              ]
+          }
+      ]
   },
   {
-    "Available": true,
-    "Description": "A rain-shrouded map in a hilly region with factories and military fortifications.",
-    "Name": "District",
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/e/e5/DistrictBanner.png",
-    "SupportedGamemodes": [
-      {
-        "GameMode": "RUSH",
-        "SupportedMapSizes": [
-          16,
-          32
-        ]
+      "Available": true,
+      "Description": "A rain-shrouded map in a hilly region with factories and military fortifications.",
+      "ImageUrls": {
+          "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/district/DiscordIcon.png",
+          "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/district/EndGame.png",
+          "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/district/LoadingScreen.png",
+          "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/district/MainMap.png",
+          "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/district/ServerList.png"
       },
-      {
-        "GameMode": "CONQ",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "INFCONQ",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "DOMI",
-        "SupportedMapSizes": [
-          16,
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "FRONTLINE",
-        "SupportedMapSizes": [
-          32,
-          64
-        ]
-      },
-      {
-        "GameMode": "CTF",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      }
-    ]
+      "Name": "District",
+      "SupportedGamemodes": [
+          {
+              "GameMode": "RUSH",
+              "SupportedMapSizes": [
+                  16,
+                  32
+              ]
+          },
+          {
+              "GameMode": "CONQ",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "INFCONQ",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "DOMI",
+              "SupportedMapSizes": [
+                  16,
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "FRONTLINE",
+              "SupportedMapSizes": [
+                  32,
+                  64
+              ]
+          },
+          {
+              "GameMode": "CTF",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          }
+      ]
   },
   {
-    "Available": true,
-    "Description": "An arid, mountainous region with scattered settlements.",
-    "DisplayName": "Dusty Dew",
-    "Name": "Dustydew",
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/e/e0/DustyDewBanner.png",
-    "SupportedGamemodes": [
-      {
-        "GameMode": "TDM",
-        "SupportedMapSizes": [
-          8,
-          16
-        ]
+      "Available": true,
+      "Description": "An arid, mountainous region with scattered settlements.",
+      "DisplayName": "Dusty Dew",
+      "ImageUrls": {
+          "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/dustydew/DiscordIcon.png",
+          "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/dustydew/EndGame.png",
+          "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/dustydew/LoadingScreen.png",
+          "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/dustydew/MainMap.png",
+          "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/dustydew/ServerList.png"
       },
-      {
-        "GameMode": "RUSH",
-        "SupportedMapSizes": [
-          16,
-          32
-        ]
-      },
-      {
-        "GameMode": "CONQ",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "INFCONQ",
-        "SupportedMapSizes": [
-          16,
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "DOMI",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "ELI",
-        "SupportedMapSizes": [
-          8,
-          16
-        ]
-      },
-      {
-        "GameMode": "GunGameFFA",
-        "SupportedMapSizes": [
-          8
-        ]
-      },
-      {
-        "GameMode": "GunGameTeam",
-        "SupportedMapSizes": [
-          8,
-          16
-        ]
-      },
-      {
-        "GameMode": "FFA",
-        "SupportedMapSizes": [
-          8
-        ]
-      }
-    ]
+      "Name": "Dustydew",
+      "SupportedGamemodes": [
+          {
+              "GameMode": "TDM",
+              "SupportedMapSizes": [
+                  8,
+                  16
+              ]
+          },
+          {
+              "GameMode": "RUSH",
+              "SupportedMapSizes": [
+                  16,
+                  32
+              ]
+          },
+          {
+              "GameMode": "CONQ",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "INFCONQ",
+              "SupportedMapSizes": [
+                  16,
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "DOMI",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "ELI",
+              "SupportedMapSizes": [
+                  8,
+                  16
+              ]
+          },
+          {
+              "GameMode": "GunGameFFA",
+              "SupportedMapSizes": [
+                  8
+              ]
+          },
+          {
+              "GameMode": "GunGameTeam",
+              "SupportedMapSizes": [
+                  8,
+                  16
+              ]
+          },
+          {
+              "GameMode": "FFA",
+              "SupportedMapSizes": [
+                  8
+              ]
+          }
+      ]
   },
   {
-    "Available": true,
-    "Description": "A forested rural map with farms and abandoned factories.",
-    "Name": "Eduardovo",
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/7/7b/EduardovoBanner.png",
-    "SupportedGamemodes": [
-      {
-        "GameMode": "TDM",
-        "SupportedMapSizes": [
-          16
-        ]
+      "Available": true,
+      "Description": "A forested rural map with farms and abandoned factories.",
+      "ImageUrls": {
+          "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/eduardovo/DiscordIcon.png",
+          "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/eduardovo/EndGame.png",
+          "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/eduardovo/LoadingScreen.png",
+          "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/eduardovo/MainMap.png",
+          "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/eduardovo/ServerList.png"
       },
-      {
-        "GameMode": "CONQ",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "INFCONQ",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "DOMI",
-        "SupportedMapSizes": [
-          16,
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "FRONTLINE",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "GunGameFFA",
-        "SupportedMapSizes": [
-          16
-        ]
-      },
-      {
-        "GameMode": "CashRun",
-        "SupportedMapSizes": [
-          16,
-          32
-        ]
-      }
-    ]
+      "Name": "Eduardovo",
+      "SupportedGamemodes": [
+          {
+              "GameMode": "TDM",
+              "SupportedMapSizes": [
+                  16
+              ]
+          },
+          {
+              "GameMode": "CONQ",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "INFCONQ",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "DOMI",
+              "SupportedMapSizes": [
+                  16,
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "FRONTLINE",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "GunGameFFA",
+              "SupportedMapSizes": [
+                  16
+              ]
+          },
+          {
+              "GameMode": "CashRun",
+              "SupportedMapSizes": [
+                  16,
+                  32
+              ]
+          }
+      ]
   },
   {
-    "Available": true,
-    "Description": "Urban map featuring cozy, small streets and parks. Most buildings are three floors high and surrounded by curved streets. Inspired by Paris, France.",
-    "Name": "Frugis",
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/3/3d/Frugis-test.png",
-    "SupportedGamemodes": [
-      {
-        "GameMode": "TDM",
-        "SupportedMapSizes": [
-          8,
-          16
-        ]
+      "Available": true,
+      "Description": "Urban map featuring cozy, small streets and parks. Most buildings are three floors high and surrounded by curved streets. Inspired by Paris, France.",
+      "ImageUrls": {
+          "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/frugis/DiscordIcon.png",
+          "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/frugis/EndGame.png",
+          "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/frugis/LoadingScreen.png",
+          "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/frugis/MainMap.png",
+          "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/frugis/ServerList.png"
       },
-      {
-        "GameMode": "RUSH",
-        "SupportedMapSizes": [
-          16,
-          32
-        ]
-      },
-      {
-        "GameMode": "CONQ",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "INFCONQ",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "DOMI",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "FRONTLINE",
-        "SupportedMapSizes": [
-          32
-        ]
-      },
-      {
-        "GameMode": "GunGameFFA",
-        "SupportedMapSizes": [
-          8,
-          16
-        ]
-      },
-      {
-        "GameMode": "GunGameTeam",
-        "SupportedMapSizes": [
-          8,
-          16
-        ]
-      },
-      {
-        "GameMode": "CashRun",
-        "SupportedMapSizes": [
-          16,
-          32
-        ]
-      },
-      {
-        "GameMode": "CTF",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      }
-    ]
+      "Name": "Frugis",
+      "SupportedGamemodes": [
+          {
+              "GameMode": "TDM",
+              "SupportedMapSizes": [
+                  8,
+                  16
+              ]
+          },
+          {
+              "GameMode": "RUSH",
+              "SupportedMapSizes": [
+                  16,
+                  32
+              ]
+          },
+          {
+              "GameMode": "CONQ",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "INFCONQ",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "DOMI",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "FRONTLINE",
+              "SupportedMapSizes": [
+                  32
+              ]
+          },
+          {
+              "GameMode": "GunGameFFA",
+              "SupportedMapSizes": [
+                  8,
+                  16
+              ]
+          },
+          {
+              "GameMode": "GunGameTeam",
+              "SupportedMapSizes": [
+                  8,
+                  16
+              ]
+          },
+          {
+              "GameMode": "CashRun",
+              "SupportedMapSizes": [
+                  16,
+                  32
+              ]
+          },
+          {
+              "GameMode": "CTF",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          }
+      ]
   },
   {
-    "Available": true,
-    "Description": "An island with an early-warning radar system used to detect nuclear missile launches. Flanked by opposing aircraft carriers, used by both factions as bases.",
-    "Name": "Isle",
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/9/98/ISLE_loading_screen_image.png",
-    "SupportedGamemodes": [
-      {
-        "GameMode": "CONQ",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
+      "Available": true,
+      "Description": "An island with an early-warning radar system used to detect nuclear missile launches. Flanked by opposing aircraft carriers, used by both factions as bases.",
+      "ImageUrls": {
+          "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/isle/DiscordIcon.png",
+          "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/isle/EndGame.png",
+          "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/isle/LoadingScreen.png",
+          "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/isle/MainMap.png",
+          "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/isle/ServerList.png"
       },
-      {
-        "GameMode": "INFCONQ",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "DOMI",
-        "SupportedMapSizes": [
-          16,
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "FRONTLINE",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "CTF",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      }
-    ]
+      "Name": "Isle",
+      "SupportedGamemodes": [
+          {
+              "GameMode": "CONQ",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "INFCONQ",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "DOMI",
+              "SupportedMapSizes": [
+                  16,
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "FRONTLINE",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "CTF",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          }
+      ]
   },
   {
-    "Available": true,
-    "Description": "A city with extensive railway yards under the cover of night.",
-    "Name": "Lonovo",
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/a/ae/LonovoBanner.png",
-    "SupportedGamemodes": [
-      {
-        "GameMode": "TDM",
-        "SupportedMapSizes": [
-          8,
-          16
-        ]
+      "Available": true,
+      "Description": "A city with extensive railway yards under the cover of night.",
+      "ImageUrls": {
+          "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/lonovo/DiscordIcon.png",
+          "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/lonovo/EndGame.png",
+          "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/lonovo/LoadingScreen.png",
+          "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/lonovo/MainMap.png",
+          "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/lonovo/ServerList.png"
       },
-      {
-        "GameMode": "RUSH",
-        "SupportedMapSizes": [
-          32
-        ]
-      },
-      {
-        "GameMode": "CONQ",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "INFCONQ",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "DOMI",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "ELI",
-        "SupportedMapSizes": [
-          16
-        ]
-      },
-      {
-        "GameMode": "GunGameFFA",
-        "SupportedMapSizes": [
-          8
-        ]
-      },
-      {
-        "GameMode": "GunGameTeam",
-        "SupportedMapSizes": [
-          8,
-          16
-        ]
-      },
-      {
-        "GameMode": "FFA",
-        "SupportedMapSizes": [
-          8
-        ]
-      },
-      {
-        "GameMode": "CashRun",
-        "SupportedMapSizes": [
-          16,
-          32
-        ]
-      }
-    ]
+      "Name": "Lonovo",
+      "SupportedGamemodes": [
+          {
+              "GameMode": "TDM",
+              "SupportedMapSizes": [
+                  8,
+                  16
+              ]
+          },
+          {
+              "GameMode": "RUSH",
+              "SupportedMapSizes": [
+                  32
+              ]
+          },
+          {
+              "GameMode": "CONQ",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "INFCONQ",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "DOMI",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "ELI",
+              "SupportedMapSizes": [
+                  16
+              ]
+          },
+          {
+              "GameMode": "GunGameFFA",
+              "SupportedMapSizes": [
+                  8
+              ]
+          },
+          {
+              "GameMode": "GunGameTeam",
+              "SupportedMapSizes": [
+                  8,
+                  16
+              ]
+          },
+          {
+              "GameMode": "FFA",
+              "SupportedMapSizes": [
+                  8
+              ]
+          },
+          {
+              "GameMode": "CashRun",
+              "SupportedMapSizes": [
+                  16,
+                  32
+              ]
+          }
+      ]
   },
   {
-    "Available": true,
-    "Description": "A small island chain with a fortified military base.",
-    "DisplayName": "Multu Islands",
-    "Name": "MultuIslands",
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/3/3f/MultuIslandsBanner.png",
-    "SupportedGamemodes": [
-      {
-        "GameMode": "RUSH",
-        "SupportedMapSizes": [
-          8,
-          16,
-          32
-        ]
+      "Available": true,
+      "Description": "A small island chain with a fortified military base.",
+      "DisplayName": "Multu Islands",
+      "ImageUrls": {
+          "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/multuislands/DiscordIcon.png",
+          "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/multuislands/EndGame.png",
+          "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/multuislands/LoadingScreen.png",
+          "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/multuislands/MainMap.png",
+          "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/multuislands/ServerList.png"
       },
-      {
-        "GameMode": "CONQ",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "INFCONQ",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "DOMI",
-        "SupportedMapSizes": [
-          16,
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "CTF",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      }
-    ]
+      "Name": "MultuIslands",
+      "SupportedGamemodes": [
+          {
+              "GameMode": "RUSH",
+              "SupportedMapSizes": [
+                  8,
+                  16,
+                  32
+              ]
+          },
+          {
+              "GameMode": "CONQ",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "INFCONQ",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "DOMI",
+              "SupportedMapSizes": [
+                  16,
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "CTF",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          }
+      ]
   },
   {
-    "Available": true,
-    "Description": "\tA small yet dense urban map dominated by high-rise buildings overlooking the streets. Inspired by Tokyo, Japan.",
-    "Name": "Namak",
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/0/03/Namak_loading.png",
-    "SupportedGamemodes": [
-      {
-        "GameMode": "RUSH",
-        "SupportedMapSizes": [
-          16,
-          32
-        ]
+      "Available": true,
+      "Description": "\tA small yet dense urban map dominated by high-rise buildings overlooking the streets. Inspired by Tokyo, Japan.",
+      "ImageUrls": {
+          "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/namak/DiscordIcon.png",
+          "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/namak/EndGame.png",
+          "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/namak/LoadingScreen.png",
+          "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/namak/MainMap.png",
+          "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/namak/ServerList.png"
       },
-      {
-        "GameMode": "CONQ",
-        "SupportedMapSizes": [
-          32,
-          64
-        ]
-      },
-      {
-        "GameMode": "INFCONQ",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "DOMI",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      }
-    ]
+      "Name": "Namak",
+      "SupportedGamemodes": [
+          {
+              "GameMode": "RUSH",
+              "SupportedMapSizes": [
+                  16,
+                  32
+              ]
+          },
+          {
+              "GameMode": "CONQ",
+              "SupportedMapSizes": [
+                  32,
+                  64
+              ]
+          },
+          {
+              "GameMode": "INFCONQ",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "DOMI",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          }
+      ]
   },
   {
-    "Available": true,
-    "Description": "A sprawling oil extraction operation in flat, desert region.",
-    "DisplayName": "Oil Dunes",
-    "Name": "OilDunes",
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/c/c2/OilDunes_loading_screen.png",
-    "SupportedGamemodes": [
-      {
-        "GameMode": "CONQ",
-        "SupportedMapSizes": [
-          32
-        ]
+      "Available": true,
+      "Description": "A sprawling oil extraction operation in flat, desert region.",
+      "DisplayName": "Oil Dunes",
+      "ImageUrls": {
+          "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/oildunes/DiscordIcon.png",
+          "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/oildunes/EndGame.png",
+          "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/oildunes/LoadingScreen.png",
+          "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/oildunes/MainMap.png",
+          "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/oildunes/ServerList.png"
       },
-      {
-        "GameMode": "INFCONQ",
-        "SupportedMapSizes": [
-          32,
-          64
-        ]
-      },
-      {
-        "GameMode": "DOMI",
-        "SupportedMapSizes": [
-          16,
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "CashRun",
-        "SupportedMapSizes": [
-          16,
-          32
-        ]
-      }
-    ]
+      "Name": "OilDunes",
+      "SupportedGamemodes": [
+          {
+              "GameMode": "CONQ",
+              "SupportedMapSizes": [
+                  32
+              ]
+          },
+          {
+              "GameMode": "INFCONQ",
+              "SupportedMapSizes": [
+                  32,
+                  64
+              ]
+          },
+          {
+              "GameMode": "DOMI",
+              "SupportedMapSizes": [
+                  16,
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "CashRun",
+              "SupportedMapSizes": [
+                  16,
+                  32
+              ]
+          }
+      ]
   },
   {
-    "Available": true,
-    "Description": "A container shipping port on a river.",
-    "Name": "River",
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/0/04/River-loadingscreen.png",
-    "SupportedGamemodes": [
-      {
-        "GameMode": "TDM",
-        "SupportedMapSizes": [
-          8,
-          16
-        ]
+      "Available": true,
+      "Description": "A container shipping port on a river.",
+      "ImageUrls": {
+          "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/river/DiscordIcon.png",
+          "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/river/EndGame.png",
+          "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/river/LoadingScreen.png",
+          "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/river/MainMap.png",
+          "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/river/ServerList.png"
       },
-      {
-        "GameMode": "CONQ",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "INFCONQ",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "DOMI",
-        "SupportedMapSizes": [
-          16,
-          32,
-          64
-        ]
-      },
-      {
-        "GameMode": "ELI",
-        "SupportedMapSizes": [
-          8,
-          16
-        ]
-      },
-      {
-        "GameMode": "FRONTLINE",
-        "SupportedMapSizes": [
-          32,
-          64
-        ]
-      },
-      {
-        "GameMode": "GunGameFFA",
-        "SupportedMapSizes": [
-          8
-        ]
-      },
-      {
-        "GameMode": "GunGameTeam",
-        "SupportedMapSizes": [
-          8,
-          16
-        ]
-      },
-      {
-        "GameMode": "FFA",
-        "SupportedMapSizes": [
-          8
-        ]
-      },
-      {
-        "GameMode": "CashRun",
-        "SupportedMapSizes": [
-          16,
-          32
-        ]
-      }
-    ]
+      "Name": "River",
+      "SupportedGamemodes": [
+          {
+              "GameMode": "TDM",
+              "SupportedMapSizes": [
+                  8,
+                  16
+              ]
+          },
+          {
+              "GameMode": "CONQ",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "INFCONQ",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "DOMI",
+              "SupportedMapSizes": [
+                  16,
+                  32,
+                  64
+              ]
+          },
+          {
+              "GameMode": "ELI",
+              "SupportedMapSizes": [
+                  8,
+                  16
+              ]
+          },
+          {
+              "GameMode": "FRONTLINE",
+              "SupportedMapSizes": [
+                  32,
+                  64
+              ]
+          },
+          {
+              "GameMode": "GunGameFFA",
+              "SupportedMapSizes": [
+                  8
+              ]
+          },
+          {
+              "GameMode": "GunGameTeam",
+              "SupportedMapSizes": [
+                  8,
+                  16
+              ]
+          },
+          {
+              "GameMode": "FFA",
+              "SupportedMapSizes": [
+                  8
+              ]
+          },
+          {
+              "GameMode": "CashRun",
+              "SupportedMapSizes": [
+                  16,
+                  32
+              ]
+          }
+      ]
   },
   {
-    "Available": true,
-    "Description": "A desert valley containing an oil refinery and a small town.",
-    "Name": "Salhan",
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/0/0d/SalhanBanner.png",
-    "SupportedGamemodes": [
-      {
-        "GameMode": "TDM",
-        "SupportedMapSizes": [
-          8,
-          16
-        ]
+      "Available": true,
+      "Description": "A desert valley containing an oil refinery and a small town.",
+      "ImageUrls": {
+          "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/salhan/DiscordIcon.png",
+          "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/salhan/EndGame.png",
+          "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/salhan/LoadingScreen.png",
+          "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/salhan/MainMap.png",
+          "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/salhan/ServerList.png"
       },
-      {
-        "GameMode": "RUSH",
-        "SupportedMapSizes": [
-          8,
-          16,
-          32
-        ]
-      },
-      {
-        "GameMode": "CONQ",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "INFCONQ",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "DOMI",
-        "SupportedMapSizes": [
-          16,
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "ELI",
-        "SupportedMapSizes": [
-          8,
-          16
-        ]
-      },
-      {
-        "GameMode": "FRONTLINE",
-        "SupportedMapSizes": [
-          32
-        ]
-      },
-      {
-        "GameMode": "CashRun",
-        "SupportedMapSizes": [
-          16,
-          32
-        ]
-      }
-    ]
+      "Name": "Salhan",
+      "SupportedGamemodes": [
+          {
+              "GameMode": "TDM",
+              "SupportedMapSizes": [
+                  8,
+                  16
+              ]
+          },
+          {
+              "GameMode": "RUSH",
+              "SupportedMapSizes": [
+                  8,
+                  16,
+                  32
+              ]
+          },
+          {
+              "GameMode": "CONQ",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "INFCONQ",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "DOMI",
+              "SupportedMapSizes": [
+                  16,
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "ELI",
+              "SupportedMapSizes": [
+                  8,
+                  16
+              ]
+          },
+          {
+              "GameMode": "FRONTLINE",
+              "SupportedMapSizes": [
+                  32
+              ]
+          },
+          {
+              "GameMode": "CashRun",
+              "SupportedMapSizes": [
+                  16,
+                  32
+              ]
+          }
+      ]
   },
   {
-    "Available": true,
-    "Description": "Big desert hills and canyons encircle a crowded town concentrated around one major road.",
-    "DisplayName": "SandySunset",
-    "Name": "SandySunset",
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/3/33/SandySunsetBanner.png",
-    "SupportedGamemodes": [
-      {
-        "GameMode": "TDM",
-        "SupportedMapSizes": [
-          8,
-          16
-        ]
+      "Available": true,
+      "Description": "Big desert hills and canyons encircle a crowded town concentrated around one major road.",
+      "DisplayName": "SandySunset",
+      "ImageUrls": {
+          "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/sandysunset/DiscordIcon.png",
+          "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/sandysunset/EndGame.png",
+          "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/sandysunset/LoadingScreen.png",
+          "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/sandysunset/MainMap.png",
+          "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/sandysunset/ServerList.png"
       },
-      {
-        "GameMode": "CONQ",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "INFCONQ",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "DOMI",
-        "SupportedMapSizes": [
-          16,
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "FRONTLINE",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "CashRun",
-        "SupportedMapSizes": [
-          16,
-          32
-        ]
-      },
-      {
-        "GameMode": "CTF",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      }
-    ]
+      "Name": "SandySunset",
+      "SupportedGamemodes": [
+          {
+              "GameMode": "TDM",
+              "SupportedMapSizes": [
+                  8,
+                  16
+              ]
+          },
+          {
+              "GameMode": "CONQ",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "INFCONQ",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "DOMI",
+              "SupportedMapSizes": [
+                  16,
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "FRONTLINE",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "CashRun",
+              "SupportedMapSizes": [
+                  16,
+                  32
+              ]
+          },
+          {
+              "GameMode": "CTF",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          }
+      ]
   },
   {
-    "Available": true,
-    "Description": "A dense map with narrow residential streets and many low-lying buildings.",
-    "DisplayName": "Tensa Town",
-    "Name": "TensaTown",
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/1/1d/TensaTown_Loadingscreen.png",
-    "SupportedGamemodes": [
-      {
-        "GameMode": "TDM",
-        "SupportedMapSizes": [
-          8,
-          16
-        ]
+      "Available": true,
+      "Description": "A dense map with narrow residential streets and many low-lying buildings.",
+      "DisplayName": "Tensa Town",
+      "ImageUrls": {
+          "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/tensatown/DiscordIcon.png",
+          "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/tensatown/EndGame.png",
+          "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/tensatown/LoadingScreen.png",
+          "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/tensatown/MainMap.png",
+          "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/tensatown/ServerList.png"
       },
-      {
-        "GameMode": "RUSH",
-        "SupportedMapSizes": [
-          16,
-          32
-        ]
-      },
-      {
-        "GameMode": "CONQ",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "INFCONQ",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "DOMI",
-        "SupportedMapSizes": [
-          16,
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "ELI",
-        "SupportedMapSizes": [
-          8,
-          16
-        ]
-      },
-      {
-        "GameMode": "FRONTLINE",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "CashRun",
-        "SupportedMapSizes": [
-          16,
-          32
-        ]
-      },
-      {
-        "GameMode": "CTF",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      }
-    ]
+      "Name": "TensaTown",
+      "SupportedGamemodes": [
+          {
+              "GameMode": "TDM",
+              "SupportedMapSizes": [
+                  8,
+                  16
+              ]
+          },
+          {
+              "GameMode": "RUSH",
+              "SupportedMapSizes": [
+                  16,
+                  32
+              ]
+          },
+          {
+              "GameMode": "CONQ",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "INFCONQ",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "DOMI",
+              "SupportedMapSizes": [
+                  16,
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "ELI",
+              "SupportedMapSizes": [
+                  8,
+                  16
+              ]
+          },
+          {
+              "GameMode": "FRONTLINE",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "CashRun",
+              "SupportedMapSizes": [
+                  16,
+                  32
+              ]
+          },
+          {
+              "GameMode": "CTF",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          }
+      ]
   },
   {
-    "Available": true,
-    "Description": "A nuclear power plant surrounded by wind turbines and prominent hills.",
-    "Name": "Valley",
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/b/b4/Valley_Loading_screen.png",
-    "SupportedGamemodes": [
-      {
-        "GameMode": "TDM",
-        "SupportedMapSizes": [
-          8,
-          16
-        ]
+      "Available": true,
+      "Description": "A nuclear power plant surrounded by wind turbines and prominent hills.",
+      "ImageUrls": {
+          "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/valley/DiscordIcon.png",
+          "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/valley/EndGame.png",
+          "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/valley/LoadingScreen.png",
+          "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/valley/MainMap.png",
+          "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/valley/ServerList.png"
       },
-      {
-        "GameMode": "RUSH",
-        "SupportedMapSizes": [
-          16,
-          32
-        ]
-      },
-      {
-        "GameMode": "CONQ",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "INFCONQ",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "DOMI",
-        "SupportedMapSizes": [
-          16,
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "FRONTLINE",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "CashRun",
-        "SupportedMapSizes": [
-          16,
-          32
-        ]
-      }
-    ]
+      "Name": "Valley",
+      "SupportedGamemodes": [
+          {
+              "GameMode": "TDM",
+              "SupportedMapSizes": [
+                  8,
+                  16
+              ]
+          },
+          {
+              "GameMode": "RUSH",
+              "SupportedMapSizes": [
+                  16,
+                  32
+              ]
+          },
+          {
+              "GameMode": "CONQ",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "INFCONQ",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "DOMI",
+              "SupportedMapSizes": [
+                  16,
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "FRONTLINE",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "CashRun",
+              "SupportedMapSizes": [
+                  16,
+                  32
+              ]
+          }
+      ]
   },
   {
-    "Available": true,
-    "Description": "Wide valley with long bridges that connect two cliffs. Inspired by the mountain Tebulosmta in Georgia.",
-    "Name": "Wakistan",
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/b/b5/WakistanBanner.png",
-    "SupportedGamemodes": [
-      {
-        "GameMode": "CONQ",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
+      "Available": true,
+      "Description": "Wide valley with long bridges that connect two cliffs. Inspired by the mountain Tebulosmta in Georgia.",
+      "ImageUrls": {
+          "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/wakistan/DiscordIcon.png",
+          "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/wakistan/EndGame.png",
+          "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/wakistan/LoadingScreen.png",
+          "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/wakistan/MainMap.png",
+          "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/wakistan/ServerList.png"
       },
-      {
-        "GameMode": "INFCONQ",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "DOMI",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "FRONTLINE",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      }
-    ]
+      "Name": "Wakistan",
+      "SupportedGamemodes": [
+          {
+              "GameMode": "CONQ",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "INFCONQ",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "DOMI",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "FRONTLINE",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          }
+      ]
   },
   {
-    "Available": true,
-    "Description": "A seaside village surrounded by rural countryside and vineyards.",
-    "DisplayName": "Wine Paradise",
-    "Name": "WineParadise",
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/5/5e/WineParadiseBanner.png",
-    "SupportedGamemodes": [
-      {
-        "GameMode": "TDM",
-        "SupportedMapSizes": [
-          8,
-          16
-        ]
+      "Available": true,
+      "Description": "A seaside village surrounded by rural countryside and vineyards.",
+      "DisplayName": "Wine Paradise",
+      "ImageUrls": {
+          "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/wineparadise/DiscordIcon.png",
+          "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/wineparadise/EndGame.png",
+          "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/wineparadise/LoadingScreen.png",
+          "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/wineparadise/MainMap.png",
+          "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/wineparadise/ServerList.png"
       },
-      {
-        "GameMode": "CONQ",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "INFCONQ",
-        "SupportedMapSizes": [
-          32
-        ]
-      },
-      {
-        "GameMode": "DOMI",
-        "SupportedMapSizes": [
-          16,
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "GunGameFFA",
-        "SupportedMapSizes": [
-          8,
-          16
-        ]
-      },
-      {
-        "GameMode": "GunGameTeam",
-        "SupportedMapSizes": [
-          8,
-          16
-        ]
-      },
-      {
-        "GameMode": "FFA",
-        "SupportedMapSizes": [
-          8,
-          16
-        ]
-      },
-      {
-        "GameMode": "CashRun",
-        "SupportedMapSizes": [
-          16,
-          32
-        ]
-      }
-    ]
+      "Name": "WineParadise",
+      "SupportedGamemodes": [
+          {
+              "GameMode": "TDM",
+              "SupportedMapSizes": [
+                  8,
+                  16
+              ]
+          },
+          {
+              "GameMode": "CONQ",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "INFCONQ",
+              "SupportedMapSizes": [
+                  32
+              ]
+          },
+          {
+              "GameMode": "DOMI",
+              "SupportedMapSizes": [
+                  16,
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "GunGameFFA",
+              "SupportedMapSizes": [
+                  8,
+                  16
+              ]
+          },
+          {
+              "GameMode": "GunGameTeam",
+              "SupportedMapSizes": [
+                  8,
+                  16
+              ]
+          },
+          {
+              "GameMode": "FFA",
+              "SupportedMapSizes": [
+                  8,
+                  16
+              ]
+          },
+          {
+              "GameMode": "CashRun",
+              "SupportedMapSizes": [
+                  16,
+                  32
+              ]
+          }
+      ]
   },
   {
-    "Available": true,
-    "Description": "Old version of the map District. We had plans to have both old and new rework of district at same time, but due bug it was not possible to do yet, but now you will able to experience a old and cozy version o District on community servers.",
-    "DisplayName": "District (Old)",
-    "Name": "Old_District",
-    "PreviewImageUrl": "https://media.discordapp.net/attachments/650516234366091274/1146281898331623545/EndGame.png",
-    "SupportedGamemodes": [
-      {
-        "GameMode": "TDM",
-        "SupportedMapSizes": [
-          8,
-          16
-        ]
+      "Available": true,
+      "Description": "Old version of the map District. We had plans to have both old and new rework of district at same time, but due bug it was not possible to do yet, but now you will able to experience a old and cozy version o District on community servers.",
+      "DisplayName": "District (Old)",
+      "ImageUrls": {
+          "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_district/DiscordIcon.png",
+          "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_district/EndGame.png",
+          "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_district/LoadingScreen.png",
+          "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_district/MainMap.png",
+          "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_district/ServerList.png"
       },
-      {
-        "GameMode": "RUSH",
-        "SupportedMapSizes": [
-          16,
-          32
-        ]
-      },
-      {
-        "GameMode": "CONQ",
-        "SupportedMapSizes": [
-          32,
-          64
-        ]
-      },
-      {
-        "GameMode": "INFCONQ",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "DOMI",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "ELI",
-        "SupportedMapSizes": [
-          16
-        ]
-      },
-      {
-        "GameMode": "CashRun",
-        "SupportedMapSizes": [
-          16,
-          32
-        ]
-      }
-    ]
+      "Name": "Old_District",
+      "SupportedGamemodes": [
+          {
+              "GameMode": "TDM",
+              "SupportedMapSizes": [
+                  8,
+                  16
+              ]
+          },
+          {
+              "GameMode": "RUSH",
+              "SupportedMapSizes": [
+                  16,
+                  32
+              ]
+          },
+          {
+              "GameMode": "CONQ",
+              "SupportedMapSizes": [
+                  32,
+                  64
+              ]
+          },
+          {
+              "GameMode": "INFCONQ",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "DOMI",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "ELI",
+              "SupportedMapSizes": [
+                  16
+              ]
+          },
+          {
+              "GameMode": "CashRun",
+              "SupportedMapSizes": [
+                  16,
+                  32
+              ]
+          }
+      ]
   },
   {
-    "Available": true,
-    "Description": "Old version of the map Eduardovo. One of the old maps of the milsim era of Battlebit 2019 , you will note it by lack of cover and super spread objective locations.",
-    "DisplayName": "Eduardovo (Old)",
-    "Name": "Old_Eduardovo",
-    "PreviewImageUrl": "https://media.discordapp.net/attachments/650516234366091274/1146281898616832081/EndGame.png",
-    "SupportedGamemodes": [
-      {
-        "GameMode": "TDM",
-        "SupportedMapSizes": [
-          8,
-          16,
-          32
-        ]
+      "Available": true,
+      "Description": "Old version of the map Eduardovo. One of the old maps of the milsim era of Battlebit 2019 , you will note it by lack of cover and super spread objective locations.",
+      "DisplayName": "Eduardovo (Old)",
+      "ImageUrls": {
+          "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_eduardovo/DiscordIcon.png",
+          "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_eduardovo/EndGame.png",
+          "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_eduardovo/LoadingScreen.png",
+          "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_eduardovo/MainMap.png",
+          "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_eduardovo/ServerList.png"
       },
-      {
-        "GameMode": "CONQ",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "ELI",
-        "SupportedMapSizes": [
-          16,
-          32
-        ]
-      },
-      {
-        "GameMode": "FRONTLINE",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      }
-    ]
+      "Name": "Old_Eduardovo",
+      "SupportedGamemodes": [
+          {
+              "GameMode": "TDM",
+              "SupportedMapSizes": [
+                  8,
+                  16,
+                  32
+              ]
+          },
+          {
+              "GameMode": "CONQ",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "ELI",
+              "SupportedMapSizes": [
+                  16,
+                  32
+              ]
+          },
+          {
+              "GameMode": "FRONTLINE",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          }
+      ]
   },
   {
-    "Available": true,
-    "Description": "Old version of the map Multu Islands. One of the maps that was available at release of game on Early Access as well, and now you will able to play on old version of map and directly compare it to new one on official servers.",
-    "DisplayName": "Multu Islands (Old)",
-    "Name": "Old_MultuIslands",
-    "PreviewImageUrl": "https://media.discordapp.net/attachments/650516234366091274/1146281898914615346/EndGame.png",
-    "SupportedGamemodes": [
-      {
-        "GameMode": "TDM",
-        "SupportedMapSizes": [
-          8,
-          16
-        ]
+      "Available": true,
+      "Description": "Old version of the map Multu Islands. One of the maps that was available at release of game on Early Access as well, and now you will able to play on old version of map and directly compare it to new one on official servers.",
+      "DisplayName": "Multu Islands (Old)",
+      "ImageUrls": {
+          "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_multuislands/DiscordIcon.png",
+          "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_multuislands/EndGame.png",
+          "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_multuislands/LoadingScreen.png",
+          "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_multuislands/MainMap.png",
+          "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_multuislands/ServerList.png"
       },
-      {
-        "GameMode": "CONQ",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      }
-    ]
+      "Name": "Old_MultuIslands",
+      "SupportedGamemodes": [
+          {
+              "GameMode": "TDM",
+              "SupportedMapSizes": [
+                  8,
+                  16
+              ]
+          },
+          {
+              "GameMode": "CONQ",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          }
+      ]
   },
   {
-    "Available": true,
-    "Description": "Old version of the map Namak. One of the oldest Battlebit map 2020-2022 playtest era ,that was a placeholder map for a urban fight scenario. Map was super compact and provide a lot of buildings and floors to access that was lead to a super chaos gameplay, you will note a big contrast between old and new Namak.",
-    "DisplayName": "Namak (Old)",
-    "Name": "Old_Namak",
-    "PreviewImageUrl": "https://media.discordapp.net/attachments/650516234366091274/1146281899258564660/EndGame.png",
-    "SupportedGamemodes": [
-      {
-        "GameMode": "TDM",
-        "SupportedMapSizes": [
-          8,
-          16
-        ]
+      "Available": true,
+      "Description": "Old version of the map Namak. One of the oldest Battlebit map 2020-2022 playtest era ,that was a placeholder map for a urban fight scenario. Map was super compact and provide a lot of buildings and floors to access that was lead to a super chaos gameplay, you will note a big contrast between old and new Namak.",
+      "DisplayName": "Namak (Old)",
+      "ImageUrls": {
+          "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_namak/DiscordIcon.png",
+          "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_namak/EndGame.png",
+          "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_namak/LoadingScreen.png",
+          "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_namak/MainMap.png",
+          "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_namak/ServerList.png"
       },
-      {
-        "GameMode": "CONQ",
-        "SupportedMapSizes": [
-          16,
-          32,
-          64
-        ]
-      },
-      {
-        "GameMode": "DOMI",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "GunGameFFA",
-        "SupportedMapSizes": [
-          8
-        ]
-      },
-      {
-        "GameMode": "GunGameTeam",
-        "SupportedMapSizes": [
-          8,
-          16
-        ]
-      },
-      {
-        "GameMode": "FFA",
-        "SupportedMapSizes": [
-          8
-        ]
-      }
-    ]
+      "Name": "Old_Namak",
+      "SupportedGamemodes": [
+          {
+              "GameMode": "TDM",
+              "SupportedMapSizes": [
+                  8,
+                  16
+              ]
+          },
+          {
+              "GameMode": "CONQ",
+              "SupportedMapSizes": [
+                  16,
+                  32,
+                  64
+              ]
+          },
+          {
+              "GameMode": "DOMI",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "GunGameFFA",
+              "SupportedMapSizes": [
+                  8
+              ]
+          },
+          {
+              "GameMode": "GunGameTeam",
+              "SupportedMapSizes": [
+                  8,
+                  16
+              ]
+          },
+          {
+              "GameMode": "FFA",
+              "SupportedMapSizes": [
+                  8
+              ]
+          }
+      ]
   },
   {
-    "Available": true,
-    "Description": "Old version of the map Oil Dunes. Another map from 2021-2022 playtest era where are both teams had big amount of armored vehicles (14 Tanks and 9 APC on Conquest 256 players). That map is not friendly for infartry for sure.",
-    "DisplayName": "Oil Dunes (Old)",
-    "Name": "Old_OilDunes",
-    "PreviewImageUrl": "https://media.discordapp.net/attachments/650516234366091274/1146281899585716324/EndGame.png",
-    "SupportedGamemodes": [
-      {
-        "GameMode": "TDM",
-        "SupportedMapSizes": [
-          16,
-          32
-        ]
+      "Available": true,
+      "Description": "Old version of the map Oil Dunes. Another map from 2021-2022 playtest era where are both teams had big amount of armored vehicles (14 Tanks and 9 APC on Conquest 256 players). That map is not friendly for infartry for sure.",
+      "DisplayName": "Oil Dunes (Old)",
+      "ImageUrls": {
+          "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_oildunes/DiscordIcon.png",
+          "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_oildunes/EndGame.png",
+          "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_oildunes/LoadingScreen.png",
+          "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_oildunes/MainMap.png",
+          "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_oildunes/ServerList.png"
       },
-      {
-        "GameMode": "CONQ",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "ELI",
-        "SupportedMapSizes": [
-          16,
-          32
-        ]
-      }
-    ]
+      "Name": "Old_OilDunes",
+      "SupportedGamemodes": [
+          {
+              "GameMode": "TDM",
+              "SupportedMapSizes": [
+                  16,
+                  32
+              ]
+          },
+          {
+              "GameMode": "CONQ",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "ELI",
+              "SupportedMapSizes": [
+                  16,
+                  32
+              ]
+          }
+      ]
   },
   {
-    "Available": true,
-    "Description": "Features a 2000x2000 meters playable area with new experimental placement of objectives, where are distance between them will be around 300m instead of 500m like on our current big scale maps.",
-    "DisplayName": "Zalfi Bay",
-    "Name": "ZalfiBay",
-    "PreviewImageUrl": "https://media.discordapp.net/attachments/438070589547216898/1152760075300110428/image.png",
-    "SupportedGamemodes": [
-      {
-        "GameMode": "CONQ",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
+      "Available": true,
+      "Description": "Features a 2000x2000 meters playable area with new experimental placement of objectives, where are distance between them will be around 300m instead of 500m like on our current big scale maps.",
+      "DisplayName": "Zalfi Bay",
+      "ImageUrls": {
+          "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/zalfibay/DiscordIcon.png",
+          "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/zalfibay/EndGame.png",
+          "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/zalfibay/LoadingScreen.png",
+          "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/zalfibay/MainMap.png",
+          "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/zalfibay/ServerList.png"
       },
-      {
-        "GameMode": "INFCONQ",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "DOMI",
-        "SupportedMapSizes": [
-          16,
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "FRONTLINE",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "CTF",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      }
-    ]
+      "Name": "ZalfiBay",
+      "SupportedGamemodes": [
+          {
+              "GameMode": "CONQ",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "INFCONQ",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "DOMI",
+              "SupportedMapSizes": [
+                  16,
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "FRONTLINE",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "CTF",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          }
+      ]
   },
   {
-    "Available": false,
-    "Description": "This map is primarily focused on infantry based gameplay rather than vehicular and infantry mixed, and it's smaller compared to other maps.",
-    "Name": "Kodiak",
-    "PreviewImageUrl": "https://media.discordapp.net/attachments/438070589547216898/1158943835561394257/image.png",
-    "SupportedGamemodes": [
-      {
-        "GameMode": "RUSH",
-        "SupportedMapSizes": [
-          16,
-          32
-        ]
+      "Available": false,
+      "Description": "This map is primarily focused on infantry based gameplay rather than vehicular and infantry mixed, and it's smaller compared to other maps.",
+      "ImageUrls": {
+          "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/kodiak/DiscordIcon.png",
+          "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/kodiak/EndGame.png",
+          "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/kodiak/LoadingScreen.png",
+          "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/kodiak/MainMap.png",
+          "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/kodiak/ServerList.png"
       },
-      {
-        "GameMode": "CONQ",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "INFCONQ",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "DOMI",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      },
-      {
-        "GameMode": "CTF",
-        "SupportedMapSizes": [
-          32,
-          64,
-          90
-        ]
-      }
-    ]
+      "Name": "Kodiak",
+      "SupportedGamemodes": [
+          {
+              "GameMode": "RUSH",
+              "SupportedMapSizes": [
+                  16,
+                  32
+              ]
+          },
+          {
+              "GameMode": "CONQ",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "INFCONQ",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "DOMI",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          },
+          {
+              "GameMode": "CTF",
+              "SupportedMapSizes": [
+                  32,
+                  64,
+                  90
+              ]
+          }
+      ]
   },
   {
-    "Available": false,
-    "Description": "Tutorial map",
-    "Name": "Polygon"
+      "Available": false,
+      "Description": "Tutorial map",
+      "ImageUrls": {
+          "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/polygon/DiscordIcon.png",
+          "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/polygon/EndGame.png",
+          "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/polygon/LoadingScreen.png",
+          "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/polygon/MainMap.png",
+          "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/polygon/ServerList.png"
+      },
+      "Name": "Polygon"
   }
 ]
