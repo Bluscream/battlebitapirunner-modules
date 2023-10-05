@@ -1135,7 +1135,7 @@
   },
   {
     "Available": true,
-    "Description": "Old version of the map District.",
+    "Description": "Old version of the map District. We had plans to have both old and new rework of district at same time, but due bug it was not possible to do yet, but now you will able to experience a old and cozy version o District on community servers.",
     "DisplayName": "District (Old)",
     "Name": "Old_District",
     "PreviewImageUrl": "https://media.discordapp.net/attachments/650516234366091274/1146281898331623545/EndGame.png",
@@ -1194,7 +1194,7 @@
   },
   {
     "Available": true,
-    "Description": "Old version of the map Eduardovo.",
+    "Description": "Old version of the map Eduardovo. One of the old maps of the milsim era of Battlebit 2019 , you will note it by lack of cover and super spread objective locations.",
     "DisplayName": "Eduardovo (Old)",
     "Name": "Old_Eduardovo",
     "PreviewImageUrl": "https://media.discordapp.net/attachments/650516234366091274/1146281898616832081/EndGame.png",
@@ -1234,7 +1234,7 @@
   },
   {
     "Available": true,
-    "Description": "Old version of the map Multu Islands.",
+    "Description": "Old version of the map Multu Islands. One of the maps that was available at release of game on Early Access as well, and now you will able to play on old version of map and directly compare it to new one on official servers.",
     "DisplayName": "Multu Islands (Old)",
     "Name": "Old_MultuIslands",
     "PreviewImageUrl": "https://media.discordapp.net/attachments/650516234366091274/1146281898914615346/EndGame.png",
@@ -1258,7 +1258,7 @@
   },
   {
     "Available": true,
-    "Description": "Old version of the map Namak.",
+    "Description": "Old version of the map Namak. One of the oldest Battlebit map 2020-2022 playtest era ,that was a placeholder map for a urban fight scenario. Map was super compact and provide a lot of buildings and floors to access that was lead to a super chaos gameplay, you will note a big contrast between old and new Namak.",
     "DisplayName": "Namak (Old)",
     "Name": "Old_Namak",
     "PreviewImageUrl": "https://media.discordapp.net/attachments/650516234366091274/1146281899258564660/EndGame.png",
@@ -1309,7 +1309,7 @@
   },
   {
     "Available": true,
-    "Description": "Old version of the map Oil Dunes.",
+    "Description": "Old version of the map Oil Dunes. Another map from 2021-2022 playtest era where are both teams had big amount of armored vehicles (14 Tanks and 9 APC on Conquest 256 players). That map is not friendly for infartry for sure.",
     "DisplayName": "Oil Dunes (Old)",
     "Name": "Old_OilDunes",
     "PreviewImageUrl": "https://media.discordapp.net/attachments/650516234366091274/1146281899585716324/EndGame.png",
@@ -1340,6 +1340,7 @@
   },
   {
     "Available": true,
+    "Description": "Features a 2000x2000 meters playable area with new experimental placement of objectives, where are distance between them will be around 300m instead of 500m like on our current big scale maps.",
     "DisplayName": "Zalfi Bay",
     "Name": "ZalfiBay",
     "PreviewImageUrl": "https://media.discordapp.net/attachments/438070589547216898/1152760075300110428/image.png",
@@ -1389,6 +1390,7 @@
   },
   {
     "Available": false,
+    "Description": "This map is primarily focused on infantry based gameplay rather than vehicular and infantry mixed, and it's smaller compared to other maps.",
     "Name": "Kodiak",
     "PreviewImageUrl": "https://media.discordapp.net/attachments/438070589547216898/1158943835561394257/image.png",
     "SupportedGamemodes": [
