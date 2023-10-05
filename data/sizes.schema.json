@@ -1,0 +1,82 @@
+{
+	"definitions": {},
+	"$schema": "http://json-schema.org/draft-07/schema#", 
+	"$id": "https://example.com/object1696480475.json", 
+	"title": "Root", 
+	"type": "array",
+	"default": [],
+	"items":{
+		"$id": "#root/items", 
+		"title": "Items", 
+		"type": "object",
+		"properties": {
+			"Available": {
+				"$id": "#root/items/Available", 
+				"title": "Available", 
+				"type": "boolean",
+				"examples": [
+					true
+				],
+				"default": true
+			},
+			"EnumValue": {
+				"$id": "#root/items/EnumValue", 
+				"title": "Enumvalue", 
+				"type": "integer",
+				"examples": [
+					8
+				],
+				"default": 0
+			},
+			"PlayersPerTeam": {
+				"$id": "#root/items/PlayersPerTeam", 
+				"title": "Playersperteam", 
+				"type": "integer",
+				"examples": [
+					8
+				],
+				"default": 0
+			},
+			"TotalSize": {
+				"$id": "#root/items/TotalSize", 
+				"title": "Totalsize", 
+				"type": "integer",
+				"examples": [
+					16
+				],
+				"default": 0
+			},
+			"ShortName": {
+				"$id": "#root/items/ShortName", 
+				"title": "Shortname", 
+				"type": "string",
+				"default": "",
+				"examples": [
+					"8v8"
+				],
+				"pattern": "^.*$"
+			},
+			"LongName": {
+				"$id": "#root/items/LongName", 
+				"title": "Longname", 
+				"type": "string",
+				"default": "",
+				"examples": [
+					"8 vs. 8"
+				],
+				"pattern": "^.*$"
+			},
+			"Description": {
+				"$id": "#root/items/Description", 
+				"title": "Description", 
+				"type": "string",
+				"default": "",
+				"examples": [
+					"8 versus 8 players"
+				],
+				"pattern": "^.*$"
+			}
+		}
+	}
+
+}

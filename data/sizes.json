@@ -1,0 +1,55 @@
+[
+    {
+        "Available": true,
+        "EnumValue": 8,
+        "PlayersPerTeam": 8,
+        "TotalSize": 16,
+        "ShortName": "8v8",
+        "LongName": "8 vs. 8",
+        "Description": "8 versus 8 players"
+    },
+    {
+        "Available": true,
+        "EnumValue": 16,
+        "PlayersPerTeam": 16,
+        "TotalSize": 32,
+        "ShortName": "16v16",
+        "LongName": "16 vs. 16",
+        "Description": "16 versus 16 players"
+    },
+    {
+        "Available": true,
+        "EnumValue": 32,
+        "PlayersPerTeam": 32,
+        "TotalSize": 64,
+        "ShortName": "32v32",
+        "LongName": "32 vs. 32",
+        "Description": "32 versus 32 players"
+    },
+    {
+        "Available": true,
+        "EnumValue": 64,
+        "PlayersPerTeam": 64,
+        "TotalSize": 128,
+        "ShortName": "64v64",
+        "LongName": "64 vs. 64",
+        "Description": "64 versus 64 players"
+    },
+    {
+        "Available": true,
+        "EnumValue": 90,
+        "PlayersPerTeam": 127,
+        "TotalSize": 254,
+        "ShortName": "127v127",
+        "LongName": "127 vs. 127",
+        "Description": "127 versus 127 players"
+    },
+    {
+        "Available": false,
+        "PlayersPerTeam": 254,
+        "TotalSize": 508,
+        "ShortName": "254v254",
+        "LongName": "254 vs. 254",
+        "Description": "254 versus 254 players"
+    }
+]
