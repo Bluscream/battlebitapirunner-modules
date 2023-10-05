@@ -681,6 +681,52 @@
 	},
 	{
 		"Available": true,
+		"Description": "Old version of the map Eduardovo. One of the old maps of the milsim era of Battlebit 2019 , you will note it by lack of cover and super spread objective locations.",
+		"DisplayName": "Eduardovo (Old)",
+		"ImageUrls": {
+			"DiscordIcon": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_eduardovo/DiscordIcon.png",
+			"EndGame": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_eduardovo/EndGame.png",
+			"LoadingScreen": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_eduardovo/LoadingScreen.png",
+			"MainMap": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_eduardovo/MainMap.png",
+			"ServerList": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_eduardovo/ServerList.png"
+		},
+		"Name": "Old_Eduardovo",
+		"SupportedGamemodes": [
+			{
+				"GameMode": "TDM",
+				"SupportedMapSizes": [
+					8,
+					16,
+					32
+				]
+			},
+			{
+				"GameMode": "CONQ",
+				"SupportedMapSizes": [
+					32,
+					64,
+					90
+				]
+			},
+			{
+				"GameMode": "ELI",
+				"SupportedMapSizes": [
+					16,
+					32
+				]
+			},
+			{
+				"GameMode": "FRONTLINE",
+				"SupportedMapSizes": [
+					32,
+					64,
+					90
+				]
+			}
+		]
+	},
+	{
+		"Available": true,
 		"Description": "A small island chain with a fortified military base.",
 		"DisplayName": "Multu Islands",
 		"ImageUrls": {
@@ -781,50 +827,6 @@
 	},
 	{
 		"Available": true,
-		"Description": "A sprawling oil extraction operation in flat, desert region.",
-		"DisplayName": "Oil Dunes",
-		"ImageUrls": {
-			"DiscordIcon": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/oildunes/DiscordIcon.png",
-			"EndGame": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/oildunes/EndGame.png",
-			"LoadingScreen": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/oildunes/LoadingScreen.png",
-			"MainMap": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/oildunes/MainMap.png",
-			"ServerList": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/oildunes/ServerList.png"
-		},
-		"Name": "OilDunes",
-		"SupportedGamemodes": [
-			{
-				"GameMode": "CONQ",
-				"SupportedMapSizes": [
-					32
-				]
-			},
-			{
-				"GameMode": "INFCONQ",
-				"SupportedMapSizes": [
-					32,
-					64
-				]
-			},
-			{
-				"GameMode": "DOMI",
-				"SupportedMapSizes": [
-					16,
-					32,
-					64,
-					90
-				]
-			},
-			{
-				"GameMode": "CashRun",
-				"SupportedMapSizes": [
-					16,
-					32
-				]
-			}
-		]
-	},
-	{
-		"Available": true,
 		"Description": "Old version of the map District. We had plans to have both old and new rework of district at same time, but due bug it was not possible to do yet, but now you will able to experience a old and cozy version o District on community servers.",
 		"DisplayName": "District (Old)",
 		"ImageUrls": {
@@ -884,52 +886,6 @@
 				"SupportedMapSizes": [
 					16,
 					32
-				]
-			}
-		]
-	},
-	{
-		"Available": true,
-		"Description": "Old version of the map Eduardovo. One of the old maps of the milsim era of Battlebit 2019 , you will note it by lack of cover and super spread objective locations.",
-		"DisplayName": "Eduardovo (Old)",
-		"ImageUrls": {
-			"DiscordIcon": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_eduardovo/DiscordIcon.png",
-			"EndGame": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_eduardovo/EndGame.png",
-			"LoadingScreen": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_eduardovo/LoadingScreen.png",
-			"MainMap": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_eduardovo/MainMap.png",
-			"ServerList": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_eduardovo/ServerList.png"
-		},
-		"Name": "Old_Eduardovo",
-		"SupportedGamemodes": [
-			{
-				"GameMode": "TDM",
-				"SupportedMapSizes": [
-					8,
-					16,
-					32
-				]
-			},
-			{
-				"GameMode": "CONQ",
-				"SupportedMapSizes": [
-					32,
-					64,
-					90
-				]
-			},
-			{
-				"GameMode": "ELI",
-				"SupportedMapSizes": [
-					16,
-					32
-				]
-			},
-			{
-				"GameMode": "FRONTLINE",
-				"SupportedMapSizes": [
-					32,
-					64,
-					90
 				]
 			}
 		]
@@ -1023,6 +979,50 @@
 	},
 	{
 		"Available": true,
+		"Description": "A sprawling oil extraction operation in flat, desert region.",
+		"DisplayName": "Oil Dunes",
+		"ImageUrls": {
+			"DiscordIcon": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/oildunes/DiscordIcon.png",
+			"EndGame": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/oildunes/EndGame.png",
+			"LoadingScreen": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/oildunes/LoadingScreen.png",
+			"MainMap": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/oildunes/MainMap.png",
+			"ServerList": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/oildunes/ServerList.png"
+		},
+		"Name": "OilDunes",
+		"SupportedGamemodes": [
+			{
+				"GameMode": "CONQ",
+				"SupportedMapSizes": [
+					32
+				]
+			},
+			{
+				"GameMode": "INFCONQ",
+				"SupportedMapSizes": [
+					32,
+					64
+				]
+			},
+			{
+				"GameMode": "DOMI",
+				"SupportedMapSizes": [
+					16,
+					32,
+					64,
+					90
+				]
+			},
+			{
+				"GameMode": "CashRun",
+				"SupportedMapSizes": [
+					16,
+					32
+				]
+			}
+		]
+	},
+	{
+		"Available": true,
 		"Description": "Old version of the map Oil Dunes. Another map from 2021-2022 playtest era where are both teams had big amount of armored vehicles (14 Tanks and 9 APC on Conquest 256 players). That map is not friendly for infartry for sure.",
 		"DisplayName": "Oil Dunes (Old)",
 		"ImageUrls": {
@@ -1072,6 +1072,18 @@
 		"Name": "Old_SandySunset"
 	},
 	{
+		"Available": true,
+		"DisplayName": "Voxel Land",
+		"ImageUrls": {
+			"DiscordIcon": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/voxelland/DiscordIcon.png",
+			"EndGame": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/voxelland/EndGame.png",
+			"LoadingScreen": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/voxelland/LoadingScreen.png",
+			"MainMap": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/voxelland/MainMap.png",
+			"ServerList": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/voxelland/ServerList.png"
+		},
+		"Name": "Voxelland"
+	},
+	{
 		"Available": false,
 		"Description": "Old version of the map Wakistan.",
 		"DisplayName": "Wakistan (Old)",
@@ -1083,6 +1095,79 @@
 			"ServerList": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_wakistan/ServerList.png"
 		},
 		"Name": "Old_Wakistan"
+	},
+	{
+		"Available": true,
+		"Description": "A seaside village surrounded by rural countryside and vineyards.",
+		"DisplayName": "Wine Paradise",
+		"ImageUrls": {
+			"DiscordIcon": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/wineparadise/DiscordIcon.png",
+			"EndGame": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/wineparadise/EndGame.png",
+			"LoadingScreen": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/wineparadise/LoadingScreen.png",
+			"MainMap": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/wineparadise/MainMap.png",
+			"ServerList": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/wineparadise/ServerList.png"
+		},
+		"Name": "WineParadise",
+		"SupportedGamemodes": [
+			{
+				"GameMode": "TDM",
+				"SupportedMapSizes": [
+					8,
+					16
+				]
+			},
+			{
+				"GameMode": "CONQ",
+				"SupportedMapSizes": [
+					32,
+					64,
+					90
+				]
+			},
+			{
+				"GameMode": "INFCONQ",
+				"SupportedMapSizes": [
+					32
+				]
+			},
+			{
+				"GameMode": "DOMI",
+				"SupportedMapSizes": [
+					16,
+					32,
+					64,
+					90
+				]
+			},
+			{
+				"GameMode": "GunGameFFA",
+				"SupportedMapSizes": [
+					8,
+					16
+				]
+			},
+			{
+				"GameMode": "GunGameTeam",
+				"SupportedMapSizes": [
+					8,
+					16
+				]
+			},
+			{
+				"GameMode": "FFA",
+				"SupportedMapSizes": [
+					8,
+					16
+				]
+			},
+			{
+				"GameMode": "CashRun",
+				"SupportedMapSizes": [
+					16,
+					32
+				]
+			}
+		]
 	},
 	{
 		"Available": false,
@@ -1492,18 +1577,6 @@
 	},
 	{
 		"Available": true,
-		"DisplayName": "Voxel Land",
-		"ImageUrls": {
-			"DiscordIcon": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/voxelland/DiscordIcon.png",
-			"EndGame": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/voxelland/EndGame.png",
-			"LoadingScreen": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/voxelland/LoadingScreen.png",
-			"MainMap": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/voxelland/MainMap.png",
-			"ServerList": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/voxelland/ServerList.png"
-		},
-		"Name": "Voxelland"
-	},
-	{
-		"Available": true,
 		"Description": "Wide valley with long bridges that connect two cliffs. Inspired by the mountain Tebulosmta in Georgia.",
 		"ImageUrls": {
 			"DiscordIcon": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/wakistan/DiscordIcon.png",
@@ -1544,79 +1617,6 @@
 					32,
 					64,
 					90
-				]
-			}
-		]
-	},
-	{
-		"Available": true,
-		"Description": "A seaside village surrounded by rural countryside and vineyards.",
-		"DisplayName": "Wine Paradise",
-		"ImageUrls": {
-			"DiscordIcon": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/wineparadise/DiscordIcon.png",
-			"EndGame": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/wineparadise/EndGame.png",
-			"LoadingScreen": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/wineparadise/LoadingScreen.png",
-			"MainMap": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/wineparadise/MainMap.png",
-			"ServerList": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/wineparadise/ServerList.png"
-		},
-		"Name": "WineParadise",
-		"SupportedGamemodes": [
-			{
-				"GameMode": "TDM",
-				"SupportedMapSizes": [
-					8,
-					16
-				]
-			},
-			{
-				"GameMode": "CONQ",
-				"SupportedMapSizes": [
-					32,
-					64,
-					90
-				]
-			},
-			{
-				"GameMode": "INFCONQ",
-				"SupportedMapSizes": [
-					32
-				]
-			},
-			{
-				"GameMode": "DOMI",
-				"SupportedMapSizes": [
-					16,
-					32,
-					64,
-					90
-				]
-			},
-			{
-				"GameMode": "GunGameFFA",
-				"SupportedMapSizes": [
-					8,
-					16
-				]
-			},
-			{
-				"GameMode": "GunGameTeam",
-				"SupportedMapSizes": [
-					8,
-					16
-				]
-			},
-			{
-				"GameMode": "FFA",
-				"SupportedMapSizes": [
-					8,
-					16
-				]
-			},
-			{
-				"GameMode": "CashRun",
-				"SupportedMapSizes": [
-					16,
-					32
 				]
 			}
 		]
