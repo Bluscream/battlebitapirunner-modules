@@ -1,0 +1,34 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        repository: 'Bluscream/battlebitapirunner-modules'
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '6.0.x'
+
+    - name: Checkout BattleBitAPIRunner
+      uses: actions/checkout@v4
+      with:
+        repository: 'BattleBit-Community-Servers/BattleBitAPIRunner'
+        path: 'BattleBitAPIRunner'
+
+    - name: Build BattleBitAPIRunner
+      run: dotnet build ./BattleBitAPIRunner
+
+    - name: Build battlebitapirunner-modules
+      run: dotnet build .
