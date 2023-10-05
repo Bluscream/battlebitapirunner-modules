@@ -1,7 +1,7 @@
 {
 	"definitions": {},
 	"$schema": "http://json-schema.org/draft-07/schema#", 
-	"$id": "https://example.com/object1696477088.json", 
+	"$id": "https://example.com/object1696543092.json", 
 	"title": "Root", 
 	"type": "array",
 	"default": [],
@@ -10,6 +10,93 @@
 		"title": "Items", 
 		"type": "object",
 		"properties": {
+			"Available": {
+				"$id": "#root/items/Available", 
+				"title": "Available", 
+				"type": "boolean",
+				"examples": [
+					true
+				],
+				"default": true
+			},
+			"Description": {
+				"$id": "#root/items/Description", 
+				"title": "Description", 
+				"type": "string",
+				"default": "",
+				"examples": [
+					"A desert island with a small town."
+				],
+				"pattern": "^.*$"
+			},
+			"ImageUrls": {
+				"$id": "#root/items/ImageUrls", 
+				"title": "Imageurls", 
+				"type": "object",
+				"properties": {
+					"DiscordIcon": {
+						"$id": "#root/items/ImageUrls/DiscordIcon", 
+						"title": "Discordicon", 
+						"type": "string",
+						"default": "",
+						"examples": [
+							"https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/azagor/DiscordIcon.png"
+						],
+						"pattern": "^.*$"
+					},
+					"EndGame": {
+						"$id": "#root/items/ImageUrls/EndGame", 
+						"title": "Endgame", 
+						"type": "string",
+						"default": "",
+						"examples": [
+							"https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/azagor/EndGame.png"
+						],
+						"pattern": "^.*$"
+					},
+					"LoadingScreen": {
+						"$id": "#root/items/ImageUrls/LoadingScreen", 
+						"title": "Loadingscreen", 
+						"type": "string",
+						"default": "",
+						"examples": [
+							"https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/azagor/LoadingScreen.png"
+						],
+						"pattern": "^.*$"
+					},
+					"MainMap": {
+						"$id": "#root/items/ImageUrls/MainMap", 
+						"title": "Mainmap", 
+						"type": "string",
+						"default": "",
+						"examples": [
+							"https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/azagor/MainMap.png"
+						],
+						"pattern": "^.*$"
+					},
+					"ServerList": {
+						"$id": "#root/items/ImageUrls/ServerList", 
+						"title": "Serverlist", 
+						"type": "string",
+						"default": "",
+						"examples": [
+							"https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/azagor/ServerList.png"
+						],
+						"pattern": "^.*$"
+					}
+				}
+			}
+,
+			"Name": {
+				"$id": "#root/items/Name", 
+				"title": "Name", 
+				"type": "string",
+				"default": "",
+				"examples": [
+					"Azagor"
+				],
+				"pattern": "^.*$"
+			},
 			"SupportedGamemodes": {
 				"$id": "#root/items/SupportedGamemodes", 
 				"title": "Supportedgamemodes", 
@@ -48,45 +135,6 @@
 					}
 				}
 
-			},
-			"PreviewImageUrl": {
-				"$id": "#root/items/PreviewImageUrl", 
-				"title": "Previewimageurl", 
-				"type": "string",
-				"default": "",
-				"examples": [
-					"https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/2/2c/AzagorBanner.png/revision/latest"
-				],
-				"pattern": "^.*$"
-			},
-			"Available": {
-				"$id": "#root/items/Available", 
-				"title": "Available", 
-				"type": "boolean",
-				"examples": [
-					true
-				],
-				"default": true
-			},
-			"Name": {
-				"$id": "#root/items/Name", 
-				"title": "Name", 
-				"type": "string",
-				"default": "",
-				"examples": [
-					"Azagor"
-				],
-				"pattern": "^.*$"
-			},
-			"Description": {
-				"$id": "#root/items/Description", 
-				"title": "Description", 
-				"type": "string",
-				"default": "",
-				"examples": [
-					"A desert island with a small town."
-				],
-				"pattern": "^.*$"
 			}
 		}
 	}
