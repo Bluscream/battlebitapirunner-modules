@@ -71,7 +71,6 @@ namespace Bluscream {
                 }
                 return moduleInfos;
             }
-            [Obsolete]
             public List<ModuleFileMetaData> ParseModules(DirectoryInfo directory) {
                 var moduleInfos = new List<ModuleFileMetaData>();
                 foreach (var file in directory.GetFiles("*.cs")) {
@@ -112,9 +111,7 @@ namespace Bluscream {
 
                 return moduleInfos;
             }
-            [Obsolete]
             public List<ModuleMetaData> ParseModule(Type moduleType) => ParseModule(moduleType.GetType().Assembly);
-            [Obsolete]
             public List<ModuleMetaData> ParseModule(Assembly moduleAssembly) {
                 var assembly = Mono.Cecil.AssemblyDefinition.ReadAssembly(moduleAssembly.GetType().Assembly.Location);
                 var moduleInfos = new List<ModuleMetaData>();
@@ -217,7 +214,6 @@ namespace Bluscream {
 
                 return configStructures;
             }
-            [Obsolete]
             public List<ConfigStructure> GetConfigStructures(Mono.Cecil.ModuleDefinition module) {
                 var configStructures = new List<ConfigStructure>();
                 foreach (var type in module.Types) {
