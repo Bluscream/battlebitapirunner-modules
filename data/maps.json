@@ -1383,6 +1383,7 @@
     ]
   },
   {
+    "Available": false,
     "Name": "Kodiak",
     "PreviewImageUrl": "https://media.discordapp.net/attachments/438070589547216898/1158943835561394257/image.png",
     "SupportedGamemodes": [
@@ -1428,6 +1429,7 @@
     ]
   },
   {
+    "Available": false,
     "Description": "Tutorial map",
     "Name": "Polygon"
   }
