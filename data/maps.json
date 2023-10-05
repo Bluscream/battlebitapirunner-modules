@@ -1483,7 +1483,7 @@
     ]
   },
   {
-    "Available": true,
+    "Available": false,
     "Description": "Old version of the map Sandy Sunset.",
     "DisplayName": "Sandy Sunset (Old)",
     "ImageUrls": {
@@ -1496,7 +1496,7 @@
     "Name": "Old_SandySunset"
   },
   {
-    "Available": true,
+    "Available": false,
     "Description": "Old version of the map Wakistan.",
     "DisplayName": "Wakistan (Old)",
     "ImageUrls": {
@@ -1509,7 +1509,7 @@
     "Name": "Old_Wakistan"
   },
   {
-    "Available": true,
+    "Available": false,
     "Description": "Old version of the map Wine Paradise.",
     "DisplayName": "Wine Paradise (Old)",
     "ImageUrls": {
