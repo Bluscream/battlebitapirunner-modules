@@ -96,5 +96,10 @@
         "Available": true,
         "Name": "CaptureTheFlag",
         "DisplayName": "Capture The Flag"
+    },
+    {
+        "Available": true,
+        "Name": "CTF",
+        "DisplayName": "Capture The Flag"
     }
 ]
