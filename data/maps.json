@@ -53,7 +53,7 @@
         ]
       }
     ],
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/2/2c/AzagorBanner.png/revision/latest",
+    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/2/2c/AzagorBanner.png",
     "Available": true,
     "Name": "Azagor",
     "Description": "A desert island with a small town."
@@ -98,7 +98,7 @@
         ]
       }
     ],
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/8/86/Basra.png/revision/latest",
+    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/8/86/Basra.png",
     "Available": true,
     "Name": "Basra",
     "Description": "An archipelago with a grounded container ship in the map\u0027s center. The northern island is a military base, while the southern island has a tourist resort and public airport."
@@ -148,7 +148,7 @@
         ]
       }
     ],
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/6/6b/Construction_.png/revision/latest",
+    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/6/6b/Construction_.png",
     "Available": true,
     "Name": "Construction",
     "Description": "\tA coastal, industrial construction site with a symmetrical layout."
@@ -203,7 +203,7 @@
         ]
       }
     ],
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/e/e5/DistrictBanner.png/revision/latest",
+    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/e/e5/DistrictBanner.png",
     "Available": true,
     "Name": "District",
     "Description": "A rain-shrouded map in a hilly region with factories and military fortifications."
@@ -276,7 +276,7 @@
         ]
       }
     ],
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/e/e0/DustyDewBanner.png/revision/latest",
+    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/e/e0/DustyDewBanner.png",
     "Available": true,
     "Name": "Dustydew",
     "DisplayName": "Dusty Dew",
@@ -337,7 +337,7 @@
         ]
       }
     ],
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/7/7b/EduardovoBanner.png/revision/latest",
+    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/7/7b/EduardovoBanner.png",
     "Available": true,
     "Name": "Eduardovo",
     "Description": "A forested rural map with farms and abandoned factories."
@@ -418,7 +418,7 @@
         ]
       }
     ],
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/3/3d/Frugis-test.png/revision/latest",
+    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/3/3d/Frugis-test.png",
     "Available": true,
     "Name": "Frugis",
     "Description": "Urban map featuring cozy, small streets and parks. Most buildings are three floors high and surrounded by curved streets. Inspired by Paris, France."
@@ -467,7 +467,7 @@
         ]
       }
     ],
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/9/98/ISLE_loading_screen_image.png/revision/latest",
+    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/9/98/ISLE_loading_screen_image.png",
     "Available": true,
     "Name": "Isle",
     "Description": "An island with an early-warning radar system used to detect nuclear missile launches. Flanked by opposing aircraft carriers, used by both factions as bases."
@@ -544,7 +544,7 @@
         ]
       }
     ],
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/a/ae/LonovoBanner.png/revision/latest",
+    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/a/ae/LonovoBanner.png",
     "Available": true,
     "Name": "Lonovo",
     "Description": "A city with extensive railway yards under the cover of night."
@@ -593,7 +593,7 @@
         ]
       }
     ],
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/3/3f/MultuIslandsBanner.png/revision/latest",
+    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/3/3f/MultuIslandsBanner.png",
     "Available": true,
     "Name": "MultuIslands",
     "DisplayName": "Multu Islands",
@@ -632,7 +632,7 @@
         ]
       }
     ],
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/0/03/Namak_loading.png/revision/latest",
+    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/0/03/Namak_loading.png",
     "Available": true,
     "Name": "Namak",
     "Description": "\tA small yet dense urban map dominated by high-rise buildings overlooking the streets. Inspired by Tokyo, Japan."
@@ -669,7 +669,7 @@
         ]
       }
     ],
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/c/c2/OilDunes_loading_screen.png/revision/latest",
+    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/c/c2/OilDunes_loading_screen.png",
     "Available": true,
     "Name": "OilDunes",
     "DisplayName": "Oil Dunes",
@@ -749,7 +749,7 @@
         ]
       }
     ],
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/0/04/River-loadingscreen.png/revision/latest",
+    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/0/04/River-loadingscreen.png",
     "Available": true,
     "Name": "River",
     "Description": "A container shipping port on a river."
@@ -817,7 +817,7 @@
         ]
       }
     ],
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/0/0d/SalhanBanner.png/revision/latest",
+    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/0/0d/SalhanBanner.png",
     "Available": true,
     "Name": "Salhan",
     "Description": "A desert valley containing an oil refinery and a small town."
@@ -880,7 +880,7 @@
         ]
       }
     ],
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/3/33/SandySunsetBanner.png/revision/latest",
+    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/3/33/SandySunsetBanner.png",
     "Available": true,
     "Name": "SandySunset",
     "DisplayName": "SandySunset",
@@ -958,7 +958,7 @@
         ]
       }
     ],
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/1/1d/TensaTown_Loadingscreen.png/revision/latest",
+    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/1/1d/TensaTown_Loadingscreen.png",
     "Available": true,
     "Name": "TensaTown",
     "DisplayName": "Tensa Town",
@@ -1021,7 +1021,7 @@
         ]
       }
     ],
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/b/b4/Valley_Loading_screen.png/revision/latest",
+    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/b/b4/Valley_Loading_screen.png",
     "Available": true,
     "Name": "Valley",
     "Description": "A nuclear power plant surrounded by wind turbines and prominent hills."
@@ -1061,7 +1061,7 @@
         ]
       }
     ],
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/b/b5/WakistanBanner.png/revision/latest",
+    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/b/b5/WakistanBanner.png",
     "Available": true,
     "Name": "Wakistan",
     "Description": "Wide valley with long bridges that connect two cliffs. Inspired by the mountain Tebulosmta in Georgia."
@@ -1127,7 +1127,7 @@
         ]
       }
     ],
-    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/5/5e/WineParadiseBanner.png/revision/latest",
+    "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/5/5e/WineParadiseBanner.png",
     "Available": true,
     "Name": "WineParadise",
     "DisplayName": "Wine Paradise",
