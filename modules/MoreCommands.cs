@@ -193,28 +193,41 @@ namespace Bluscream {
             commandSource.Message($"Toggled bots firing");
         }
 
-        //[Commands.CommandCallback("tps", Description = "Information about server usage")]
-        //public void PosCommand(RunnerPlayer commandSource) {
-        //    var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}tps\""; var cmdConfig = MyCommandsConfiguration.tps;
-        //    if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
-        //    if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
-        //    var sb = new StringBuilder();
-        //    sb.AppendLine($"CPU: {cpu_ghz_used} / {cpu_ghz_total}");
-        //    sb.AppendLine($"Ram: {ram_used} / {ram_total}");
-        //    sb.AppendLine($"Upload: {bandwith_used_mbytes_per_second_upload}");
-        //    sb.AppendLine($"Download: {bandwith_used_mbytes_per_second_download}");
-        //    sb.AppendLine($"Ping (To Google): {ping_to_8_8_8_8}");
-        //    System.Net.IPAddress playerIp = commandSource.IP;
-        //    sb.AppendLine($"Ping (To You): {ping_to_playerIP}");
-        //    commandSource.Message(sb.ToString(), 5);
-        //}
-
-        [Commands.CommandCallback("pos", Description = "Current position (logs to file)")]
-            public void PosCommand(RunnerPlayer commandSource) {
-            var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}pos\""; var cmdConfig = MyCommandsConfiguration.pos;
+        [Commands.CommandCallback("listmodules", Description = "Lists all loaded modules")]
+        public void ListModules(RunnerPlayer commandSource) {
+            var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}modules\""; var cmdConfig = MyCommandsConfiguration.listmodules;
             if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
             if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
-            commandSource.Message($"Position: {commandSource.Position}", 5);
+
+            var moduleType = Assembly.GetEntryAssembly().GetType("BattleBitAPIRunner.Module");
+            var moduleListField = moduleType.GetField("Modules", BindingFlags.Static | BindingFlags.Public);
+            if (moduleListField is null) return;
+
+            IReadOnlyList<BattleBitAPIRunner.Module> modules = (IReadOnlyList<Module>)moduleListField.GetValue(null);
+            commandSource.Message(string.Join(", ", modules.Select(m => m.Name)));
+        }
+            //[Commands.CommandCallback("tps", Description = "Information about server usage")]
+            //public void PosCommand(RunnerPlayer commandSource) {
+            //    var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}tps\""; var cmdConfig = MyCommandsConfiguration.tps;
+            //    if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
+            //    if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
+            //    var sb = new StringBuilder();
+            //    sb.AppendLine($"CPU: {cpu_ghz_used} / {cpu_ghz_total}");
+            //    sb.AppendLine($"Ram: {ram_used} / {ram_total}");
+            //    sb.AppendLine($"Upload: {bandwith_used_mbytes_per_second_upload}");
+            //    sb.AppendLine($"Download: {bandwith_used_mbytes_per_second_download}");
+            //    sb.AppendLine($"Ping (To Google): {ping_to_8_8_8_8}");
+            //    System.Net.IPAddress playerIp = commandSource.IP;
+            //    sb.AppendLine($"Ping (To You): {ping_to_playerIP}");
+            //    commandSource.Message(sb.ToString(), 5);
+            //}
+
+            [Commands.CommandCallback("pos", Description = "Current position (logs to file)")]
+            public void PosCommand(RunnerPlayer commandSource) {
+                var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}pos\""; var cmdConfig = MyCommandsConfiguration.pos;
+                if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
+                if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
+                commandSource.Message($"Position: {commandSource.Position}", 5);
                 File.AppendAllLines(Configuration.SavedPositionsFile, new[] { $"{this.Server.Map},{this.Server.MapSize},{commandSource.Position.X}|{commandSource.Position.Y}|{commandSource.Position.Z}" });
             }
         #endregion
@@ -227,6 +240,7 @@ namespace Bluscream {
             public CommandConfiguration listmaps { get; set; } = new CommandConfiguration() { AllowedRoles = Extensions.ToRoleStringList(MoreRoles.All) };
             public CommandConfiguration listmodes { get; set; } = new CommandConfiguration() { AllowedRoles = Extensions.ToRoleStringList(MoreRoles.All) };
             public CommandConfiguration listsizes { get; set; } = new CommandConfiguration() { AllowedRoles = Extensions.ToRoleStringList(MoreRoles.All) };
+            public CommandConfiguration listmodules { get; set; } = new CommandConfiguration() { AllowedRoles = Extensions.ToRoleStringList(MoreRoles.All) };
             public CommandConfiguration start { get; set; } = new CommandConfiguration() { AllowedRoles = Extensions.ToRoleStringList(MoreRoles.Staff) };
             public CommandConfiguration end { get; set; } = new CommandConfiguration() { AllowedRoles = Extensions.ToRoleStringList(MoreRoles.Staff) };
             public CommandConfiguration exec { get; set; } = new CommandConfiguration() { AllowedRoles = Extensions.ToRoleStringList(Roles.Admin) };
