@@ -3,11 +3,11 @@
     "Available": true,
     "Description": "A desert island with a small town.",
     "ImageUrls": {
-      "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/azagor/DiscordIcon.png",
-      "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/azagor/EndGame.png",
-      "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/azagor/LoadingScreen.png",
-      "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/azagor/MainMap.png",
-      "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/azagor/ServerList.png"
+      "DiscordIcon": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/azagor/DiscordIcon.png",
+      "EndGame": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/azagor/EndGame.png",
+      "LoadingScreen": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/azagor/LoadingScreen.png",
+      "MainMap": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/azagor/MainMap.png",
+      "ServerList": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/azagor/ServerList.png"
     },
     "Name": "Azagor",
     "SupportedGamemodes": [
@@ -68,11 +68,11 @@
     "Available": true,
     "Description": "An archipelago with a grounded container ship in the map's center. The northern island is a military base, while the southern island has a tourist resort and public airport.",
     "ImageUrls": {
-      "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/basra/DiscordIcon.png",
-      "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/basra/EndGame.png",
-      "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/basra/LoadingScreen.png",
-      "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/basra/MainMap.png",
-      "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/basra/ServerList.png"
+      "DiscordIcon": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/basra/DiscordIcon.png",
+      "EndGame": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/basra/EndGame.png",
+      "LoadingScreen": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/basra/LoadingScreen.png",
+      "MainMap": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/basra/MainMap.png",
+      "ServerList": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/basra/ServerList.png"
     },
     "Name": "Basra",
     "SupportedGamemodes": [
@@ -119,11 +119,11 @@
     "Available": true,
     "Description": "\tA coastal, industrial construction site with a symmetrical layout.",
     "ImageUrls": {
-      "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/construction/DiscordIcon.png",
-      "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/construction/EndGame.png",
-      "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/construction/LoadingScreen.png",
-      "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/construction/MainMap.png",
-      "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/construction/ServerList.png"
+      "DiscordIcon": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/construction/DiscordIcon.png",
+      "EndGame": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/construction/EndGame.png",
+      "LoadingScreen": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/construction/LoadingScreen.png",
+      "MainMap": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/construction/MainMap.png",
+      "ServerList": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/construction/ServerList.png"
     },
     "Name": "Construction",
     "SupportedGamemodes": [
@@ -175,11 +175,11 @@
     "Available": true,
     "Description": "A rain-shrouded map in a hilly region with factories and military fortifications.",
     "ImageUrls": {
-      "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/district/DiscordIcon.png",
-      "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/district/EndGame.png",
-      "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/district/LoadingScreen.png",
-      "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/district/MainMap.png",
-      "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/district/ServerList.png"
+      "DiscordIcon": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/district/DiscordIcon.png",
+      "EndGame": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/district/EndGame.png",
+      "LoadingScreen": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/district/LoadingScreen.png",
+      "MainMap": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/district/MainMap.png",
+      "ServerList": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/district/ServerList.png"
     },
     "Name": "District",
     "SupportedGamemodes": [
@@ -237,11 +237,11 @@
     "Description": "An arid, mountainous region with scattered settlements.",
     "DisplayName": "Dusty Dew",
     "ImageUrls": {
-      "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/dustydew/DiscordIcon.png",
-      "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/dustydew/EndGame.png",
-      "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/dustydew/LoadingScreen.png",
-      "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/dustydew/MainMap.png",
-      "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/dustydew/ServerList.png"
+      "DiscordIcon": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/dustydew/DiscordIcon.png",
+      "EndGame": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/dustydew/EndGame.png",
+      "LoadingScreen": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/dustydew/LoadingScreen.png",
+      "MainMap": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/dustydew/MainMap.png",
+      "ServerList": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/dustydew/ServerList.png"
     },
     "Name": "Dustydew",
     "SupportedGamemodes": [
@@ -316,11 +316,11 @@
     "Available": true,
     "Description": "A forested rural map with farms and abandoned factories.",
     "ImageUrls": {
-      "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/eduardovo/DiscordIcon.png",
-      "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/eduardovo/EndGame.png",
-      "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/eduardovo/LoadingScreen.png",
-      "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/eduardovo/MainMap.png",
-      "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/eduardovo/ServerList.png"
+      "DiscordIcon": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/eduardovo/DiscordIcon.png",
+      "EndGame": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/eduardovo/EndGame.png",
+      "LoadingScreen": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/eduardovo/LoadingScreen.png",
+      "MainMap": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/eduardovo/MainMap.png",
+      "ServerList": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/eduardovo/ServerList.png"
     },
     "Name": "Eduardovo",
     "SupportedGamemodes": [
@@ -382,11 +382,11 @@
     "Available": true,
     "Description": "Urban map featuring cozy, small streets and parks. Most buildings are three floors high and surrounded by curved streets. Inspired by Paris, France.",
     "ImageUrls": {
-      "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/frugis/DiscordIcon.png",
-      "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/frugis/EndGame.png",
-      "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/frugis/LoadingScreen.png",
-      "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/frugis/MainMap.png",
-      "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/frugis/ServerList.png"
+      "DiscordIcon": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/frugis/DiscordIcon.png",
+      "EndGame": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/frugis/EndGame.png",
+      "LoadingScreen": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/frugis/LoadingScreen.png",
+      "MainMap": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/frugis/MainMap.png",
+      "ServerList": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/frugis/ServerList.png"
     },
     "Name": "Frugis",
     "SupportedGamemodes": [
@@ -469,11 +469,11 @@
     "Available": true,
     "Description": "An island with an early-warning radar system used to detect nuclear missile launches. Flanked by opposing aircraft carriers, used by both factions as bases.",
     "ImageUrls": {
-      "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/isle/DiscordIcon.png",
-      "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/isle/EndGame.png",
-      "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/isle/LoadingScreen.png",
-      "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/isle/MainMap.png",
-      "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/isle/ServerList.png"
+      "DiscordIcon": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/isle/DiscordIcon.png",
+      "EndGame": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/isle/EndGame.png",
+      "LoadingScreen": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/isle/LoadingScreen.png",
+      "MainMap": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/isle/MainMap.png",
+      "ServerList": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/isle/ServerList.png"
     },
     "Name": "Isle",
     "SupportedGamemodes": [
@@ -524,11 +524,11 @@
     "Available": true,
     "Description": "A city with extensive railway yards under the cover of night.",
     "ImageUrls": {
-      "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/lonovo/DiscordIcon.png",
-      "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/lonovo/EndGame.png",
-      "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/lonovo/LoadingScreen.png",
-      "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/lonovo/MainMap.png",
-      "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/lonovo/ServerList.png"
+      "DiscordIcon": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/lonovo/DiscordIcon.png",
+      "EndGame": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/lonovo/EndGame.png",
+      "LoadingScreen": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/lonovo/LoadingScreen.png",
+      "MainMap": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/lonovo/MainMap.png",
+      "ServerList": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/lonovo/ServerList.png"
     },
     "Name": "Lonovo",
     "SupportedGamemodes": [
@@ -608,11 +608,11 @@
     "Description": "A small island chain with a fortified military base.",
     "DisplayName": "Multu Islands",
     "ImageUrls": {
-      "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/multuislands/DiscordIcon.png",
-      "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/multuislands/EndGame.png",
-      "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/multuislands/LoadingScreen.png",
-      "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/multuislands/MainMap.png",
-      "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/multuislands/ServerList.png"
+      "DiscordIcon": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/multuislands/DiscordIcon.png",
+      "EndGame": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/multuislands/EndGame.png",
+      "LoadingScreen": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/multuislands/LoadingScreen.png",
+      "MainMap": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/multuislands/MainMap.png",
+      "ServerList": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/multuislands/ServerList.png"
     },
     "Name": "MultuIslands",
     "SupportedGamemodes": [
@@ -663,11 +663,11 @@
     "Available": true,
     "Description": "\tA small yet dense urban map dominated by high-rise buildings overlooking the streets. Inspired by Tokyo, Japan.",
     "ImageUrls": {
-      "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/namak/DiscordIcon.png",
-      "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/namak/EndGame.png",
-      "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/namak/LoadingScreen.png",
-      "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/namak/MainMap.png",
-      "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/namak/ServerList.png"
+      "DiscordIcon": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/namak/DiscordIcon.png",
+      "EndGame": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/namak/EndGame.png",
+      "LoadingScreen": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/namak/LoadingScreen.png",
+      "MainMap": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/namak/MainMap.png",
+      "ServerList": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/namak/ServerList.png"
     },
     "Name": "Namak",
     "SupportedGamemodes": [
@@ -708,11 +708,11 @@
     "Description": "A sprawling oil extraction operation in flat, desert region.",
     "DisplayName": "Oil Dunes",
     "ImageUrls": {
-      "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/oildunes/DiscordIcon.png",
-      "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/oildunes/EndGame.png",
-      "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/oildunes/LoadingScreen.png",
-      "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/oildunes/MainMap.png",
-      "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/oildunes/ServerList.png"
+      "DiscordIcon": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/oildunes/DiscordIcon.png",
+      "EndGame": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/oildunes/EndGame.png",
+      "LoadingScreen": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/oildunes/LoadingScreen.png",
+      "MainMap": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/oildunes/MainMap.png",
+      "ServerList": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/oildunes/ServerList.png"
     },
     "Name": "OilDunes",
     "SupportedGamemodes": [
@@ -751,11 +751,11 @@
     "Available": true,
     "Description": "A container shipping port on a river.",
     "ImageUrls": {
-      "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/river/DiscordIcon.png",
-      "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/river/EndGame.png",
-      "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/river/LoadingScreen.png",
-      "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/river/MainMap.png",
-      "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/river/ServerList.png"
+      "DiscordIcon": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/river/DiscordIcon.png",
+      "EndGame": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/river/EndGame.png",
+      "LoadingScreen": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/river/LoadingScreen.png",
+      "MainMap": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/river/MainMap.png",
+      "ServerList": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/river/ServerList.png"
     },
     "Name": "River",
     "SupportedGamemodes": [
@@ -836,11 +836,11 @@
     "Available": true,
     "Description": "A desert valley containing an oil refinery and a small town.",
     "ImageUrls": {
-      "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/salhan/DiscordIcon.png",
-      "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/salhan/EndGame.png",
-      "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/salhan/LoadingScreen.png",
-      "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/salhan/MainMap.png",
-      "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/salhan/ServerList.png"
+      "DiscordIcon": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/salhan/DiscordIcon.png",
+      "EndGame": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/salhan/EndGame.png",
+      "LoadingScreen": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/salhan/LoadingScreen.png",
+      "MainMap": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/salhan/MainMap.png",
+      "ServerList": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/salhan/ServerList.png"
     },
     "Name": "Salhan",
     "SupportedGamemodes": [
@@ -911,11 +911,11 @@
     "Description": "Big desert hills and canyons encircle a crowded town concentrated around one major road.",
     "DisplayName": "SandySunset",
     "ImageUrls": {
-      "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/sandysunset/DiscordIcon.png",
-      "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/sandysunset/EndGame.png",
-      "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/sandysunset/LoadingScreen.png",
-      "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/sandysunset/MainMap.png",
-      "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/sandysunset/ServerList.png"
+      "DiscordIcon": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/sandysunset/DiscordIcon.png",
+      "EndGame": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/sandysunset/EndGame.png",
+      "LoadingScreen": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/sandysunset/LoadingScreen.png",
+      "MainMap": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/sandysunset/MainMap.png",
+      "ServerList": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/sandysunset/ServerList.png"
     },
     "Name": "SandySunset",
     "SupportedGamemodes": [
@@ -981,11 +981,11 @@
     "Description": "A dense map with narrow residential streets and many low-lying buildings.",
     "DisplayName": "Tensa Town",
     "ImageUrls": {
-      "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/tensatown/DiscordIcon.png",
-      "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/tensatown/EndGame.png",
-      "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/tensatown/LoadingScreen.png",
-      "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/tensatown/MainMap.png",
-      "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/tensatown/ServerList.png"
+      "DiscordIcon": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/tensatown/DiscordIcon.png",
+      "EndGame": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/tensatown/EndGame.png",
+      "LoadingScreen": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/tensatown/LoadingScreen.png",
+      "MainMap": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/tensatown/MainMap.png",
+      "ServerList": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/tensatown/ServerList.png"
     },
     "Name": "TensaTown",
     "SupportedGamemodes": [
@@ -1064,11 +1064,11 @@
     "Available": true,
     "Description": "A nuclear power plant surrounded by wind turbines and prominent hills.",
     "ImageUrls": {
-      "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/valley/DiscordIcon.png",
-      "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/valley/EndGame.png",
-      "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/valley/LoadingScreen.png",
-      "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/valley/MainMap.png",
-      "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/valley/ServerList.png"
+      "DiscordIcon": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/valley/DiscordIcon.png",
+      "EndGame": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/valley/EndGame.png",
+      "LoadingScreen": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/valley/LoadingScreen.png",
+      "MainMap": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/valley/MainMap.png",
+      "ServerList": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/valley/ServerList.png"
     },
     "Name": "Valley",
     "SupportedGamemodes": [
@@ -1132,11 +1132,11 @@
     "Available": true,
     "Description": "Wide valley with long bridges that connect two cliffs. Inspired by the mountain Tebulosmta in Georgia.",
     "ImageUrls": {
-      "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/wakistan/DiscordIcon.png",
-      "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/wakistan/EndGame.png",
-      "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/wakistan/LoadingScreen.png",
-      "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/wakistan/MainMap.png",
-      "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/wakistan/ServerList.png"
+      "DiscordIcon": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/wakistan/DiscordIcon.png",
+      "EndGame": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/wakistan/EndGame.png",
+      "LoadingScreen": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/wakistan/LoadingScreen.png",
+      "MainMap": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/wakistan/MainMap.png",
+      "ServerList": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/wakistan/ServerList.png"
     },
     "Name": "Wakistan",
     "SupportedGamemodes": [
@@ -1179,11 +1179,11 @@
     "Description": "A seaside village surrounded by rural countryside and vineyards.",
     "DisplayName": "Wine Paradise",
     "ImageUrls": {
-      "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/wineparadise/DiscordIcon.png",
-      "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/wineparadise/EndGame.png",
-      "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/wineparadise/LoadingScreen.png",
-      "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/wineparadise/MainMap.png",
-      "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/wineparadise/ServerList.png"
+      "DiscordIcon": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/wineparadise/DiscordIcon.png",
+      "EndGame": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/wineparadise/EndGame.png",
+      "LoadingScreen": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/wineparadise/LoadingScreen.png",
+      "MainMap": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/wineparadise/MainMap.png",
+      "ServerList": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/wineparadise/ServerList.png"
     },
     "Name": "WineParadise",
     "SupportedGamemodes": [
@@ -1252,11 +1252,11 @@
     "Description": "Old version of the map District. We had plans to have both old and new rework of district at same time, but due bug it was not possible to do yet, but now you will able to experience a old and cozy version o District on community servers.",
     "DisplayName": "District (Old)",
     "ImageUrls": {
-      "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_district/DiscordIcon.png",
-      "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_district/EndGame.png",
-      "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_district/LoadingScreen.png",
-      "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_district/MainMap.png",
-      "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_district/ServerList.png"
+      "DiscordIcon": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_district/DiscordIcon.png",
+      "EndGame": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_district/EndGame.png",
+      "LoadingScreen": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_district/LoadingScreen.png",
+      "MainMap": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_district/MainMap.png",
+      "ServerList": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_district/ServerList.png"
     },
     "Name": "Old_District",
     "SupportedGamemodes": [
@@ -1317,11 +1317,11 @@
     "Description": "Old version of the map Eduardovo. One of the old maps of the milsim era of Battlebit 2019 , you will note it by lack of cover and super spread objective locations.",
     "DisplayName": "Eduardovo (Old)",
     "ImageUrls": {
-      "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_eduardovo/DiscordIcon.png",
-      "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_eduardovo/EndGame.png",
-      "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_eduardovo/LoadingScreen.png",
-      "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_eduardovo/MainMap.png",
-      "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_eduardovo/ServerList.png"
+      "DiscordIcon": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_eduardovo/DiscordIcon.png",
+      "EndGame": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_eduardovo/EndGame.png",
+      "LoadingScreen": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_eduardovo/LoadingScreen.png",
+      "MainMap": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_eduardovo/MainMap.png",
+      "ServerList": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_eduardovo/ServerList.png"
     },
     "Name": "Old_Eduardovo",
     "SupportedGamemodes": [
@@ -1363,11 +1363,11 @@
     "Description": "Old version of the map Multu Islands. One of the maps that was available at release of game on Early Access as well, and now you will able to play on old version of map and directly compare it to new one on official servers.",
     "DisplayName": "Multu Islands (Old)",
     "ImageUrls": {
-      "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_multuislands/DiscordIcon.png",
-      "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_multuislands/EndGame.png",
-      "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_multuislands/LoadingScreen.png",
-      "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_multuislands/MainMap.png",
-      "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_multuislands/ServerList.png"
+      "DiscordIcon": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_multuislands/DiscordIcon.png",
+      "EndGame": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_multuislands/EndGame.png",
+      "LoadingScreen": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_multuislands/LoadingScreen.png",
+      "MainMap": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_multuislands/MainMap.png",
+      "ServerList": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_multuislands/ServerList.png"
     },
     "Name": "Old_MultuIslands",
     "SupportedGamemodes": [
@@ -1393,11 +1393,11 @@
     "Description": "Old version of the map Namak. One of the oldest Battlebit map 2020-2022 playtest era ,that was a placeholder map for a urban fight scenario. Map was super compact and provide a lot of buildings and floors to access that was lead to a super chaos gameplay, you will note a big contrast between old and new Namak.",
     "DisplayName": "Namak (Old)",
     "ImageUrls": {
-      "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_namak/DiscordIcon.png",
-      "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_namak/EndGame.png",
-      "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_namak/LoadingScreen.png",
-      "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_namak/MainMap.png",
-      "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_namak/ServerList.png"
+      "DiscordIcon": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_namak/DiscordIcon.png",
+      "EndGame": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_namak/EndGame.png",
+      "LoadingScreen": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_namak/LoadingScreen.png",
+      "MainMap": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_namak/MainMap.png",
+      "ServerList": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_namak/ServerList.png"
     },
     "Name": "Old_Namak",
     "SupportedGamemodes": [
@@ -1450,11 +1450,11 @@
     "Description": "Old version of the map Oil Dunes. Another map from 2021-2022 playtest era where are both teams had big amount of armored vehicles (14 Tanks and 9 APC on Conquest 256 players). That map is not friendly for infartry for sure.",
     "DisplayName": "Oil Dunes (Old)",
     "ImageUrls": {
-      "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_oildunes/DiscordIcon.png",
-      "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_oildunes/EndGame.png",
-      "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_oildunes/LoadingScreen.png",
-      "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_oildunes/MainMap.png",
-      "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_oildunes/ServerList.png"
+      "DiscordIcon": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_oildunes/DiscordIcon.png",
+      "EndGame": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_oildunes/EndGame.png",
+      "LoadingScreen": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_oildunes/LoadingScreen.png",
+      "MainMap": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_oildunes/MainMap.png",
+      "ServerList": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_oildunes/ServerList.png"
     },
     "Name": "Old_OilDunes",
     "SupportedGamemodes": [
@@ -1487,11 +1487,11 @@
     "Description": "Old version of the map Sandy Sunset.",
     "DisplayName": "Sandy Sunset (Old)",
     "ImageUrls": {
-      "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_sandysunset/DiscordIcon.png",
-      "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_sandysunset/EndGame.png",
-      "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_sandysunset/LoadingScreen.png",
-      "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_sandysunset/MainMap.png",
-      "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_sandysunset/ServerList.png"
+      "DiscordIcon": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_sandysunset/DiscordIcon.png",
+      "EndGame": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_sandysunset/EndGame.png",
+      "LoadingScreen": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_sandysunset/LoadingScreen.png",
+      "MainMap": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_sandysunset/MainMap.png",
+      "ServerList": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_sandysunset/ServerList.png"
     },
     "Name": "Old_SandySunset"
   },
@@ -1500,11 +1500,11 @@
     "Description": "Old version of the map Wakistan.",
     "DisplayName": "Wakistan (Old)",
     "ImageUrls": {
-      "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_wakistan/DiscordIcon.png",
-      "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_wakistan/EndGame.png",
-      "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_wakistan/LoadingScreen.png",
-      "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_wakistan/MainMap.png",
-      "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_wakistan/ServerList.png"
+      "DiscordIcon": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_wakistan/DiscordIcon.png",
+      "EndGame": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_wakistan/EndGame.png",
+      "LoadingScreen": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_wakistan/LoadingScreen.png",
+      "MainMap": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_wakistan/MainMap.png",
+      "ServerList": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_wakistan/ServerList.png"
     },
     "Name": "Old_Wakistan"
   },
@@ -1513,11 +1513,11 @@
     "Description": "Old version of the map Wine Paradise.",
     "DisplayName": "Wine Paradise (Old)",
     "ImageUrls": {
-      "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_wineparadise/DiscordIcon.png",
-      "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_wineparadise/EndGame.png",
-      "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_wineparadise/LoadingScreen.png",
-      "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_wineparadise/MainMap.png",
-      "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_wineparadise/ServerList.png"
+      "DiscordIcon": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_wineparadise/DiscordIcon.png",
+      "EndGame": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_wineparadise/EndGame.png",
+      "LoadingScreen": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_wineparadise/LoadingScreen.png",
+      "MainMap": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_wineparadise/MainMap.png",
+      "ServerList": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/old_wineparadise/ServerList.png"
     },
     "Name": "Old_WineParadise"
   },
@@ -1526,11 +1526,11 @@
     "Description": "Features a 2000x2000 meters playable area with new experimental placement of objectives, where are distance between them will be around 300m instead of 500m like on our current big scale maps.",
     "DisplayName": "Zalfi Bay",
     "ImageUrls": {
-      "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/zalfibay/DiscordIcon.png",
-      "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/zalfibay/EndGame.png",
-      "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/zalfibay/LoadingScreen.png",
-      "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/zalfibay/MainMap.png",
-      "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/zalfibay/ServerList.png"
+      "DiscordIcon": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/zalfibay/DiscordIcon.png",
+      "EndGame": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/zalfibay/EndGame.png",
+      "LoadingScreen": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/zalfibay/LoadingScreen.png",
+      "MainMap": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/zalfibay/MainMap.png",
+      "ServerList": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/zalfibay/ServerList.png"
     },
     "Name": "ZalfiBay",
     "SupportedGamemodes": [
@@ -1581,11 +1581,11 @@
     "Available": false,
     "Description": "This map is primarily focused on infantry based gameplay rather than vehicular and infantry mixed, and it's smaller compared to other maps.",
     "ImageUrls": {
-      "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/kodiak/DiscordIcon.png",
-      "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/kodiak/EndGame.png",
-      "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/kodiak/LoadingScreen.png",
-      "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/kodiak/MainMap.png",
-      "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/kodiak/ServerList.png"
+      "DiscordIcon": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/kodiak/DiscordIcon.png",
+      "EndGame": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/kodiak/EndGame.png",
+      "LoadingScreen": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/kodiak/LoadingScreen.png",
+      "MainMap": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/kodiak/MainMap.png",
+      "ServerList": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/kodiak/ServerList.png"
     },
     "Name": "Kodiak",
     "SupportedGamemodes": [
@@ -1634,11 +1634,11 @@
     "Available": false,
     "Description": "Tutorial map",
     "ImageUrls": {
-      "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/polygon/DiscordIcon.png",
-      "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/polygon/EndGame.png",
-      "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/polygon/LoadingScreen.png",
-      "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/polygon/MainMap.png",
-      "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/polygon/ServerList.png"
+      "DiscordIcon": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/polygon/DiscordIcon.png",
+      "EndGame": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/polygon/EndGame.png",
+      "LoadingScreen": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/polygon/LoadingScreen.png",
+      "MainMap": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/polygon/MainMap.png",
+      "ServerList": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/polygon/ServerList.png"
     },
     "Name": "Polygon"
   },
@@ -1646,22 +1646,22 @@
     "Available": false,
     "DisplayName": "Event Map",
     "ImageUrls": {
-      "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/eventmap/DiscordIcon.png",
-      "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/eventmap/EndGame.png",
-      "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/eventmap/LoadingScreen.png",
-      "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/eventmap/MainMap.png",
-      "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/eventmap/ServerList.png"
+      "DiscordIcon": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/eventmap/DiscordIcon.png",
+      "EndGame": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/eventmap/EndGame.png",
+      "LoadingScreen": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/eventmap/LoadingScreen.png",
+      "MainMap": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/eventmap/MainMap.png",
+      "ServerList": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/eventmap/ServerList.png"
     },
     "Name": "Eventmap"
   },
   {
     "Available": false,
     "ImageUrls": {
-      "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/hotland/DiscordIcon.png",
-      "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/hotland/EndGame.png",
-      "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/hotland/LoadingScreen.png",
-      "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/hotland/MainMap.png",
-      "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/hotland/ServerList.png"
+      "DiscordIcon": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/hotland/DiscordIcon.png",
+      "EndGame": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/hotland/EndGame.png",
+      "LoadingScreen": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/hotland/LoadingScreen.png",
+      "MainMap": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/hotland/MainMap.png",
+      "ServerList": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/hotland/ServerList.png"
     },
     "Name": "Hotland"
   },
@@ -1669,11 +1669,11 @@
     "Available": true,
     "DisplayName": "Voxel Land",
     "ImageUrls": {
-      "DiscordIcon": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/voxelland/DiscordIcon.png",
-      "EndGame": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/voxelland/EndGame.png",
-      "LoadingScreen": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/voxelland/LoadingScreen.png",
-      "MainMap": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/voxelland/MainMap.png",
-      "ServerList": "https://raw.githubusercontent.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/voxelland/ServerList.png"
+      "DiscordIcon": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/voxelland/DiscordIcon.png",
+      "EndGame": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/voxelland/EndGame.png",
+      "LoadingScreen": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/voxelland/LoadingScreen.png",
+      "MainMap": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/voxelland/MainMap.png",
+      "ServerList": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/voxelland/ServerList.png"
     },
     "Name": "Voxelland"
   }
