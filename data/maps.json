@@ -101,7 +101,7 @@
     "PreviewImageUrl": "https://static.wikia.nocookie.net/battlebit_gamepedia_en/images/8/86/Basra.png",
     "Available": true,
     "Name": "Basra",
-    "Description": "An archipelago with a grounded container ship in the map\u0027s center. The northern island is a military base, while the southern island has a tourist resort and public airport."
+    "Description": "An archipelago with a grounded container ship in the map's center. The northern island is a military base, while the southern island has a tourist resort and public airport."
   },
   {
     "SupportedGamemodes": [
@@ -1188,7 +1188,7 @@
     ],
     "Available": true,
     "Name": "Old_District",
-    "DisplayName": "Old District",
+    "DisplayName": "District (Old)",
     "Description": "Old version of the map District."
   },
   {
@@ -1227,7 +1227,7 @@
     ],
     "Available": true,
     "Name": "Old_Eduardovo",
-    "DisplayName": "Old Eduardovo",
+    "DisplayName": "Eduardovo (Old)",
     "Description": "Old version of the map Eduardovo."
   },
   {
@@ -1250,7 +1250,7 @@
     ],
     "Available": true,
     "Name": "Old_MultuIslands",
-    "DisplayName": "Old Multu Islands",
+    "DisplayName": "Multu Islands (Old)",
     "Description": "Old version of the map Multu Islands."
   },
   {
@@ -1300,7 +1300,7 @@
     ],
     "Available": true,
     "Name": "Old_Namak",
-    "DisplayName": "Old Namak",
+    "DisplayName": "Namak (Old)",
     "Description": "Old version of the map Namak."
   },
   {
@@ -1330,7 +1330,8 @@
     ],
     "Available": true,
     "Name": "Old_OilDunes",
-    "DisplayName": "Old Oil Dunes"
+    "DisplayName": "Oil Dunes (Old)",
+    "Description": "Old version of the map Oil Dunes."
   },
   {
     "SupportedGamemodes": [
