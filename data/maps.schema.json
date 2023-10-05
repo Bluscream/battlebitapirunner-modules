@@ -1,0 +1,4753 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "array",
+  "items": [
+    {
+      "type": "object",
+      "properties": {
+        "SupportedGamemodes": {
+          "type": "array",
+          "items": [
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            }
+          ]
+        },
+        "PreviewImageUrl": {
+          "type": "string"
+        },
+        "Available": {
+          "type": "boolean"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "Description": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "SupportedGamemodes",
+        "PreviewImageUrl",
+        "Available",
+        "Name",
+        "Description"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "SupportedGamemodes": {
+          "type": "array",
+          "items": [
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            }
+          ]
+        },
+        "PreviewImageUrl": {
+          "type": "string"
+        },
+        "Available": {
+          "type": "boolean"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "Description": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "SupportedGamemodes",
+        "PreviewImageUrl",
+        "Available",
+        "Name",
+        "Description"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "SupportedGamemodes": {
+          "type": "array",
+          "items": [
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            }
+          ]
+        },
+        "PreviewImageUrl": {
+          "type": "string"
+        },
+        "Available": {
+          "type": "boolean"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "Description": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "SupportedGamemodes",
+        "PreviewImageUrl",
+        "Available",
+        "Name",
+        "Description"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "SupportedGamemodes": {
+          "type": "array",
+          "items": [
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            }
+          ]
+        },
+        "PreviewImageUrl": {
+          "type": "string"
+        },
+        "Available": {
+          "type": "boolean"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "Description": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "SupportedGamemodes",
+        "PreviewImageUrl",
+        "Available",
+        "Name",
+        "Description"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "SupportedGamemodes": {
+          "type": "array",
+          "items": [
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            }
+          ]
+        },
+        "PreviewImageUrl": {
+          "type": "string"
+        },
+        "Available": {
+          "type": "boolean"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "DisplayName": {
+          "type": "string"
+        },
+        "Description": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "SupportedGamemodes",
+        "PreviewImageUrl",
+        "Available",
+        "Name",
+        "DisplayName",
+        "Description"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "SupportedGamemodes": {
+          "type": "array",
+          "items": [
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            }
+          ]
+        },
+        "PreviewImageUrl": {
+          "type": "string"
+        },
+        "Available": {
+          "type": "boolean"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "Description": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "SupportedGamemodes",
+        "PreviewImageUrl",
+        "Available",
+        "Name",
+        "Description"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "SupportedGamemodes": {
+          "type": "array",
+          "items": [
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            }
+          ]
+        },
+        "PreviewImageUrl": {
+          "type": "string"
+        },
+        "Available": {
+          "type": "boolean"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "Description": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "SupportedGamemodes",
+        "PreviewImageUrl",
+        "Available",
+        "Name",
+        "Description"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "SupportedGamemodes": {
+          "type": "array",
+          "items": [
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            }
+          ]
+        },
+        "PreviewImageUrl": {
+          "type": "string"
+        },
+        "Available": {
+          "type": "boolean"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "Description": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "SupportedGamemodes",
+        "PreviewImageUrl",
+        "Available",
+        "Name",
+        "Description"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "SupportedGamemodes": {
+          "type": "array",
+          "items": [
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            }
+          ]
+        },
+        "PreviewImageUrl": {
+          "type": "string"
+        },
+        "Available": {
+          "type": "boolean"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "Description": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "SupportedGamemodes",
+        "PreviewImageUrl",
+        "Available",
+        "Name",
+        "Description"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "SupportedGamemodes": {
+          "type": "array",
+          "items": [
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            }
+          ]
+        },
+        "PreviewImageUrl": {
+          "type": "string"
+        },
+        "Available": {
+          "type": "boolean"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "DisplayName": {
+          "type": "string"
+        },
+        "Description": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "SupportedGamemodes",
+        "PreviewImageUrl",
+        "Available",
+        "Name",
+        "DisplayName",
+        "Description"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "SupportedGamemodes": {
+          "type": "array",
+          "items": [
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            }
+          ]
+        },
+        "PreviewImageUrl": {
+          "type": "string"
+        },
+        "Available": {
+          "type": "boolean"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "Description": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "SupportedGamemodes",
+        "PreviewImageUrl",
+        "Available",
+        "Name",
+        "Description"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "SupportedGamemodes": {
+          "type": "array",
+          "items": [
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            }
+          ]
+        },
+        "PreviewImageUrl": {
+          "type": "string"
+        },
+        "Available": {
+          "type": "boolean"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "DisplayName": {
+          "type": "string"
+        },
+        "Description": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "SupportedGamemodes",
+        "PreviewImageUrl",
+        "Available",
+        "Name",
+        "DisplayName",
+        "Description"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "SupportedGamemodes": {
+          "type": "array",
+          "items": [
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            }
+          ]
+        },
+        "PreviewImageUrl": {
+          "type": "string"
+        },
+        "Available": {
+          "type": "boolean"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "Description": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "SupportedGamemodes",
+        "PreviewImageUrl",
+        "Available",
+        "Name",
+        "Description"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "SupportedGamemodes": {
+          "type": "array",
+          "items": [
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            }
+          ]
+        },
+        "PreviewImageUrl": {
+          "type": "string"
+        },
+        "Available": {
+          "type": "boolean"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "Description": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "SupportedGamemodes",
+        "PreviewImageUrl",
+        "Available",
+        "Name",
+        "Description"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "SupportedGamemodes": {
+          "type": "array",
+          "items": [
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            }
+          ]
+        },
+        "PreviewImageUrl": {
+          "type": "string"
+        },
+        "Available": {
+          "type": "boolean"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "DisplayName": {
+          "type": "string"
+        },
+        "Description": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "SupportedGamemodes",
+        "PreviewImageUrl",
+        "Available",
+        "Name",
+        "DisplayName",
+        "Description"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "SupportedGamemodes": {
+          "type": "array",
+          "items": [
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            }
+          ]
+        },
+        "PreviewImageUrl": {
+          "type": "string"
+        },
+        "Available": {
+          "type": "boolean"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "DisplayName": {
+          "type": "string"
+        },
+        "Description": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "SupportedGamemodes",
+        "PreviewImageUrl",
+        "Available",
+        "Name",
+        "DisplayName",
+        "Description"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "SupportedGamemodes": {
+          "type": "array",
+          "items": [
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            }
+          ]
+        },
+        "PreviewImageUrl": {
+          "type": "string"
+        },
+        "Available": {
+          "type": "boolean"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "Description": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "SupportedGamemodes",
+        "PreviewImageUrl",
+        "Available",
+        "Name",
+        "Description"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "SupportedGamemodes": {
+          "type": "array",
+          "items": [
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            }
+          ]
+        },
+        "PreviewImageUrl": {
+          "type": "string"
+        },
+        "Available": {
+          "type": "boolean"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "Description": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "SupportedGamemodes",
+        "PreviewImageUrl",
+        "Available",
+        "Name",
+        "Description"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "SupportedGamemodes": {
+          "type": "array",
+          "items": [
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            }
+          ]
+        },
+        "PreviewImageUrl": {
+          "type": "string"
+        },
+        "Available": {
+          "type": "boolean"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "DisplayName": {
+          "type": "string"
+        },
+        "Description": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "SupportedGamemodes",
+        "PreviewImageUrl",
+        "Available",
+        "Name",
+        "DisplayName",
+        "Description"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "SupportedGamemodes": {
+          "type": "array",
+          "items": [
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            }
+          ]
+        },
+        "Available": {
+          "type": "boolean"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "DisplayName": {
+          "type": "string"
+        },
+        "Description": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "SupportedGamemodes",
+        "Available",
+        "Name",
+        "DisplayName",
+        "Description"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "SupportedGamemodes": {
+          "type": "array",
+          "items": [
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            }
+          ]
+        },
+        "Available": {
+          "type": "boolean"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "DisplayName": {
+          "type": "string"
+        },
+        "Description": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "SupportedGamemodes",
+        "Available",
+        "Name",
+        "DisplayName",
+        "Description"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "SupportedGamemodes": {
+          "type": "array",
+          "items": [
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            }
+          ]
+        },
+        "Available": {
+          "type": "boolean"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "DisplayName": {
+          "type": "string"
+        },
+        "Description": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "SupportedGamemodes",
+        "Available",
+        "Name",
+        "DisplayName",
+        "Description"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "SupportedGamemodes": {
+          "type": "array",
+          "items": [
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            }
+          ]
+        },
+        "Available": {
+          "type": "boolean"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "DisplayName": {
+          "type": "string"
+        },
+        "Description": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "SupportedGamemodes",
+        "Available",
+        "Name",
+        "DisplayName",
+        "Description"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "SupportedGamemodes": {
+          "type": "array",
+          "items": [
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            }
+          ]
+        },
+        "Available": {
+          "type": "boolean"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "DisplayName": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "SupportedGamemodes",
+        "Available",
+        "Name",
+        "DisplayName"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "SupportedGamemodes": {
+          "type": "array",
+          "items": [
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            }
+          ]
+        },
+        "Available": {
+          "type": "boolean"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "DisplayName": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "SupportedGamemodes",
+        "Available",
+        "Name",
+        "DisplayName"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "Name": {
+          "type": "string"
+        },
+        "SupportedGamemodes": {
+          "type": "array",
+          "items": [
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "GameMode": {
+                  "type": "string"
+                },
+                "SupportedMapSizes": {
+                  "type": "array",
+                  "items": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "integer"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "GameMode",
+                "SupportedMapSizes"
+              ]
+            }
+          ]
+        }
+      },
+      "required": [
+        "Name",
+        "SupportedGamemodes"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "Name": {
+          "type": "string"
+        },
+        "Description": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "Name",
+        "Description"
+      ]
+    }
+  ]
+}
