@@ -560,6 +560,7 @@ public class MapRotationConfiguration : ModuleConfiguration
         "Old_OilDunes",
         "Old_Eduardovo",
         "Old_MultuIslands",
-        "ZalfiBay"
+        "ZalfiBay",
+        "Kodiak"
     };
 }
