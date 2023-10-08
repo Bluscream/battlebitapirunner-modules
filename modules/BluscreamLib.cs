@@ -26,16 +26,6 @@ using System.Net.Http;
 
 namespace Bluscream {
     #region Defines
-    public static class MoreRoles {
-        public const Roles Staff = Roles.Admin | Roles.Moderator;
-        public const Roles Member = Roles.Admin | Roles.Moderator | Roles.Special | Roles.Vip;
-        public const Roles All = Roles.Admin | Roles.Moderator | Roles.Special | Roles.Vip | Roles.None;
-    }
-    public enum MapDayNight : byte {
-        Day,
-        Night,
-        None
-    }
     public class ModuleInfo {
         public bool Loaded { get; set; }
         public bool Enabled { get; set; }
@@ -216,91 +206,8 @@ namespace Bluscream {
         #region Data
         public static IReadOnlyList<string> GameModeNames { get { return GameModes.Where(m => m.Available == true).Select(m => m.Name).ToList(); } }
         public static IReadOnlyList<string> GameModeDisplayNames { get { return Maps.Where(m => m.Available == true).Select(m => m.DisplayName).ToList(); } }
-        public static IReadOnlyList<GameModeInfo> GameModes = new GameModeInfo[] {
-        new GameModeInfo() {
-            Name = "TDM",
-            DisplayName = "Team Deathmatch",
-            Description = "Kill the enemy team"
-        },
-        new GameModeInfo() {
-            Name = "AAS",
-            DisplayName = "AAS"
-        },
-        new GameModeInfo() {
-            Name = "RUSH",
-            DisplayName = "Rush",
-            Description = "Plant or defuse bombs"
-        },
-        new GameModeInfo() {
-            Name = "CONQ",
-            DisplayName = "Conquest",
-            Description = "Capture and hold positions"
-        },
-        new GameModeInfo() {
-            Name = "DOMI",
-            DisplayName = "Domination"
-        },
-        new GameModeInfo() {
-            Name = "ELI",
-            DisplayName = "Elimination"
-        },
-        new GameModeInfo() {
-            Name = "INFCONQ",
-            DisplayName = "Infantry Conquest",
-            Description = "Conquest without strong vehicles"
-        },
-        new GameModeInfo() {
-            Name = "FRONTLINE",
-            DisplayName = "Frontline"
-        },
-        new GameModeInfo() {
-            Name = "GunGameFFA",
-            DisplayName = "Gun Game (Free For All)",
-            Description = "Get through the loadouts as fast as possible"
-        },
-        new GameModeInfo() {
-            Name = "FFA",
-            DisplayName = "Free For All",
-            Description = "Team Deathmatch without teams"
-        },
-        new GameModeInfo() {
-            Name = "GunGameTeam",
-            DisplayName = "Gun Game (Team)",
-            Description = "Get through the loadouts as fast as possible"
-        },
-        new GameModeInfo() {
-            Name = "SuicideRush",
-            DisplayName = "Suicide Rush"
-        },
-        new GameModeInfo() {
-            Name = "CatchGame",
-            DisplayName = "Catch Game"
-        },
-        new GameModeInfo() {
-            Name = "Infected",
-            DisplayName = "Infected",
-            Description = "Zombies"
-        },
-        new GameModeInfo() {
-            Name = "CashRun",
-            DisplayName = "Cash Run"
-        },
-        new GameModeInfo() {
-            Name = "VoxelFortify",
-            DisplayName = "Voxel Fortify"
-        },
-        new GameModeInfo() {
-            Name = "VoxelTrench",
-            DisplayName = "Voxel Trench"
-        },
-        new GameModeInfo() {
-            Name = "CaptureTheFlag",
-            DisplayName = "Capture The Flag"
-        },
-    };
         public static IReadOnlyList<string> MapNames { get { return Maps.Where(m => m.Available == true).Select(m => m.Name).ToList(); } }
         public static IReadOnlyList<string> MapDisplayNames { get { return Maps.Where(m => m.Available == true).Select(m => m.DisplayName).ToList(); } }
-        public static IReadOnlyList<MapInfo> Maps { get; set; }
         #endregion
         #region Configuration
         public static Configuration Config { get; set; }
@@ -355,7 +262,7 @@ namespace Bluscream {
         }
     #endregion
     #region Extensions
-    public static class Extensions {
+    public static partial class Extensions {
         #region Events
         public delegate void PlayerKickedHandler(RunnerPlayer player, string? reason);
         public static event PlayerKickedHandler OnPlayerKicked = delegate { };
@@ -1112,31 +1019,53 @@ namespace Bluscream {
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("DisplayName")]
-        public string? DisplayName { get; set; }
+        public string? DisplayName_ { get; set; }
+
+        [JsonIgnore]
+        public string? DisplayName { get { return string.IsNullOrWhiteSpace(DisplayName_) ? DisplayName_ : Name; } }
     }
     #region Maps
     public class SupportedGamemode {
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("GameMode")]
-        public string GameMode { get; set; } = null!;
+        public virtual string? GameMode { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("SupportedMapSizes")]
-        public List<MapSize>? SupportedMapSizes { get; set; }
+        public virtual List<long> SupportedMapSizes { get; set; }
 
         public GameModeInfo? GetGameMode() => BluscreamLib.GameModes.First(g => g.Name == GameMode);
     }
+    public partial class ImageUrls {
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonPropertyName("DiscordIcon")]
+        public virtual Uri? DiscordIcon { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonPropertyName("EndGame")]
+        public virtual Uri? EndGame { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonPropertyName("LoadingScreen")]
+        public virtual Uri? LoadingScreen { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonPropertyName("MainMap")]
+        public virtual Uri? MainMap { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonPropertyName("ServerList")]
+        public virtual Uri? ServerList { get; set; }
+    }
     public class MapInfo : BaseInfo {
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonPropertyName("ImageUrls")]
+        public virtual ImageUrls? ImageUrls { get; set; }
+
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("SupportedGamemodes")]
-        public List<SupportedGamemode>? SupportedGamemodes { get; set; }
-
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        [JsonPropertyName("PreviewImageUrl")]
-        public Uri? PreviewImageUrl { get; set; }
-
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public Uri? MinimapImageUrl { get; internal set; }
+        public virtual List<SupportedGamemode>? SupportedGamemodes { get; set; }
 
         public static MapInfo FromName(string name) => BluscreamLib.Maps.First(m => m.Name == name);
     }
@@ -1154,6 +1083,39 @@ namespace Bluscream {
         public static List<GameModeInfo> FromFile(FileInfo file) => JsonUtils.FromJsonFile<List<GameModeInfo>>(file);
         public static List<GameModeInfo> FromUrl(string url) => FromUrl(new Uri(url));
         public static List<GameModeInfo> FromUrl(Uri url) => JsonUtils.FromUrl<List<GameModeInfo>>(url);
+    }
+    #endregion
+    #region Sizes
+    public partial class SizeInfo {
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonPropertyName("Available")]
+        public virtual bool? Available { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonPropertyName("EnumValue")]
+        public virtual long? EnumValue { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonPropertyName("PlayersPerTeam")]
+        public virtual long? PlayersPerTeam { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonPropertyName("TotalSize")]
+        public virtual long? TotalSize { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonPropertyName("ShortName")]
+        public virtual string ShortName { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonPropertyName("LongName")]
+        public virtual string LongName { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonPropertyName("Description")]
+        public virtual string Description { get; set; }
+
+        public static List<SizeInfo> FromJson(string json) => JsonSerializer.Deserialize<List<SizeInfo>>(json, Bluscream.Converter.Settings);
     }
     #endregion
     #endregion
