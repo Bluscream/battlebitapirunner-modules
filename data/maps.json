@@ -544,7 +544,7 @@
 		]
 	},
 	{
-		"Available": false,
+		"Available": true,
 		"Description": "This map is primarily focused on infantry based gameplay rather than vehicular and infantry mixed, and it's smaller compared to other maps.",
 		"ImageUrls": {
 			"DiscordIcon": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/kodiak/DiscordIcon.png",
