@@ -523,8 +523,8 @@ public class MapRotation : BattleBitModule
             ("RUSH", new [] {MapSize._8v8,MapSize._16vs16,}),
             ("CONQ", new [] {MapSize._16vs16,MapSize._32vs32,MapSize._127vs127,}),
             ("INFCONQ", new [] {MapSize._16vs16,MapSize._32vs32,MapSize._127vs127,}),
-            ("DOMI", new [] { MapSize._16vs16, MapSize._32vs32,MapSize._127vs127,}),
-            ("CTF", new [] {MapSize._16vs16, MapSize._32vs32,MapSize._127vs127,}),
+            ("DOMI", new [] { MapSize._16vs16,MapSize._32vs32,MapSize._127vs127,}),
+            ("CTF", new [] {MapSize._16vs16,MapSize._32vs32,MapSize._127vs127,}),
         }),
     };
     }
