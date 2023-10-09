@@ -12,7 +12,7 @@ namespace BattleBitBaseModules;
 /// </summary>
 [RequireModule(typeof(GameModeRotation))]
 [RequireModule(typeof(CommandHandler))]
-[Module("Adds a small tweak to the map rotation so that maps that were just played take more time to appear again, this works by counting how many matches happened since the maps were last played and before getting to the voting screen, the n least played ones are picked to appear on the voting screen . It also adds a command so that any player can know what maps are in the rotation.", "1.4.2")]
+[Module("Adds a small tweak to the map rotation so that maps that were just played take more time to appear again, this works by counting how many matches happened since the maps were last played and before getting to the voting screen, the n least played ones are picked to appear on the voting screen . It also adds a command so that any player can know what maps are in the rotation.", "1.4.3")]
 public class MapRotation : BattleBitModule
 {
     [ModuleReference]
@@ -520,11 +520,11 @@ public class MapRotation : BattleBitModule
             ("CTF", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
         }),
         new MapInfo("Kodiak", new[]{
-            ("RUSH", new [] {MapSize._8v8,MapSize._16vs16,}),
-            ("CONQ", new [] {MapSize._16vs16,MapSize._32vs32,MapSize._127vs127,}),
-            ("INFCONQ", new [] {MapSize._16vs16,MapSize._32vs32,MapSize._127vs127,}),
-            ("DOMI", new [] { MapSize._16vs16,MapSize._32vs32,MapSize._127vs127,}),
-            ("CTF", new [] {MapSize._16vs16,MapSize._32vs32,MapSize._127vs127,}),
+            ("CONQ", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
+            ("INFCONQ", new [] {MapSize._32vs32, MapSize._64vs64,MapSize._127vs127,}),
+            ("DOMI", new [] { MapSize._16vs16, MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
+            ("CTF", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
+            ("RUSH", new [] {MapSize._16vs16,MapSize._32vs32,}),
         }),
     };
     }
