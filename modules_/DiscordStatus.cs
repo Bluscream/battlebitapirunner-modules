@@ -1,3 +1,4 @@
+﻿// VERSION 1.3
 // MADE BY @SENTENNIAL
 using System;
 using System.Threading.Tasks;
@@ -6,8 +7,7 @@ using Discord;
 using Discord.WebSocket;
 
 namespace DiscordStatus;
-
-[Module("Connects each server to a Discord Bot, and updates the Discord Bot's status with the server's player-count and map information.", "1.2")]
+[Module("Connects each server to a Discord Bot, and updates the Discord Bot's status with the server's player-count and map information.", "1.3")]
 public class DiscordStatus : BattleBitModule
 {
     public DiscordConfiguration Configuration { get; set; }
@@ -21,8 +21,8 @@ public class DiscordStatus : BattleBitModule
             Unload();
             throw new Exception("API Key is not set. Please set it in the configuration file.");
         }
-        Task.Run(() => connectDiscord());
-        Task.Run(UpdateTimer);
+        Task.Run(() => connectDiscord()).ContinueWith(t => Console.WriteLine($"Error during Discord connection {t.Exception}"), TaskContinuationOptions.OnlyOnFaulted);
+        Task.Run(UpdateTimer).ContinueWith(t => Console.WriteLine($"Error during Discord Status update {t.Exception}"), TaskContinuationOptions.OnlyOnFaulted);
         return Task.CompletedTask;
     }
     private async void UpdateTimer()
