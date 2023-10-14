@@ -8,7 +8,7 @@ namespace Bluscream {
     [RequireModule(typeof(Bluscream.BluscreamLib))]
     [RequireModule(typeof(Bluscream.GeoApi))]
     [RequireModule(typeof(Commands.CommandHandler))]
-    [RequireModule(typeof(Permissions.PlayerPermissions))]
+    [RequireModule(typeof(Permissions.GranularPermissions))]
     [Module("Using the GeoApi to block certain players from joining", "2.0.2")]
     public class VPNBlocker : BattleBitModule {
         public static ModuleInfo ModuleInfo = new() {
@@ -26,7 +26,7 @@ namespace Bluscream {
         public Commands.CommandHandler CommandHandler { get; set; } = null!;
 
         [ModuleReference]
-        public Permissions.PlayerPermissions PlayerPermissions { get; set; } = null!;
+        public Permissions.GranularPermissions GranularPermissions { get; set; } = null!;
 
         [ModuleReference]
         public Bluscream.GeoApi GeoApi { get; set; } = null!;
@@ -40,7 +40,6 @@ namespace Bluscream {
         #endregion
 
         #region Methods
-        private static void Log(object _msg, string source = "VPNBlocker") => BluscreamLib.Log(_msg, source);
         public string FormatString(string format, RunnerPlayer player, IpApi.Response geoData) {
             return format.
                 Replace("{geoData.Isp}", geoData.Isp).
@@ -59,29 +58,28 @@ namespace Bluscream {
             }
             return null;
         }
-        public bool CheckWhitelistRoles(RunnerPlayer player, BlockConfiguration config) {
+        public bool CheckWhitelistPermissions(RunnerPlayer player, BlockConfiguration config) {
             //Log($"CheckWhitelistRoles({player.fullstr()}, {config.ToJson()})");
-            var whitelistedRoles = config.WhitelistedRoles.ParseRoles();
-            if (PlayerPermissions is not null && Extensions.HasNoRoleOf(player, PlayerPermissions, whitelistedRoles)) {
-                Log($"Player {player.str()} would have been kicked for {config.Name}, but has a whitelisted role ({whitelistedRoles.ToJson()})");
+            if (GranularPermissions is not null && player.HasAnyPermissionOf(GranularPermissions, config.WhitelistedPermissions)) {
+                this.Logger.Info($"Player {player.str()} would have been kicked for {config.Name}, but has a whitelisted permission ({config.WhitelistedPermissions.ToJson()})");
                 return true;
             }
             return false;
         }
         public bool CheckPlayer(RunnerPlayer player, IpApi.Response geoData) {
             //Log($"CheckPlayer({player.fullstr()}, {geoData.ToJson()})");
-            if (PlayerPermissions is not null && CheckWhitelistRoles(player, Config.BlockProxies)) return false;
+            if (CheckWhitelistPermissions(player, Config.BlockProxies)) return false;
             if (Config.BlockProxies.Enabled && (geoData.Proxy) == true) { player.Kick(FormatString(Config.BlockProxies.KickMessage, player, geoData)); return true; }
-            if (PlayerPermissions is not null && CheckWhitelistRoles(player, Config.BlockServers)) return false;
+            if (CheckWhitelistPermissions(player, Config.BlockServers)) return false;
             if (Config.BlockServers.Enabled && (geoData.Hosting) == true) { player.Kick(FormatString(Config.BlockServers.KickMessage, player, geoData)); return true; }
-            if (PlayerPermissions is not null && CheckWhitelistRoles(player, Config.BlockMobile)) return false;
+            if (CheckWhitelistPermissions(player, Config.BlockMobile)) return false;
             if (Config.BlockMobile.Enabled && (geoData.Mobile) == true) { player.Kick(FormatString(Config.BlockMobile.KickMessage, player, geoData)); return true; }
 
-            if (PlayerPermissions is not null && CheckWhitelistRoles(player, Config.ISPs)) return false;
+            if (CheckWhitelistPermissions(player, Config.ISPs)) return false;
             if (Config.ISPs.Enabled && geoData.Isp is not null && (CheckStringListEntry(Config.ISPs, geoData.Isp) == true)) { player.Kick(FormatString(Config.ISPs.KickMessage, player, geoData)); return true; }
-            if (PlayerPermissions is not null && CheckWhitelistRoles(player, Config.Continents)) return false;
+            if (CheckWhitelistPermissions(player, Config.Continents)) return false;
             if (Config.Continents.Enabled && geoData.Continent is not null && (CheckStringListEntry(Config.Continents, geoData.Continent) == true)) { player.Kick(FormatString(Config.Continents.KickMessage, player, geoData)); return true; }
-            if (PlayerPermissions is not null && CheckWhitelistRoles(player, Config.Countries)) return false;
+            if (CheckWhitelistPermissions(player, Config.Countries)) return false;
             if (Config.Countries.Enabled && geoData.Country is not null && (CheckStringListEntry(Config.Countries, geoData.Country) == true)) { player.Kick(FormatString(Config.Countries.KickMessage, player, geoData)); return true; }
 
             return false;
@@ -111,7 +109,7 @@ namespace Bluscream {
         #region Events
         public override void OnModulesLoaded() {
             if (GeoApi is null) {
-                Log($"GeoApi could not be found! Is it installed?");
+                this.Logger.Info($"GeoApi could not be found! Is it installed?");
             } else {
                 this.CommandHandler.Register(this);
                 GeoApi.OnPlayerDataReceived += GeoApi_OnPlayerDataReceived;
@@ -124,11 +122,8 @@ namespace Bluscream {
         #endregion
 
         #region Commands
-        [CommandCallback("blockplayer", Description = "Toggles blocking for a specific player's item")]
+        [CommandCallback("blockplayer", Description = "Toggles blocking for a specific player's item", ConsoleCommand = true, Permissions = new[] { "commands.blockplayer" })]
         public void ToggleBlockPlayerCommand(BBRAPIModules.RunnerPlayer commandSource, RunnerPlayer target, string list = "") {
-            var cmdName = $"\"{CommandHandler.CommandConfiguration.CommandPrefix}blockplayer\""; var cmdConfig = CommandsConfigurationInstance.blockplayer;
-            if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
-            if (PlayerPermissions is not null && Extensions.HasNoRoleOf(commandSource, PlayerPermissions, cmdConfig.AllowedRoles.ParseRoles())) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
             var geoData = GeoApi?.GetData(target)?.Result;
             if (geoData is null) { commandSource.Message($"Could not fetch geoData for {target.str()}"); return; }
             switch (list.ToLowerInvariant()) {
@@ -142,11 +137,8 @@ namespace Bluscream {
                     commandSource.Message("Available options:\n\nisp, continent, country"); break;
             }
         }
-        [CommandCallback("block", Description = "Toggles blocking for a specific item")]
+        [CommandCallback("block", Description = "Toggles blocking for a specific item", ConsoleCommand = true, Permissions = new[] { "commands.block" })]
         public void ToggleBlockCommand(BBRAPIModules.RunnerPlayer commandSource, string? list = null, string? entry = null) {
-            var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}block\""; var cmdConfig = CommandsConfigurationInstance.block;
-            if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
-            if (PlayerPermissions is not null && Extensions.HasNoRoleOf(commandSource, PlayerPermissions, cmdConfig.AllowedRoles.ParseRoles())) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
             if (list is null) {
                 commandSource.Message($"VPNBlocker Config:\n" +
                     $"\nBlockProxies: {Config.BlockProxies.Enabled.ToEnabledDisabled()}" +
@@ -182,11 +174,6 @@ namespace Bluscream {
 
 
         #region Configuration
-        public CommandsConfiguration CommandsConfigurationInstance { get; set; }
-        public class CommandsConfiguration : ModuleConfiguration {
-            public CommandConfiguration block { get; set; } = new CommandConfiguration() { AllowedRoles = Extensions.ToRoleStringList(BattleBitAPI.Common.Roles.Admin) };
-            public CommandConfiguration blockplayer { get; set; } = new CommandConfiguration() { AllowedRoles = Extensions.ToRoleStringList(BattleBitAPI.Common.Roles.Admin) };
-        }
         public class BlockListConfiguration : BlockConfiguration {
             public string BlockMode { get; set; } = "Blacklist";
             public List<string> List { get; set; } = new List<string>();
@@ -195,18 +182,18 @@ namespace Bluscream {
             public string Name = string.Empty;
             public bool Enabled { get; set; } = false;
             public string KickMessage { get; set; } = "Kicked by VPNBlocker!";
-            public List<string> WhitelistedRoles { get; set; } = new() { "Admin", "Moderator", "Special", "Vip" };
+            public List<string> WhitelistedPermissions { get; set; } = new() { "vpnblocker.bypass" };
         }
-        public Configuration Config { get; set; }
+        public Configuration Config { get; set; } = null!;
         public class Configuration : ModuleConfiguration {
             public TimeSpan FailTimeout { get; set; } = TimeSpan.FromMinutes(1);
-            public BlockConfiguration BlockProxies { get; set; } = new BlockConfiguration() { Name = "BlockProxies", Enabled = true, KickMessage = "Proxies and VPNs are not allowed on this server, disable your VPN and try again!" };
-            public BlockConfiguration BlockServers { get; set; } = new BlockConfiguration() { Name = "BlockServers", Enabled = true, KickMessage = "Non-Residential IPs are not allowed on this server!" };
-            public BlockConfiguration BlockMobile { get; set; } = new BlockConfiguration() { Name = "BlockMobile", Enabled = false, KickMessage = "Mobile Networks are not allowed on this server!" };
-            public BlockConfiguration BlockFailed { get; set; } = new BlockConfiguration() { Name = "BlockFailed", Enabled = true, KickMessage = "Your IP {player.IP} failed to be validated, try again" };
-            public BlockListConfiguration ISPs { get; set; } = new BlockListConfiguration() { Name = "ISPs", Enabled = true, KickMessage = "Sorry, your ISP \"{geoData.Isp}\" is not allowed on this server!", List = new() { "Cloudflare, Inc." } };
-            public BlockListConfiguration Continents { get; set; } = new BlockListConfiguration() { Name = "Continents", Enabled = true, KickMessage = "Sorry, your continent \"{geoData.Continent}\" is not allowed on this server!" };
-            public BlockListConfiguration Countries { get; set; } = new BlockListConfiguration() { Name = "Countries", Enabled = true, KickMessage = "Sorry, your country \"{geoData.Country}\" is not allowed on this server!" };
+            public BlockConfiguration BlockProxies { get; set; } = new BlockConfiguration() { Name = "BlockProxies", Enabled = true, WhitelistedPermissions = new() { "vpnblocker.bypass", "vpnblocker.bypass.proxy" }, KickMessage = "Proxies and VPNs are not allowed on this server, disable your VPN and try again!" };
+            public BlockConfiguration BlockServers { get; set; } = new BlockConfiguration() { Name = "BlockServers", Enabled = true, WhitelistedPermissions = new() { "vpnblocker.bypass", "vpnblocker.bypass.server" }, KickMessage = "Non-Residential IPs are not allowed on this server!" };
+            public BlockConfiguration BlockMobile { get; set; } = new BlockConfiguration() { Name = "BlockMobile", Enabled = false, WhitelistedPermissions = new() { "vpnblocker.bypass", "vpnblocker.bypass.mobile" }, KickMessage = "Mobile Networks are not allowed on this server!" };
+            public BlockConfiguration BlockFailed { get; set; } = new BlockConfiguration() { Name = "BlockFailed", Enabled = true, WhitelistedPermissions = new() { "vpnblocker.bypass", "vpnblocker.bypass.failed" }, KickMessage = "Your IP {player.IP} failed to be validated, try again" };
+            public BlockListConfiguration ISPs { get; set; } = new BlockListConfiguration() { Name = "ISPs", Enabled = true, WhitelistedPermissions = new() { "vpnblocker.bypass", "vpnblocker.bypass.isp" }, KickMessage = "Sorry, your ISP \"{geoData.Isp}\" is not allowed on this server!", List = new() { "Cloudflare, Inc." } };
+            public BlockListConfiguration Continents { get; set; } = new BlockListConfiguration() { Name = "Continents", Enabled = true, WhitelistedPermissions = new() { "vpnblocker.bypass", "vpnblocker.bypass.continent" }, KickMessage = "Sorry, your continent \"{geoData.Continent}\" is not allowed on this server!" };
+            public BlockListConfiguration Countries { get; set; } = new BlockListConfiguration() { Name = "Countries", Enabled = true, WhitelistedPermissions = new() { "vpnblocker.bypass", "vpnblocker.bypass.country" }, KickMessage = "Sorry, your country \"{geoData.Country}\" is not allowed on this server!" };
         }
         #endregion
     }

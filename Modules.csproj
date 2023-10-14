@@ -65,7 +65,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BattleBitAPIRunner-beta\BBRAPIModules\BBRAPIModules-beta.csproj" />
     <ProjectReference Include="BattleBitBaseModules\BattleBitBaseModules.csproj" />
   </ItemGroup>
 

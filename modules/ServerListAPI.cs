@@ -4,6 +4,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 
 using BBRAPIModules;
+using static Bluscream.Response;
 
 namespace Bluscream {
 
@@ -22,15 +23,15 @@ namespace Bluscream {
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("MapSize")]
-        public virtual MapSize? MapSize { get; set; }
+        public virtual Enums.MapSize? MapSize { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("Gamemode")]
-        public virtual Gamemode? Gamemode { get; set; }
+        public virtual Enums.Gamemode? Gamemode { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("Region")]
-        public virtual Region? Region { get; set; }
+        public virtual Enums.Region? Region { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("Players")]
@@ -50,7 +51,7 @@ namespace Bluscream {
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("DayNight")]
-        public virtual DayNight? DayNight { get; set; }
+        public virtual Enums.DayNight? DayNight { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("IsOfficial")]
@@ -62,21 +63,20 @@ namespace Bluscream {
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("AntiCheat")]
-        public virtual AntiCheat? AntiCheat { get; set; }
+        public virtual Enums.AntiCheat? AntiCheat { get; set; }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("Build")]
-        public virtual Build? Build { get; set; }
-    }
+        public virtual Enums.Build? Build { get; set; }
 
-    public enum AntiCheat { Unknown, Eac };
-    public enum Build { Unknown, Production216, Production218Hotfix, Production218SecHotfix };
-    public enum DayNight { Unknown, Day, Night };
-    public enum Gamemode { Unknown, CaptureTheFlag, Conq, Domi, Eli, Frontline, Infconq, Rush, Tdm, VoxelFortify };
-    public enum MapSize { Unknown, Big, Medium, Small, Tiny, Ultra };
-    public enum Region { Unknown, AmericaCentral, AsiaCentral, AustraliaCentral, BrazilCentral, EuropeCentral, JapanCentral };
-
-    public partial class Response {
+        public class Enums {
+            public enum AntiCheat { Unknown, Eac };
+            public enum Build { Unknown, Production216, Production218Hotfix, Production218SecHotfix };
+            public enum DayNight { Unknown, Day, Night };
+            public enum Gamemode { Unknown, CaptureTheFlag, Conq, Domi, Eli, Frontline, Infconq, Rush, Tdm, VoxelFortify };
+            public enum MapSize { Unknown, Big, Medium, Small, Tiny, Ultra };
+            public enum Region { Unknown, AmericaCentral, AsiaCentral, AustraliaCentral, BrazilCentral, EuropeCentral, JapanCentral };
+        }
         public static List<Response> FromJson(string json) => JsonSerializer.Deserialize<List<Response>>(json, Bluscream.Converter.Settings);
     }
 
@@ -85,19 +85,19 @@ namespace Bluscream {
     }
 
 
-    internal class AntiCheatConverter : JsonConverter<AntiCheat> {
-        public override bool CanConvert(Type t) => t == typeof(AntiCheat);
+    internal class AntiCheatConverter : JsonConverter<Enums.AntiCheat> {
+        public override bool CanConvert(Type t) => t == typeof(Enums.AntiCheat);
 
-        public override AntiCheat Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
+        public override Enums.AntiCheat Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
             var value = reader.GetString();
             if (value == "EAC") {
-                return AntiCheat.Eac;
+                return Enums.AntiCheat.Eac;
             }
             throw new Exception("Cannot unmarshal type AntiCheat");
         }
 
-        public override void Write(Utf8JsonWriter writer, AntiCheat value, JsonSerializerOptions options) {
-            if (value == AntiCheat.Eac) {
+        public override void Write(Utf8JsonWriter writer, Enums.AntiCheat value, JsonSerializerOptions options) {
+            if (value == Enums.AntiCheat.Eac) {
                 JsonSerializer.Serialize(writer, "EAC", options);
                 return;
             }
@@ -106,31 +106,31 @@ namespace Bluscream {
 
         public static readonly AntiCheatConverter Singleton = new AntiCheatConverter();
     }
-    internal class BuildConverter : JsonConverter<Build> {
-        public override bool CanConvert(Type t) => t == typeof(Build);
+    internal class BuildConverter : JsonConverter<Enums.Build> {
+        public override bool CanConvert(Type t) => t == typeof(Enums.Build);
 
-        public override Build Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
+        public override Enums.Build Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
             var value = reader.GetString();
             switch (value) {
                 case "Production 2.1.6":
-                    return Build.Production216;
+                    return Enums.Build.Production216;
                 case "Production 2.1.8 Sec-Hotfix":
-                    return Build.Production218SecHotfix;
+                    return Enums.Build.Production218SecHotfix;
                 case "Production 2.1.8 hotfix":
-                    return Build.Production218Hotfix;
+                    return Enums.Build.Production218Hotfix; // TODO READ FROM DATA
             }
             throw new Exception("Cannot unmarshal type Build");
         }
 
-        public override void Write(Utf8JsonWriter writer, Build value, JsonSerializerOptions options) {
+        public override void Write(Utf8JsonWriter writer, Enums.Build value, JsonSerializerOptions options) {
             switch (value) {
-                case Build.Production216:
+                case Enums.Build.Production216:
                     JsonSerializer.Serialize(writer, "Production 2.1.6", options);
                     return;
-                case Build.Production218SecHotfix:
+                case Enums.Build.Production218SecHotfix:
                     JsonSerializer.Serialize(writer, "Production 2.1.8 Sec-Hotfix", options);
                     return;
-                case Build.Production218Hotfix:
+                case Enums.Build.Production218Hotfix:
                     JsonSerializer.Serialize(writer, "Production 2.1.8 hotfix", options);
                     return;
             }
@@ -139,26 +139,26 @@ namespace Bluscream {
 
         public static readonly BuildConverter Singleton = new BuildConverter();
     }
-    internal class DayNightConverter : JsonConverter<DayNight> {
-        public override bool CanConvert(Type t) => t == typeof(DayNight);
+    internal class DayNightConverter : JsonConverter<Enums.DayNight> {
+        public override bool CanConvert(Type t) => t == typeof(Enums.DayNight);
 
-        public override DayNight Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
+        public override Enums.DayNight Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
             var value = reader.GetString();
             switch (value) {
                 case "Day":
-                    return DayNight.Day;
+                    return Enums.DayNight.Day;
                 case "Night":
-                    return DayNight.Night;
+                    return Enums.DayNight.Night;
             }
             throw new Exception("Cannot unmarshal type DayNight");
         }
 
-        public override void Write(Utf8JsonWriter writer, DayNight value, JsonSerializerOptions options) {
+        public override void Write(Utf8JsonWriter writer, Enums.DayNight value, JsonSerializerOptions options) {
             switch (value) {
-                case DayNight.Day:
+                case Enums.DayNight.Day:
                     JsonSerializer.Serialize(writer, "Day", options);
                     return;
-                case DayNight.Night:
+                case Enums.DayNight.Night:
                     JsonSerializer.Serialize(writer, "Night", options);
                     return;
             }
@@ -167,61 +167,61 @@ namespace Bluscream {
 
         public static readonly DayNightConverter Singleton = new DayNightConverter();
     }
-    internal class GamemodeConverter : JsonConverter<Gamemode> {
-        public override bool CanConvert(Type t) => t == typeof(Gamemode);
+    internal class GamemodeConverter : JsonConverter<Enums.Gamemode> {
+        public override bool CanConvert(Type t) => t == typeof(Enums.Gamemode);
 
-        public override Gamemode Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
+        public override Enums.Gamemode Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
             var value = reader.GetString();
             switch (value) {
                 case "CONQ":
-                    return Gamemode.Conq;
+                    return Enums.Gamemode.Conq;
                 case "CaptureTheFlag":
-                    return Gamemode.CaptureTheFlag;
+                    return Enums.Gamemode.CaptureTheFlag;
                 case "DOMI":
-                    return Gamemode.Domi;
+                    return Enums.Gamemode.Domi;
                 case "ELI":
-                    return Gamemode.Eli;
+                    return Enums.Gamemode.Eli;
                 case "FRONTLINE":
-                    return Gamemode.Frontline;
+                    return Enums.Gamemode.Frontline;
                 case "INFCONQ":
-                    return Gamemode.Infconq;
+                    return Enums.Gamemode.Infconq;
                 case "RUSH":
-                    return Gamemode.Rush;
+                    return Enums.Gamemode.Rush;
                 case "TDM":
-                    return Gamemode.Tdm;
+                    return Enums.Gamemode.Tdm;
                 case "VoxelFortify":
-                    return Gamemode.VoxelFortify;
+                    return Enums.Gamemode.VoxelFortify;
             }
             throw new Exception("Cannot unmarshal type Gamemode");
         }
 
-        public override void Write(Utf8JsonWriter writer, Gamemode value, JsonSerializerOptions options) {
+        public override void Write(Utf8JsonWriter writer, Enums.Gamemode value, JsonSerializerOptions options) {
             switch (value) {
-                case Gamemode.Conq:
+                case Enums.Gamemode.Conq:
                     JsonSerializer.Serialize(writer, "CONQ", options);
                     return;
-                case Gamemode.CaptureTheFlag:
+                case Enums.Gamemode.CaptureTheFlag:
                     JsonSerializer.Serialize(writer, "CaptureTheFlag", options);
                     return;
-                case Gamemode.Domi:
+                case Enums.Gamemode.Domi:
                     JsonSerializer.Serialize(writer, "DOMI", options);
                     return;
-                case Gamemode.Eli:
+                case Enums.Gamemode.Eli:
                     JsonSerializer.Serialize(writer, "ELI", options);
                     return;
-                case Gamemode.Frontline:
+                case Enums.Gamemode.Frontline:
                     JsonSerializer.Serialize(writer, "FRONTLINE", options);
                     return;
-                case Gamemode.Infconq:
+                case Enums.Gamemode.Infconq:
                     JsonSerializer.Serialize(writer, "INFCONQ", options);
                     return;
-                case Gamemode.Rush:
+                case Enums.Gamemode.Rush:
                     JsonSerializer.Serialize(writer, "RUSH", options);
                     return;
-                case Gamemode.Tdm:
+                case Enums.Gamemode.Tdm:
                     JsonSerializer.Serialize(writer, "TDM", options);
                     return;
-                case Gamemode.VoxelFortify:
+                case Enums.Gamemode.VoxelFortify:
                     JsonSerializer.Serialize(writer, "VoxelFortify", options);
                     return;
             }
@@ -230,41 +230,41 @@ namespace Bluscream {
 
         public static readonly GamemodeConverter Singleton = new GamemodeConverter();
     }
-    internal class MapSizeConverter : JsonConverter<MapSize> {
-        public override bool CanConvert(Type t) => t == typeof(MapSize);
+    internal class MapSizeConverter : JsonConverter<Enums.MapSize> {
+        public override bool CanConvert(Type t) => t == typeof(Enums.MapSize);
 
-        public override MapSize Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
+        public override Enums.MapSize Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
             var value = reader.GetString();
             switch (value) {
                 case "Big":
-                    return MapSize.Big;
+                    return Enums.MapSize.Big;
                 case "Medium":
-                    return MapSize.Medium;
+                    return Enums.MapSize.Medium;
                 case "Small":
-                    return MapSize.Small;
+                    return Enums.MapSize.Small;
                 case "Tiny":
-                    return MapSize.Tiny;
+                    return Enums.MapSize.Tiny;
                 case "Ultra":
-                    return MapSize.Ultra;
+                    return Enums.MapSize.Ultra;
             }
             throw new Exception("Cannot unmarshal type MapSize");
         }
 
-        public override void Write(Utf8JsonWriter writer, MapSize value, JsonSerializerOptions options) {
+        public override void Write(Utf8JsonWriter writer, Enums.MapSize value, JsonSerializerOptions options) {
             switch (value) {
-                case MapSize.Big:
+                case Enums.MapSize.Big:
                     JsonSerializer.Serialize(writer, "Big", options);
                     return;
-                case MapSize.Medium:
+                case Enums.MapSize.Medium:
                     JsonSerializer.Serialize(writer, "Medium", options);
                     return;
-                case MapSize.Small:
+                case Enums.MapSize.Small:
                     JsonSerializer.Serialize(writer, "Small", options);
                     return;
-                case MapSize.Tiny:
+                case Enums.MapSize.Tiny:
                     JsonSerializer.Serialize(writer, "Tiny", options);
                     return;
-                case MapSize.Ultra:
+                case Enums.MapSize.Ultra:
                     JsonSerializer.Serialize(writer, "Ultra", options);
                     return;
             }
@@ -273,46 +273,46 @@ namespace Bluscream {
 
         public static readonly MapSizeConverter Singleton = new MapSizeConverter();
     }
-    internal class RegionConverter : JsonConverter<Region> {
-        public override bool CanConvert(Type t) => t == typeof(Region);
+    internal class RegionConverter : JsonConverter<Enums.Region> {
+        public override bool CanConvert(Type t) => t == typeof(Enums.Region);
 
-        public override Region Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
+        public override Enums.Region Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
             var value = reader.GetString();
             switch (value) {
                 case "America_Central":
-                    return Region.AmericaCentral;
+                    return Enums.Region.AmericaCentral;
                 case "Asia_Central":
-                    return Region.AsiaCentral;
+                    return Enums.Region.AsiaCentral;
                 case "Australia_Central":
-                    return Region.AustraliaCentral;
+                    return Enums.Region.AustraliaCentral;
                 case "Brazil_Central":
-                    return Region.BrazilCentral;
+                    return Enums.Region.BrazilCentral;
                 case "Europe_Central":
-                    return Region.EuropeCentral;
+                    return Enums.Region.EuropeCentral;
                 case "Japan_Central":
-                    return Region.JapanCentral;
+                    return Enums.Region.JapanCentral;
             }
             throw new Exception("Cannot unmarshal type Region");
         }
 
-        public override void Write(Utf8JsonWriter writer, Region value, JsonSerializerOptions options) {
+        public override void Write(Utf8JsonWriter writer, Enums.Region value, JsonSerializerOptions options) {
             switch (value) {
-                case Region.AmericaCentral:
+                case Enums.Region.AmericaCentral:
                     JsonSerializer.Serialize(writer, "America_Central", options);
                     return;
-                case Region.AsiaCentral:
+                case Enums.Region.AsiaCentral:
                     JsonSerializer.Serialize(writer, "Asia_Central", options);
                     return;
-                case Region.AustraliaCentral:
+                case Enums.Region.AustraliaCentral:
                     JsonSerializer.Serialize(writer, "Australia_Central", options);
                     return;
-                case Region.BrazilCentral:
+                case Enums.Region.BrazilCentral:
                     JsonSerializer.Serialize(writer, "Brazil_Central", options);
                     return;
-                case Region.EuropeCentral:
+                case Enums.Region.EuropeCentral:
                     JsonSerializer.Serialize(writer, "Europe_Central", options);
                     return;
-                case Region.JapanCentral:
+                case Enums.Region.JapanCentral:
                     JsonSerializer.Serialize(writer, "Japan_Central", options);
                     return;
             }

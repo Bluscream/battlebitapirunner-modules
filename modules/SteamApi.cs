@@ -8,6 +8,7 @@ using System.Net.Http;
 using BBRAPIModules;
 using Bluscream;
 using System.Linq;
+using SteamWebApi;
 
 namespace Bluscream {
     [RequireModule(typeof(BluscreamLib))]
@@ -82,15 +83,30 @@ namespace Bluscream {
                 Console.WriteLine("Steam Web API Key is not set up in config, can't continue!");
                 return null!;
             }
-            var url = Configuration.GetPlayerBansUrl.Replace("{steamId64}", steamId64.ToString()).Replace("{Configuration.SteamWebApiKey}", Configuration.SteamWebApiKey);
-            HttpResponseMessage httpResponse;
-            try { httpResponse = await SteamApi.httpClient.GetAsync(url); } catch (Exception ex) {
-                Log($"Failed to get steam data for {steamId64}: {ex.Message}");
+            BansResponse bansResponse;
+            try {
+                var url = Configuration.GetPlayerBansUrl.Replace("{steamId64}", steamId64.ToString()).Replace("{Configuration.SteamWebApiKey}", Configuration.SteamWebApiKey);
+                this.Logger.Debug($"GET {url}");
+                var httpResponse = await SteamApi.httpClient.GetAsync(url);
+                var json = await httpResponse.Content.ReadAsStringAsync();
+                bansResponse = SteamWebApi.BansResponse.FromJson(json);
+            } catch (Exception ex) {
+                this.Logger.Error($"Failed to get steam bans for {steamId64}: {ex.Message}");
                 return null;
             }
-            var json = await httpResponse.Content.ReadAsStringAsync();
-            var response = SteamWebApi.BanResponse.FromJson(json);
-            return new SteamWebApi.Response() { Bans = response.Players.First() };
+
+            SummaryResponse summaryResponse;
+            try {
+                var url = Configuration.GetPlayerSummaryUrl.Replace("{steamId64}", steamId64.ToString()).Replace("{Configuration.SteamWebApiKey}", Configuration.SteamWebApiKey);
+                this.Logger.Debug($"GET {url}");
+                var httpResponse = await SteamApi.httpClient.GetAsync(url);
+                var json = await httpResponse.Content.ReadAsStringAsync();
+                summaryResponse = SteamWebApi.SummaryResponse.FromJson(json);
+            } catch (Exception ex) {
+                this.Logger.Error($"Failed to get steam summary for {steamId64}: {ex.Message}");
+                return null;
+            }
+            return new SteamWebApi.Response() { Bans = bansResponse.Players.FirstOrDefault(), Summary = summaryResponse?.Response?.Players?.FirstOrDefault() };
         }
         #endregion
 
@@ -124,21 +140,25 @@ namespace Bluscream {
     public class Configuration : ModuleConfiguration {
         public string SteamWebApiKey { get; set; } = string.Empty;
         public string GetPlayerBansUrl { get; set; } = "http://api.steampowered.com/ISteamUser/GetPlayerBans/v1/?steamids={steamId64}&key={Configuration.SteamWebApiKey}";
+        public string GetPlayerSummaryUrl { get; set; } = "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?steamids={steamId64}&key={Configuration.SteamWebApiKey}";
         public TimeSpan RemoveDelay { get; set; } = TimeSpan.FromMinutes(1);
     }
 }
 #region json
 namespace SteamWebApi {
     public class Response {
-        public SteamWebApi.Player? Bans { get; set; }
+        public SteamWebApi.BansPlayer? Bans { get; set; }
+        public SteamWebApi.SummaryPlayer? Summary { get; set; }
     }
 
-    public partial class BanResponse {
+    public partial class BansResponse {
         [JsonPropertyName("players")]
-        public List<Player> Players { get; set; } = null!;
+        public List<BansPlayer> Players { get; set; } = null!;
+
+        public static BansResponse FromJson(string json) => JsonSerializer.Deserialize<BansResponse>(json, Converter.Settings);
     }
 
-    public partial class Player {
+    public partial class BansPlayer {
         [JsonPropertyName("SteamId")]
         public string SteamId { get; set; } = null!;
 
@@ -161,12 +181,95 @@ namespace SteamWebApi {
         public string EconomyBan { get; set; } = null!;
     }
 
-    public partial class BanResponse {
-        public static BanResponse FromJson(string json) => JsonSerializer.Deserialize<BanResponse>(json, Converter.Settings);
+    public partial class SummaryResponse {
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonPropertyName("response")]
+        public virtual SummaryResponseResponse? Response { get; set; }
+
+        public static SummaryResponse FromJson(string json) => JsonSerializer.Deserialize<SummaryResponse>(json, Converter.Settings);
+    }
+
+    public partial class SummaryResponseResponse {
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonPropertyName("players")]
+        public virtual List<SummaryPlayer>? Players { get; set; }
+    }
+
+    public partial class SummaryPlayer {
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonPropertyName("steamid")]
+        public virtual string? _SteamId64 { get; set; }
+        [JsonIgnore]
+        public virtual long? SteamId64 { get { return long.Parse(_SteamId64); } }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonPropertyName("communityvisibilitystate")]
+        public virtual long? CommunityVisibilityState { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonPropertyName("profilestate")]
+        public virtual long? ProfileState { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonPropertyName("personaname")]
+        public virtual string? PersonaName { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonPropertyName("profileurl")]
+        public virtual Uri? ProfileUrl { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonPropertyName("avatar")]
+        public virtual Uri? Avatar { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonPropertyName("avatarmedium")]
+        public virtual Uri? AvatarMedium { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonPropertyName("avatarfull")]
+        public virtual Uri? AvatarFull { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonPropertyName("avatarhash")]
+        public virtual string? AvatarHash { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonPropertyName("personastate")]
+        public virtual long? PersonaState { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonPropertyName("realname")]
+        public virtual string? RealName { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonPropertyName("primaryclanid")]
+        public virtual string? _PrimaryClanId { get; set; }
+        [JsonIgnore]
+        public virtual long? PrimaryClanId { get { return long.Parse(_PrimaryClanId); } }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonPropertyName("timecreated")]
+        public virtual long? _TimeCreated { get; set; }
+        [JsonIgnore]
+        public virtual DateTime? TimeCreated { get { return DateTimeOffset.FromUnixTimeSeconds((long)_TimeCreated).DateTime; } }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonPropertyName("personastateflags")]
+        public virtual long? PersonaStateFlags { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonPropertyName("commentpermission")]
+        public virtual long? CommentPermission { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonPropertyName("loccountrycode")]
+        public virtual string? CountryCode { get; set; }
     }
 
     public static class Serialize {
-        public static string ToJson(this BanResponse self) => JsonSerializer.Serialize(self, Converter.Settings);
+        public static string ToJson(this BansResponse self) => JsonSerializer.Serialize(self, Converter.Settings);
+        public static string ToJson(this SummaryResponse self) => JsonSerializer.Serialize(self, Converter.Settings);
     }
 }
 #endregion
