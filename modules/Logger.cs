@@ -36,13 +36,21 @@ namespace Bluscream {
         public Commands.CommandHandler CommandHandler { get; set; } = null!;
 
         [ModuleReference]
-        public GeoApi GeoApi { get; set; } = null!;
-
-        [ModuleReference]
         public BluscreamLib BluscreamLib { get; set; } = null!;
 
         [ModuleReference]
-        public SteamApi SteamApi { get; set; } = null!;
+#if DEBUG
+        public GeoApi? GeoApi { get; set; } = null!;
+#else
+        public dynamic? GeoApi { get; set; }
+#endif
+
+        [ModuleReference]
+#if DEBUG
+        public SteamApi? SteamApi { get; set; } = null!;
+#else
+        public SteamApi? SteamApi { get; set; }
+#endif
 
         [ModuleReference]
 #if DEBUG
@@ -159,6 +167,8 @@ namespace Bluscream {
                 input = input.Replace("{geoData.Timezone}", geoData.Timezone);
                 input = input.Replace("{geoData.Reverse}", geoData.Reverse);
                 input = input.Replace("{geoData.ToJson()}", geoData.ToJson());
+            } else if (steamData is not null) {
+                input = input.Replace("{geoData.CountryCode}", steamData.Summary?.CountryCode?.ToLowerInvariant());
             }
             input = input.Replace("{reason}", reportReason?.ToString());
             input = input.Replace("{msg}", msg);
