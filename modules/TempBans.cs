@@ -7,17 +7,21 @@ using System.Text.Json;
 using System.IO;
 using System.Text;
 using System.Net;
+
 using TimeSpanParserUtil;
 using Humanizer;
+
 using BBRAPIModules;
 
 using Bluscream;
 using static Bluscream.BluscreamLib;
 using Bans;
+using BattleBitBaseModules;
 
 namespace Bluscream {
     [RequireModule(typeof(BluscreamLib))]
     [RequireModule(typeof(Commands.CommandHandler))]
+    [RequireModule(typeof(BattleBitBaseModules.RichText))]
     [Module("Basic temp banning", "2.0.0")]
     public class TempBans : BattleBitModule {
         public static ModuleInfo ModuleInfo = new() {
@@ -61,56 +65,83 @@ namespace Bluscream {
         }
         #endregion
         #region Commands
-        [Commands.CommandCallback("tempban", Description = "Bans a player for a specified time period", Permissions = new[] { "command.tempban" })]
+        [Commands.CommandCallback("tempban", Description = "Bans a player for a specified time period", ConsoleCommand = true, Permissions = new[] { "command.tempban" })]
         public void TempBanCommand(RunnerPlayer commandSource, RunnerPlayer target, string duration, string? reason = null, string? note = null) {
             var span = TimeSpanParser.Parse(duration);
             var ban = TempBanPlayer(target, span, reason, note, Configuration.DefaultServers, invoker: commandSource);
             if (ban is null) {
-                commandSource.Message($"Failed to ban {target.str()}"); return;
+                commandSource.SayToChat($"Failed to ban {target.str()}"); return;
             }
-            commandSource.Message($"{target.str()} has been banned for {ban.Remaining.Humanize()}");
+            commandSource.SayToChat($"{target.str()} has been banned for {ban.Remaining.Humanize()}");
         }
-        [Commands.CommandCallback("tempbanid", Description = "Bans a player for a specified time period by Steam ID 64", Permissions = new[] { "command.tempbanid" })]
+        [Commands.CommandCallback("tempbanid", Description = "Bans a player for a specified time period by Steam ID 64", ConsoleCommand = true, Permissions = new[] { "command.tempbanid" })]
         public void TempBanIdCommand(RunnerPlayer commandSource, string targetSteamId64, string duration, string? reason = null, string? note = null) {
             var success = ulong.TryParse(targetSteamId64, out var result);
             if (!success) {
-                commandSource.Message($"{targetSteamId64} is not a valid Steam ID 64"); return;
+                var msg = $"{targetSteamId64} is not a valid Steam ID 64";
+                this.Logger.Debug(msg);
+                commandSource.SayToChat(msg);
+                return;
             }
-            var bannedUntil = DateTime.UtcNow + TimeSpanParser.Parse(duration);
+            success = TimeSpanParser.TryParse(duration, out var span);
+            if (!success) {
+                var msg = $"{duration} is not a valid timespan!";
+                this.Logger.Debug(msg);
+                commandSource.SayToChat(msg);
+                return;
+            }
+            var bannedUntil = DateTime.UtcNow + span;
             var ban = TempBanPlayer(targetSteamId64: result, dateTime: bannedUntil, reason: reason, note: note, servers: Configuration.DefaultServers, invokerName: commandSource.Name, invokerSteamId64: commandSource.SteamID, invokerIp: commandSource.IP);
             if (ban is null) {
-                commandSource.Message($"Failed to ban {targetSteamId64}"); return;
+                commandSource.SayToChat($"Failed to ban {targetSteamId64}"); return;
             }
-            commandSource.Message($"{ban.Target} has been banned for {ban.Remaining.Humanize()}");
+            commandSource.SayToChat($"{ban.Target} has been banned for {ban.Remaining.Humanize()}");
         }
-        [Commands.CommandCallback("tempbanip", Description = "Bans a player for a specified time period by IP", Permissions = new[] { "command.tempbanip" })]
+        [Commands.CommandCallback("untempbanid", Description = "Unbans a player for a specified time period by Steam ID 64", ConsoleCommand = true, Permissions = new[] { "command.untempbanid" })]
+        public void UnTempBanIdCommand(RunnerPlayer commandSource, string targetSteamId64) {
+            var success = ulong.TryParse(targetSteamId64, out var result);
+            if (!success) {
+                var msg = $"{targetSteamId64} is not a valid Steam ID 64";
+                this.Logger.Debug(msg);
+                commandSource.SayToChat(msg);
+                return;
+            }
+            var ban = Bans.Get(result);
+            if (ban is null) {
+                commandSource.SayToChat($"Player {targetSteamId64} is not banned!"); return;
+            }
+            Bans.Remove(ban);
+        }
+        [Commands.CommandCallback("tempbanip", Description = "Bans a player for a specified time period by IP", ConsoleCommand = true, Permissions = new[] { "command.tempbanip" })]
         public void TempBanIpCommand(RunnerPlayer commandSource, string targetIp, string duration, string? reason = null, string? note = null) {
             var success = IPAddress.TryParse(targetIp, out var result);
             if (!success) {
-                commandSource.Message($"{targetIp} is not a valid IP Address"); return;
+                commandSource.SayToChat($"{targetIp} is not a valid IP Address"); return;
             }
-            var bannedUntil = DateTime.UtcNow + TimeSpanParser.Parse(duration);
+            var span = TimeSpanParser.Parse(duration);
+            var bannedUntil = DateTime.UtcNow + span;
             var ban = TempBanPlayer(targetIp: result, dateTime: bannedUntil, reason: reason, note: note, servers: Configuration.DefaultServers, invokerName: commandSource.Name, invokerSteamId64: commandSource.SteamID, invokerIp: commandSource.IP);
             if (ban is null) {
-                commandSource.Message($"Failed to ban {targetIp}"); return;
+                commandSource.SayToChat($"Failed to ban {targetIp}"); return;
             }
-            commandSource.Message($"{ban.Target} has been banned for {ban.Remaining.Humanize()}");
+            commandSource.SayToChat($"{ban.Target} has been banned for {ban.Remaining.Humanize()}");
         }
 
-        [Commands.CommandCallback("untempban", Description = "Unbans a player that is temporary banned", Permissions = new[] { "command.untempban" })]
+        [Commands.CommandCallback("untempban", Description = "Unbans a player that is temporary banned", ConsoleCommand = true, Permissions = new[] { "command.untempban" })]
         public void UnTempBanCommand(RunnerPlayer commandSource, RunnerPlayer target) {
             var ban = Bans.Get(target);
             if (ban is null) {
-                commandSource.Message($"Player{target.str()} is not banned!"); return;
+                commandSource.SayToChat($"Player {target.str()} is not banned!"); return;
             }
             Bans.Remove(ban);
         }
 
-        [Commands.CommandCallback("listtempbans", Description = "Lists players that are temporarily banned", Permissions = new[] { "command.listtempbans" })]
+        [Commands.CommandCallback("listtempbans", Description = "Lists players that are temporarily banned", ConsoleCommand = true, Permissions = new[] { "command.listtempbans" })]
         public void ListTempBannedCommand(RunnerPlayer commandSource) {
-            commandSource.Message($"{Bans.Get().Count} Bans\n\n" + string.Join("\n", Bans.Get().Select(b=>$"{b.Target} by {b.Invoker}: {b.Remaining.Humanize()}")));
+            commandSource.Message($"{Bans.Get().Count} Bans\n\n" + string.Join("\n", Bans.Get().Select(b=>$"{b.Target.DisplayName} by {b.Invoker?.DisplayName}: {b.Remaining.Humanize()}")));
         }
         #endregion
+        #region Methods
         public void CheckAllPlayers() {
             foreach (var player in this.Server.AllPlayers) {
                 CheckPlayer(player);
@@ -140,27 +171,29 @@ namespace Bluscream {
                 Servers = servers.Distinct().ToList(),
                 Invoker = new PlayerEntry() { SteamId64 = invokerSteamId64, Name = invokerName, IpAddress = invokerIp?.ToString() },
             };
-            var ban = Bans.Add(newban);
-            KickBannedPlayer(ban);
+            var (msg, ban) = Bans.Add(newban);
+            this.Logger.Info($"{msg}: {ban?.ToJSON(true)}");
+            if (ban is not null) KickBannedPlayer(ban);
             return ban;
         }
 
-        public void KickBannedPlayer(BanEntry banEntry) {
+        public void KickBannedPlayer(BanEntry? banEntry) {
+            if (banEntry == null) return;
             var allServers = banEntry.Servers?.Contains("*") == true;
             var currentServer = banEntry.Servers?.Contains($"{this.Server.GameIP}:{this.Server.GamePort}") == true;
             if (allServers || currentServer) {
                 Server.Kick(banEntry.Target.SteamId64.Value, Configuration.KickNoticeTemplate
                     .Replace("{servername}", this.Server.ServerName)
-                    .Replace("{invoker}", banEntry.Invoker?.Name)
+                    .Replace("{invoker}", banEntry.Invoker?.fullstr())
                     .Replace("{reason}", banEntry.Reason)
                     .Replace("{note}", banEntry.Note)
                     .Replace("{until}", banEntry.BannedUntilUtc.ToString())
                     .Replace("{remaining}", banEntry.Remaining.Humanize())
                 );
-                TempBans.Log($"Kicked tempbanned player {banEntry.Target.Name} ({banEntry.Target.SteamId64}): Banned until {banEntry.BannedUntilUtc} UTC");
+                TempBans.Log($"Kicked tempbanned player {banEntry.Target.fullstr()}: Banned until {banEntry.BannedUntilUtc} UTC");
             }
         }
-
+        #endregion
         //public override Task OnPlayerJoiningToServer(RunnerPlayer player, PlayerJoiningArguments request)
         //{
         //    return Task.FromResult(request as PlayerJoiningArguments);
@@ -175,7 +208,13 @@ namespace Bluscream {
         public bool LogToConsole { get; set; } = true;
         public string BanFilePath { get; set; } = "./data/bans.json";
         public List<string> DefaultServers { get; set; } = new List<string>() { "*" };
-        public string KickNoticeTemplate { get; set; } = "You are banned on {servername}!\n\nBanned by: {invoker}\nReason: \"{reason}\"\nUntil: {until} UTC\n\nTry again in {remaining}";
+        public string KickNoticeTemplate { get; set; } =
+@$"{Colors.Red}You are banned{Colors.None} on {Colors.Orange}{{servername}}{Colors.None}!
+
+Banned by: {Colors.Orange}{{invoker}}{Colors.None}
+Reason: {{reason}}{Colors.None}
+Until: {Colors.LightCyan}{{until}}{Colors.None} UTC
+Try again in {Colors.LightCyan}{{remaining}}";
     }
 }
 #region json
@@ -197,7 +236,10 @@ namespace Bans {
         [JsonPropertyName("Hwid")]
         public string? Hwid { get; set; }
 
-        public override string ToString() {
+        [JsonIgnore]
+        public string DisplayName { get { return Name ?? SteamId64.ToString() ?? "Unknown"; } }
+
+        public string fullstr() {
             var sb = new StringBuilder();
             if (Name is not null) sb.Append(Name.Quote());
             if (SteamId64 is not null) sb.Append($" ({SteamId64})");
@@ -264,28 +306,28 @@ namespace Bans {
             return result;
         }
 
-        public BanEntry? Add(BanEntry entry, bool overwrite = false) {
+        public KeyValuePair<string, BanEntry?> Add(BanEntry entry, bool overwrite = false) {
             var exists = Entries.FirstOrDefault(b => (b?.Target != null) && (b?.Target?.SteamId64 == entry.Target?.SteamId64), null);
             if (exists != null ) {
                 if (!overwrite) {
-                    TempBans.Log($"Tried to add duplicate ban but overwrite was not enabled!");
-                    TempBans.Log(JsonSerializer.Serialize(entry, new JsonSerializerOptions() { WriteIndented = true }));
-                    return null;
+                    var msg = "Tried to add duplicate ban but overwrite was not enabled!";
+                    return new(msg, null);
                 } else {
                     Entries.Remove(exists);
                     Entries.Add(entry);
                     Save();
-                    return entry;
-                    }
+                    return new("Successfully overwrote existing tempban", Entries.Where(e => e == entry).FirstOrDefault());
+                }
             } else {
                 Entries.Add(entry);
                 Save();
-                return entry;
+                return new("Successfully add new tempban", Entries.Where(e => e == entry).FirstOrDefault());
             }
         }
-        public void Remove(BanEntry entry) {
-            Entries.Remove(entry);
+        public bool Remove(BanEntry entry) {
+            var success = Entries.Remove(entry);
             Save();
+            return success;
         }
 
         public void Load() {
