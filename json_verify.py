@@ -14,9 +14,7 @@ for filename in glob.iglob('**/*.json', recursive=True):
     files += 1
     with open(filename, 'r') as f:
         content = f.read()
-        # Find all matches of the pattern
-        matches = pattern.findall(content)
-        if matches:
+        if matches := pattern.findall(content):
             print(f"Trailing comma found in file {filename}")
             found += 1
 
