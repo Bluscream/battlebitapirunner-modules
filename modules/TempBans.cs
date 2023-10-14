@@ -17,6 +17,7 @@ using Bluscream;
 using static Bluscream.BluscreamLib;
 using Bans;
 using BattleBitBaseModules;
+using System.CodeDom.Compiler;
 
 namespace Bluscream {
     [RequireModule(typeof(BluscreamLib))]
@@ -164,15 +165,15 @@ namespace Bluscream {
             servers = servers ?? Configuration.DefaultServers;
             dateTime = dateTime ?? DateTime.MaxValue;
             var newban = new BanEntry() {
-                Target = new PlayerEntry() { SteamId64 = targetSteamId64, Name = targetName, IpAddress = targetIp?.ToString() },
+                Target = new PlayerEntry() { SteamId64 = targetSteamId64, Name = targetName, IpAddress = targetIp },
                 BannedUntilUtc = dateTime,
                 Reason = reason,
                 Note = note,
                 Servers = servers.Distinct().ToList(),
-                Invoker = new PlayerEntry() { SteamId64 = invokerSteamId64, Name = invokerName, IpAddress = invokerIp?.ToString() },
+                Invoker = new PlayerEntry() { SteamId64 = invokerSteamId64, Name = invokerName, IpAddress = invokerIp },
             };
             var (msg, ban) = Bans.Add(newban);
-            this.Logger.Info($"{msg}: {ban?.ToJSON(true)}");
+            this.Logger.Info($"{msg}: {ban?.ToJson(true)}");
             if (ban is not null) KickBannedPlayer(ban);
             return ban;
         }
@@ -182,15 +183,19 @@ namespace Bluscream {
             var allServers = banEntry.Servers?.Contains("*") == true;
             var currentServer = banEntry.Servers?.Contains($"{this.Server.GameIP}:{this.Server.GamePort}") == true;
             if (allServers || currentServer) {
-                Server.Kick(banEntry.Target.SteamId64.Value, Configuration.KickNoticeTemplate
+                var kickMsg = Configuration.KickNoticeTemplate.Join("\r\n")
                     .Replace("{servername}", this.Server.ServerName)
                     .Replace("{invoker}", banEntry.Invoker?.fullstr())
                     .Replace("{reason}", banEntry.Reason)
                     .Replace("{note}", banEntry.Note)
                     .Replace("{until}", banEntry.BannedUntilUtc.ToString())
-                    .Replace("{remaining}", banEntry.Remaining.Humanize())
+                    .Replace("{remaining}", banEntry.Remaining.Humanize()
                 );
-                TempBans.Log($"Kicked tempbanned player {banEntry.Target.fullstr()}: Banned until {banEntry.BannedUntilUtc} UTC");
+                foreach (var player in this.Server.AllPlayers) {
+                    if (banEntry.Target.SteamId64 == player.SteamID || banEntry.Target.IpAddress == player.IP)
+                    Server.Kick(player.SteamID, kickMsg);
+                    TempBans.Log($"Kicked tempbanned player {player.fullstr()}: Banned until {banEntry.BannedUntilUtc} UTC");
+                }
             }
         }
         #endregion
@@ -208,13 +213,13 @@ namespace Bluscream {
         public bool LogToConsole { get; set; } = true;
         public string BanFilePath { get; set; } = "./data/bans.json";
         public List<string> DefaultServers { get; set; } = new List<string>() { "*" };
-        public string KickNoticeTemplate { get; set; } =
-@$"{Colors.Red}You are banned{Colors.None} on {Colors.Orange}{{servername}}{Colors.None}!
-
-Banned by: {Colors.Orange}{{invoker}}{Colors.None}
-Reason: {{reason}}{Colors.None}
-Until: {Colors.LightCyan}{{until}}{Colors.None} UTC
-Try again in {Colors.LightCyan}{{remaining}}";
+        public List<string> KickNoticeTemplate { get; set; } = new() {
+            $"{Colors.Red}You are banned{Colors.None} on {Colors.Orange}{{servername}}{Colors.None}!",
+            $"Banned by: {{invoker}}{Colors.None}",
+            $"Reason: {{reason}}{Colors.None}",
+            $"Until: {{until}} UTC",
+            $"Try again in {{remaining}}"
+        };
     }
 }
 #region json
@@ -230,7 +235,9 @@ namespace Bans {
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         [JsonPropertyName("IpAddress")]
-        public string? IpAddress { get; set; }
+        public IPAddress? IpAddress { get; set; }
+        //[JsonIgnore]
+        //public IPAddress? IpAddress { get { IPAddress.TryParse(_IpAddress, out var result); return result; } set { _IpAddress = value?.ToString(); } }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         [JsonPropertyName("Hwid")]
@@ -247,6 +254,9 @@ namespace Bans {
         }
     }
     public partial class BanEntry {
+        [JsonPropertyName("Id")]
+        public string Id { get; set; } = null!;
+
         [JsonPropertyName("Target")]
         public PlayerEntry Target { get; set; } = null!;
 
@@ -266,13 +276,15 @@ namespace Bans {
         [JsonPropertyName("BannedUntil")]
         public DateTime? BannedUntilUtc { get; set; }
 
+        [JsonPropertyName("BannedAt")]
+        public DateTime? BannedAt { get; set; }
+
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         [JsonPropertyName("Servers")]
         public List<string> Servers { get; set; } = new List<string>() { "*" };
-    }
-    public partial class BanEntry {
+
         [JsonIgnore]
-        public TimeSpan Remaining => BannedUntilUtc.Value - DateTime.UtcNow;
+        public TimeSpan Remaining { get { return BannedUntilUtc.Value - DateTime.UtcNow; } }
     }
 
         public class BanList {
@@ -307,6 +319,8 @@ namespace Bans {
         }
 
         public KeyValuePair<string, BanEntry?> Add(BanEntry entry, bool overwrite = false) {
+            entry.BannedAt = DateTime.UtcNow;
+            entry.Id = entry.GetMd5Hash();
             var exists = Entries.FirstOrDefault(b => (b?.Target != null) && (b?.Target?.SteamId64 == entry.Target?.SteamId64), null);
             if (exists != null ) {
                 if (!overwrite) {
@@ -341,7 +355,7 @@ namespace Bans {
                 Save();
             }
         }
-        public void Save() => Entries.ToFile(File);
+        public void Save() => Entries.ToFile(File, indented: true);
     }
 }
 #endregion

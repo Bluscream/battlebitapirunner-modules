@@ -43,7 +43,7 @@ namespace Bluscream {
         }
 
         private void SteamApi_OnDataReceived(RunnerPlayer player, SteamWebApi.Response steamData) {
-            this.Logger.Debug($"Recieved Steam Data for {player.fullstr()}: {steamData.ToJSON(false)}");
+            this.Logger.Debug($"Recieved Steam Data for {player.fullstr()}: {steamData.ToJson(false)}");
         }
         #endregion
 
@@ -59,9 +59,9 @@ namespace Bluscream {
                     commandSource.Message("Steam bans request failed, check connection and config!");
                     return;
                 }
-                response.AppendLine($"VAC Banned: {steam.Bans.VacBanned.ToYesNo()} ({steam.Bans.NumberOfVacBans} times)");
-                if (steam.Bans.VacBanned) response.AppendLine($"Last VAC Ban: {steam.Bans.DaysSinceLastBan} days ago");
-                response.AppendLine($"Community Banned: {steam.Bans.CommunityBanned.ToYesNo()}");
+                response.AppendLine($"VAC Banned: {steam.Bans.VacBanned?.ToYesNo()} ({steam.Bans.NumberOfVacBans} times)");
+                if (steam.Bans.VacBanned == true) response.AppendLine($"Last VAC Ban: {steam.Bans.DaysSinceLastBan} days ago");
+                response.AppendLine($"Community Banned: {steam.Bans.CommunityBanned?.ToYesNo()}");
                 response.AppendLine($"Trade Banned: {(steam.Bans.EconomyBan != "none").ToYesNo()}");
                 response.AppendLine($"Game Banned: {(steam.Bans.NumberOfGameBans > 0).ToYesNo()} ({steam.Bans.NumberOfGameBans} times)");
             }

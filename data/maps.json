@@ -117,7 +117,7 @@
 	},
 	{
 		"Available": true,
-		"Description": "\tA coastal, industrial construction site with a symmetrical layout.",
+		"Description": "A coastal, industrial construction site with a symmetrical layout.",
 		"ImageUrls": {
 			"DiscordIcon": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/construction/DiscordIcon.png",
 			"EndGame": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/construction/EndGame.png",
@@ -783,7 +783,7 @@
 	},
 	{
 		"Available": true,
-		"Description": "\tA small yet dense urban map dominated by high-rise buildings overlooking the streets. Inspired by Tokyo, Japan.",
+		"Description": "A small yet dense urban map dominated by high-rise buildings overlooking the streets. Inspired by Tokyo, Japan.",
 		"ImageUrls": {
 			"DiscordIcon": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/namak/DiscordIcon.png",
 			"EndGame": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/namak/EndGame.png",
@@ -1356,7 +1356,7 @@
 	{
 		"Available": true,
 		"Description": "Big desert hills and canyons encircle a crowded town concentrated around one major road.",
-		"DisplayName": "SandySunset",
+		"DisplayName": "Sandy Sunset",
 		"ImageUrls": {
 			"DiscordIcon": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/sandysunset/DiscordIcon.png",
 			"EndGame": "https://githubraw.com/Bluscream/battlebitapirunner-modules/master/data/images/maps/sandysunset/EndGame.png",

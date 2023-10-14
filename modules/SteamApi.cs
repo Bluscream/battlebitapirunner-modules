@@ -65,8 +65,8 @@ namespace Bluscream {
         public async Task<long> GetBanCount(RunnerPlayer player) {
             var bans = (await GetData(player)!).Bans;
             if (bans is null) return -1;
-            var banCount = bans.NumberOfVacBans + bans.NumberOfGameBans;
-            if (bans.CommunityBanned) banCount++;
+            var banCount = bans.NumberOfVacBans.Value + bans.NumberOfGameBans.Value;
+            if (bans.CommunityBanned == true) banCount++;
             if (bans.EconomyBan != "none") banCount++;
             return banCount;
         }
@@ -89,7 +89,7 @@ namespace Bluscream {
                 this.Logger.Debug($"GET {url}");
                 var httpResponse = await SteamApi.httpClient.GetAsync(url);
                 var json = await httpResponse.Content.ReadAsStringAsync();
-                bansResponse = SteamWebApi.BansResponse.FromJson(json);
+                bansResponse = JsonUtils.FromJson<BansResponse>(json);
             } catch (Exception ex) {
                 this.Logger.Error($"Failed to get steam bans for {steamId64}: {ex.Message}");
                 return null;
@@ -101,7 +101,7 @@ namespace Bluscream {
                 this.Logger.Debug($"GET {url}");
                 var httpResponse = await SteamApi.httpClient.GetAsync(url);
                 var json = await httpResponse.Content.ReadAsStringAsync();
-                summaryResponse = SteamWebApi.SummaryResponse.FromJson(json);
+                summaryResponse = JsonUtils.FromJson<SummaryResponse>(json);
             } catch (Exception ex) {
                 this.Logger.Error($"Failed to get steam summary for {steamId64}: {ex.Message}");
                 return null;
@@ -155,30 +155,36 @@ namespace SteamWebApi {
         [JsonPropertyName("players")]
         public List<BansPlayer> Players { get; set; } = null!;
 
-        public static BansResponse FromJson(string json) => JsonSerializer.Deserialize<BansResponse>(json, Converter.Settings);
     }
 
     public partial class BansPlayer {
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("SteamId")]
-        public string SteamId { get; set; } = null!;
+        public string? SteamId { get; set; } = null!;
 
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("CommunityBanned")]
-        public bool CommunityBanned { get; set; }
+        public bool? CommunityBanned { get; set; }
 
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("VACBanned")]
-        public bool VacBanned { get; set; }
+        public bool? VacBanned { get; set; }
 
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("NumberOfVACBans")]
-        public long NumberOfVacBans { get; set; }
+        public long? NumberOfVacBans { get; set; }
 
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("DaysSinceLastBan")]
-        public long DaysSinceLastBan { get; set; }
+        public long? DaysSinceLastBan { get; set; }
 
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("NumberOfGameBans")]
-        public long NumberOfGameBans { get; set; }
+        public long? NumberOfGameBans { get; set; }
 
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("EconomyBan")]
-        public string EconomyBan { get; set; } = null!;
+        public string? EconomyBan { get; set; } = null!;
     }
 
     public partial class SummaryResponse {
@@ -186,7 +192,6 @@ namespace SteamWebApi {
         [JsonPropertyName("response")]
         public virtual SummaryResponseResponse? Response { get; set; }
 
-        public static SummaryResponse FromJson(string json) => JsonSerializer.Deserialize<SummaryResponse>(json, Converter.Settings);
     }
 
     public partial class SummaryResponseResponse {
@@ -265,11 +270,6 @@ namespace SteamWebApi {
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("loccountrycode")]
         public virtual string? CountryCode { get; set; }
-    }
-
-    public static class Serialize {
-        public static string ToJson(this BansResponse self) => JsonSerializer.Serialize(self, Converter.Settings);
-        public static string ToJson(this SummaryResponse self) => JsonSerializer.Serialize(self, Converter.Settings);
     }
 }
 #endregion

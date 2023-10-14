@@ -23,6 +23,7 @@ using BBRAPIModules;
 using Bluscream;
 using BattleBitAPI.Server;
 using System.Net.Http;
+using System.Security.Cryptography;
 
 namespace Bluscream {
     #region Defines
@@ -107,23 +108,26 @@ namespace Bluscream {
             var MapsFile = new FileInfo(Config.MapsFile);
             try {
                 Maps = MapList.FromUrl(Config.MapsUrl);
-                Maps.ToFile(MapsFile);
-                this.Logger.Info($"Updated {MapsFile.Name} from {Config.MapsUrl}");
+                Maps.ToFile(MapsFile, true);
+                this.Logger.Info($"Updated {MapsFile.Name} ({Maps.Count} maps) from {Config.MapsUrl}");
             } catch (Exception ex) {
                 this.Logger.Info($"Unable to get new {MapsFile.Name}: {ex.Message}");
                 this.Logger.Info($"Using {Config.MapsFile} if it exists");
                 Maps = MapsFile.Exists ? MapList.FromFile(MapsFile) : new();
             }
+            this.Logger.Info($"Loaded {Maps.Count} maps");
+
             var GameModesFile = new FileInfo(Config.GameModesFile);
             try {
                 GameModes = GameModeList.FromUrl(Config.GameModesUrl);
-                GameModes.ToFile(GameModesFile);
-                this.Logger.Info($"Updated {GameModesFile.Name} from {Config.GameModesUrl}");
+                GameModes.ToFile(GameModesFile, true);
+                this.Logger.Info($"Updated {GameModesFile.Name} ({GameModes.Count} gamemodes)  from {Config.GameModesUrl}");
             } catch (Exception ex) {
                 this.Logger.Info($"Unable to get new {GameModesFile.Name}: {ex.Message}");
                 this.Logger.Info($"Using {Config.GameModesFile} if it exists");
                 GameModes = GameModesFile.Exists ? GameModeList.FromFile(GameModesFile) : new();
             }
+            this.Logger.Info($"Loaded {GameModes.Count} gamemodes");
         }
         #endregion
         #region Methods
@@ -205,11 +209,11 @@ namespace Bluscream {
         #endregion
         #region Data
         public static List<GameModeInfo> GameModes = new();
-        public static IReadOnlyList<string> GameModeNames { get { return GameModes.Where(m => m.Available == true).Select(m => m.Name).ToList() ?? new(); } }
-        public static IReadOnlyList<string> GameModeDisplayNames { get { return Maps.Where(m => m.Available == true).Select(m => m.DisplayName).ToList() ?? new(); } }
+        public static IReadOnlyList<string> GameModeNames => GameModes.Where(m => m.Available == true).Select(m => m.Name).ToList() ?? new();
+        public static IReadOnlyList<string> GameModeDisplayNames => Maps.Where(m => m.Available == true).Select(m => m.DisplayName ?? m.Name).ToList() ?? new();
         public static List<MapInfo> Maps = new();
-        public static IReadOnlyList<string> MapNames { get { return Maps.Where(m => m.Available == true).Select(m => m.Name).ToList() ?? new(); } }
-        public static IReadOnlyList<string> MapDisplayNames { get { return Maps.Where(m => m.Available == true).Select(m => m.DisplayName).ToList() ?? new(); } }
+        public static IReadOnlyList<string> MapNames => Maps.Where(m => m.Available == true).Select(m => m.Name).ToList() ?? new();
+        public static IReadOnlyList<string> MapDisplayNames => Maps.Where(m => m.Available == true).Select(m => m.DisplayName ?? m.Name).ToList() ?? new();
         #endregion
         #region Configuration
         public static Configuration Config { get; set; } = null!;
@@ -702,16 +706,16 @@ namespace Bluscream {
 
         #endregion FileInfo
         #region Object
-        public static string ToJSON(this object obj, bool indented = true) {
-            return JsonSerializer.Serialize(obj, new JsonSerializerOptions {
-                WriteIndented = indented,
-                Converters =
-            {
-                    new JsonStringEnumConverter(),
-                    new IPAddressConverter(),
-                    new IPEndPointConverter()
+        public static string GetMd5Hash(this object obj) {
+            using (MD5 md5 = MD5.Create()) {
+                byte[] inputBytes = Encoding.UTF8.GetBytes(obj.ToJson(false));
+                byte[] hashBytes = md5.ComputeHash(inputBytes);
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < hashBytes.Length; i++) {
+                    sb.Append(hashBytes[i].ToString("X2"));
                 }
-            });
+                return sb.ToString().ToLowerInvariant();
+            }
         }
         #endregion Object
         #region Int
@@ -895,20 +899,23 @@ namespace Bluscream {
         }
         public static T FromJson<T>(string jsonText) => JsonSerializer.Deserialize<T>(jsonText, Converter.Settings);
         public static T FromJsonFile<T>(FileInfo file) => FromJson<T>(File.ReadAllText(file.FullName));
-        public static string ToJson<T>(this T self) => JsonSerializer.Serialize(self, Converter.Settings);
-            public static void ToFile<T>(this T self, FileInfo file) {
+        public static string ToJson<T>(this T self, bool indented = false) => JsonSerializer.Serialize(self, new JsonSerializerOptions(Converter.Settings) { WriteIndented = indented });
+            public static void ToFile<T>(this T self, FileInfo file, bool indented = false) {
                 file?.Directory?.Create();
-                File.WriteAllText(file?.FullName, ToJson(self));
+                File.WriteAllText(file?.FullName, ToJson(self, indented));
             }
     }
     public static class Converter {
         public static readonly JsonSerializerOptions Settings = new(JsonSerializerDefaults.General) {
-            Converters =
-            {
-            new DateOnlyConverter(),
-            new TimeOnlyConverter(),
-            IsoDateTimeOffsetConverter.Singleton
-        },
+            Converters = {
+                 new JsonStringEnumConverter(),
+                //new ParseStringConverter(),
+                //new DateOnlyConverter(),
+                //new TimeOnlyConverter(),
+                IsoDateTimeOffsetConverter.Singleton,
+                new IPAddressConverter(),
+                new IPEndPointConverter()
+            },
         };
     }
     public class ParseStringConverter : JsonConverter<long> {
@@ -1059,7 +1066,7 @@ namespace Bluscream {
         public string? DisplayName_ { get; set; }
 
         [JsonIgnore]
-        public string? DisplayName { get { return string.IsNullOrWhiteSpace(DisplayName_) ? DisplayName_ : Name; } }
+        public string DisplayName => DisplayName_ ?? Name ?? "Unknown Map";
     }
     #region Maps
     public class SupportedGamemode {

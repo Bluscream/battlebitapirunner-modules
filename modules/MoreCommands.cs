@@ -101,7 +101,7 @@ namespace Bluscream {
 
         [Commands.CommandCallback("list maps", Description = "Lists all maps", Permissions = new[] { "commands.listmaps" })]
         public void ListMaps(RunnerPlayer commandSource) {
-            commandSource.Message("<b>Available Maps:</b>\n\n" + string.Join(", ", BluscreamLib.Maps.Select(m => m.DisplayName)));
+            commandSource.Message("<b>Available Maps:</b>\n\n" + string.Join(", ", BluscreamLib.MapDisplayNames));
         }
         [Commands.CommandCallback("list modes", Description = "Lists all gamemodes", Permissions = new[] { "commands.listmodes" })]
         public void ListGameMods(RunnerPlayer commandSource) {
