@@ -72,15 +72,15 @@ namespace Bluscream {
         }
     }
     #region Configuration
-    public class CommandConfiguration {
-        public bool Enabled { get; set; } = true;
-        public List<string>? AllowedRoles { get; set; } = new() { };
-    }
+    //public class CommandConfiguration {
+    //    public bool Enabled { get; set; } = true;
+    //    public List<string>? AllowedRoles { get; set; } = new() { };
+    //}
     #endregion
     #endregion
     #region Requires
     [RequireModule(typeof(DevMinersBBModules.ModuleUsageStats))]
-    [RequireModule(typeof(Permissions.PlayerPermissions))]
+    [RequireModule(typeof(Permissions.GranularPermissions))]
     #endregion
     [Module("Bluscream's Library", "2.0.2")]
     public class BluscreamLib : BattleBitModule {
@@ -103,28 +103,27 @@ namespace Bluscream {
         public BluscreamLib() {
             Log("Constructor called");
         }
-        public override Task OnConnected() {
+        public override void OnModulesLoaded() {
             var MapsFile = new FileInfo(Config.MapsFile);
             try {
                 Maps = MapList.FromUrl(Config.MapsUrl);
                 Maps.ToFile(MapsFile);
-                Log($"Updated {MapsFile.Name} from {Config.MapsUrl}");
+                this.Logger.Info($"Updated {MapsFile.Name} from {Config.MapsUrl}");
             } catch (Exception ex) {
-                Log($"Unable to get new {MapsFile.Name}: {ex.Message}");
-                Log($"Using {Config.MapsFile} if it exists");
+                this.Logger.Info($"Unable to get new {MapsFile.Name}: {ex.Message}");
+                this.Logger.Info($"Using {Config.MapsFile} if it exists");
                 Maps = MapsFile.Exists ? MapList.FromFile(MapsFile) : new();
             }
             var GameModesFile = new FileInfo(Config.GameModesFile);
             try {
                 GameModes = GameModeList.FromUrl(Config.GameModesUrl);
                 GameModes.ToFile(GameModesFile);
-                Log($"Updated {GameModesFile.Name} from {Config.GameModesUrl}");
+                this.Logger.Info($"Updated {GameModesFile.Name} from {Config.GameModesUrl}");
             } catch (Exception ex) {
-                Log($"Unable to get new {GameModesFile.Name}: {ex.Message}");
-                Log($"Using {Config.GameModesFile} if it exists");
+                this.Logger.Info($"Unable to get new {GameModesFile.Name}: {ex.Message}");
+                this.Logger.Info($"Using {Config.GameModesFile} if it exists");
                 GameModes = GameModesFile.Exists ? GameModeList.FromFile(GameModesFile) : new();
             }
-            return Task.CompletedTask;
         }
         #endregion
         #region Methods
@@ -158,12 +157,12 @@ namespace Bluscream {
             return null;
         }
 
-        public static MapDayNight GetDayNightFromString(string input) {
-            if (string.IsNullOrWhiteSpace(input)) return MapDayNight.None;
+        public static MapDayNight? GetDayNightFromString(string input) {
+            if (string.IsNullOrWhiteSpace(input)) return null;
             input = input.Trim().ToLowerInvariant();
             if (input.Contains("day")) return MapDayNight.Day;
             else if (input.Contains("night")) return MapDayNight.Night;
-            return MapDayNight.None;
+            return null;
         }
         public static MapSize GetMapSizeFromString(string input) {
             switch (input) {
@@ -197,20 +196,23 @@ namespace Bluscream {
             }
         }
 
-        public static void Log(object _msg, string source = "") {
+        [Obsolete("Use this.Logger instead for non-static methods!")]
+        public static void Log(object _msg, string source = "BluscreamLib") {
             var msg = _msg.ToString();
             if (string.IsNullOrWhiteSpace(msg)) return;
             Console.WriteLine($"[{DateTime.Now.ToString("HH:mm:ss")}] {source} > {msg.Trim()}");
         }
         #endregion
         #region Data
-        public static IReadOnlyList<string> GameModeNames { get { return GameModes.Where(m => m.Available == true).Select(m => m.Name).ToList(); } }
-        public static IReadOnlyList<string> GameModeDisplayNames { get { return Maps.Where(m => m.Available == true).Select(m => m.DisplayName).ToList(); } }
-        public static IReadOnlyList<string> MapNames { get { return Maps.Where(m => m.Available == true).Select(m => m.Name).ToList(); } }
-        public static IReadOnlyList<string> MapDisplayNames { get { return Maps.Where(m => m.Available == true).Select(m => m.DisplayName).ToList(); } }
+        public static List<GameModeInfo> GameModes = new();
+        public static IReadOnlyList<string> GameModeNames { get { return GameModes.Where(m => m.Available == true).Select(m => m.Name).ToList() ?? new(); } }
+        public static IReadOnlyList<string> GameModeDisplayNames { get { return Maps.Where(m => m.Available == true).Select(m => m.DisplayName).ToList() ?? new(); } }
+        public static List<MapInfo> Maps = new();
+        public static IReadOnlyList<string> MapNames { get { return Maps.Where(m => m.Available == true).Select(m => m.Name).ToList() ?? new(); } }
+        public static IReadOnlyList<string> MapDisplayNames { get { return Maps.Where(m => m.Available == true).Select(m => m.DisplayName).ToList() ?? new(); } }
         #endregion
         #region Configuration
-        public static Configuration Config { get; set; }
+        public static Configuration Config { get; set; } = null!;
         public class Configuration : ModuleConfiguration {
             public string TimeStampFormat { get; set; } = "HH:mm:ss";
             public string MapsFile { get; set; } = "data/maps.json";
@@ -298,7 +300,7 @@ namespace Bluscream {
                 return Roles.None;
             }
             if (rolesString.Equals("All", StringComparison.OrdinalIgnoreCase)) {
-                return MoreRoles.Member;
+                return Roles.Admin | Roles.Moderator | Roles.Vip | Roles.Special;
             }
             Roles result = Roles.None;
             var separators = new[] { ',', '|' };
@@ -315,7 +317,7 @@ namespace Bluscream {
                 return Roles.None;
             }
             if (rolesList.Any(role => role.Equals("All", StringComparison.OrdinalIgnoreCase))) {
-                return MoreRoles.Member;
+                return Roles.Admin | Roles.Moderator | Roles.Vip | Roles.Special;
             }
             Roles result = Roles.None;
             foreach (var roleString in rolesList) {
@@ -351,6 +353,7 @@ namespace Bluscream {
         public static string fullstr(this RunnerPlayer player) => $"{player.str()} ({player.SteamID})";
         public static void Kick(this BattleBitAPI.Player<RunnerPlayer> player, string? reason = null) => Kick(player as RunnerPlayer, reason);
         public static void Kick(this RunnerPlayer player, string? reason = null) {
+            BluscreamLib.Log($"Kicking Player {player.str()} for \"{reason}\"");
             player.Kick(reason);
             OnPlayerKicked?.Invoke(player, reason);
         }
@@ -362,6 +365,13 @@ namespace Bluscream {
         public static bool HasAllRolesOf(this RunnerPlayer player, Permissions.PlayerPermissions permissionsModule, Roles needsAllRole) => needsAllRole > 0 && (player.GetRoles(permissionsModule) & needsAllRole) == needsAllRole;
         public static bool HasOnlyThisRole(this RunnerPlayer player, Permissions.PlayerPermissions permissionsModule, Roles role) => role > 0 && player.GetRoles(permissionsModule) == role;
         public static bool HasOnlyTheseRoles(this RunnerPlayer player, Permissions.PlayerPermissions permissionsModule, Roles roles) => player.HasOnlyTheseRoles(permissionsModule, roles);
+        public static List<string> GetPlayerPermissions(this RunnerPlayer player, Permissions.GranularPermissions permissionsModule) => permissionsModule.GetPlayerPermissions(player.SteamID).ToList();
+        public static List<string> GetAllPlayerPermissions(this RunnerPlayer player, Permissions.GranularPermissions permissionsModule) => permissionsModule.GetAllPlayerPermissions(player.SteamID).ToList();
+        public static bool HasAnyPermissionOf(this RunnerPlayer player, Permissions.GranularPermissions permissionsModule, List<string> needsAnyPermission) => player.GetAllPlayerPermissions(permissionsModule).ContainsAny(values: needsAnyPermission.ToArray());
+        public static bool HasAllPermissionsOf(this RunnerPlayer player, Permissions.GranularPermissions permissionsModule, List<string> needsAllPermissions) => player.GetAllPlayerPermissions(permissionsModule).ContainsAll(values: needsAllPermissions.ToArray());
+        public static List<string> GetPlayerGroups(this RunnerPlayer player, Permissions.GranularPermissions permissionsModule) => permissionsModule.GetPlayerGroups(player.SteamID).ToList();
+        public static bool HasAnyGroupOf(this RunnerPlayer player, Permissions.GranularPermissions permissionsModule, List<string> needsAnyGroup) => player.GetPlayerGroups(permissionsModule).ContainsAny(values: needsAnyGroup.ToArray());
+        public static bool HasAllGroupsOf(this RunnerPlayer player, Permissions.GranularPermissions permissionsModule, List<string> needsAllGroups) => player.GetPlayerGroups(permissionsModule).ContainsAll(values: needsAllGroups.ToArray());
         #endregion
         public static void SayToTeamChat(this RunnerPlayer player, RunnerServer server, string message) => server.SayToTeamChat(player.Team, message);
         public static void SayToSquadChat(this RunnerPlayer player, RunnerServer server, string message) => server.SayToSquadChat(player.Team, player.SquadName, message);
@@ -384,12 +394,12 @@ namespace Bluscream {
         public static void SayToChat(this Squad<RunnerPlayer> squad, string message) => squad.Server.SayToSquadChat(squad.Team, squad.Name, message);
         #endregion
         #region Map
-        public static void ChangeTime(this RunnerServer Server, MapDayNight dayNight = MapDayNight.None) => ChangeMap(Server, dayNight: dayNight);
-        public static void ChangeGameMode(this RunnerServer Server, GameModeInfo? gameMode = null, MapDayNight dayNight = MapDayNight.None) => ChangeMap(Server, gameMode: gameMode, dayNight: dayNight);
-        public static void ChangeMap(this RunnerServer Server, MapInfo? map = null, GameModeInfo? gameMode = null, MapDayNight dayNight = MapDayNight.None) {
+        public static void ChangeTime(this RunnerServer Server, MapDayNight? dayNight = null) => ChangeMap(Server, dayNight: dayNight);
+        public static void ChangeGameMode(this RunnerServer Server, GameModeInfo? gameMode = null, MapDayNight? dayNight = null) => ChangeMap(Server, gameMode: gameMode, dayNight: dayNight);
+        public static void ChangeMap(this RunnerServer Server, MapInfo? map = null, GameModeInfo? gameMode = null, MapDayNight? dayNight = null) {
             map = map ?? MapInfo.FromName(Server.Map);
             gameMode = gameMode ?? GameModeInfo.FromName(Server.Gamemode);
-            dayNight = dayNight == MapDayNight.None ? (MapDayNight)Server.DayNight : dayNight;
+            dayNight = dayNight ?? Server.DayNight;
 
             var oldMaps = Server.MapRotation.GetMapRotation();
             Server.MapRotation.SetRotation(map.Name);
@@ -398,7 +408,7 @@ namespace Bluscream {
 
             var oldVoteDay = Server.ServerSettings.CanVoteDay;
             var oldVoteNight = Server.ServerSettings.CanVoteNight;
-            if (dayNight != MapDayNight.None) {
+            if (dayNight is not null) {
                 switch (dayNight) {
                     case MapDayNight.Day:
                         Server.ServerSettings.CanVoteDay = true;
@@ -413,7 +423,7 @@ namespace Bluscream {
             var msg = new StringBuilder();
             if (map is not null) msg.Append($"Changing map to {map.DisplayName}");
             if (gameMode is not null) msg.Append($" ({gameMode.DisplayName})");
-            if (dayNight != MapDayNight.None) msg.Append($" [{dayNight}]");
+            if (dayNight is not null) msg.Append($" [{dayNight}]");
 
             Server.SayToAllChat(msg.ToString());
             Server.AnnounceShort(msg.ToString());
@@ -460,7 +470,7 @@ namespace Bluscream {
         public static MapInfo? ParseMap(this string input) => BluscreamLib.ResolveGameModeMapNameMatch(input, BluscreamLib.Maps);
         public static GameModeInfo? ToGameMode(this string gameModeName) => BluscreamLib.GameModes.Where(m => m.Name.ToLowerInvariant() == gameModeName.ToLowerInvariant()).First();
         public static GameModeInfo? ParseGameMode(this string input) => BluscreamLib.ResolveGameModeMapNameMatch(input, BluscreamLib.GameModes);
-        public static MapDayNight ParseDayNight(this string input) => BluscreamLib.GetDayNightFromString(input);
+        public static MapDayNight? ParseDayNight(this string input) => BluscreamLib.GetDayNightFromString(input);
         public static string Base64Encode(this string plainText) {
             var plainTextBytes = Encoding.UTF8.GetBytes(plainText);
             return Convert.ToBase64String(plainTextBytes);
@@ -552,6 +562,14 @@ namespace Bluscream {
                 BluscreamLib.Log($"Unable to parse: {version} as version!");
             }
             return Version;
+        }
+        public static bool ContainsAll(this string value, params string[] values) {
+            foreach (string one in values) {
+                if (!value.Contains(one)) {
+                    return false;
+                }
+            }
+            return true;
         }
         #endregion String
         #region bool
@@ -750,7 +768,7 @@ namespace Bluscream {
             return null;
         }
 
-        public static string Join(this List<string> strings, string separator) {
+        public static string Join(this IEnumerable<string> strings, string separator) {
             return string.Join(separator, strings);
         }
 
@@ -763,6 +781,25 @@ namespace Bluscream {
             list.RemoveAt(index);
             return r;
         }
+
+        public static bool ContainsAll(this IEnumerable<string> value, params string[] values) => ContainsAll(value.ToList(), values);
+        public static bool ContainsAll(this string[] value, params string[] values) => ContainsAll(value.ToList(), values);
+        public static bool ContainsAll(this List<string> value, params string[] values) {
+            foreach (string one in values) {
+                if (!value.Any(one.Contains)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public static bool ContainsAny(this IEnumerable<string> value, params string[] values) => ContainsAll(value.ToList(), values);
+        public static bool ContainsAny(this string[] value, params string[] values) => ContainsAll(value.ToList(), values);
+        public static bool ContainsAny(this List<string> value, params string[] values) {
+            return value.Any(values.Contains);
+        }
+
+        
 
         #endregion List
         #region Uri
@@ -1105,15 +1142,15 @@ namespace Bluscream {
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("ShortName")]
-        public virtual string ShortName { get; set; }
+        public virtual string ShortName { get; set; } = null!;
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("LongName")]
-        public virtual string LongName { get; set; }
+        public virtual string LongName { get; set; } = null!;
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("Description")]
-        public virtual string Description { get; set; }
+        public virtual string Description { get; set; } = null!;
 
         public static List<SizeInfo> FromJson(string json) => JsonSerializer.Deserialize<List<SizeInfo>>(json, Bluscream.Converter.Settings);
     }

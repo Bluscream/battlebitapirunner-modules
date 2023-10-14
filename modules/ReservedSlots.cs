@@ -13,8 +13,8 @@ namespace BattleBitBaseModules;
 [Module("Reserved Slots", "1.0.0")]
 public class ReservedSlots : BattleBitModule
 {
-    public ReservedSlotsConfiguration Configuration { get; set; }
-    public PlayerPermissions PlayerPermissions { get; set; }
+    public ReservedSlotsConfiguration Configuration { get; set; } = null!;
+    public PlayerPermissions PlayerPermissions { get; set; } = null!;
 
     public override Task OnPlayerJoiningToServer(ulong steamID, PlayerJoiningArguments args)
     {

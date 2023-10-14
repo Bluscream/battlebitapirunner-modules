@@ -16,10 +16,10 @@ namespace BattleBitBaseModules;
 public class MapRotation : BattleBitModule
 {
     [ModuleReference]
-    public CommandHandler CommandHandler { get; set; }
+    public CommandHandler CommandHandler { get; set; } = null!;
     [ModuleReference]
-    public GameModeRotation GameModeRotation { get; set; }
-    public MapRotationConfiguration Configuration { get; set; }
+    public GameModeRotation GameModeRotation { get; set; } = null!;
+    public MapRotationConfiguration Configuration { get; set; } = null!;
 
     public override async Task OnConnected()
     {
@@ -111,7 +111,7 @@ public class MapRotation : BattleBitModule
         this.CommandHandler.Register(this);
     }
 
-    [CommandCallback("Maps", Description = "Shows the current map rotation")]
+    [CommandCallback("Maps", Description = "Shows the current map rotation", ConsoleCommand = true)]
     public void Maps(RunnerPlayer commandSource)
     {
         string maps = "";
@@ -122,7 +122,7 @@ public class MapRotation : BattleBitModule
         Server.MessageToPlayer(commandSource, $"The current map rotation is: {maps}");
     }
 
-    [CommandCallback("AddMap", Description = "Adds a map in the current rotation", AllowedRoles = Roles.Admin)]
+    [CommandCallback("AddMap", Description = "Adds a map in the current rotation", ConsoleCommand = true, Permissions = new[] { "command.addmap" })]
     public void AddMap(RunnerPlayer commandSource, string map)
     {
         var matchingName = FindMapName(commandSource, map);
@@ -149,7 +149,7 @@ public class MapRotation : BattleBitModule
         Server.SayToChat($"Successfuly added {matchingName} to rotation", commandSource);
     }
 
-    [CommandCallback("RemoveMap", Description = "Removes a map from the current rotation", AllowedRoles = Roles.Admin)]
+    [CommandCallback("RemoveMap", Description = "Removes a map from the current rotation", ConsoleCommand = true, Permissions = new[] { "command.removemap" })]
     public void RemoveMap(RunnerPlayer commandSource, string map)
     {
         var matchingName = FindMapName(commandSource, map);
@@ -167,7 +167,7 @@ public class MapRotation : BattleBitModule
         Server.SayToChat($"Successfuly removed {matchingName} from rotation", commandSource);
     }
 
-    [CommandCallback("AddGMMaps", Description = "Adds every map that supports the selected gamemode at the current map size to the rotation", AllowedRoles = Roles.Admin)]
+    [CommandCallback("AddGMMaps", Description = "Adds every map that supports the selected gamemode at the current map size to the rotation", ConsoleCommand = true, Permissions = new[] { "command.addgmmaps" })]
     public void AddGMMaps(RunnerPlayer commandSource, string gamemode)
     {
         var gamemodeName = GameModeRotation.FindGameMode(gamemode);
@@ -205,7 +205,7 @@ public class MapRotation : BattleBitModule
         Server.SayToChat($"Successfuly added {outputString} to rotation", commandSource);
     }
 
-    [CommandCallback("MapCleanup", Description = "Removes a maps that don't support current gamemodes at current map size", AllowedRoles = Roles.Admin)]
+    [CommandCallback("MapCleanup", Description = "Removes a maps that don't support current gamemodes at current map size", ConsoleCommand = true, Permissions = new[] { "command.mapcleanup" })]
     public void MapCleanup(RunnerPlayer commandSource)
     {
         var currentRotation = GameModeRotation.ActiveGamemodes.ConvertAll(name => name.ToLower());
@@ -281,7 +281,7 @@ public class MapRotation : BattleBitModule
     }
 
     /*//use for debugging
-    [CommandCallback("M", Description = "Shows how many matches since the last time a map was played")]
+    [CommandCallback("M", Description = "Shows how many matches since the last time a map was played", ConsoleCommand = true, Permissions = new[] { "command.m" })]
     public void M(RunnerPlayer commandSource)
     {
         string maps = "";
@@ -293,7 +293,7 @@ public class MapRotation : BattleBitModule
         }
         Server.SayToChat($"maps played and times since last played: {maps}", commandSource);
     }
-    [CommandCallback("CM", Description = "Shows the Current Map name returned by Server.map")]
+    [CommandCallback("CM", Description = "Shows the Current Map name returned by Server.map", ConsoleCommand = true, Permissions = new[] { "command.cm" })]
     public void CM(RunnerPlayer commandSource)
     {
         Server.MessageToPlayer(commandSource, $"Current map {Server.Map}");

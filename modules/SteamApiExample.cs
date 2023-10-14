@@ -26,16 +26,10 @@ namespace Bluscream {
         public CommandHandler CommandHandler { get; set; } = null!;
         [ModuleReference]
         public Bluscream.SteamApi SteamApi { get; set; } = null!;
-        [ModuleReference]
-#if DEBUG
-        public Permissions.PlayerPermissions? PlayerPermissions { get; set; }
-#else
-        public dynamic? PlayerPermissions { get; set; }
-#endif
         #endregion
 
         #region Methods
-        private static void Log(object _msg, string source = "GeoApiExample") => BluscreamLib.Log(_msg, source);
+        private static void Log(object _msg, string source = "SteamApiExample") => BluscreamLib.Log(_msg, source);
         #endregion
 
         #region Events
@@ -54,11 +48,8 @@ namespace Bluscream {
         #endregion
 
         #region Commands
-        [CommandCallback("playerbans", Description = "Lists steam bans of a player")]
+        [CommandCallback("playerbans", Description = "Lists steam bans of a player", ConsoleCommand = true, Permissions = new[] { "command.playerbans" })]
         public async void GetPlayerBans(RunnerPlayer commandSource, RunnerPlayer? _player = null) {
-            var cmdName = $"\"{CommandHandler.CommandConfiguration.CommandPrefix}playerbans\""; var cmdConfig = CommandsConfigurationInstance.playerbans;
-            if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
-            if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
             _player = _player ?? commandSource;
             var response = new StringBuilder();
             if (!string.IsNullOrEmpty(_player.Name)) response.AppendLine($"Name: {_player.str()} ({_player.Name.Length} chars)");
@@ -75,13 +66,6 @@ namespace Bluscream {
                 response.AppendLine($"Game Banned: {(bans.NumberOfGameBans > 0).ToYesNo()} ({bans.NumberOfGameBans} times)");
             }
             commandSource.Message(response.ToString());
-        }
-        #endregion
-
-        #region Configuration
-        public CommandsConfiguration CommandsConfigurationInstance { get; set; }
-        public class CommandsConfiguration : ModuleConfiguration {
-            public CommandConfiguration playerbans { get; set; } = new CommandConfiguration() { AllowedRoles = Extensions.ToRoleStringList(MoreRoles.Staff) };
         }
         #endregion
     }

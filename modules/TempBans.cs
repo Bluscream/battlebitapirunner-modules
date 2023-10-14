@@ -30,19 +30,12 @@ namespace Bluscream {
             SupportUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/issues/new?title=TempBans")
         };
         [ModuleReference]
-        public Commands.CommandHandler CommandHandler { get; set; }
-        [ModuleReference]
-#if DEBUG
-        public Permissions.PlayerPermissions? PlayerPermissions { get; set; } = null!;
-#else
-        public dynamic? PlayerPermissions { get; set; } = null!;
-#endif
-        public CommandsConfiguration CommandsConfiguration { get; set; }
+        public Commands.CommandHandler CommandHandler { get; set; } = null!;
 
-        public static TempBansConfiguration Configuration { get; set; }
+        public static TempBansConfiguration Configuration { get; set; } = null!;
 
-        public static FileInfo BanListFile { get; set; }
-        public static BanList Bans { get; set; }
+        public static FileInfo BanListFile { get; set; } = null!;
+        public static BanList Bans { get; set; } = null!;
 
         public static void Log(object msg) {
             if (Configuration.LogToConsole) BluscreamLib.Log(msg, "TempBans");
@@ -68,11 +61,8 @@ namespace Bluscream {
         }
         #endregion
         #region Commands
-        [Commands.CommandCallback("tempban", Description = "Bans a player for a specified time period")]
+        [Commands.CommandCallback("tempban", Description = "Bans a player for a specified time period", Permissions = new[] { "command.tempban" })]
         public void TempBanCommand(RunnerPlayer commandSource, RunnerPlayer target, string duration, string? reason = null, string? note = null) {
-            var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}tempban\""; var cmdConfig = CommandsConfiguration.tempban;
-            if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
-            if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
             var span = TimeSpanParser.Parse(duration);
             var ban = TempBanPlayer(target, span, reason, note, Configuration.DefaultServers, invoker: commandSource);
             if (ban is null) {
@@ -80,28 +70,35 @@ namespace Bluscream {
             }
             commandSource.Message($"{target.str()} has been banned for {ban.Remaining.Humanize()}");
         }
-        [Commands.CommandCallback("tempbanid", Description = "Bans a player for a specified time period by Steam ID 64")]
+        [Commands.CommandCallback("tempbanid", Description = "Bans a player for a specified time period by Steam ID 64", Permissions = new[] { "command.tempbanid" })]
         public void TempBanIdCommand(RunnerPlayer commandSource, string targetSteamId64, string duration, string? reason = null, string? note = null) {
-            var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}tempbanid\""; var cmdConfig = CommandsConfiguration.tempbanid;
-            if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
-            if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
             var success = ulong.TryParse(targetSteamId64, out var result);
             if (!success) {
                 commandSource.Message($"{targetSteamId64} is not a valid Steam ID 64"); return;
             }
             var bannedUntil = DateTime.UtcNow + TimeSpanParser.Parse(duration);
-            var ban = TempBanPlayer(result, dateTime: bannedUntil, reason: reason, note: note, servers: Configuration.DefaultServers, invokerName: commandSource.Name, invokerSteamId64: commandSource.SteamID, invokerIp: commandSource.IP);
+            var ban = TempBanPlayer(targetSteamId64: result, dateTime: bannedUntil, reason: reason, note: note, servers: Configuration.DefaultServers, invokerName: commandSource.Name, invokerSteamId64: commandSource.SteamID, invokerIp: commandSource.IP);
             if (ban is null) {
                 commandSource.Message($"Failed to ban {targetSteamId64}"); return;
             }
             commandSource.Message($"{ban.Target} has been banned for {ban.Remaining.Humanize()}");
         }
+        [Commands.CommandCallback("tempbanip", Description = "Bans a player for a specified time period by IP", Permissions = new[] { "command.tempbanip" })]
+        public void TempBanIpCommand(RunnerPlayer commandSource, string targetIp, string duration, string? reason = null, string? note = null) {
+            var success = IPAddress.TryParse(targetIp, out var result);
+            if (!success) {
+                commandSource.Message($"{targetIp} is not a valid IP Address"); return;
+            }
+            var bannedUntil = DateTime.UtcNow + TimeSpanParser.Parse(duration);
+            var ban = TempBanPlayer(targetIp: result, dateTime: bannedUntil, reason: reason, note: note, servers: Configuration.DefaultServers, invokerName: commandSource.Name, invokerSteamId64: commandSource.SteamID, invokerIp: commandSource.IP);
+            if (ban is null) {
+                commandSource.Message($"Failed to ban {targetIp}"); return;
+            }
+            commandSource.Message($"{ban.Target} has been banned for {ban.Remaining.Humanize()}");
+        }
 
-            [Commands.CommandCallback("untempban", Description = "Unbans a player that is temporary banned")]
+        [Commands.CommandCallback("untempban", Description = "Unbans a player that is temporary banned", Permissions = new[] { "command.untempban" })]
         public void UnTempBanCommand(RunnerPlayer commandSource, RunnerPlayer target) {
-            var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}untempban\""; var cmdConfig = CommandsConfiguration.untempban;
-            if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
-            if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
             var ban = Bans.Get(target);
             if (ban is null) {
                 commandSource.Message($"Player{target.str()} is not banned!"); return;
@@ -109,11 +106,8 @@ namespace Bluscream {
             Bans.Remove(ban);
         }
 
-        [Commands.CommandCallback("listtempbans", Description = "Lists players that are temporarily banned")]
+        [Commands.CommandCallback("listtempbans", Description = "Lists players that are temporarily banned", Permissions = new[] { "command.listtempbans" })]
         public void ListTempBannedCommand(RunnerPlayer commandSource) {
-            var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}listtempbans\""; var cmdConfig = CommandsConfiguration.listtempbans;
-            if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
-            if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
             commandSource.Message($"{Bans.Get().Count} Bans\n\n" + string.Join("\n", Bans.Get().Select(b=>$"{b.Target} by {b.Invoker}: {b.Remaining.Humanize()}")));
         }
         #endregion
@@ -133,7 +127,7 @@ namespace Bluscream {
             TempBanPlayer(target, DateTime.UtcNow + timeSpan, reason, note, servers, invoker);
         public BanEntry? TempBanPlayer(RunnerPlayer target, DateTime dateTime, string? reason = null, string? note = null, List<string>? servers = null, RunnerPlayer? invoker = null) =>
             TempBanPlayer(target.SteamID, target.Name, target.IP, dateTime, reason, note, servers, invoker?.Name, invoker?.SteamID, invoker?.IP);
-        public BanEntry? TempBanPlayer(ulong targetSteamId64, string? targetName = null, IPAddress? targetIp = null,
+        public BanEntry? TempBanPlayer(ulong? targetSteamId64 = null, string? targetName = null, IPAddress? targetIp = null,
             DateTime? dateTime = null, string? reason = null, string? note = null, List<string>? servers = null,
             string? invokerName = null, ulong? invokerSteamId64 = null, IPAddress? invokerIp = null) {
             servers = servers ?? Configuration.DefaultServers;
@@ -177,12 +171,6 @@ namespace Bluscream {
     //    public static bool TempBanPlayer(this RunnerPlayer player, TimeSpan timeSpan) => TempBans.TempBanPlayer(player, timeSpan);
     //    public static bool TempBanPlayer(this RunnerPlayer player, DateTime dateTime) => TempBans.TempBanPlayer(player, dateTime);
     // }
-    public class CommandsConfiguration : ModuleConfiguration {
-        public CommandConfiguration tempban { get; set; } = new CommandConfiguration() { AllowedRoles = Extensions.ToRoleStringList(MoreRoles.Staff) };
-        public CommandConfiguration tempbanid { get; set; } = new CommandConfiguration() { AllowedRoles = Extensions.ToRoleStringList(MoreRoles.Staff) };
-        public CommandConfiguration untempban { get; set; } = new CommandConfiguration() { AllowedRoles = Extensions.ToRoleStringList(MoreRoles.Staff) };
-        public CommandConfiguration listtempbans { get; set; } = new CommandConfiguration() { AllowedRoles = Extensions.ToRoleStringList(MoreRoles.Staff) };
-    }
     public class TempBansConfiguration : ModuleConfiguration {
         public bool LogToConsole { get; set; } = true;
         public string BanFilePath { get; set; } = "./data/bans.json";
