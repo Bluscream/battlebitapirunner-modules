@@ -148,17 +148,18 @@ namespace Bluscream {
             }
             return null;
         }
-        public static T? ResolveGameModeMapNameMatch<T>(string input, IEnumerable<T> matches) where T : BaseInfo {
+        public static List<T> ResolveGameModeMapNameMatch<T>(string input, IEnumerable<T> matches) where T : BaseInfo {
             var lower = input.ToLowerInvariant().Trim();
             foreach (var match in matches) {
-                if (lower == match.Name?.ToLowerInvariant()) return match;
-                else if (lower == match.DisplayName?.ToLowerInvariant()) return match;
+                if (lower == match.Name.ToLowerInvariant()) return new() { match };
+                else if (lower == match.DisplayName.ToLowerInvariant()) return new() { match };
             }
+            var result = new List<T>();
             foreach (var match in matches) {
-                if (match.DisplayName?.ToLowerInvariant().Contains(lower) == true) return match;
-                else if ((match.DisplayName?.ToLowerInvariant().Contains(lower) == true)) return match;
+                if (match.Name.ToLowerInvariant().Contains(lower)) result.Add(match);
+                else if (match.DisplayName.ToLowerInvariant().Contains(lower)) result.Add(match);
             }
-            return null;
+            return result;
         }
 
         public static MapDayNight? GetDayNightFromString(string input) {
@@ -214,6 +215,7 @@ namespace Bluscream {
         public static List<MapInfo> Maps = new();
         public static IReadOnlyList<string> MapNames => Maps.Where(m => m.Available == true).Select(m => m.Name).ToList() ?? new();
         public static IReadOnlyList<string> MapDisplayNames => Maps.Where(m => m.Available == true).Select(m => m.DisplayName ?? m.Name).ToList() ?? new();
+        public static IReadOnlyList<string> MapSizeNames => (IReadOnlyList<string>)Enum.GetValues(typeof(MapSize));
         #endregion
         #region Configuration
         public static Configuration Config { get; set; } = null!;
@@ -246,7 +248,7 @@ namespace Bluscream {
                 currentP.Kill();
             }
 
-            public static IPEndPoint ParseIPEndPoint(string endPoint) {
+            public static IPEndPoint? ParseIPEndPoint(string endPoint) {
                 string[] ep = endPoint.Split(':');
                 if (ep.Length < 2) return null;
                 IPAddress ip;
@@ -351,6 +353,8 @@ namespace Bluscream {
             var player = server.GetPlayerBySteamId64(steamId64);
             return player?.Name ?? steamId64.ToString();
         }
+        public static MapInfo GetCurrentMap(this RunnerServer server) => BluscreamLib.Maps.Where(p => p.Name == server.Map).First();
+        public static GameModeInfo GetCurrentGameMode(this RunnerServer server) => BluscreamLib.GameModes.Where(p => p.Name == server.Gamemode).First();
         #endregion
         #region Player
         public static string str(this RunnerPlayer player) => $"\"{player.Name}\"";
@@ -400,10 +404,11 @@ namespace Bluscream {
         #region Map
         public static void ChangeTime(this RunnerServer Server, MapDayNight? dayNight = null) => ChangeMap(Server, dayNight: dayNight);
         public static void ChangeGameMode(this RunnerServer Server, GameModeInfo? gameMode = null, MapDayNight? dayNight = null) => ChangeMap(Server, gameMode: gameMode, dayNight: dayNight);
+        public static void ChangeMap(this RunnerServer Server, MapInfo? map = null, GameModeInfo? gameMode = null, string? dayNight = null) => ChangeMap(Server, map, gameMode, dayNight?.ParseDayNight());
         public static void ChangeMap(this RunnerServer Server, MapInfo? map = null, GameModeInfo? gameMode = null, MapDayNight? dayNight = null) {
             map = map ?? MapInfo.FromName(Server.Map);
             gameMode = gameMode ?? GameModeInfo.FromName(Server.Gamemode);
-            dayNight = dayNight ?? Server.DayNight;
+            //dayNight = dayNight ?? Server.DayNight;
 
             var oldMaps = Server.MapRotation.GetMapRotation();
             Server.MapRotation.SetRotation(map.Name);
@@ -426,8 +431,8 @@ namespace Bluscream {
             }
             var msg = new StringBuilder();
             if (map is not null) msg.Append($"Changing map to {map.DisplayName}");
-            if (gameMode is not null) msg.Append($" ({gameMode.DisplayName})");
             if (dayNight is not null) msg.Append($" [{dayNight}]");
+            if (gameMode is not null) msg.Append($" ({gameMode.DisplayName})");
 
             Server.SayToAllChat(msg.ToString());
             Server.AnnounceShort(msg.ToString());
@@ -471,9 +476,9 @@ namespace Bluscream {
         }
 
         public static MapInfo? ToMap(this string mapName) => BluscreamLib.Maps.Where(m => m.Name.ToLowerInvariant() == mapName.ToLowerInvariant()).First();
-        public static MapInfo? ParseMap(this string input) => BluscreamLib.ResolveGameModeMapNameMatch(input, BluscreamLib.Maps);
+        public static List<MapInfo> ParseMap(this string input) => BluscreamLib.ResolveGameModeMapNameMatch(input, BluscreamLib.Maps);
         public static GameModeInfo? ToGameMode(this string gameModeName) => BluscreamLib.GameModes.Where(m => m.Name.ToLowerInvariant() == gameModeName.ToLowerInvariant()).First();
-        public static GameModeInfo? ParseGameMode(this string input) => BluscreamLib.ResolveGameModeMapNameMatch(input, BluscreamLib.GameModes);
+        public static List<GameModeInfo> ParseGameMode(this string input) => BluscreamLib.ResolveGameModeMapNameMatch(input, BluscreamLib.GameModes);
         public static MapDayNight? ParseDayNight(this string input) => BluscreamLib.GetDayNightFromString(input);
         public static string Base64Encode(this string plainText) {
             var plainTextBytes = Encoding.UTF8.GetBytes(plainText);
@@ -827,7 +832,7 @@ namespace Bluscream {
         #endregion Uri
         #region Enum
 
-        public static string GetDescription(this Enum value) {
+        public static string? GetDescription(this Enum value) {
             Type type = value.GetType();
             string name = Enum.GetName(type, value);
             if (name != null) {
@@ -842,7 +847,7 @@ namespace Bluscream {
             return null;
         }
 
-        public static T GetValueFromDescription<T>(string description, bool returnDefault = false) {
+        public static T? GetValueFromDescription<T>(string description, bool returnDefault = false) {
             var type = typeof(T);
             if (!type.IsEnum) throw new InvalidOperationException();
             foreach (var field in type.GetFields()) {
@@ -863,7 +868,7 @@ namespace Bluscream {
         #endregion Enum
         #region Task
 
-        public static async Task<TResult> TimeoutAfter<TResult>(this Task<TResult> task, TimeSpan timeout) {
+        public static async Task<TResult?> TimeoutAfter<TResult>(this Task<TResult> task, TimeSpan timeout) {
             using (var timeoutCancellationTokenSource = new CancellationTokenSource()) {
                 var completedTask = await Task.WhenAny(task, Task.Delay(timeout, timeoutCancellationTokenSource.Token));
                 if (completedTask == task) {
@@ -1055,7 +1060,7 @@ namespace Bluscream {
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("Name")]
-        public string? Name { get; set; }
+        public string Name { get; set; } = null!;
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("Description")]
@@ -1067,16 +1072,19 @@ namespace Bluscream {
 
         [JsonIgnore]
         public string DisplayName => DisplayName_ ?? Name ?? "Unknown Map";
+        public override string ToString() => DisplayName_ is null ? $"{DisplayName_} ({Name})" : DisplayName;
     }
     #region Maps
     public class SupportedGamemode {
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("GameMode")]
-        public virtual string? GameMode { get; set; }
+        public virtual string GameMode { get; set; } = null!;
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("SupportedMapSizes")]
-        public virtual List<long> SupportedMapSizes { get; set; }
+        public virtual List<long> _SupportedMapSizes { get; set; } = new();
+        [JsonIgnore]
+        public virtual List<MapSize> SupportedMapSizes => _SupportedMapSizes.ConvertAll(size => { if (Enum.IsDefined(typeof(MapSize), size)) { return (MapSize)Enum.ToObject(typeof(MapSize), size); } else { return MapSize.None; }});
 
         public GameModeInfo? GetGameMode() => BluscreamLib.GameModes.First(g => g.Name == GameMode);
     }
@@ -1159,7 +1167,7 @@ namespace Bluscream {
         [JsonPropertyName("Description")]
         public virtual string Description { get; set; } = null!;
 
-        public static List<SizeInfo> FromJson(string json) => JsonSerializer.Deserialize<List<SizeInfo>>(json, Bluscream.Converter.Settings);
+        public static List<SizeInfo>? FromJson(string json) => JsonSerializer.Deserialize<List<SizeInfo>>(json, Bluscream.Converter.Settings);
     }
     #endregion
     #endregion

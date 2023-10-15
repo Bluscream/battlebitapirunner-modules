@@ -215,7 +215,7 @@ namespace Bluscream {
         public List<string> DefaultServers { get; set; } = new List<string>() { "*" };
         public List<string> KickNoticeTemplate { get; set; } = new() {
             $"{Colors.Red}You are banned{Colors.None} on {Colors.Orange}{{servername}}{Colors.None}!",
-            $"Banned by: {{invoker}}{Colors.None}",
+            $"Banned by: {Sprites.Moderator} {{invoker}}{Colors.None}",
             $"Reason: {{reason}}{Colors.None}",
             $"Until: {{until}} UTC",
             $"Try again in {{remaining}}"
