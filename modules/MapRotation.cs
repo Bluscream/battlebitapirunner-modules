@@ -1,8 +1,11 @@
 ﻿using BattleBitAPI.Common;
 using BBRAPIModules;
+using Bluscream;
 using Commands;
+using Microsoft.VisualBasic;
 using System;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace BattleBitBaseModules;
@@ -10,6 +13,7 @@ namespace BattleBitBaseModules;
 /// <summary>
 /// Author: @RainOrigami modified by @_dx2
 /// </summary>
+[RequireModule(typeof(Bluscream.BluscreamLib))]
 [RequireModule(typeof(GameModeRotation))]
 [RequireModule(typeof(CommandHandler))]
 [Module("Adds a small tweak to the map rotation so that maps that were just played take more time to appear again, this works by counting how many matches happened since the maps were last played and before getting to the voting screen, the n least played ones are picked to appear on the voting screen . It also adds a command so that any player can know what maps are in the rotation.", "1.4.3")]
@@ -19,6 +23,9 @@ public class MapRotation : BattleBitModule
     public CommandHandler CommandHandler { get; set; } = null!;
     [ModuleReference]
     public GameModeRotation GameModeRotation { get; set; } = null!;
+    [ModuleReference]
+    public BluscreamLib BluscreamLib { get; set; } = null!;
+
     public MapRotationConfiguration Configuration { get; set; } = null!;
 
     public override async Task OnConnected()
@@ -40,12 +47,12 @@ public class MapRotation : BattleBitModule
         var currentRotation = GameModeRotation.ActiveGamemodes.ConvertAll(name => name.ToLower());
 
         var currentMapNames = Configuration.Maps.ToList();
-        var currentMaps = MapInfo.maps.ToList().FindAll(map => currentMapNames.Contains(map.Name));
+        var currentMaps = BluscreamLib.Maps.ToList().FindAll(map => currentMapNames.Contains(map.Name));
         var unsuportedMaps = currentMaps.FindAll(map =>
         {
-            var gamemodes = map.SupportedGamemodes.ToList().FindAll(gm => currentRotation.Contains(gm.Name.ToLower()));
-            if (gamemodes.Count == 0) return true;
-            return gamemodes.FindIndex(gm => gm.Sizes.Contains(Server.MapSize)) == -1;
+            var gamemodes = map.SupportedGamemodes?.FindAll(gm => currentRotation.Contains(gm.GameMode.ToLower()));
+            if (gamemodes?.Count == 0) return true;
+            return gamemodes.FindIndex(gm => gm.SupportedMapSizes.Contains(Server.MapSize)) == -1;
         }).ConvertAll(map => map.Name);
 
         if (unsuportedMaps.Count > 0)
@@ -56,7 +63,7 @@ public class MapRotation : BattleBitModule
 
                 outputString += map + ", ";
             }
-            Console.WriteLine(@$"{Server.ServerName}[WARNING]MapRotation: The following maps do not support the current gamemode rotation at the current mapsize: 
+            this.Logger.Info(@$"{Server.ServerName}[WARNING]MapRotation: The following maps do not support the current gamemode rotation at the current mapsize: 
 {outputString}, please, change the gamemodes or run the command !MapCleanup ingame to remove them");
         }
 
@@ -80,11 +87,11 @@ public class MapRotation : BattleBitModule
             var currentMapIndex = Array.IndexOf(Configuration.Maps, Server.Map);
             if (currentMapIndex == -1)
             {
-                Console.WriteLine($"{Server.ServerName} MapRotation: Current map({Server.Map}) not found in MapRotation ConfigList while reseting the counter(Did you type the name correctly?)");
+                this.Logger.Info($"{Server.ServerName} MapRotation: Current map({Server.Map}) not found in MapRotation ConfigList while reseting the counter(Did you type the name correctly?)");
             }
             else
             {
-                Console.WriteLine($"{Server.ServerName} MapRotation: Starting new match in {Server.Map}");
+                this.Logger.Info($"{Server.ServerName} MapRotation: Starting new match in {Server.Map}");
                 Configuration.MatchesSinceSelection[currentMapIndex] = 0;
             }
             var currentGamemodes = Array.ConvertAll(Server.GamemodeRotation.GetGamemodeRotation().ToArray(), gm => GameModeRotation.FindGameMode(gm) ?? "") ?? Array.Empty<string>();
@@ -92,7 +99,7 @@ public class MapRotation : BattleBitModule
             var sortedMaps = Configuration.Maps.Zip(Configuration.MatchesSinceSelection)
                 .OrderByDescending(map => map.Second).ToList();
             var mapsWithCurrentModeSupport = sortedMaps
-                .FindAll(map => Array.ConvertAll(FindMap(map.First).SupportedGamemodes, gm => gm.Name).ToArray().Intersect(currentGamemodes).Any());
+                .FindAll(map => FindMap(map.First).SupportedGamemodes.ConvertAll(gm => gm.GameMode).ToArray().Intersect(currentGamemodes).Any());
             var mapsThisRound = mapsWithCurrentModeSupport
                 .GetRange(0, Math.Min(Configuration.MapCountInRotation, mapsWithCurrentModeSupport.Count)).ConvertAll(m => m.First).ToArray();
 
@@ -134,9 +141,9 @@ public class MapRotation : BattleBitModule
             Server.SayToChat($"{matchingName} is already in rotation", commandSource);
             return;
         }
-        var currentMap = MapInfo.maps.ToList().Find(map => map.Name == matchingName);
+        var currentMap = BluscreamLib.Maps.ToList().Find(map => map.Name == matchingName);
         var supportedGamemodes = (currentMap != null) ? currentMap.SupportedGamemodes.ToList().
-            FindAll(gm => gm.Sizes.Contains(Server.MapSize)).ConvertAll(sgm => sgm.Name).ToArray() : new[] { "" };
+            FindAll(gm => gm.SupportedMapSizes.Contains(Server.MapSize)).ConvertAll(sgm => sgm.GameMode).ToArray() : new[] { "" };
         var gamemodesIntersection = GameModeRotation.ActiveGamemodes.Intersect(supportedGamemodes).ToArray();
         if (gamemodesIntersection.Length == 0)
         {
@@ -181,11 +188,11 @@ public class MapRotation : BattleBitModule
             Server.SayToChat($"{gamemodeName} is not currently in rotation, try activating it before using this command", commandSource);
             return;
         }
-        var mapsToAdd = MapInfo.maps.ToList().FindAll(map =>
+        var mapsToAdd = BluscreamLib.Maps.ToList().FindAll(map =>
         {
-            var index = map.SupportedGamemodes.ToList().FindIndex(gm => gm.Name.ToLower() == gamemodeName.ToLower());
+            var index = map.SupportedGamemodes.ToList().FindIndex(gm => gm.GameMode.ToLower() == gamemodeName.ToLower());
             if (index == -1) return false;
-            return map.SupportedGamemodes[index].Sizes.Contains(Server.MapSize);
+            return map.SupportedGamemodes[index].SupportedMapSizes.Contains(Server.MapSize);
         }).ConvertAll(map => map.Name);
 
         if (mapsToAdd.Count == 0)
@@ -210,12 +217,12 @@ public class MapRotation : BattleBitModule
     {
         var currentRotation = GameModeRotation.ActiveGamemodes.ConvertAll(name => name.ToLower());
         var currentMapNames = Configuration.Maps.ToList();
-        var currentMaps = MapInfo.maps.ToList().FindAll(map => currentMapNames.Contains(map.Name));
+        var currentMaps = BluscreamLib.Maps.ToList().FindAll(map => currentMapNames.Contains(map.Name));
         var unsuportedMaps = currentMaps.FindAll(map =>
         {
-            var gamemodes = map.SupportedGamemodes.ToList().FindAll(gm => currentRotation.Contains(gm.Name.ToLower()));
+            var gamemodes = map.SupportedGamemodes.ToList().FindAll(gm => currentRotation.Contains(gm.GameMode.ToLower()));
             if (gamemodes.Count == 0) return true;
-            return gamemodes.FindIndex(gm => gm.Sizes.Contains(Server.MapSize)) == -1;
+            return gamemodes.FindIndex(gm => gm.SupportedMapSizes.Contains(Server.MapSize)) == -1;
         }).ConvertAll(m => m.Name);
 
 
@@ -240,37 +247,14 @@ public class MapRotation : BattleBitModule
 
     private string? FindMapName(RunnerPlayer commandSource, string mapName)
     {
-        var matchingNames = Array.FindAll(MapInfo.maps, m => m.Name.ToLower().StartsWith(mapName.ToLower()));
-        if (!matchingNames.Any())
-        {
-            Server.SayToChat($"{mapName} does not exist, check your typing.", commandSource);
-            return null;
-        }
-        if (matchingNames.Length > 1)
-        {
-            Server.SayToChat($"Multiple maps starts with {mapName}, please try again.", commandSource);
-            return null;
-        }
-        return matchingNames[0].Name;
+        return mapName.ParseMap()?.First()?.Name;
     }
-    private static MapInfo? FindMap(string mapName)
-    {
-        var matchingNames = Array.FindAll(MapInfo.maps, m => m.Name.ToLower().StartsWith(mapName.ToLower()));
-        if (!matchingNames.Any())
-        {
-            Console.WriteLine($"MapRotation: {mapName} does not exist, removing from list.");
-            return null;
-        }
-        if (matchingNames.Length > 1)
-        {
-            Console.WriteLine($"MapRotation: Multiple maps starts with {mapName}, removing from list.");
-            return null;
-        }
-        return matchingNames[0];
+    private static MapInfo? FindMap(string mapName) {
+        return mapName.ParseMap()?.FirstOrDefault();
     }
     private void ReinicializeCounters()
     {
-        Console.WriteLine($"{Server.ServerName} MapRotation: reinicializing maps counter");
+        this.Logger.Info($"{Server.ServerName} MapRotation: reinicializing maps counter");
         Configuration.MatchesSinceSelection = new int[Configuration.Maps.Length];
         Random r = new();
         for (int i = 0; i < Configuration.Maps.Length; i++)
@@ -298,236 +282,6 @@ public class MapRotation : BattleBitModule
     {
         Server.MessageToPlayer(commandSource, $"Current map {Server.Map}");
     }*/
-
-    public class MapInfo
-    {
-        public string Name { get; }
-        public (string Name, MapSize[] Sizes)[] SupportedGamemodes { get; }
-
-        public MapInfo(string name, (string Name, MapSize[] Sizes)[] supportedGamemodes)
-        {
-            Name = name;
-            SupportedGamemodes = supportedGamemodes;
-        }
-
-        public static readonly MapInfo[] maps = new MapInfo[]{
-        new MapInfo("Azagor", new[]{
-            ("TDM", new [] {MapSize._8v8,MapSize._16vs16,}),
-            ("RUSH", new [] {MapSize._16vs16,MapSize._32vs32,}),
-            ("CONQ", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("INFCONQ", new [] {MapSize._64vs64,MapSize._127vs127,}),
-            ("DOMI", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("ELI", new [] {MapSize._16vs16,}),
-            ("FRONTLINE", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            }),
-        new MapInfo("Basra", new[]{
-            ("TDM", new [] {MapSize._8v8,MapSize._16vs16,}),
-            ("CONQ", new [] {MapSize._64vs64,MapSize._127vs127,}),
-            ("INFCONQ", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("ELI", new [] {MapSize._8v8,MapSize._16vs16,}),
-            ("FRONTLINE", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            }),
-        new MapInfo("Construction", new[]{
-            ("TDM", new [] {MapSize._8v8,MapSize._16vs16,}),
-            ("CONQ", new [] {MapSize._32vs32,}),
-            ("INFCONQ", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("DOMI", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("ELI", new [] {MapSize._8v8,MapSize._16vs16,}),
-            ("CashRun", new [] {MapSize._16vs16,}),
-            }),
-        new MapInfo("District", new[]{
-            ("RUSH", new [] {MapSize._16vs16,MapSize._32vs32,}),
-            ("CONQ", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("INFCONQ", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("DOMI", new [] {MapSize._16vs16,MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("FRONTLINE", new [] {MapSize._32vs32,MapSize._64vs64,}),
-            ("CTF", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-        }),
-        new MapInfo("Dustydew", new[]{
-            ("TDM", new [] {MapSize._8v8,MapSize._16vs16,}),
-            ("RUSH", new [] {MapSize._16vs16,MapSize._32vs32,}),
-            ("CONQ", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("INFCONQ", new [] {MapSize._16vs16,MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("DOMI", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("ELI", new [] {MapSize._8v8,MapSize._16vs16,}),
-            ("GunGameFFA", new [] {MapSize._8v8,}),
-            ("GunGameTeam", new [] {MapSize._8v8,MapSize._16vs16,}),
-            ("FFA", new [] {MapSize._8v8,}),
-        }),
-        new MapInfo("Eduardovo", new[]{
-            ("TDM", new [] {MapSize._16vs16,}),
-            ("CONQ", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("INFCONQ", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("DOMI", new [] {MapSize._16vs16,MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("FRONTLINE", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("GunGameFFA", new [] {MapSize._16vs16,}),
-            ("CashRun", new [] {MapSize._16vs16,MapSize._32vs32,}),
-        }),
-        new MapInfo("Frugis", new[]{
-            ("TDM", new [] {MapSize._8v8,MapSize._16vs16,}),
-            ("RUSH", new [] {MapSize._16vs16,MapSize._32vs32,}),
-            ("CONQ", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("INFCONQ", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("DOMI", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("FRONTLINE", new [] {MapSize._32vs32,}),
-            ("GunGameFFA", new [] {MapSize._8v8,MapSize._16vs16,}),
-            ("GunGameTeam", new [] {MapSize._8v8,MapSize._16vs16,}),
-            ("CashRun", new [] {MapSize._16vs16,MapSize._32vs32,}),
-            ("CTF", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-        }),
-        new MapInfo("Isle", new[]{
-            ("CONQ", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("INFCONQ", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("DOMI", new [] {MapSize._16vs16,MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("FRONTLINE", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("CTF", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-        }),
-        new MapInfo("Lonovo", new[]{
-            ("TDM", new [] {MapSize._8v8,MapSize._16vs16,}),
-            ("RUSH", new [] {MapSize._32vs32,}),
-            ("CONQ", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("INFCONQ", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("DOMI", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("ELI", new [] {MapSize._16vs16,}),
-            ("GunGameFFA", new [] {MapSize._8v8,}),
-            ("GunGameTeam", new [] {MapSize._8v8,MapSize._16vs16,}),
-            ("FFA", new [] {MapSize._8v8,}),
-            ("CashRun", new [] {MapSize._16vs16,MapSize._32vs32,}),
-        }),
-        new MapInfo("MultuIslands", new[]{
-            ("RUSH", new [] {MapSize._8v8,MapSize._16vs16,MapSize._32vs32,}),
-            ("CONQ", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("INFCONQ", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("DOMI", new [] {MapSize._16vs16,MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("CTF", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-        }),
-        new MapInfo("Namak", new[]{
-            ("RUSH", new [] {MapSize._16vs16,MapSize._32vs32,}),
-            ("CONQ", new [] {MapSize._32vs32,MapSize._64vs64,}),
-            ("INFCONQ", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("DOMI", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-        }),
-        new MapInfo("OilDunes", new[]  {
-            ("CONQ", new [] {MapSize._32vs32,}),
-            ("INFCONQ", new [] {MapSize._32vs32,MapSize._64vs64,}),
-            ("DOMI", new [] {MapSize._16vs16,MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("CashRun", new [] {MapSize._16vs16,MapSize._32vs32,}),
-        }),
-        new MapInfo("River", new[]{
-            ("TDM", new [] {MapSize._8v8,MapSize._16vs16,}),
-            ("CONQ", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("INFCONQ", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("DOMI", new [] {MapSize._16vs16,MapSize._32vs32,MapSize._64vs64,}),
-            ("ELI", new [] {MapSize._8v8,MapSize._16vs16,}),
-            ("FRONTLINE", new [] {MapSize._32vs32,MapSize._64vs64,}),
-            ("GunGameFFA", new [] {MapSize._8v8,}),
-            ("GunGameTeam", new [] {MapSize._8v8,MapSize._16vs16,}),
-            ("FFA", new [] {MapSize._8v8,}),
-            ("CashRun", new [] {MapSize._16vs16,MapSize._32vs32,}),
-        }),
-        new MapInfo("Salhan", new[]{
-            ("TDM", new [] {MapSize._8v8,MapSize._16vs16,}),
-            ("RUSH", new [] {MapSize._8v8,MapSize._16vs16,MapSize._32vs32,}),
-            ("CONQ", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("INFCONQ", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("DOMI", new [] {MapSize._16vs16,MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("ELI", new [] {MapSize._8v8,MapSize._16vs16,}),
-            ("FRONTLINE", new [] {MapSize._32vs32,}),
-            ("CashRun", new [] {MapSize._16vs16,MapSize._32vs32,}),
-        }),
-        new MapInfo("SandySunset", new[]{
-            ("TDM", new [] {MapSize._8v8,MapSize._16vs16,}),
-            ("CONQ", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("INFCONQ", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("DOMI", new [] {MapSize._16vs16,MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("FRONTLINE", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("CashRun", new [] {MapSize._16vs16,MapSize._32vs32,}),
-            ("CTF", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-        }),
-        new MapInfo("TensaTown", new[]{
-            ("TDM", new [] {MapSize._8v8,MapSize._16vs16,}),
-            ("RUSH", new [] {MapSize._16vs16,MapSize._32vs32,}),
-            ("CONQ", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("INFCONQ", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("DOMI", new [] {MapSize._16vs16,MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("ELI", new [] {MapSize._8v8,MapSize._16vs16,}),
-            ("FRONTLINE", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("CashRun", new [] {MapSize._16vs16,MapSize._32vs32,}),
-            ("CTF", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-        }),
-        new MapInfo("Valley", new[]{
-            ("TDM", new [] {MapSize._8v8,MapSize._16vs16,}),
-            ("RUSH", new [] {MapSize._16vs16,MapSize._32vs32,}),
-            ("CONQ", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("INFCONQ", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("DOMI", new [] {MapSize._16vs16,MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("FRONTLINE", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("CashRun", new [] {MapSize._16vs16,MapSize._32vs32,}),
-        }),
-        new MapInfo("Wakistan", new[]{
-            ("CONQ", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("INFCONQ", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("DOMI", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("FRONTLINE", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-        }),
-        new MapInfo("WineParadise", new[]{
-            ("TDM", new [] {MapSize._8v8,MapSize._16vs16,}),
-            ("CONQ", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("INFCONQ", new [] {MapSize._32vs32,}),
-            ("DOMI", new [] {MapSize._16vs16,MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("GunGameFFA", new [] {MapSize._8v8,MapSize._16vs16,}),
-            ("GunGameTeam", new [] {MapSize._8v8,MapSize._16vs16,}),
-            ("FFA", new [] {MapSize._8v8,MapSize._16vs16,}),
-            ("CashRun", new [] {MapSize._16vs16,MapSize._32vs32,})
-        }),
-        new MapInfo("Old_District", new[]{
-            ("TDM", new [] {MapSize._8v8,MapSize._16vs16,}),
-            ("RUSH", new [] {MapSize._16vs16,MapSize._32vs32,}),
-            ("CONQ", new [] {MapSize._32vs32,MapSize._64vs64}),
-            ("INFCONQ", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("DOMI", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("ELI", new [] {MapSize._16vs16,}),
-            ("CashRun", new [] {MapSize._16vs16,MapSize._32vs32,})
-        }),
-        new MapInfo("Old_Eduardovo", new[]{
-            ("TDM", new [] {MapSize._8v8,MapSize._16vs16,MapSize._32vs32,}),
-            ("CONQ", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("ELI", new [] {MapSize._16vs16,MapSize._32vs32,}),
-            ("FRONTLINE", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-        }),
-        new MapInfo("Old_MultuIslands", new[]{
-            ("TDM", new [] {MapSize._8v8,MapSize._16vs16}),
-            ("CONQ", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-        }),
-        new MapInfo("Old_Namak", new[]{
-            ("TDM", new [] {MapSize._8v8,MapSize._16vs16}),
-            ("CONQ", new [] {MapSize._16vs16,MapSize._32vs32,MapSize._64vs64,}),
-            ("DOMI", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("GunGameFFA", new [] {MapSize._8v8}),
-            ("GunGameTeam", new [] {MapSize._8v8,MapSize._16vs16,}),
-            ("FFA", new [] {MapSize._8v8}),
-        }),
-        new MapInfo("Old_OilDunes", new[]{
-            ("TDM", new [] {MapSize._16vs16, MapSize._32vs32}),
-            ("CONQ", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("ELI", new [] {MapSize._16vs16,MapSize._32vs32,}),
-        }),
-        new MapInfo("ZalfiBay", new[]{
-            ("CONQ", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("INFCONQ", new [] {MapSize._32vs32, MapSize._64vs64,MapSize._127vs127,}),
-            ("DOMI", new [] { MapSize._16vs16, MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("FRONTLINE", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("CTF", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-        }),
-        new MapInfo("Kodiak", new[]{
-            ("CONQ", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("INFCONQ", new [] {MapSize._32vs32, MapSize._64vs64,MapSize._127vs127,}),
-            ("DOMI", new [] { MapSize._16vs16, MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("CTF", new [] {MapSize._32vs32,MapSize._64vs64,MapSize._127vs127,}),
-            ("RUSH", new [] {MapSize._16vs16,MapSize._32vs32,}),
-        }),
-    };
-    }
 }
 
 public class MapRotationConfiguration : ModuleConfiguration
@@ -544,23 +298,23 @@ public class MapRotationConfiguration : ModuleConfiguration
         "Eduardovo",
         "Frugis",
         "Isle",
+        "Kodiak",
         "Lonovo",
+        "Old_Eduardovo",
         "MultuIslands",
         "Namak",
+        "Old_District",
+        "Old_MultuIslands",
+        "Old_Namak",
         "OilDunes",
+        "Old_OilDunes",
+        "WineParadise",
         "River",
         "Salhan",
         "SandySunset",
         "TensaTown",
         "Valley",
         "Wakistan",
-        "WineParadise",
-        "Old_Namak",
-        "Old_District",
-        "Old_OilDunes",
-        "Old_Eduardovo",
-        "Old_MultuIslands",
-        "ZalfiBay",
-        "Kodiak"
+        "ZalfiBay"
     };
 }
