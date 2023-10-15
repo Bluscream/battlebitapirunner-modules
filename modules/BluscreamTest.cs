@@ -14,7 +14,7 @@ namespace Bluscream {
 
         public override Task OnConnected() {
             this.Server.SetRulesScreenText("RulesScreenText");
-            this.Server.SetNewPassword("vde");
+            //this.Server.SetNewPassword("vde");
             return Task.CompletedTask;
         }
 
