@@ -24,54 +24,12 @@ using Bluscream;
 using BattleBitAPI.Server;
 using System.Net.Http;
 using System.Security.Cryptography;
+using System.ComponentModel.DataAnnotations;
+using Discord.Webhook;
+using Discord;
 
 namespace Bluscream {
     #region Defines
-    public class ModuleInfo {
-        public bool Loaded { get; set; }
-        public bool Enabled { get; set; }
-        public string Name { get; set; }
-        public string? Description { get; set; }
-        public Version Version { get; set; }
-        public string Author { get; set; }
-        public Uri? WebsiteUrl { get; set; }
-        public Uri? UpdateUrl { get; set; }
-        public Uri? SupportUrl { get; set; }
-        public ModuleInfo() { }
-        public ModuleInfo(string name, string description, Version version, string author, Uri websiteUrl, Uri updateUrl, Uri supportUrl) {
-            Name = name;
-            Description = description;
-            Version = version;
-            Author = author;
-            WebsiteUrl = websiteUrl;
-            UpdateUrl = updateUrl;
-            SupportUrl = supportUrl;
-        }
-        public ModuleInfo(string name, string description, Version version, string author, string websiteUrl, string updateUrl, string supportUrl) :
-            this(name, description, version, author, websiteUrl.ToUri(), updateUrl.ToUri(), supportUrl.ToUri()) { }
-        public ModuleInfo(string name, string description, string version, string author, string websiteUrl, string updateUrl, string supportUrl) :
-            this(name, description, version.ToVersion(), author, websiteUrl.ToUri(), updateUrl.ToUri(), supportUrl.ToUri()) { }
-    }
-    public struct DateTimeWithZone {
-        private readonly DateTime utcDateTime;
-        private readonly TimeZoneInfo timeZone;
-
-        public DateTimeWithZone(DateTime dateTime, TimeZoneInfo timeZone) {
-            var dateTimeUnspec = DateTime.SpecifyKind(dateTime, DateTimeKind.Unspecified);
-            utcDateTime = TimeZoneInfo.ConvertTimeToUtc(dateTimeUnspec, timeZone);
-            this.timeZone = timeZone;
-        }
-
-        public DateTime UniversalTime { get { return utcDateTime; } }
-
-        public TimeZoneInfo TimeZone { get { return timeZone; } }
-
-        public DateTime LocalTime {
-            get {
-                return TimeZoneInfo.ConvertTime(utcDateTime, timeZone);
-            }
-        }
-    }
     #region Configuration
     //public class CommandConfiguration {
     //    public bool Enabled { get; set; } = true;
@@ -271,6 +229,13 @@ namespace Bluscream {
     #endregion
     #region Extensions
     public static partial class Extensions {
+        #region Team
+        public static string ToCountryCode(this Team team) => team == Team.TeamA ? "US" : "RU";
+        #endregion
+        #region Squad
+        public static char ToLetter(this Squads squad) => squad.ToString()[0];
+        public static char ToLetter(this Squad<RunnerPlayer> squad) => squad.Name.ToLetter();
+        #endregion
         #region Events
         public delegate void PlayerKickedHandler(RunnerPlayer player, string? reason);
         public static event PlayerKickedHandler OnPlayerKicked = delegate { };
@@ -446,6 +411,11 @@ namespace Bluscream {
         }
         #endregion
         #region String
+        public static string SanitizeDiscord(this string input) => input.Replace("`", "`\\`").Replace("@", "\\@");
+        public static string ReplaceDiscord(this string input, string key, object? replacement) {
+            if (replacement is null) return input;
+            return input.Replace($"{{{key}}}", replacement?.ToString()?.SanitizeDiscord());
+        }
         public static bool EvalToBool(this string expression) {
             System.Data.DataTable table = new System.Data.DataTable();
             table.Columns.Add("expression", string.Empty.GetType(), expression);
@@ -711,6 +681,24 @@ namespace Bluscream {
 
         #endregion FileInfo
         #region Object
+        public static Embed ToDiscordEmbed(this object obj) {
+            var embed = new EmbedBuilder()
+                .WithTimestamp(DateTimeOffset.UtcNow)
+                .WithFooter(new EmbedFooterBuilder() { Text = obj.GetType().Name });
+            foreach (var prop in obj.GetType().GetProperties()) {
+                var value = prop.GetValue(obj);
+                if (value is not null) {
+                    embed.AddField(prop.Name, value?.ToString() ?? string.Empty);
+                }
+            }
+            foreach (var prop in obj.GetType().GetFields()) {
+                var value = prop.GetValue(obj);
+                if (value is not null) {
+                    embed.AddField(prop.Name, value?.ToString() ?? string.Empty);
+                }
+            }
+            return embed.Build();
+        }
         public static string GetMd5Hash(this object obj) {
             using (MD5 md5 = MD5.Create()) {
                 byte[] inputBytes = Encoding.UTF8.GetBytes(obj.ToJson(false));
@@ -808,11 +796,32 @@ namespace Bluscream {
             return value.Any(values.Contains);
         }
 
-        
+
 
         #endregion List
         #region Uri
-
+        public static async Task SendWebhook(this Uri url, string jsonContent) {
+            using (var httpClient = new HttpClient()) {
+                var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+                HttpResponseMessage response = await httpClient.PostAsync(url, content);
+                if (!response.IsSuccessStatusCode) {
+                    throw new Exception($"Error sending webhook: {response.StatusCode}");
+                }
+            }
+        }
+        public static async Task SendDiscordWebhook(this Uri url, DiscordEmbed discordEmbed) {
+            using (var client = new DiscordWebhookClient(url.ToString())) {
+                var embed = new EmbedBuilder()
+                    .WithTitle(discordEmbed.Title)
+                    .WithDescription(discordEmbed.Description)
+                    .WithTimestamp(DateTimeOffset.UtcNow)
+                    .WithFooter(new EmbedFooterBuilder() { Text = discordEmbed.Footer });
+                foreach (var field in discordEmbed.Fields) {
+                    embed.AddField(field.Name, field.Value, field.Inline);
+                }
+                await client.SendMessageAsync(embeds: new[] { embed.Build() });
+            }
+        }
         public static bool ContainsKey(this NameValueCollection collection, string key) {
             if (collection.Get(key) == null) {
                 return collection.AllKeys.Contains(key);
@@ -820,7 +829,6 @@ namespace Bluscream {
 
             return true;
         }
-
         public static NameValueCollection ParseQueryString(this Uri uri) {
             return HttpUtility.ParseQueryString(uri.Query);
         }
@@ -831,7 +839,6 @@ namespace Bluscream {
         }
         #endregion Uri
         #region Enum
-
         public static string? GetDescription(this Enum value) {
             Type type = value.GetType();
             string name = Enum.GetName(type, value);
@@ -867,7 +874,6 @@ namespace Bluscream {
 
         #endregion Enum
         #region Task
-
         public static async Task<TResult?> TimeoutAfter<TResult>(this Task<TResult> task, TimeSpan timeout) {
             using (var timeoutCancellationTokenSource = new CancellationTokenSource()) {
                 var completedTask = await Task.WhenAny(task, Task.Delay(timeout, timeoutCancellationTokenSource.Token));
@@ -1052,6 +1058,83 @@ namespace Bluscream {
     }
 }
     #endregion
+    #region Defines
+    public struct ModuleInfo {
+        public bool Loaded { get; set; }
+        public bool Enabled { get; set; }
+        public string Name { get; set; }
+        public string? Description { get; set; }
+        public Version Version { get; set; }
+        public string Author { get; set; }
+        public Uri? WebsiteUrl { get; set; }
+        public Uri? UpdateUrl { get; set; }
+        public Uri? SupportUrl { get; set; }
+        public ModuleInfo() { }
+        public ModuleInfo(string name, string description, Version version, string author, Uri websiteUrl, Uri updateUrl, Uri supportUrl) {
+            Name = name;
+            Description = description;
+            Version = version;
+            Author = author;
+            WebsiteUrl = websiteUrl;
+            UpdateUrl = updateUrl;
+            SupportUrl = supportUrl;
+        }
+        public ModuleInfo(string name, string description, Version version, string author, string websiteUrl, string updateUrl, string supportUrl) :
+            this(name, description, version, author, websiteUrl.ToUri(), updateUrl.ToUri(), supportUrl.ToUri()) { }
+        public ModuleInfo(string name, string description, string version, string author, string websiteUrl, string updateUrl, string supportUrl) :
+            this(name, description, version.ToVersion(), author, websiteUrl.ToUri(), updateUrl.ToUri(), supportUrl.ToUri()) { }
+    }
+    public struct DateTimeWithZone {
+        private readonly DateTime utcDateTime;
+        private readonly TimeZoneInfo timeZone;
+
+        public DateTimeWithZone(DateTime dateTime, TimeZoneInfo timeZone) {
+            var dateTimeUnspec = DateTime.SpecifyKind(dateTime, DateTimeKind.Unspecified);
+            utcDateTime = TimeZoneInfo.ConvertTimeToUtc(dateTimeUnspec, timeZone);
+            this.timeZone = timeZone;
+        }
+
+        public DateTime UniversalTime { get { return utcDateTime; } }
+
+        public TimeZoneInfo TimeZone { get { return timeZone; } }
+
+        public DateTime LocalTime {
+            get {
+                return TimeZoneInfo.ConvertTime(utcDateTime, timeZone);
+            }
+        }
+    }
+    public struct DiscordEmbed {
+        public string Title { get; set; }
+        public string Description { get; set; }
+        public List<EmbedField> Fields { get; set; }
+        public string Timestamp { get; set; }
+        public string Footer { get; set; }
+
+        public DiscordEmbed(object obj) {
+            Title = obj.GetType().Name;
+            Fields = new List<EmbedField>();
+            Timestamp = DateTime.UtcNow.ToString("o");
+            foreach (var prop in obj.GetType().GetProperties()) {
+                var value = prop.GetValue(obj);
+                if (value is not null) {
+                    Fields.Add(new EmbedField { Name = prop.Name, Value = value?.ToString() ?? string.Empty });
+                }
+            }
+            foreach (var prop in obj.GetType().GetFields()) {
+                var value = prop.GetValue(obj);
+                if (value is not null) {
+                    Fields.Add(new EmbedField { Name = prop.Name, Value = value?.ToString() ?? string.Empty });
+                }
+            }
+        }
+        public class EmbedField {
+            public string Name { get; set; } = null!;
+            public string Value { get; set; } = null!;
+            public bool Inline { get; set; } = false;
+        }
+    }
+
     #region Data
     public abstract class BaseInfo {
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
@@ -1169,6 +1252,7 @@ namespace Bluscream {
 
         public static List<SizeInfo>? FromJson(string json) => JsonSerializer.Deserialize<List<SizeInfo>>(json, Bluscream.Converter.Settings);
     }
+    #endregion
     #endregion
     #endregion
 }
