@@ -83,7 +83,7 @@ namespace Bluscream {
                 success = false;
                 while (!success) {
                     try {
-                        await client.SendMessageAsync(text: msg.SanitizeDiscord());
+                        await client.SendMessageAsync(text: msg);
                         success = true;
                     } catch (Exception ex) {
                         // Console.WriteLine($"Failed to POST webhook: {ex.Message}");
