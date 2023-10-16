@@ -48,6 +48,8 @@
   <ItemGroup>
     <None Include="bb-modules\telemetry.sln" />
     <None Include="bb-modules\telemetry\telemetry.csproj" />
+    <None Include="RainOrigami-BattleBitBaseModules\BattleBitBaseModules.csproj" />
+    <None Include="RainOrigami-BattleBitBaseModules\BattleBitBaseModules.sln" />
   </ItemGroup>
 
   <ItemGroup>
