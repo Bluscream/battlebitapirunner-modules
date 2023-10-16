@@ -27,6 +27,7 @@ using System.Security.Cryptography;
 using System.ComponentModel.DataAnnotations;
 using Discord.Webhook;
 using Discord;
+using log4net;
 
 namespace Bluscream {
     #region Defines
@@ -58,34 +59,37 @@ namespace Bluscream {
         // #else
         //         public dynamic? PlayerPermissions { get; set; } = null!;
         // #endif
+
+        public static new readonly ILog Logger = LogManager.GetLogger(typeof(BluscreamLib));
+
         #region EventHandlers
         public BluscreamLib() {
-            Log("Constructor called");
+            Logger.Debug("Constructor called");
         }
         public override void OnModulesLoaded() {
             var MapsFile = new FileInfo(Config.MapsFile);
             try {
                 Maps = MapList.FromUrl(Config.MapsUrl);
                 Maps.ToFile(MapsFile, true);
-                this.Logger.Info($"Updated {MapsFile.Name} ({Maps.Count} maps) from {Config.MapsUrl}");
+                Logger.Info($"Updated {MapsFile.Name} ({Maps.Count} maps) from {Config.MapsUrl}");
             } catch (Exception ex) {
-                this.Logger.Info($"Unable to get new {MapsFile.Name}: {ex.Message}");
-                this.Logger.Info($"Using {Config.MapsFile} if it exists");
+                Logger.Info($"Unable to get new {MapsFile.Name}: {ex.Message}");
+                Logger.Info($"Using {Config.MapsFile} if it exists");
                 Maps = MapsFile.Exists ? MapList.FromFile(MapsFile) : new();
             }
-            this.Logger.Info($"Loaded {Maps.Count} maps");
+            Logger.Info($"Loaded {Maps.Count} maps");
 
             var GameModesFile = new FileInfo(Config.GameModesFile);
             try {
                 GameModes = GameModeList.FromUrl(Config.GameModesUrl);
                 GameModes.ToFile(GameModesFile, true);
-                this.Logger.Info($"Updated {GameModesFile.Name} ({GameModes.Count} gamemodes)  from {Config.GameModesUrl}");
+                Logger.Info($"Updated {GameModesFile.Name} ({GameModes.Count} gamemodes)  from {Config.GameModesUrl}");
             } catch (Exception ex) {
-                this.Logger.Info($"Unable to get new {GameModesFile.Name}: {ex.Message}");
-                this.Logger.Info($"Using {Config.GameModesFile} if it exists");
+                Logger.Info($"Unable to get new {GameModesFile.Name}: {ex.Message}");
+                Logger.Info($"Using {Config.GameModesFile} if it exists");
                 GameModes = GameModesFile.Exists ? GameModeList.FromFile(GameModesFile) : new();
             }
-            this.Logger.Info($"Loaded {GameModes.Count} gamemodes");
+            Logger.Info($"Loaded {GameModes.Count} gamemodes");
         }
         #endregion
         #region Methods
@@ -128,28 +132,34 @@ namespace Bluscream {
             return null;
         }
         public static MapSize GetMapSizeFromString(string input) {
-            switch (input) {
-                case "16":
+            switch (input.Trim().ToLowerInvariant()) {
+                case "tiny":
+                case "8":
                 case "8v8":
                 case "_8v8":
                 case "8vs8":
                     return MapSize._8v8;
-                case "32":
+                case "small":
+                case "16":
                 case "16v16":
                 case "_16v16":
                 case "16vs16":
                     return MapSize._16vs16;
-                case "64":
+                case "medium":
+                case "32":
                 case "32v32":
                 case "_32v32":
                 case "32vs32":
                     return MapSize._32vs32;
-                case "128":
+                case "big":
+                case "large":
+                case "64":
                 case "64v64":
                 case "_64v64":
                 case "64vs64":
                     return MapSize._64vs64;
-                case "256":
+                case "ultra":
+                case "127":
                 case "127v127":
                 case "_127v127":
                 case "127vs127":
@@ -368,12 +378,14 @@ namespace Bluscream {
         #endregion
         #region Map
         public static void ChangeTime(this RunnerServer Server, MapDayNight? dayNight = null) => ChangeMap(Server, dayNight: dayNight);
-        public static void ChangeGameMode(this RunnerServer Server, GameModeInfo? gameMode = null, MapDayNight? dayNight = null) => ChangeMap(Server, gameMode: gameMode, dayNight: dayNight);
-        public static void ChangeMap(this RunnerServer Server, MapInfo? map = null, GameModeInfo? gameMode = null, string? dayNight = null) => ChangeMap(Server, map, gameMode, dayNight?.ParseDayNight());
-        public static void ChangeMap(this RunnerServer Server, MapInfo? map = null, GameModeInfo? gameMode = null, MapDayNight? dayNight = null) {
+        public static void ChangeGameMode(this RunnerServer Server, GameModeInfo? gameMode = null, MapDayNight? dayNight = null, MapSize mapSize = MapSize.None) => ChangeMap(Server, gameMode: gameMode, dayNight: dayNight, mapSize: mapSize);
+        public static void ChangeMap(this RunnerServer Server, MapInfo? map = null, GameModeInfo? gameMode = null, string? dayNight = null, MapSize mapSize = MapSize.None) => ChangeMap(Server, map, gameMode, dayNight?.ParseDayNight(), mapSize: mapSize);
+        public static void ChangeMap(this RunnerServer Server, MapInfo? map = null, GameModeInfo? gameMode = null, MapDayNight? dayNight = null, MapSize mapSize = MapSize.None) {
             map = map ?? MapInfo.FromName(Server.Map);
             gameMode = gameMode ?? GameModeInfo.FromName(Server.Gamemode);
             //dayNight = dayNight ?? Server.DayNight;
+
+            if (mapSize != MapSize.None) Server.SetServerSizeForNextMatch(mapSize);
 
             var oldMaps = Server.MapRotation.GetMapRotation();
             Server.MapRotation.SetRotation(map.Name);
@@ -411,6 +423,7 @@ namespace Bluscream {
         }
         #endregion
         #region String
+        public static bool ContainsAny(this string input, IEnumerable<string> values, StringComparison stringComparison = StringComparison.Ordinal) => values.Any(value => input.Contains(value, stringComparison));
         public static string SanitizeDiscord(this string input) => input.Replace("`", "`\\`").Replace("@", "\\@");
         public static string ReplaceDiscord(this string input, string key, object? replacement) {
             if (replacement is null) return input;
@@ -681,6 +694,14 @@ namespace Bluscream {
 
         #endregion FileInfo
         #region Object
+
+        public static void Reply(this BattleBitModule module, object obj, RunnerPlayer? targetPlayer) {
+            var msg = obj.ToString();
+            if (msg is null) return;
+            if (targetPlayer is null) { module.Logger.Info(msg); return; }
+            if (msg.ContainsAny(new[] { "\n", "<br>" }, StringComparison.OrdinalIgnoreCase) || msg.Length > 250) targetPlayer.Message(msg);
+            else targetPlayer.SayToChat(msg);
+        }
         public static Embed ToDiscordEmbed(this object obj) {
             var embed = new EmbedBuilder()
                 .WithTimestamp(DateTimeOffset.UtcNow)
