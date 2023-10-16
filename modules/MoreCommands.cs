@@ -30,7 +30,13 @@ namespace Bluscream {
         public override void OnModulesLoaded() {
             this.CommandHandler.Register(this);
         }
-        public string GetCurrentMapInfoString() => $"Current Map:\n\nName: {this.Server.Map.ToMap()?.DisplayName} ({this.Server.Map})\nMode: {this.Server.Gamemode.ToGameMode()?.DisplayName} ({this.Server.Gamemode})\nSize: {this.Server.MapSize}";
+        public string GetCurrentMapInfoString() {
+            var sb = new StringBuilder("Current Map:\n\n");
+            sb.AppendLine($"Name: {this.Server.GetCurrentMap()?.DisplayName} ({this.Server.Map})");
+            sb.AppendLine($"Mode: {this.Server.GetCurrentGameMode()?.DisplayName} ({this.Server.Gamemode})");
+            sb.AppendLine($"Size: {this.Server.MapSize}");
+            return sb.ToString();
+        }
         #region commands
         [Commands.CommandCallback("map", Description = "Changes the map", ConsoleCommand = true, Permissions = new[] { "commands.map" })]
         public void SetMap(RunnerPlayer commandSource, string? mapName = null, string? dayNight = null, string? gameMode = null)
@@ -147,7 +153,7 @@ namespace Bluscream {
         this.Server.ExecuteCommand($"bot fire");
             commandSource.Message($"Toggled bots firing");
         }
-        [Commands.CommandCallback("pw", Description = "Toggles bots firing", ConsoleCommand = true, Permissions = new[] { "commands.pw" })]
+        [Commands.CommandCallback("pw", Description = "Gets or sets current server password", ConsoleCommand = true, Permissions = new[] { "commands.pw" })]
         public void SetPasswordCommand(RunnerPlayer commandSource, string? newPass = null) {
             if (newPass is null) {
                 commandSource.SayToChat(this.Server.IsPasswordProtected ? "Server has a password!" : "Server has no password set!");

@@ -50,7 +50,7 @@ namespace Bluscream {
         private async Task AddData(RunnerPlayer player) {
             if (Players.ContainsKey(player)) return;
             SteamWebApi.Response? steamData = await _GetData(player);
-            if (steamData is null) return;
+            if (steamData is null || Players.ContainsKey(player)) return;
             _Players.Add(player, steamData);
             OnPlayerDataReceived?.Invoke(player, steamData);
         }
@@ -270,6 +270,9 @@ namespace SteamWebApi {
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("loccountrycode")]
         public virtual string? CountryCode { get; set; }
+
+        [JsonIgnore]
+        public virtual string DisplayName => RealName ?? PersonaName ?? "Unknown";
     }
 }
 #endregion

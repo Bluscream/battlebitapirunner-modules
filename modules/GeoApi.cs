@@ -48,7 +48,7 @@ namespace Bluscream {
         private async Task AddData(RunnerPlayer player) {
             if (Players.ContainsKey(player)) return;
             IpApi.Response? geoData = await _GetData(player);
-            if (geoData is null) return;
+            if (geoData is null || Players.ContainsKey(player)) return;
             _Players.Add(player, geoData);
             OnPlayerDataReceived?.Invoke(player, geoData);
         }
