@@ -177,7 +177,7 @@ namespace Bluscream {
             if (playerJoiningArguments is not null && steamId64 is not null) {
                 var steam = SteamApi?._GetData((ulong)steamId64).Result;
                 if (steam is not null) {
-                    //if (geoData?.CountryCode is null) input = input.ReplaceDiscord("geoData.CountryCode", steam.Summary?.CountryCode?.ToLowerInvariant());
+                    if (geoData?.CountryCode is null) input = input.ReplaceDiscord("geoData.CountryCode", steam.Summary?.CountryCode?.ToLowerInvariant());
                     if (player?.Name is null) {
                         input = input.ReplaceDiscord("player.Name", steam.Summary?.PersonaName);
                         input = input.ReplaceDiscord("player.str()", $"\"{steam.Summary?.PersonaName}\" ({steam.Summary?.SteamId64})");
