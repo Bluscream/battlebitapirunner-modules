@@ -28,6 +28,7 @@ using System.ComponentModel.DataAnnotations;
 using Discord.Webhook;
 using Discord;
 using log4net;
+using PlayerFinder;
 
 namespace Bluscream {
     #region Defines
@@ -247,7 +248,7 @@ namespace Bluscream {
         public static char ToLetter(this Squad<RunnerPlayer> squad) => squad.Name.ToLetter();
         #endregion
         #region Events
-        public delegate void PlayerKickedHandler(RunnerPlayer player, string? reason);
+        public delegate void PlayerKickedHandler(object targetPlayer, string? reason);
         public static event PlayerKickedHandler OnPlayerKicked = delegate { };
         #endregion
         #region Roles
@@ -330,13 +331,18 @@ namespace Bluscream {
         }
         public static MapInfo GetCurrentMap(this RunnerServer server) => BluscreamLib.Maps.Where(p => p.Name == server.Map).First();
         public static GameModeInfo GetCurrentGameMode(this RunnerServer server) => BluscreamLib.GameModes.Where(p => p.Name == server.Gamemode).First();
+        public static void Kick(this RunnerServer server, ulong steamId64, string? reason = null) {
+            BluscreamLib.Logger.Warn($"Kicking Player {steamId64} for \"{reason}\"");
+            server.Kick(steamId64, reason);
+            OnPlayerKicked?.Invoke(steamId64, reason);
+        }
         #endregion
         #region Player
         public static string str(this RunnerPlayer player) => $"\"{player.Name}\"";
         public static string fullstr(this RunnerPlayer player) => $"{player.str()} ({player.SteamID})";
         public static void Kick(this BattleBitAPI.Player<RunnerPlayer> player, string? reason = null) => Kick(player as RunnerPlayer, reason);
         public static void Kick(this RunnerPlayer player, string? reason = null) {
-            BluscreamLib.Log($"Kicking Player {player.str()} for \"{reason}\"");
+            BluscreamLib.Logger.Warn($"Kicking Player {player.str()} for \"{reason}\"");
             player.Kick(reason);
             OnPlayerKicked?.Invoke(player, reason);
         }
@@ -372,7 +378,12 @@ namespace Bluscream {
                     player.SayToChat(message);
             }
         }
-            #endregion
+        public static void Kick(this GameServer<RunnerPlayer> server, ulong steamId64, string? reason = null) {
+            BluscreamLib.Logger.Warn($"Kicking Player {steamId64} for \"{reason}\"");
+            server.Kick(steamId64, reason);
+            OnPlayerKicked?.Invoke(steamId64, reason);
+        }
+        #endregion
         #region Squad
         public static void SayToChat(this Squad<RunnerPlayer> squad, string message) => squad.Server.SayToSquadChat(squad.Team, squad.Name, message);
         #endregion
