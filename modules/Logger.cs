@@ -39,18 +39,18 @@ namespace Bluscream {
         public BluscreamLib BluscreamLib { get; set; } = null!;
 
         [ModuleReference]
-#if DEBUG
-        public GeoApi? GeoApi { get; set; } = null!;
-#else
-        public dynamic? GeoApi { get; set; }
-#endif
+//#if DEBUG
+        public GeoApi GeoApi { get; set; } = null!;
+//#else
+//        public dynamic? GeoApi { get; set; }
+//#endif
 
         [ModuleReference]
-#if DEBUG
-        public SteamApi? SteamApi { get; set; } = null!;
-#else
-        public SteamApi? SteamApi { get; set; }
-#endif
+//#if DEBUG
+        public SteamApi SteamApi { get; set; } = null!;
+//#else
+//        public dynamic SteamApi { get; set; }
+//#endif
 
         [ModuleReference]
 #if DEBUG
@@ -71,15 +71,19 @@ namespace Bluscream {
             Console.WriteLine(msg);
         }
         private async Task SendToWebhook(string webhookUrl, string msg) {
-            if (string.IsNullOrWhiteSpace(msg)) return;
-            var idToken = webhookUrl.Substring(webhookUrl.LastIndexOf('/') + 1).Split('/');
-            ulong webhookId = ulong.Parse(idToken[0]);
-            string webhookToken = idToken[1];
-            using (var client = new DiscordWebhookClient(webhookId, webhookToken)) {
-                var success = false;
+            if (string.IsNullOrWhiteSpace(webhookUrl) || string.IsNullOrWhiteSpace(msg)) return;
+            var success = Uri.TryCreate(webhookUrl, new UriCreationOptions(), out var url);
+            if (!success || url is null) return;
+            //var pathTokens = url.AbsolutePath.Split("/").ToList();
+            //pathTokens.RemoveAll(s => string.IsNullOrEmpty(s));
+            //var idToken = url.AbsolutePath.Substring(url.AbsolutePath.LastIndexOf('/') + 1).Split('/');
+            //ulong webhookId = ulong.Parse(pathTokens[0]);
+            //string webhookToken = pathTokens[1];
+            using (var client = new DiscordWebhookClient(url.AbsoluteUri)) {
+                success = false;
                 while (!success) {
                     try {
-                        await client.SendMessageAsync(text: msg.Replace("@", "\\@"));
+                        await client.SendMessageAsync(text: msg.SanitizeDiscord());
                         success = true;
                     } catch (Exception ex) {
                         // Console.WriteLine($"Failed to POST webhook: {ex.Message}");
@@ -166,14 +170,14 @@ namespace Bluscream {
                 input = input.ReplaceDiscord("geoData.ToJson(true)", geoData.ToJson(true));
             }
             if (steamData is not null) {
-                input = input.ReplaceDiscord("geoData.CountryCode", steamData.Summary?.CountryCode?.ToLowerInvariant());
+                input = input.ReplaceDiscord("steamData.CountryCode", steamData.Summary?.CountryCode?.ToLowerInvariant());
                 input = input.ReplaceDiscord("steamData.ToJson()", steamData.ToJson());
                 input = input.ReplaceDiscord("steamData.ToJson(true)", steamData.ToJson(true));
             }
             if (playerJoiningArguments is not null && steamId64 is not null) {
                 var steam = SteamApi?._GetData((ulong)steamId64).Result;
                 if (steam is not null) {
-                    if (geoData?.CountryCode is null) input = input.ReplaceDiscord("geoData.CountryCode", steam.Summary?.CountryCode?.ToLowerInvariant());
+                    //if (geoData?.CountryCode is null) input = input.ReplaceDiscord("geoData.CountryCode", steam.Summary?.CountryCode?.ToLowerInvariant());
                     if (player?.Name is null) {
                         input = input.ReplaceDiscord("player.Name", steam.Summary?.PersonaName);
                         input = input.ReplaceDiscord("player.str()", $"\"{steam.Summary?.PersonaName}\" ({steam.Summary?.SteamId64})");

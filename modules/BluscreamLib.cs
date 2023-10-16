@@ -331,13 +331,13 @@ namespace Bluscream {
             OnPlayerKicked?.Invoke(player, reason);
         }
         #region Permissions
-        public static Roles GetRoles(this RunnerPlayer player, Permissions.PlayerPermissions permissionsModule) => permissionsModule.GetPlayerRoles(player.SteamID);
-        public static bool HasRole(this RunnerPlayer player, Permissions.PlayerPermissions permissionsModule, Roles role) => permissionsModule.HasPlayerRole(player.SteamID, role);
-        public static bool HasAnyRoleOf(this RunnerPlayer player, Permissions.PlayerPermissions permissionsModule, Roles needsAnyRole) => needsAnyRole > 0 && (player.GetRoles(permissionsModule) & needsAnyRole) != 0;
-        public static bool HasNoRoleOf(this RunnerPlayer player, Permissions.PlayerPermissions permissionsModule, Roles needsNoRole) => needsNoRole > 0 && (player.GetRoles(permissionsModule) & needsNoRole) == 0;
-        public static bool HasAllRolesOf(this RunnerPlayer player, Permissions.PlayerPermissions permissionsModule, Roles needsAllRole) => needsAllRole > 0 && (player.GetRoles(permissionsModule) & needsAllRole) == needsAllRole;
-        public static bool HasOnlyThisRole(this RunnerPlayer player, Permissions.PlayerPermissions permissionsModule, Roles role) => role > 0 && player.GetRoles(permissionsModule) == role;
-        public static bool HasOnlyTheseRoles(this RunnerPlayer player, Permissions.PlayerPermissions permissionsModule, Roles roles) => player.HasOnlyTheseRoles(permissionsModule, roles);
+        //public static Roles GetRoles(this RunnerPlayer player, Permissions.PlayerPermissions permissionsModule) => permissionsModule.GetPlayerRoles(player.SteamID);
+        //public static bool HasRole(this RunnerPlayer player, Permissions.PlayerPermissions permissionsModule, Roles role) => permissionsModule.HasPlayerRole(player.SteamID, role);
+        //public static bool HasAnyRoleOf(this RunnerPlayer player, Permissions.PlayerPermissions permissionsModule, Roles needsAnyRole) => needsAnyRole > 0 && (player.GetRoles(permissionsModule) & needsAnyRole) != 0;
+        //public static bool HasNoRoleOf(this RunnerPlayer player, Permissions.PlayerPermissions permissionsModule, Roles needsNoRole) => needsNoRole > 0 && (player.GetRoles(permissionsModule) & needsNoRole) == 0;
+        //public static bool HasAllRolesOf(this RunnerPlayer player, Permissions.PlayerPermissions permissionsModule, Roles needsAllRole) => needsAllRole > 0 && (player.GetRoles(permissionsModule) & needsAllRole) == needsAllRole;
+        //public static bool HasOnlyThisRole(this RunnerPlayer player, Permissions.PlayerPermissions permissionsModule, Roles role) => role > 0 && player.GetRoles(permissionsModule) == role;
+        //public static bool HasOnlyTheseRoles(this RunnerPlayer player, Permissions.PlayerPermissions permissionsModule, Roles roles) => player.HasOnlyTheseRoles(permissionsModule, roles);
         public static List<string> GetPlayerPermissions(this RunnerPlayer player, Permissions.GranularPermissions permissionsModule) => permissionsModule.GetPlayerPermissions(player.SteamID).ToList();
         public static List<string> GetAllPlayerPermissions(this RunnerPlayer player, Permissions.GranularPermissions permissionsModule) => permissionsModule.GetAllPlayerPermissions(player.SteamID).ToList();
         public static bool HasAnyPermissionOf(this RunnerPlayer player, Permissions.GranularPermissions permissionsModule, List<string> needsAnyPermission) => player.GetAllPlayerPermissions(permissionsModule).ContainsAny(values: needsAnyPermission.ToArray());

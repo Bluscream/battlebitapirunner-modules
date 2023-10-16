@@ -50,7 +50,7 @@ namespace Bluscream {
         private async Task AddData(RunnerPlayer player) {
             if (Players.ContainsKey(player)) return;
             SteamWebApi.Response? steamData = await _GetData(player);
-            if (steamData is null) return;
+            if (steamData is null || Players.ContainsKey(player)) return;
             _Players.Add(player, steamData);
             OnPlayerDataReceived?.Invoke(player, steamData);
         }
