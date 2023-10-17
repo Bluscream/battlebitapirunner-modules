@@ -9,12 +9,12 @@ namespace BattleBitBaseModules;
 /// Author: @RainOrigami, Bluscream
 /// </summary>
 
-[RequireModule(typeof(PlayerPermissions))]
+[RequireModule(typeof(GranularPermissions))]
 [Module("Reserved Slots", "1.0.0")]
 public class ReservedSlots : BattleBitModule
 {
     public ReservedSlotsConfiguration Configuration { get; set; } = null!;
-    public PlayerPermissions PlayerPermissions { get; set; } = null!;
+    public GranularPermissions GranularPermissions { get; set; } = null!;
 
     public override Task OnPlayerJoiningToServer(ulong steamID, PlayerJoiningArguments args)
     {
@@ -23,7 +23,7 @@ public class ReservedSlots : BattleBitModule
             return Task.CompletedTask;
         }
 
-        if ((this.PlayerPermissions.GetPlayerRoles(steamID) & this.Configuration.AllowedRoles) > 0)
+        if (this.GranularPermissions.HasPermission(steamID, "reservedslots.use"))
         {
             return Task.CompletedTask;
         }
@@ -39,5 +39,4 @@ public class ReservedSlots : BattleBitModule
 public class ReservedSlotsConfiguration : ModuleConfiguration
 {
     public int ReservedSlots { get; set; } = 2;
-    public Roles AllowedRoles { get; set; } = Roles.Admin | Roles.Moderator;
 }

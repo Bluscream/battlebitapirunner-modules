@@ -189,7 +189,8 @@ namespace Bluscream {
                 input = input.ReplaceDiscord("playerJoiningArguments.Progress.Progress.Prestige", playerJoiningArguments.Stats.Progress.Prestige);
                 input = input.ReplaceDiscord("playerJoiningArguments.Stats.Roles.ToRoleString()", playerJoiningArguments.Stats.Roles.ToRoleString());
                 input = input.ReplaceDiscord("playerJoiningArguments.Progress.Progress.Rank", playerJoiningArguments.Stats.Progress.Rank);
-            }
+            };
+            input = input.ReplaceDiscord("geoData.CountryFlagEmoji", geoData?.CountryFlagEmoji);
             input = input.ReplaceDiscord("reason", reportReason);
             input = input.ReplaceDiscord("msg", msg);
             input = input.ReplaceDiscord("oldState", oldState);
@@ -201,7 +202,6 @@ namespace Bluscream {
                 case ChatChannel.TeamChat: input = input.ReplaceDiscord("chatChannel", $"{player?.Team.ToCountryCode()} > "); break;
                 default: input = input.ReplaceDiscord("chatChannel", string.Empty); break;
             }
-            
             foreach (var replacement in Config.randomReplacements) {
                 input = input.Replace($"{{random.{replacement.Key}}}", replacement.Value[random.Next(replacement.Value.Count)]);
             }
@@ -370,9 +370,8 @@ namespace Bluscream {
             HandleEvent(Config.OnPlayerReported, player: from, target: to, reportReason: reason, _msg: additional);
             return Task.CompletedTask;
         }
-
-        private void OnPlayerKicked(RunnerPlayer player, string? reason) {
-            HandleEvent(Config.OnPlayerKicked, player: player, _msg: reason!);
+        private void OnPlayerKicked(object targetPlayer, string? reason) {
+            HandleEvent(Config.OnPlayerKicked, player: targetPlayer as RunnerPlayer ?? null, steamId64: targetPlayer as ulong? ?? null, _msg: reason!);
         }
         public override Task OnPlayerDisconnected(RunnerPlayer player) {
             HandleEvent(Config.OnPlayerDisconnected, player: player);
@@ -473,19 +472,19 @@ namespace Bluscream {
             public LogConfigurationEntry OnPlayerJoiningToServer { get; set; } = new() {
                 Console = new LogConfigurationEntrySettings() { Message = "[{now}] {BannedOrP}layer [{playerJoiningArguments.Stats.Roles.ToRoleString()}] {player.str()} is connecting to the server from {geoData.CountryCode} (Prestige: {playerJoiningArguments.Progress.Progress.Prestige} | Rank: {playerJoiningArguments.Stats.Progress.Rank})" },
                 UILog = new LogConfigurationEntrySettings() { Message = "{player.Name} [~]" },
-                Discord = new DiscordWebhookLogConfigurationEntrySettings() { Message = "[{now}] {BannedOrP}layer [{playerJoiningArguments.Stats.Roles.ToRoleString()}] {player.str()} is connecting to the server from :flag_{geoData.CountryCode}: (Prestige: {playerJoiningArguments.Progress.Progress.Prestige} | Rank: {playerJoiningArguments.Stats.Progress.Rank})" }
+                Discord = new DiscordWebhookLogConfigurationEntrySettings() { Message = "[{now}] {BannedOrP}layer [{playerJoiningArguments.Stats.Roles.ToRoleString()}] {player.str()} is connecting to the server from {CountryFlagEmoji} (Prestige: {playerJoiningArguments.Progress.Progress.Prestige} | Rank: {playerJoiningArguments.Stats.Progress.Rank})" }
             };
             public LogConfigurationEntry OnPlayerConnected { get; set; } = new() {
                 Chat = new LogConfigurationEntrySettings() { Message = "[+] {player.Name} {random.joined} from {geoData.Country}", Permissions = { "logger.OnPlayerConnected" } },
                 Console = new LogConfigurationEntrySettings() { Message = "[{now}] [+] {player.Name} ({player.SteamID})) [{player.IP},{geoData.Country},{geoData.Continent}]" },
                 UILog = new LogConfigurationEntrySettings() { Message = "{player.Name} [+]" },
-                Discord = new DiscordWebhookLogConfigurationEntrySettings() { Message = "[{now}] `{player.str()}`connected from {geoData.Country}, {geoData.Continent} :flag_{geoData.CountryCode}:" },
+                Discord = new DiscordWebhookLogConfigurationEntrySettings() { Message = "[{now}] `{player.str()}`connected from {geoData.Country}, {geoData.Continent} {CountryFlagEmoji}" },
             };
             public LogConfigurationEntry OnPlayerDisconnected { get; set; } = new() {
-                Chat = new LogConfigurationEntrySettings() { Message = "[-] {player.Name} from {geoData.Country} left", Permissions = { "logger.OnPlayerDisconnected" } },
+                Chat = new LogConfigurationEntrySettings() { Message = "[-] {player.Name} left", Permissions = { "logger.OnPlayerDisconnected" } },
                 Console = new LogConfigurationEntrySettings() { Message = "[{now}] [-] {player.Name} ({player.SteamID})) [{player.IP} {geoData.Country}]" },
                 UILog = new LogConfigurationEntrySettings() { Message = "{player.Name} [-]" },
-                Discord = new DiscordWebhookLogConfigurationEntrySettings() { Message = "[{now}] `{player.str()}`from {geoData.Country} :flag_{geoData.CountryCode}: disconnected :arrow_left:" },
+                Discord = new DiscordWebhookLogConfigurationEntrySettings() { Message = "[{now}] `{player.str()}`from {geoData.Country} {CountryFlagEmoji} disconnected :arrow_left:" },
             };
             public LogConfigurationEntry OnPlayerKicked { get; set; } = new() {
                 Chat = new LogConfigurationEntrySettings() { Message = "[-] {player.Name} was kicked for {msg}", Permissions = { "logger.OnPlayerKicked" } },

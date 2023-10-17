@@ -1,46 +1,35 @@
+using BattleBitAPI.Common;
+using BattleBitAPI.Server;
+using BBRAPIModules;
+using Bluscream;
+using Discord;
+using Discord.Webhook;
+using Humanizer;
+using log4net;
 using System;
-using System.Globalization;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Reflection;
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Web;
-using System.Net;
-
-using BattleBitAPI.Common;
-using BBRAPIModules;
-
-using Bluscream;
-using BattleBitAPI.Server;
-using System.Net.Http;
-using System.Security.Cryptography;
-using System.ComponentModel.DataAnnotations;
-using Discord.Webhook;
-using Discord;
-using log4net;
-using PlayerFinder;
 
 namespace Bluscream {
-    #region Defines
-    #region Configuration
-    //public class CommandConfiguration {
-    //    public bool Enabled { get; set; } = true;
-    //    public List<string>? AllowedRoles { get; set; } = new() { };
-    //}
-    #endregion
-    #endregion
     #region Requires
-    [RequireModule(typeof(DevMinersBBModules.ModuleUsageStats))]
+    //[RequireModule(typeof(DevMinersBBModules.ModuleUsageStats))]
     [RequireModule(typeof(Permissions.GranularPermissions))]
     #endregion
     [Module("Bluscream's Library", "2.0.2")]
@@ -48,7 +37,7 @@ namespace Bluscream {
         public static ModuleInfo ModuleInfo = new() {
             Name = "Bluscream's Library",
             Description = "Generic library for common code used by multiple modules.",
-            Version = new Version(2,0,2),
+            Version = new Version(2, 0, 2),
             Author = "Bluscream",
             WebsiteUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/"),
             UpdateUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/raw/master/modules/BluscreamLib.cs"),
@@ -60,9 +49,9 @@ namespace Bluscream {
         // #else
         //         public dynamic? PlayerPermissions { get; set; } = null!;
         // #endif
-
         public static new readonly ILog Logger = LogManager.GetLogger(typeof(BluscreamLib));
-
+        #region Events
+        #endregion
         #region EventHandlers
         public BluscreamLib() {
             Logger.Debug("Constructor called");
@@ -71,7 +60,7 @@ namespace Bluscream {
             var MapsFile = new FileInfo(Config.MapsFile);
             try {
                 Maps = MapList.FromUrl(Config.MapsUrl);
-                Maps.ToFile(MapsFile, true);
+                Maps.ToJsonFile(MapsFile, true);
                 Logger.Info($"Updated {MapsFile.Name} ({Maps.Count} maps) from {Config.MapsUrl}");
             } catch (Exception ex) {
                 Logger.Info($"Unable to get new {MapsFile.Name}: {ex.Message}");
@@ -83,7 +72,7 @@ namespace Bluscream {
             var GameModesFile = new FileInfo(Config.GameModesFile);
             try {
                 GameModes = GameModeList.FromUrl(Config.GameModesUrl);
-                GameModes.ToFile(GameModesFile, true);
+                GameModes.ToJsonFile(GameModesFile, true);
                 Logger.Info($"Updated {GameModesFile.Name} ({GameModes.Count} gamemodes)  from {Config.GameModesUrl}");
             } catch (Exception ex) {
                 Logger.Info($"Unable to get new {GameModesFile.Name}: {ex.Message}");
@@ -94,6 +83,16 @@ namespace Bluscream {
         }
         #endregion
         #region Methods
+        public static bool IsAlreadyRunning(string? appName = null) {
+            if (string.IsNullOrWhiteSpace(appName)) {
+                appName = Process.GetCurrentProcess().ProcessName;
+            }
+            Mutex m = new Mutex(false, appName);
+            if (m.WaitOne(1, false) == false) {
+                return true;
+            }
+            return false;
+        }
         public static string GetStringValue(KeyValuePair<string, string?>? match) {
             if (!match.HasValue) return string.Empty;
             if (!string.IsNullOrWhiteSpace(match.Value.Value)) return match.Value.Value;
@@ -184,7 +183,7 @@ namespace Bluscream {
         public static List<MapInfo> Maps = new();
         public static IReadOnlyList<string> MapNames => Maps.Where(m => m.Available == true).Select(m => m.Name).ToList() ?? new();
         public static IReadOnlyList<string> MapDisplayNames => Maps.Where(m => m.Available == true).Select(m => m.DisplayName ?? m.Name).ToList() ?? new();
-        public static IReadOnlyList<string> MapSizeNames => (IReadOnlyList<string>)Enum.GetValues(typeof(MapSize));
+        public static IReadOnlyList<string> MapSizeNames => (IReadOnlyList<string>)Enum.GetNames(typeof(MapSize));
         #endregion
         #region Configuration
         public static Configuration Config { get; set; } = null!;
@@ -197,49 +196,12 @@ namespace Bluscream {
         }
         #endregion
     }
-    #region Utils
-    public static partial class Utils {
-            public static FileInfo getOwnPath() {
-                return new FileInfo(Path.GetDirectoryName(Environment.ProcessPath));
-            }
 
-            public static bool IsAlreadyRunning(string appName) {
-                System.Threading.Mutex m = new System.Threading.Mutex(false, appName);
-                if (m.WaitOne(1, false) == false) {
-                    return true;
-                }
-                return false;
-            }
-
-            internal static void Exit() {
-                Environment.Exit(0);
-                var currentP = Process.GetCurrentProcess();
-                currentP.Kill();
-            }
-
-            public static IPEndPoint? ParseIPEndPoint(string endPoint) {
-                string[] ep = endPoint.Split(':');
-                if (ep.Length < 2) return null;
-                IPAddress ip;
-                if (ep.Length > 2) {
-                    if (!IPAddress.TryParse(string.Join(":", ep, 0, ep.Length - 1), out ip)) {
-                        return null;
-                    }
-                } else {
-                    if (!IPAddress.TryParse(ep[0], out ip)) {
-                        return null;
-                    }
-                }
-                int port;
-                if (!int.TryParse(ep[ep.Length - 1], NumberStyles.None, NumberFormatInfo.CurrentInfo, out port)) {
-                    return null;
-                }
-                return new IPEndPoint(ip, port);
-            }
-        }
-    #endregion
     #region Extensions
     public static partial class Extensions {
+        #region Stats
+        public static string str(this PlayerStats stats) => $"Banned: {stats.IsBanned.ToYesNo()} | Roles: {stats.Roles.ToRoleString()} | PlayTime: {TimeSpan.FromSeconds(stats.Progress.PlayTimeSeconds).Humanize()} | Rank: {stats.Progress.Rank} | Prestige: {stats.Progress.Prestige} | XP: {stats.Progress.EXP}";
+        #endregion
         #region Team
         public static string ToCountryCode(this Team team) => team == Team.TeamA ? "US" : "RU";
         #endregion
@@ -313,18 +275,18 @@ namespace Bluscream {
         #region Server
         public static string str(this RunnerServer server) => $"\"{server.ServerName}\" ({server.AllPlayers.Count()} players)";
         public static void SayToTeamChat(this RunnerServer server, Team team, string message) {
-                foreach (var player in server.AllPlayers) {
-                    if (player.Team == team)
-                        player.SayToChat(message);
-                }
+            foreach (var player in server.AllPlayers) {
+                if (player.Team == team)
+                    player.SayToChat(message);
             }
+        }
         public static void SayToSquadChat(this RunnerServer server, Team team, Squads squad, string message) {
             foreach (var player in server.AllPlayers) {
                 if (player.Team == team && player.Squad.Name == squad)
                     player.SayToChat(message);
             }
         }
-        public static RunnerPlayer GetPlayerBySteamId64(this RunnerServer server, ulong steamId64) => server.AllPlayers.Where(p=>p.SteamID==steamId64).First();
+        public static RunnerPlayer GetPlayerBySteamId64(this RunnerServer server, ulong steamId64) => server.AllPlayers.Where(p => p.SteamID == steamId64).First();
         public static string GetPlayerNameBySteamId64(this RunnerServer server, ulong steamId64) {
             var player = server.GetPlayerBySteamId64(steamId64);
             return player?.Name ?? steamId64.ToString();
@@ -434,6 +396,13 @@ namespace Bluscream {
         }
         #endregion
         #region String
+
+        public static string FromFile(FileInfo file) => file.ReadAllText();
+        public static void ToFile(this string self, FileInfo file) {
+            file?.Directory?.Create();
+            file?.WriteAllText(self);
+        }
+
         public static bool ContainsAny(this string input, IEnumerable<string> values, StringComparison stringComparison = StringComparison.Ordinal) => values.Any(value => input.Contains(value, stringComparison));
         public static string SanitizeDiscord(this string input) => input.Replace("`", "`\\`").Replace("@", "\\@");
         public static string ReplaceDiscord(this string input, string key, object? replacement) {
@@ -667,6 +636,13 @@ namespace Bluscream {
         #endregion DirectoryInfo
         #region FileInfo
 
+        public static string GetMd5Hash(this FileInfo file) {
+            using var md5 = MD5.Create();
+            using var stream = file.OpenRead();
+            var hash = md5.ComputeHash(stream);
+            return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
+        }
+
         public static FileInfo Backup(this FileInfo file, bool overwrite = true, string extension = ".bak") {
             return file.CopyTo(file.FullName + extension, overwrite);
         }
@@ -695,8 +671,14 @@ namespace Bluscream {
 
         public static void WriteAllText(this FileInfo file, string text) {
             file.Directory.Create();
-            if (!file.Exists) file.Create().Close();
+            //if (!file.Exists) file.Create().Close();
             File.WriteAllText(file.FullName, text);
+        }
+
+        public static void WriteAllBytes(this FileInfo file, byte[] bytes) {
+            file.Directory.Create();
+            //if (!file.Exists) file.Create().Close();
+            File.WriteAllBytes(file.FullName, bytes);
         }
 
         public static string ReadAllText(this FileInfo file) => File.ReadAllText(file.FullName);
@@ -731,7 +713,8 @@ namespace Bluscream {
             }
             return embed.Build();
         }
-        public static string GetMd5Hash(this object obj) {
+        public static string? GetMd5Hash(this object obj) {
+            if (obj is null) return null;
             using (MD5 md5 = MD5.Create()) {
                 byte[] inputBytes = Encoding.UTF8.GetBytes(obj.ToJson(false));
                 byte[] hashBytes = md5.ComputeHash(inputBytes);
@@ -930,6 +913,8 @@ namespace Bluscream {
                 @event(sender, e);
         }
         #endregion
+        #region Process
+        public static Process? Start(this ProcessStartInfo processStartInfo) => Process.Start(processStartInfo);
     }
     #endregion
     #region json
@@ -941,12 +926,12 @@ namespace Bluscream {
             }
         }
         public static T FromJson<T>(string jsonText) => JsonSerializer.Deserialize<T>(jsonText, Converter.Settings);
-        public static T FromJsonFile<T>(FileInfo file) => FromJson<T>(File.ReadAllText(file.FullName));
+        public static T FromJsonFile<T>(FileInfo file) => FromJson<T>(file.ReadAllText());
         public static string ToJson<T>(this T self, bool indented = false) => JsonSerializer.Serialize(self, new JsonSerializerOptions(Converter.Settings) { WriteIndented = indented });
-            public static void ToFile<T>(this T self, FileInfo file, bool indented = false) {
-                file?.Directory?.Create();
-                File.WriteAllText(file?.FullName, ToJson(self, indented));
-            }
+        public static void ToJsonFile<T>(this T self, FileInfo file, bool indented = false) {
+            file?.Directory?.Create();
+            file?.WriteAllText(ToJson(self, indented));
+        }
     }
     public static class Converter {
         public static readonly JsonSerializerOptions Settings = new(JsonSerializerDefaults.General) {
@@ -1077,35 +1062,147 @@ namespace Bluscream {
         }
     }
     public class IPEndPointConverter : JsonConverter<IPEndPoint> {
-    public override IPEndPoint Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
-        var ipEndPointString = reader.GetString();
-        var endPointParts = ipEndPointString.Split(':');
-        var ip = IPAddress.Parse(endPointParts[0]);
-        var port = int.Parse(endPointParts[1]);
-        return new IPEndPoint(ip, port);
-    }
+        public override IPEndPoint Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
+            var ipEndPointString = reader.GetString();
+            var endPointParts = ipEndPointString.Split(':');
+            var ip = IPAddress.Parse(endPointParts[0]);
+            var port = int.Parse(endPointParts[1]);
+            return new IPEndPoint(ip, port);
+        }
 
-    public override void Write(Utf8JsonWriter writer, IPEndPoint value, JsonSerializerOptions options) {
-        writer.WriteStringValue(value.ToString());
+        public override void Write(Utf8JsonWriter writer, IPEndPoint value, JsonSerializerOptions options) {
+            writer.WriteStringValue(value.ToString());
+        }
     }
-}
     #endregion
     #region Defines
+    public static class Runner {
+        public static Process Process => Process.GetCurrentProcess();
+        public static string Name => System.IO.Path.GetFileNameWithoutExtension(Process.MainModule.ModuleName);
+        public static string WindowTitle => Process.MainWindowTitle;
+        public static FileInfo Path { get; set; } = new FileInfo(Process.MainModule.FileName);
+        public static Collection<string> CommandLine { get; set; } = new ProcessStartInfo() { Arguments = Environment.CommandLine }.ArgumentList;
+        public static FileInfo DllFile = Path.Directory.CombineFile(Name.Ext("dll"));
+        public static Version Version { get; set; } = FileVersionInfo.GetVersionInfo(DllFile.FullName).FileVersion.ToVersion() ?? FileVersionInfo.GetVersionInfo(DllFile.FullName).ProductVersion.ToVersion();
+        public static Uri WebsiteUrl { get; set; } = new Uri("https://github.com/BattleBit-Community-Servers/BattleBitAPIRunner");
+        public static Uri SupportUrl { get; set; } = new Uri("https://github.com/BattleBit-Community-Servers/BattleBitAPIRunner/issues/new");
+        public static FileInfo AppSettingsFile = Path.Directory.CombineFile("appsettings.json");
+        public static AppSettingsContent AppSettings = JsonSerializer.Deserialize<AppSettingsContent>(AppSettingsFile.ReadAllText());
+        public static List<ModuleInfo> Modules { get; set; } = GetModuleInfoFromFiles(GetModuleFiles());
+
+        public delegate void RunnerStoppingHandler();
+        public static event RunnerStoppingHandler OnApiRunnerStopping = delegate { };
+        public delegate void RunnerRestartingHandler(FileInfo path, Collection<string> commandLine);
+        public static event RunnerRestartingHandler OnApiRunnerRestarting = delegate { };
+
+        public static bool IsAlreadyRunning() => BluscreamLib.IsAlreadyRunning(Process.ProcessName);
+        public static void Exit() {
+            OnApiRunnerStopping?.Invoke();
+            Environment.Exit(0);
+            Process.Kill();
+        }
+        public static void Start(IEnumerable<string>? args = null) {
+            var startInfo = new ProcessStartInfo() {
+                FileName = Path.FullName,
+                Arguments = args?.Join(" ") ?? Environment.CommandLine
+            };
+            startInfo.Start();
+        }
+        public static void Restart() {
+            OnApiRunnerRestarting?.Invoke(Path, CommandLine);
+            Start(CommandLine);
+            Environment.Exit(0);
+            Process.Kill();
+        }
+
+        public class AppSettingsContent {
+            [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+            [JsonPropertyName("IP")]
+            public virtual string? Ip { get; set; }
+
+            [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+            [JsonPropertyName("Port")]
+            public virtual long? Port { get; set; }
+
+            [JsonPropertyName("IPAddress")]
+            public virtual object? IpAddress { get; set; }
+
+            [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+            [JsonPropertyName("ModulesPath")]
+            public virtual string _ModulesPath { get; set; }
+            [JsonIgnore]
+            public virtual DirectoryInfo ModulesPath => new DirectoryInfo(_ModulesPath);
+
+            [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+            [JsonPropertyName("Modules")]
+            public virtual List<string> _Modules { get; set; } = new();
+            [JsonIgnore]
+            public virtual IEnumerable<FileInfo> Modules => _Modules.Select(m => new FileInfo(m));
+
+            [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+            [JsonPropertyName("DependencyPath")]
+            public virtual string? DependencyPath { get; set; }
+
+            [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+            [JsonPropertyName("ConfigurationPath")]
+            public virtual string? ConfigurationPath { get; set; }
+
+            [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+            [JsonPropertyName("LogLevel")]
+            public virtual string? LogLevel { get; set; }
+
+            [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+            [JsonPropertyName("WarningThreshold")]
+            public virtual long? WarningThreshold { get; set; }
+        }
+
+        internal static IEnumerable<FileInfo> GetModuleFilesFromFolder(DirectoryInfo directory) => directory.GetFiles("*.cs", SearchOption.TopDirectoryOnly).ToList();
+        internal static IEnumerable<FileInfo> GetModuleFiles() {
+            var moduleFiles = new List<FileInfo>();
+            if (AppSettings?.ModulesPath != null)
+                moduleFiles.AddRange(GetModuleFilesFromFolder(AppSettings.ModulesPath));
+            if (AppSettings?.Modules == null) return moduleFiles;
+            moduleFiles.AddRange(AppSettings.Modules.Where(file => file.Exists));
+            return moduleFiles;
+        }
+        internal static KeyValuePair<string?, string?> GetVersionAndDescriptionFromFile(FileSystemInfo file) {
+            var text = File.ReadAllText(file.FullName);
+            var regex = new Regex(@"\[Module\(""(.*)"", ""(.*)""\)\]");
+            var matches = regex.Matches(text);
+            foreach (Match match in matches) return new(match.Groups[2].Value, match.Groups[1].Value);
+            return new(null, null);
+        }
+        internal static List<ModuleInfo> GetModuleInfoFromFiles(IEnumerable<FileInfo> files) {
+            List<ModuleInfo> modules = new();
+            foreach (var file in files) {
+                if (file.Extension.ToLowerInvariant() == ".cs") {
+                    var (version, description) = GetVersionAndDescriptionFromFile(file);
+                    modules.Add(ModuleInfo.FromFile(file, version, description));
+                }
+            }
+            BluscreamLib.Log($"Loaded {modules.Count} modules's infos...");
+            return modules;
+        }
+    }
     public struct ModuleInfo {
-        public bool Loaded { get; set; }
-        public bool Enabled { get; set; }
-        public string Name { get; set; }
+        public bool? Loaded { get; set; }
+        public bool? Enabled { get; set; }
+        public string? Name { get; set; }
         public string? Description { get; set; }
         public Version Version { get; set; }
-        public string Author { get; set; }
+        public string? _Version { get; set; }
+        public string? Author { get; set; }
         public Uri? WebsiteUrl { get; set; }
         public Uri? UpdateUrl { get; set; }
         public Uri? SupportUrl { get; set; }
+        public FileInfo? Path { get; set; }
+        public string? Hash { get; set; }
         public ModuleInfo() { }
         public ModuleInfo(string name, string description, Version version, string author, Uri websiteUrl, Uri updateUrl, Uri supportUrl) {
             Name = name;
             Description = description;
             Version = version;
+            _Version = version.ToString();
             Author = author;
             WebsiteUrl = websiteUrl;
             UpdateUrl = updateUrl;
@@ -1115,6 +1212,15 @@ namespace Bluscream {
             this(name, description, version, author, websiteUrl.ToUri(), updateUrl.ToUri(), supportUrl.ToUri()) { }
         public ModuleInfo(string name, string description, string version, string author, string websiteUrl, string updateUrl, string supportUrl) :
             this(name, description, version.ToVersion(), author, websiteUrl.ToUri(), updateUrl.ToUri(), supportUrl.ToUri()) { }
+
+        public static ModuleInfo FromFile(FileInfo file, string version, string description) => new ModuleInfo() {
+            Path = file,
+            Name = file.FileNameWithoutExtension(),
+            _Version = version ?? "Unknown",
+            Version = version.ToVersion(),
+            Description = description,
+            Hash = file.GetMd5Hash()
+        };
     }
     public struct DateTimeWithZone {
         private readonly DateTime utcDateTime;
@@ -1166,7 +1272,123 @@ namespace Bluscream {
             public bool Inline { get; set; } = false;
         }
     }
-
+    public enum DisconnectReason {
+        Unknown = 0,
+        RemoteConnectionRequestedToTerminate = 1,
+        Timeout = 2,
+        ManyExceptions = 3,
+        TooManyUnverifiedPackages = 4,
+        WeirdPackageIndex = 5,
+        SyncPackageWasNull = 6,
+        ServerIsEndingGame = 7,
+        BannedFromServer = 8,
+        KickedFromServer = 9,
+        AntiCheatAuthFail = 10,
+        ServerChangedMap = 11,
+        WasAlreadyInGame = 12,
+        VersionDoesNotMatch = 13,
+        CorruptedGameFiles = 14,
+        ServerFull = 15,
+        PingLimit = 16,
+        AfkLimit = 17
+    }
+    public enum NetworkCommuncation : byte {
+        NetworkPadding = 0,
+        ClientConnected = 1,
+        ClientDisconnected = 2,
+        RPC = 3,
+        Stream = 4,
+        SpawnObject = 5,
+        DestroyObject = 6,
+        VoiceOverIP = 7,
+        PlayerSpawn = 8,
+        ForceSpawn = 9,
+        VehicleStream = 10,
+        PlayerPositionStream = 11,
+        BodyHitRequest = 12,
+        ArmorHitRequest = 13,
+        SetTime = 14,
+        SpawnVehicle = 15,
+        SavePrefs = 16,
+        GadgetRPC = 17,
+        CombinedReliable = 18,
+        ThrownGadgetStream = 19,
+        ReplicaGadgetStream = 20,
+        VehicleDebrisStream = 21,
+        VehicleSeatBehaviourStream = 22,
+        PlayerPerspective = 23,
+        MagazineStream = 24,
+        DroneStream = 25,
+        ThrowableStream = 26,
+        PickableStream = 27,
+        TreeStream = 28,
+        SupplyBoxStream = 29,
+        AntiCheatSnapshot = 30,
+        ServerSnapshot = 31,
+        ClientTick = 32,
+        ProjectileExplosionRequest = 33,
+        PlayerSpectatorData = 34,
+        ReportPlayer = 35,
+        Count = 36
+    }
+    public enum NetworkFail : byte {
+        UnknownError = 0,
+        NoResponse = 1,
+        ServerIsFull = 2,
+        UnmatchVersion = 3,
+        Banned = 4,
+        SameSteamIDPlayerAlreadyPlaying = 5,
+        SteamVacAuthFail = 6,
+        HailSteamIDsDoesNotMatch = 7,
+        VersionMatchFail = 8,
+        SteamWebApiFail = 9,
+        BannedFromMasterServer = 10,
+        UnableToParseMasterServerData = 11,
+        RankUnmatch = 12,
+        AntiCheatAuthFail = 13,
+        SteamVerifyFail = 14,
+        QueueCanceled = 15,
+        QueueOrderMismatch = 16,
+        ServerChangedMap = 17,
+        MissingTicket = 18,
+        AlreadyInGame = 19,
+        CorruptedGameFiles = 20,
+        InvalidToken = 246,
+        InvalidSteamTicket = 248,
+        AlreadyInQueue = 249,
+        ServerFull = 250,
+        ReservedSlotExpired = 251,
+        Success = 127,
+        WrongMapLoaded = 252
+    }
+    public enum PackageType : byte {
+        Browser_ServerInfoRequest = 128,
+        Browser_PingRequest = 129,
+        Game_Hail = 127,
+        Game_Reliable = 1,
+        Game_Unreliable = 2,
+        Game_PingResponse = 5,
+        Game_ReliableFragmantedData = 6,
+        Game_ReliableFragmantedEnd = 7,
+        Game_PingRequest = 8,
+        Game_Disconnect = byte.MaxValue,
+        ServerDeployer_PingRequest = 200,
+        ServerDeployer_ConsoleExecute = 201,
+        RemoteControl_Request = 233,
+        MTUDiscovery_Request = 240,
+        Connecting_Accepted = 244,
+        Connecting_ReservedSlotExpired = 245,
+        Connecting_InvalidToken = 246,
+        Connecting_DenyJoin = 252,
+        Connecting_QueueIndex = 253,
+        Connecting_MapRequest = 130,
+        Connecting_KeepAlive = 131,
+        SlotReserving_SlotReserved = 247,
+        SlotReserving_InvalidSteamTicket = 248,
+        SlotReserving_WrongPassword = 249,
+        SlotReserving_ServerFull = 250,
+        SlotReserving_ReserveSlot = 251
+    }
     #region Data
     public abstract class BaseInfo {
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
@@ -1199,7 +1421,7 @@ namespace Bluscream {
         [JsonPropertyName("SupportedMapSizes")]
         public virtual List<long> _SupportedMapSizes { get; set; } = new();
         [JsonIgnore]
-        public virtual List<MapSize> SupportedMapSizes => _SupportedMapSizes.ConvertAll(size => { if (Enum.IsDefined(typeof(MapSize), size)) { return (MapSize)Enum.ToObject(typeof(MapSize), size); } else { return MapSize.None; }});
+        public virtual List<MapSize> SupportedMapSizes => _SupportedMapSizes.ConvertAll(size => { if (Enum.IsDefined(typeof(MapSize), size)) { return (MapSize)Enum.ToObject(typeof(MapSize), size); } else { return MapSize.None; } });
 
         public GameModeInfo? GetGameMode() => BluscreamLib.GameModes.First(g => g.Name == GameMode);
     }
@@ -1284,7 +1506,8 @@ namespace Bluscream {
 
         public static List<SizeInfo>? FromJson(string json) => JsonSerializer.Deserialize<List<SizeInfo>>(json, Bluscream.Converter.Settings);
     }
-    #endregion
-    #endregion
-    #endregion
 }
+#endregion
+#endregion
+#endregion
+#endregion

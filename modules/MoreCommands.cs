@@ -7,8 +7,12 @@ using System.Collections.Generic;
 using BattleBitAPI.Common;
 using BBRAPIModules;
 using System.Text;
+using BBRModules;
+using BattleBitAPI.Features;
+using System.Threading.Tasks;
 
 namespace Bluscream {
+    [RequireModule(typeof(PaginatorLib))]
     [RequireModule(typeof(BluscreamLib))]
     [RequireModule(typeof(Commands.CommandHandler))]
     [Module("More Commands", "2.0.0.1")]
@@ -123,6 +127,19 @@ namespace Bluscream {
         public void ListGameSizesCommand(RunnerPlayer commandSource) {
         this.Reply("<b>Available Sizes:</b>\n\n" + string.Join("\n", BluscreamLib.MapSizeNames), commandSource);
         }
+        [Commands.CommandCallback("list squads", Description = "Lists all available squad names", ConsoleCommand = true, Permissions = new[] { "commands.listsquads" })]
+        public void ListGameSquadsCommand(RunnerPlayer commandSource, int pageNum = 1) {
+            List<string> helpLines = Enum.GetNames(typeof(Squads)).ToList();
+            var perPage = 30;
+            int pages = (int)Math.Ceiling((double)helpLines.Count / perPage);
+            if (pageNum < 1 || pageNum > pages) {
+                this.Reply($"<color=\"red\">Invalid page number. Must be between 1 and {pages}.", commandSource);
+                return;
+            }
+            commandSource.Message($"<#FFA500>Available squads<br><color=\"white\">{Environment.NewLine}{string.Join(", ", helpLines.Skip((pageNum - 1) * perPage).Take(perPage))}{(pages > 1 ? $"{Environment.NewLine}Page {pageNum} of {pages}{(pageNum < pages ? $" - type !list squads {pageNum + 1} for next page" : "")}" : "")}");
+            //string message = new PlaceholderLib(Configuration.TeamFullMessage, "maxPlayers", teamCount + extraPlayers).Run();
+            //this.Reply(string.Join("\n", Enum.GetNames(typeof(Squads)).Chunk(26).Select(c=>string.Join(",",c))), commandSource);
+        }
 
         [Commands.CommandCallback("start", Description = "Force starts the round", ConsoleCommand = true, Permissions = new[] { "commands.start" })]
         public void ForceStartRoundCommand(RunnerPlayer commandSource) {
@@ -162,6 +179,43 @@ namespace Bluscream {
             }
             this.Server.SetNewPassword(newPass);
             this.Reply(string.IsNullOrEmpty(newPass) ? "Server password removed!" : $"Set server password to {newPass.Quote()}!", commandSource);
+        }
+
+        [Commands.CommandCallback("api restart", Description = "Restarts the API Runner", ConsoleCommand = true, Permissions = new[] { "commands.api.restart" })]
+        public void RestartApiCommand(RunnerPlayer commandSource) {
+            this.Reply("Restarting API Runner ...", commandSource);
+            Task.Delay(1000).Wait();
+            Runner.Restart();
+        }
+        [Commands.CommandCallback("api stop", Description = "Stops the API Runner", ConsoleCommand = true, Permissions = new[] { "commands.api.stop" })]
+        public void StopApiCommand(RunnerPlayer commandSource) {
+            this.Reply("Stopping API Runner ...", commandSource);
+            Task.Delay(1000).Wait();
+            Runner.Exit();
+        }
+        [Commands.CommandCallback("api info", Description = "Shows Information about the API Runner", ConsoleCommand = true, Permissions = new[] { "commands.api.stop" })]
+        public void ApiInfoCommand(RunnerPlayer commandSource) {
+            this.Reply($"<b>{Runner.Name}<b>\nv<b>{Runner.Version}<b>\nBy <b>@rainorigami</b>\nRunning <b>{Runner.Modules.Count}</b> Modules", commandSource);
+        }
+
+        [Commands.CommandCallback("api list", Description = "Lists all API Runner modules", ConsoleCommand = true, Permissions = new[] { "commands.api.modules" })]
+        public void ApiModuleListCommand(RunnerPlayer commandSource) {
+            string modulesText;
+            if (Runner.Modules.Count < 10) modulesText = string.Join("\n", Runner.Modules.Select(m => $"\"{m.Name}\" v{m.Version}"));
+            else if (Runner.Modules.Count < 20) modulesText = string.Join(", ", Runner.Modules.Select(m => $"\"{m.Name}\" v{m.Version}"));
+            else if (Runner.Modules.Count < 25) modulesText = string.Join(", ", Runner.Modules.Select(m => $"{m.Name} v{m.Version}"));
+            else if (Runner.Modules.Count < 30) modulesText = string.Join(", ", Runner.Modules.Select(m => $"{m.Name} {m.Version}"));
+            else modulesText = string.Join(", ", Runner.Modules.Select(m => m.Name));
+            commandSource.Message($"<size=175%>{Runner.Modules.Count} BattleBitAPIRunner modules loaded</size>\n\n{modulesText}");
+        }
+
+        [Commands.CommandCallback("api module", Description = "Displays information about a specific module", ConsoleCommand = true, Permissions = new[] { "commands.api.module" })]
+        public void ApiModuleInfoCommand(RunnerPlayer commandSource, string moduleName) {
+            var name = moduleName.ToLowerInvariant();
+            var module = Runner.Modules.Where(m => m.Name.ToLowerInvariant() == name);
+            if (!module.Any()) module = Runner.Modules.Where(m => m.Name.ToLowerInvariant().Contains(name));
+            if (!module.Any()) { commandSource.SayToChat($"Could not find module with the name \"{name}\""); return; }
+            commandSource.Message($"<size=175%>{module.First().Name} v{module.First().Version}</size>\n\n<b>{module.First().Description}");
         }
 
         //[Commands.CommandCallback("tps", Description = "Information about server usage")]
