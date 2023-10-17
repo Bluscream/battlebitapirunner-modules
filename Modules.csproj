@@ -22,6 +22,7 @@
     <Compile Remove="configurations\**" />
     <Compile Remove="configurations_\**" />
     <Compile Remove="dependencies\**" />
+    <Compile Remove="flyingkarii-CustomModules\**" />
     <Compile Remove="modules_\**" />
     <EmbeddedResource Remove="battlebit-rcon\**" />
     <EmbeddedResource Remove="BattleBitBaseModules\**" />
@@ -30,6 +31,7 @@
     <EmbeddedResource Remove="configurations\**" />
     <EmbeddedResource Remove="configurations_\**" />
     <EmbeddedResource Remove="dependencies\**" />
+    <EmbeddedResource Remove="flyingkarii-CustomModules\**" />
     <EmbeddedResource Remove="modules_\**" />
     <None Remove="battlebit-rcon\**" />
     <None Remove="BattleBitBaseModules\**" />
@@ -38,11 +40,17 @@
     <None Remove="configurations\**" />
     <None Remove="configurations_\**" />
     <None Remove="dependencies\**" />
+    <None Remove="flyingkarii-CustomModules\**" />
     <None Remove="modules_\**" />
   </ItemGroup>
 
   <ItemGroup>
     <None Remove="modules\ChatLogger.cs.disable" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="modules_\DocumentationGenerator.cs" />
+    <Compile Include="modules_\RoundEndAdvertise.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -64,8 +72,8 @@
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.8.0-2.final" />
     <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="4.8.0-2.final" />
     <PackageReference Include="Mono.Cecil" Version="0.11.5" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="SmartFormat.NET" Version="3.3.0" />
+    <PackageReference Include="System.Management" Version="7.0.2" />
     <PackageReference Include="Tabulate.NET" Version="1.0.5" />
     <PackageReference Include="TimeSpanParserUtil" Version="1.2.0" />
   </ItemGroup>

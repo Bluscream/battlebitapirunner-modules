@@ -2,10 +2,12 @@ using BattleBitAPI.Common;
 using BattleBitAPI.Server;
 using BBRAPIModules;
 using Bluscream;
+using Commands;
 using Discord;
 using Discord.Webhook;
 using Humanizer;
 using log4net;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -15,6 +17,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Management;
 using System.Net;
 using System.Net.Http;
 using System.Reflection;
@@ -915,7 +918,32 @@ namespace Bluscream {
         #endregion
         #region Process
         public static Process? Start(this ProcessStartInfo processStartInfo) => Process.Start(processStartInfo);
+        public static void Exit(this Process process) {
+            process.CloseMainWindow();
+            process.Close();
+            process.Kill();
+        }
+        public static void Start(this Process process, string? args = null) {
+            var startInfo = new ProcessStartInfo() {
+                FileName = process.MainModule.FileName,
+                Arguments = args
+            };
+            startInfo.Start();
+        }
+        public static void Start(this Process process, IEnumerable<string>? args = null) => process.Start(args?.Join(" "));
+        public static void Restart(this Process process) {
+            process.Start(process.GetCommandLineList());
+            process.Exit();
+        }
+        public static string GetCommandLine(this Process process) {
+            using (ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT CommandLine FROM Win32_Process WHERE ProcessId = " + process.Id))
+            using (ManagementObjectCollection objects = searcher.Get()) {
+                return objects.Cast<ManagementBaseObject>().SingleOrDefault()?["CommandLine"]?.ToString();
+            }
+        }
+        public static List<string> GetCommandLineList(this Process process) => Regex.Matches(GetCommandLine(process), @"[\""].+?[\""]|[^ ]+").Cast<Match>().Select(m => m.Value).ToList();
     }
+    #endregion
     #endregion
     #region json
     public static class JsonUtils {
@@ -1098,21 +1126,73 @@ namespace Bluscream {
         public static bool IsAlreadyRunning() => BluscreamLib.IsAlreadyRunning(Process.ProcessName);
         public static void Exit() {
             OnApiRunnerStopping?.Invoke();
-            Environment.Exit(0);
-            Process.Kill();
+            Process.Exit();
         }
         public static void Start(IEnumerable<string>? args = null) {
-            var startInfo = new ProcessStartInfo() {
-                FileName = Path.FullName,
-                Arguments = args?.Join(" ") ?? Environment.CommandLine
-            };
-            startInfo.Start();
+            Process.Start(args?.Join(" ") ?? Environment.CommandLine);
         }
         public static void Restart() {
             OnApiRunnerRestarting?.Invoke(Path, CommandLine);
-            Start(CommandLine);
-            Environment.Exit(0);
-            Process.Kill();
+            Process.Restart();
+        }
+        public static Dictionary<Process, List<string>> GetRunningGameServers() {
+            var processes = Process.GetProcessesByName("BattleBit.exe").Intersect(Process.GetProcessesByName("BattleBitEAC.exe"));
+            Dictionary<Process, List<string>> servers = new();
+            foreach (var process in processes) {
+                servers[process] = process.GetCommandLineList();
+            }
+            return servers;
+        }
+        public static Dictionary<Process, List<string>> GetRunningGameServersByApiPort(int? apiPort = null) {
+            apiPort = apiPort ?? AppSettings.Port;
+            var allServers = GetRunningGameServers();
+            Dictionary<Process, List<string>> servers = new();
+            foreach (var (process, commandline) in allServers) {
+                foreach (var arg in commandline) {
+                   if (arg.Contains("-ApiEndPoint=") && arg.Contains($":{apiPort}"))
+                        servers[process] = commandline;
+                }
+            }
+            return servers;
+        }
+        public static Dictionary<Process, List<string>> GetRunningGameServersByName(string name) {
+            var allServers = GetRunningGameServers();
+            Dictionary<Process, List<string>> servers = new();
+            foreach (var (process, commandline) in allServers) {
+                foreach (var arg in commandline) {
+                    if (arg.Contains("-Name=") && arg.Contains($":{name}"))
+                        servers[process] = commandline;
+                }
+            }
+            return servers;
+        }
+
+        internal static IEnumerable<FileInfo> GetModuleFilesFromFolder(DirectoryInfo directory) => directory.GetFiles("*.cs", SearchOption.TopDirectoryOnly).ToList();
+        internal static IEnumerable<FileInfo> GetModuleFiles() {
+            var moduleFiles = new List<FileInfo>();
+            if (AppSettings?.ModulesPath != null)
+                moduleFiles.AddRange(GetModuleFilesFromFolder(AppSettings.ModulesPath));
+            if (AppSettings?.Modules == null) return moduleFiles;
+            moduleFiles.AddRange(AppSettings.Modules.Where(file => file.Exists));
+            return moduleFiles;
+        }
+        internal static KeyValuePair<string?, string?> GetVersionAndDescriptionFromFile(FileSystemInfo file) {
+            var text = File.ReadAllText(file.FullName);
+            var regex = new Regex(@"\[Module\(""(.*)"", ""(.*)""\)\]");
+            var matches = regex.Matches(text);
+            foreach (Match match in matches) return new(match.Groups[2].Value, match.Groups[1].Value);
+            return new(null, null);
+        }
+        internal static List<ModuleInfo> GetModuleInfoFromFiles(IEnumerable<FileInfo> files) {
+            List<ModuleInfo> modules = new();
+            foreach (var file in files) {
+                if (file.Extension.ToLowerInvariant() == ".cs") {
+                    var (version, description) = GetVersionAndDescriptionFromFile(file);
+                    modules.Add(ModuleInfo.FromFile(file, version, description));
+                }
+            }
+            BluscreamLib.Log($"Loaded {modules.Count} modules's infos...");
+            return modules;
         }
 
         public class AppSettingsContent {
@@ -1122,7 +1202,7 @@ namespace Bluscream {
 
             [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
             [JsonPropertyName("Port")]
-            public virtual long? Port { get; set; }
+            public virtual int? Port { get; set; }
 
             [JsonPropertyName("IPAddress")]
             public virtual object? IpAddress { get; set; }
@@ -1154,34 +1234,6 @@ namespace Bluscream {
             [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
             [JsonPropertyName("WarningThreshold")]
             public virtual long? WarningThreshold { get; set; }
-        }
-
-        internal static IEnumerable<FileInfo> GetModuleFilesFromFolder(DirectoryInfo directory) => directory.GetFiles("*.cs", SearchOption.TopDirectoryOnly).ToList();
-        internal static IEnumerable<FileInfo> GetModuleFiles() {
-            var moduleFiles = new List<FileInfo>();
-            if (AppSettings?.ModulesPath != null)
-                moduleFiles.AddRange(GetModuleFilesFromFolder(AppSettings.ModulesPath));
-            if (AppSettings?.Modules == null) return moduleFiles;
-            moduleFiles.AddRange(AppSettings.Modules.Where(file => file.Exists));
-            return moduleFiles;
-        }
-        internal static KeyValuePair<string?, string?> GetVersionAndDescriptionFromFile(FileSystemInfo file) {
-            var text = File.ReadAllText(file.FullName);
-            var regex = new Regex(@"\[Module\(""(.*)"", ""(.*)""\)\]");
-            var matches = regex.Matches(text);
-            foreach (Match match in matches) return new(match.Groups[2].Value, match.Groups[1].Value);
-            return new(null, null);
-        }
-        internal static List<ModuleInfo> GetModuleInfoFromFiles(IEnumerable<FileInfo> files) {
-            List<ModuleInfo> modules = new();
-            foreach (var file in files) {
-                if (file.Extension.ToLowerInvariant() == ".cs") {
-                    var (version, description) = GetVersionAndDescriptionFromFile(file);
-                    modules.Add(ModuleInfo.FromFile(file, version, description));
-                }
-            }
-            BluscreamLib.Log($"Loaded {modules.Count} modules's infos...");
-            return modules;
         }
     }
     public struct ModuleInfo {
@@ -1507,7 +1559,6 @@ namespace Bluscream {
         public static List<SizeInfo>? FromJson(string json) => JsonSerializer.Deserialize<List<SizeInfo>>(json, Bluscream.Converter.Settings);
     }
 }
-#endregion
 #endregion
 #endregion
 #endregion

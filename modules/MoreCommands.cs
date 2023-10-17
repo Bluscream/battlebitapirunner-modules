@@ -10,6 +10,7 @@ using System.Text;
 using BBRModules;
 using BattleBitAPI.Features;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace Bluscream {
     [RequireModule(typeof(PaginatorLib))]
@@ -171,16 +172,32 @@ namespace Bluscream {
         this.Server.ExecuteCommand($"bot fire");
             this.Reply($"Toggled bots firing", commandSource);
         }
-        [Commands.CommandCallback("pw", Description = "Gets or sets current server password", ConsoleCommand = true, Permissions = new[] { "commands.pw" })]
-        public void SetPasswordCommandCommand(RunnerPlayer commandSource, string? newPass = null) {
-            if (newPass is null) {
-                this.Reply(this.Server.IsPasswordProtected ? "Server has a password!" : "Server has no password set!", commandSource);
-                return;
-            }
-            this.Server.SetNewPassword(newPass);
-            this.Reply(string.IsNullOrEmpty(newPass) ? "Server password removed!" : $"Set server password to {newPass.Quote()}!", commandSource);
+        [Commands.CommandCallback("pw get", Description = "Gets or sets current server password", ConsoleCommand = true, Permissions = new[] { "commands.pw.get" })]
+        public void GetPasswordCommandCommand(RunnerPlayer commandSource) {
+            this.Reply(this.Server.IsPasswordProtected ? "Server has a password!" : "Server has no password set!", commandSource);
+        }
+        [Commands.CommandCallback("pw set", Description = "Gets or sets current server password", ConsoleCommand = true, Permissions = new[] { "commands.pw.set" })]
+        public void SetPasswordCommandCommand(RunnerPlayer commandSource, string newPass = "") {
+            this.Server.SetNewPassword(newPass.Trim());
+            this.Reply(string.IsNullOrEmpty(newPass) ? "Server password removed!" : $"Set server password to {newPass.Trim().Quote()}!", commandSource);
         }
 
+        [Commands.CommandCallback("server stop", Description = "Stops the game server process", ConsoleCommand = true, Permissions = new[] { "commands.server.stop" })]
+        public void StopServerCommand(RunnerPlayer commandSource) {
+            this.Reply("Restarting game server ...", commandSource);
+            Task.Delay(1000).Wait();
+            var servers = Runner.GetRunningGameServersByName(this.Server.ServerName);
+            if (servers.Count < 1) { this.Reply($"Could not find any running game servers with the name \"{this.Server.ServerName}\"", commandSource); return; } else if (servers.Count > 1) { this.Reply($"Found {servers.Count} running game servers with the name \"{this.Server.ServerName}\", aborting!", commandSource); return; }
+            servers.First().Key.Exit();
+        }
+        [Commands.CommandCallback("server restart", Description = "Restarts the game server process", ConsoleCommand = true, Permissions = new[] { "commands.server.restart" })]
+        public void RestartServerCommand(RunnerPlayer commandSource) {
+            this.Reply("Restarting game server ...", commandSource);
+            Task.Delay(1000).Wait();
+            var servers = Runner.GetRunningGameServersByName(this.Server.ServerName);
+            if (servers.Count < 1) { this.Reply($"Could not find any running game servers with the name \"{this.Server.ServerName}\"", commandSource); return; } else if (servers.Count > 1) { this.Reply($"Found {servers.Count} running game servers with the name \"{this.Server.ServerName}\", aborting!", commandSource); return; }
+            servers.First().Key.Restart();
+        }
         [Commands.CommandCallback("api restart", Description = "Restarts the API Runner", ConsoleCommand = true, Permissions = new[] { "commands.api.restart" })]
         public void RestartApiCommand(RunnerPlayer commandSource) {
             this.Reply("Restarting API Runner ...", commandSource);
@@ -193,7 +210,7 @@ namespace Bluscream {
             Task.Delay(1000).Wait();
             Runner.Exit();
         }
-        [Commands.CommandCallback("api info", Description = "Shows Information about the API Runner", ConsoleCommand = true, Permissions = new[] { "commands.api.stop" })]
+        [Commands.CommandCallback("api info", Description = "Shows Information about the API Runner", ConsoleCommand = true, Permissions = new[] { "commands.api.info" })]
         public void ApiInfoCommand(RunnerPlayer commandSource) {
             this.Reply($"<b>{Runner.Name}<b>\nv<b>{Runner.Version}<b>\nBy <b>@rainorigami</b>\nRunning <b>{Runner.Modules.Count}</b> Modules", commandSource);
         }
