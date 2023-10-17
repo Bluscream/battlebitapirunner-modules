@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
 
-namespace BBRModules
+namespace Modules
 {
     [Module("Advertise your discord, patreon, etc at the end of a round.", "1.0.0")]
     public class RoundEndAdvertise : BattleBitModule
@@ -61,13 +61,13 @@ namespace BBRModules
 
     public class REAConfig : ModuleConfiguration
     {
-        public string MessageType {get; set;} = "AnnounceLong";
-        public string Message {get; set;} = "Join our discord at discord.website.com!";
+        public string MessageType { get; set; } = "AnnounceLong";
+        public string Message { get; set; } = "Join our discord at discord.website.com!";
 
-        public bool UseDifferentMessages {get; set;} = false;
-        public float TimedMessageDuration {get; set;} = 5.0f;
+        public bool UseDifferentMessages { get; set; } = false;
+        public float TimedMessageDuration { get; set; } = 5.0f;
 
-        public List<string> Messages {get; set;} = new()
+        public List<string> Messages { get; set; } = new()
         {
             "Join our discord at discord.website.com!"
         };

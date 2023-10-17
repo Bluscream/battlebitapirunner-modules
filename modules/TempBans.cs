@@ -355,7 +355,7 @@ namespace Bans {
                 Save();
             }
         }
-        public void Save() => Entries.ToFile(File, indented: true);
+        public void Save() => Entries.ToJsonFile(File, indented: true);
     }
 }
 #endregion

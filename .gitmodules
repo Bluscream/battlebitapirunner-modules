@@ -26,3 +26,7 @@
 	path = DasIschBims-BattleBitLifeSteal
 	url = https://github.com/bluscreams-battlebit-module-forks/DasIschBims-BattleBitLifeSteal
 	branch = main
+[submodule "flyingkarii-CustomModules"]
+	path = flyingkarii-CustomModules
+	url = https://github.com/bluscreams-battlebit-module-forks/flyingkarii-CustomModules
+	branch = master

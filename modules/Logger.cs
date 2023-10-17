@@ -83,7 +83,7 @@ namespace Bluscream {
                 success = false;
                 while (!success) {
                     try {
-                        await client.SendMessageAsync(text: msg.SanitizeDiscord());
+                        await client.SendMessageAsync(text: msg);
                         success = true;
                     } catch (Exception ex) {
                         // Console.WriteLine($"Failed to POST webhook: {ex.Message}");
@@ -177,7 +177,7 @@ namespace Bluscream {
             if (playerJoiningArguments is not null && steamId64 is not null) {
                 var steam = SteamApi?._GetData((ulong)steamId64).Result;
                 if (steam is not null) {
-                    //if (geoData?.CountryCode is null) input = input.ReplaceDiscord("geoData.CountryCode", steam.Summary?.CountryCode?.ToLowerInvariant());
+                    if (geoData?.CountryCode is null) input = input.ReplaceDiscord("geoData.CountryCode", steam.Summary?.CountryCode?.ToLowerInvariant());
                     if (player?.Name is null) {
                         input = input.ReplaceDiscord("player.Name", steam.Summary?.PersonaName);
                         input = input.ReplaceDiscord("player.str()", $"\"{steam.Summary?.PersonaName}\" ({steam.Summary?.SteamId64})");
@@ -189,7 +189,8 @@ namespace Bluscream {
                 input = input.ReplaceDiscord("playerJoiningArguments.Progress.Progress.Prestige", playerJoiningArguments.Stats.Progress.Prestige);
                 input = input.ReplaceDiscord("playerJoiningArguments.Stats.Roles.ToRoleString()", playerJoiningArguments.Stats.Roles.ToRoleString());
                 input = input.ReplaceDiscord("playerJoiningArguments.Progress.Progress.Rank", playerJoiningArguments.Stats.Progress.Rank);
-            }
+            };
+            input = input.ReplaceDiscord("geoData.CountryFlagEmoji", geoData?.CountryFlagEmoji);
             input = input.ReplaceDiscord("reason", reportReason);
             input = input.ReplaceDiscord("msg", msg);
             input = input.ReplaceDiscord("oldState", oldState);
@@ -201,7 +202,6 @@ namespace Bluscream {
                 case ChatChannel.TeamChat: input = input.ReplaceDiscord("chatChannel", $"{player?.Team.ToCountryCode()} > "); break;
                 default: input = input.ReplaceDiscord("chatChannel", string.Empty); break;
             }
-            
             foreach (var replacement in Config.randomReplacements) {
                 input = input.Replace($"{{random.{replacement.Key}}}", replacement.Value[random.Next(replacement.Value.Count)]);
             }
@@ -370,9 +370,8 @@ namespace Bluscream {
             HandleEvent(Config.OnPlayerReported, player: from, target: to, reportReason: reason, _msg: additional);
             return Task.CompletedTask;
         }
-
-        private void OnPlayerKicked(RunnerPlayer player, string? reason) {
-            HandleEvent(Config.OnPlayerKicked, player: player, _msg: reason!);
+        private void OnPlayerKicked(object targetPlayer, string? reason) {
+            HandleEvent(Config.OnPlayerKicked, player: targetPlayer as RunnerPlayer ?? null, steamId64: targetPlayer as ulong? ?? null, _msg: reason!);
         }
         public override Task OnPlayerDisconnected(RunnerPlayer player) {
             HandleEvent(Config.OnPlayerDisconnected, player: player);
@@ -417,11 +416,15 @@ namespace Bluscream {
 
         #region Config
         public class LogConfigurationEntrySettings {
-            public bool Enabled { get; set; } = false;
+            public bool Enabled { get; set; } = true;
             public string Message { get; set; } = string.Empty;
             [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
             public List<string>? Permissions { get; set; } = new();
             public Duration Duration { get; set; } = Duration.None;
+        }
+        public class FileLogConfigurationEntrySettings : LogConfigurationEntrySettings {
+            public string Path { get; set; } = string.Empty;
+            public string Mode { get; set; } = "a";
         }
         public class DiscordWebhookLogConfigurationEntrySettings : LogConfigurationEntrySettings {
             public string WebhookUrl { get; set; } = string.Empty;
@@ -438,7 +441,7 @@ namespace Bluscream {
             [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
             public LogConfigurationEntrySettings Modal { get; set; } = null!;
             [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-            public LogConfigurationEntrySettings File { get; set; } = null!;
+            public FileLogConfigurationEntrySettings File { get; set; } = null!;
             [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
             public DiscordWebhookLogConfigurationEntrySettings Discord { get; set; } = null!;
         }
@@ -451,65 +454,65 @@ namespace Bluscream {
                 { "joined", new() { "joined", "connected", "hailed" } },
             };
             public LogConfigurationEntry OnApiModulesLoaded { get; set; } = new() {
-                Chat = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] API Modules loaded", Permissions = { "logger.OnApiModulesLoaded" } },
-                Console = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] API Modules loaded" },
-                UILog = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] API Modules loaded" },
-                Discord = new DiscordWebhookLogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] API Modules loaded" },
+                Chat = new LogConfigurationEntrySettings() { Message = "[{now}] API Modules loaded", Permissions = { "logger.OnApiModulesLoaded" } },
+                Console = new LogConfigurationEntrySettings() { Message = "[{now}] API Modules loaded" },
+                UILog = new LogConfigurationEntrySettings() { Message = "[{now}] API Modules loaded" },
+                Discord = new DiscordWebhookLogConfigurationEntrySettings() { Message = "[{now}] API Modules loaded" },
             };
             public LogConfigurationEntry OnApiConnected { get; set; } = new() {
-                Chat = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] Server connected to API", Permissions = { "logger.OnApiConnected" } },
-                Console = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] {server.str()} connected to API" },
-                UILog = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] Server connected to API" },
-                Discord = new DiscordWebhookLogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] {server.str()} connected to API" },
+                Chat = new LogConfigurationEntrySettings() { Message = "[{now}] Server connected to API", Permissions = { "logger.OnApiConnected" } },
+                Console = new LogConfigurationEntrySettings() { Message = "[{now}] {server.str()} connected to API" },
+                UILog = new LogConfigurationEntrySettings() { Message = "[{now}] Server connected to API" },
+                Discord = new DiscordWebhookLogConfigurationEntrySettings() { Message = "[{now}] {server.str()} connected to API" },
             };
             public LogConfigurationEntry OnApiDisconnected { get; set; } = new() {
-                Console = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] Server disconnected from API", Permissions = { "logger.OnApiDisconnected" } },
-                Discord = new DiscordWebhookLogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] Server disconnected from API" },
+                Console = new LogConfigurationEntrySettings() { Message = "[{now}] Server disconnected from API", Permissions = { "logger.OnApiDisconnected" } },
+                Discord = new DiscordWebhookLogConfigurationEntrySettings() { Message = "[{now}] Server disconnected from API" },
             };
             public LogConfigurationEntry OnPlayerJoiningToServer { get; set; } = new() {
-                Console = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] {BannedOrP}layer [{playerJoiningArguments.Stats.Roles.ToRoleString()}] {player.str()} is connecting to the server from {geoData.CountryCode} (Prestige: {playerJoiningArguments.Progress.Progress.Prestige} | Rank: {playerJoiningArguments.Stats.Progress.Rank})" },
-                UILog = new LogConfigurationEntrySettings() { Enabled = true, Message = "{player.Name} [~]" },
-                Discord = new DiscordWebhookLogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] {BannedOrP}layer [{playerJoiningArguments.Stats.Roles.ToRoleString()}] {player.str()} is connecting to the server from :flag_{geoData.CountryCode}: (Prestige: {playerJoiningArguments.Progress.Progress.Prestige} | Rank: {playerJoiningArguments.Stats.Progress.Rank})" }
+                Console = new LogConfigurationEntrySettings() { Message = "[{now}] {BannedOrP}layer [{playerJoiningArguments.Stats.Roles.ToRoleString()}] {player.str()} is connecting to the server from {geoData.CountryCode} (Prestige: {playerJoiningArguments.Progress.Progress.Prestige} | Rank: {playerJoiningArguments.Stats.Progress.Rank})" },
+                UILog = new LogConfigurationEntrySettings() { Message = "{player.Name} [~]" },
+                Discord = new DiscordWebhookLogConfigurationEntrySettings() { Message = "[{now}] {BannedOrP}layer [{playerJoiningArguments.Stats.Roles.ToRoleString()}] {player.str()} is connecting to the server from {CountryFlagEmoji} (Prestige: {playerJoiningArguments.Progress.Progress.Prestige} | Rank: {playerJoiningArguments.Stats.Progress.Rank})" }
             };
             public LogConfigurationEntry OnPlayerConnected { get; set; } = new() {
-                Chat = new LogConfigurationEntrySettings() { Enabled = true, Message = "[+] {player.Name} {random.joined} from {geoData.Country}", Permissions = { "logger.OnPlayerConnected" } },
-                Console = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] [+] {player.Name} ({player.SteamID})) [{player.IP},{geoData.Country},{geoData.Continent}]" },
-                UILog = new LogConfigurationEntrySettings() { Enabled = true, Message = "{player.Name} [+]" },
-                Discord = new DiscordWebhookLogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] `{player.str()}`connected from {geoData.Country}, {geoData.Continent} :flag_{geoData.CountryCode}:" },
+                Chat = new LogConfigurationEntrySettings() { Message = "[+] {player.Name} {random.joined} from {geoData.Country}", Permissions = { "logger.OnPlayerConnected" } },
+                Console = new LogConfigurationEntrySettings() { Message = "[{now}] [+] {player.Name} ({player.SteamID})) [{player.IP},{geoData.Country},{geoData.Continent}]" },
+                UILog = new LogConfigurationEntrySettings() { Message = "{player.Name} [+]" },
+                Discord = new DiscordWebhookLogConfigurationEntrySettings() { Message = "[{now}] `{player.str()}`connected from {geoData.Country}, {geoData.Continent} {CountryFlagEmoji}" },
             };
             public LogConfigurationEntry OnPlayerDisconnected { get; set; } = new() {
-                Chat = new LogConfigurationEntrySettings() { Enabled = true, Message = "[-] {player.Name} from {geoData.Country} left", Permissions = { "logger.OnPlayerDisconnected" } },
-                Console = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] [-] {player.Name} ({player.SteamID})) [{player.IP} {geoData.Country}]" },
-                UILog = new LogConfigurationEntrySettings() { Enabled = true, Message = "{player.Name} [-]" },
-                Discord = new DiscordWebhookLogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] `{player.str()}`from {geoData.Country} :flag_{geoData.CountryCode}: disconnected :arrow_left:" },
+                Chat = new LogConfigurationEntrySettings() { Message = "[-] {player.Name} left", Permissions = { "logger.OnPlayerDisconnected" } },
+                Console = new LogConfigurationEntrySettings() { Message = "[{now}] [-] {player.Name} ({player.SteamID})) [{player.IP} {geoData.Country}]" },
+                UILog = new LogConfigurationEntrySettings() { Message = "{player.Name} [-]" },
+                Discord = new DiscordWebhookLogConfigurationEntrySettings() { Message = "[{now}] `{player.str()}`from {geoData.Country} {CountryFlagEmoji} disconnected :arrow_left:" },
             };
             public LogConfigurationEntry OnPlayerKicked { get; set; } = new() {
-                Chat = new LogConfigurationEntrySettings() { Enabled = true, Message = "[-] {player.Name} was kicked for {msg}", Permissions = { "logger.OnPlayerKicked" } },
-                Console = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] [-] {player.Name} ({player.SteamID})) [{player.IP}] kicked for {msg}" },
-                Discord = new DiscordWebhookLogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] `{player.str()}` kicked :leg:" },
+                Chat = new LogConfigurationEntrySettings() { Message = "[-] {player.Name} was kicked for {msg}", Permissions = { "logger.OnPlayerKicked" } },
+                Console = new LogConfigurationEntrySettings() { Message = "[{now}] [-] {player.Name} ({player.SteamID})) [{player.IP}] kicked for {msg}" },
+                Discord = new DiscordWebhookLogConfigurationEntrySettings() { Message = "[{now}] `{player.str()}` kicked :leg:" },
             };
             public LogConfigurationEntry OnPlayerChatMessage { get; set; } = new() {
-                Console = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] {player.str()} says \"{msg}\" in {chatChannel}" },
-                Discord = new DiscordWebhookLogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] `{player.Name}` says \"{msg}\" in {chatChannel} :speech_balloon:" },
+                Console = new LogConfigurationEntrySettings() { Message = "[{now}] {player.str()} says \"{msg}\" in {chatChannel}" },
+                Discord = new DiscordWebhookLogConfigurationEntrySettings() { Message = "[{now}] `{player.Name}` says \"{msg}\" in {chatChannel} :speech_balloon:" },
             };
             public LogConfigurationEntry OnPlayerChatCommand { get; set; } = new() {
-                Console = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] {player.str()} issued command \"{msg}\" in {chatChannel}" },
-                Discord = new DiscordWebhookLogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] {chatChannel}`{player.str()}` issued command \"{msg}\" in {chatChannel}" },
+                Console = new LogConfigurationEntrySettings() { Message = "[{now}] {player.str()} issued command \"{msg}\" in {chatChannel}" },
+                Discord = new DiscordWebhookLogConfigurationEntrySettings() { Message = "[{now}] {chatChannel}`{player.str()}` issued command \"{msg}\" in {chatChannel}" },
             };
             public LogConfigurationEntry OnConsoleCommand { get; set; } = new() {
-                Console = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] Console issued command \"{msg}\"" },
-                Discord = new DiscordWebhookLogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] Console issued command \"{msg}\"" },
+                Console = new LogConfigurationEntrySettings() { Message = "[{now}] Console issued command \"{msg}\"" },
+                Discord = new DiscordWebhookLogConfigurationEntrySettings() { Message = "[{now}] Console issued command \"{msg}\"" },
             };
             public LogConfigurationEntry OnConsoleChat { get; set; } = new() {
-                Console = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] Console wrote \"{msg}\"" },
-                Discord = new DiscordWebhookLogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] Console wrote \"{msg}\"" },
+                Console = new LogConfigurationEntrySettings() { Message = "[{now}] Console wrote \"{msg}\"" },
+                Discord = new DiscordWebhookLogConfigurationEntrySettings() { Message = "[{now}] Console wrote \"{msg}\"" },
             };
             public LogConfigurationEntry OnPlayerReported { get; set; } = new() {
-                Chat = new LogConfigurationEntrySettings() { Enabled = true, Message = "{target.Name} was reported for {reason}" },
-                Console = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] {player.str()} reported {target.str()} for {reason}: \"{msg}\"" },
-                UILog = new LogConfigurationEntrySettings() { Enabled = true, Message = "{target.Name} was reported ({reason})" },
-                Modal = new LogConfigurationEntrySettings() { Enabled = true, Message = "{target.fullstr()}\nwas reported by\n{player.fullstr()}\n\nReason: {reason}\n\n\"{msg}\"", Permissions = { "logger.OnPlayerReported" } },
-                Discord = new DiscordWebhookLogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] {target.Name} was reported for {reason} :warning:" },
+                Chat = new LogConfigurationEntrySettings() { Message = "{target.Name} was reported for {reason}" },
+                Console = new LogConfigurationEntrySettings() { Message = "[{now}] {player.str()} reported {target.str()} for {reason}: \"{msg}\"" },
+                UILog = new LogConfigurationEntrySettings() { Message = "{target.Name} was reported ({reason})" },
+                Modal = new LogConfigurationEntrySettings() { Message = "{target.fullstr()}\nwas reported by\n{player.fullstr()}\n\nReason: {reason}\n\n\"{msg}\"", Permissions = { "logger.OnPlayerReported" } },
+                Discord = new DiscordWebhookLogConfigurationEntrySettings() { Message = "[{now}] {target.Name} was reported for {reason} :warning:" },
             };
             public LogConfigurationEntry OnSavePlayerStats { get; set; } = new();
             public LogConfigurationEntry OnPlayerRequestingToChangeRole { get; set; } = new();
@@ -526,35 +529,35 @@ namespace Bluscream {
             public LogConfigurationEntry OnAPlayerDownedAnotherPlayer { get; set; } = new();
             public LogConfigurationEntry OnAPlayerRevivedAnotherPlayer { get; set; } = new();
             public LogConfigurationEntry OnGameStateChanged { get; set; } = new() {
-                Console = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] Game State changed from {oldState} to {newState}" },
-                UILog = new LogConfigurationEntrySettings() { Enabled = true, Message = "Game State changed to {newState}" },
-                Discord = new DiscordWebhookLogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] Game State changed from {oldState} to {newState}" },
+                Console = new LogConfigurationEntrySettings() { Message = "[{now}] Game State changed from {oldState} to {newState}" },
+                UILog = new LogConfigurationEntrySettings() { Message = "Game State changed to {newState}" },
+                Discord = new DiscordWebhookLogConfigurationEntrySettings() { Message = "[{now}] Game State changed from {oldState} to {newState}" },
             };
             public LogConfigurationEntry OnRoundEnded { get; set; } = new() {
-                Console = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] Round ended" },
-                UILog = new LogConfigurationEntrySettings() { Enabled = true, Message = "Round ended" },
-                Discord = new DiscordWebhookLogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] Round ended" },
+                Console = new LogConfigurationEntrySettings() { Message = "[{now}] Round ended" },
+                UILog = new LogConfigurationEntrySettings() { Message = "Round ended" },
+                Discord = new DiscordWebhookLogConfigurationEntrySettings() { Message = "[{now}] Round ended" },
             };
             public LogConfigurationEntry OnRoundStarted { get; set; } = new() {
-                Console = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] Round started" },
-                UILog = new LogConfigurationEntrySettings() { Enabled = true, Message = "Round started" },
-                Discord = new DiscordWebhookLogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] Round started" },
+                Console = new LogConfigurationEntrySettings() { Message = "[{now}] Round started" },
+                UILog = new LogConfigurationEntrySettings() { Message = "Round started" },
+                Discord = new DiscordWebhookLogConfigurationEntrySettings() { Message = "[{now}] Round started" },
             };
             public LogConfigurationEntry OnSessionChanged { get; set; } = new() {
-                Console = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] Game Session changed from {oldSessionId} to {newSessionId}" },
-                UILog = new LogConfigurationEntrySettings() { Enabled = true, Message = "Game State changed to {newSessionId}" },
-                Discord = new DiscordWebhookLogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] Game Session changed from {oldSessionId} to {newSessionId}" },
+                Console = new LogConfigurationEntrySettings() { Message = "[{now}] Game Session changed from {oldSessionId} to {newSessionId}" },
+                UILog = new LogConfigurationEntrySettings() { Message = "Game State changed to {newSessionId}" },
+                Discord = new DiscordWebhookLogConfigurationEntrySettings() { Message = "[{now}] Game Session changed from {oldSessionId} to {newSessionId}" },
             };
             public LogConfigurationEntry OnModuleUnloading { get; set; } = new() {
-                Console = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] Logger module unloaded" },
-                Discord = new DiscordWebhookLogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] Logger module unloaded" },
+                Console = new LogConfigurationEntrySettings() { Message = "[{now}] Logger module unloaded" },
+                Discord = new DiscordWebhookLogConfigurationEntrySettings() { Message = "[{now}] Logger module unloaded" },
             };
             public LogConfigurationEntry OnSteamDataReceived { get; set; } = new() {
-                Console = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] OnSteamDataReceived: {steamData.ToJson()}" },
+                Console = new LogConfigurationEntrySettings() { Message = "[{now}] OnSteamDataReceived: {steamData.ToJson()}" },
                 Discord = new DiscordWebhookLogConfigurationEntrySettings() { Enabled = false, Message = "[{now}] OnSteamDataReceived: {steamData.ToJson()}" },
             };
             public LogConfigurationEntry OnGeoDataReceived { get; set; } = new() {
-                Console = new LogConfigurationEntrySettings() { Enabled = true, Message = "[{now}] OnGeoDataRecieved: {geoData.ToJson()}" },
+                Console = new LogConfigurationEntrySettings() { Message = "[{now}] OnGeoDataRecieved: {geoData.ToJson()}" },
                 Discord = new DiscordWebhookLogConfigurationEntrySettings() { Enabled = false, Message = "[{now}] OnGeoDataRecieved: {geoData.ToJson(true)}" },
             };
         }
