@@ -182,6 +182,11 @@ namespace Bluscream {
             this.Reply(string.IsNullOrEmpty(newPass) ? "Server password removed!" : $"Set server password to {newPass.Trim().Quote()}!", commandSource);
         }
 
+        [Commands.CommandCallback("server list", Description = "Lists running game server process", ConsoleCommand = true, Permissions = new[] { "commands.server.list" })]
+        public void ListServersCommand(RunnerPlayer commandSource) {
+            var servers = Runner.GetRunningGameServersByName(this.Server.ServerName);
+            this.Reply(servers.Select(s=>(s.Key.MainWindowTitle)).Join("\n"), commandSource);
+        }
         [Commands.CommandCallback("server stop", Description = "Stops the game server process", ConsoleCommand = true, Permissions = new[] { "commands.server.stop" })]
         public void StopServerCommand(RunnerPlayer commandSource) {
             this.Reply("Restarting game server ...", commandSource);
@@ -198,6 +203,7 @@ namespace Bluscream {
             if (servers.Count < 1) { this.Reply($"Could not find any running game servers with the name \"{this.Server.ServerName}\"", commandSource); return; } else if (servers.Count > 1) { this.Reply($"Found {servers.Count} running game servers with the name \"{this.Server.ServerName}\", aborting!", commandSource); return; }
             servers.First().Key.Restart();
         }
+
         [Commands.CommandCallback("api restart", Description = "Restarts the API Runner", ConsoleCommand = true, Permissions = new[] { "commands.api.restart" })]
         public void RestartApiCommand(RunnerPlayer commandSource) {
             this.Reply("Restarting API Runner ...", commandSource);

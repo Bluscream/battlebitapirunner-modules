@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
@@ -19,6 +19,7 @@
     <Compile Remove="BattleBitBaseModules\**" />
     <Compile Remove="BattleBitExamples\**" />
     <Compile Remove="BattleBitZombies\**" />
+    <Compile Remove="bb-modules\**" />
     <Compile Remove="configurations\**" />
     <Compile Remove="configurations_\**" />
     <Compile Remove="dependencies\**" />
@@ -28,6 +29,7 @@
     <EmbeddedResource Remove="BattleBitBaseModules\**" />
     <EmbeddedResource Remove="BattleBitExamples\**" />
     <EmbeddedResource Remove="BattleBitZombies\**" />
+    <EmbeddedResource Remove="bb-modules\**" />
     <EmbeddedResource Remove="configurations\**" />
     <EmbeddedResource Remove="configurations_\**" />
     <EmbeddedResource Remove="dependencies\**" />
@@ -37,6 +39,7 @@
     <None Remove="BattleBitBaseModules\**" />
     <None Remove="BattleBitExamples\**" />
     <None Remove="BattleBitZombies\**" />
+    <None Remove="bb-modules\**" />
     <None Remove="configurations\**" />
     <None Remove="configurations_\**" />
     <None Remove="dependencies\**" />
@@ -50,12 +53,10 @@
 
   <ItemGroup>
     <Compile Include="modules_\DocumentationGenerator.cs" />
-    <Compile Include="modules_\RoundEndAdvertise.cs" />
+    <Compile Include="modules_\ServerListAPI.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="bb-modules\telemetry.sln" />
-    <None Include="bb-modules\telemetry\telemetry.csproj" />
     <None Include="RainOrigami-BattleBitBaseModules\BattleBitBaseModules.csproj" />
     <None Include="RainOrigami-BattleBitBaseModules\BattleBitBaseModules.sln" />
   </ItemGroup>
@@ -65,16 +66,18 @@
     <PackageReference Include="Discord.Net.Webhook" Version="3.12.0" />
     <PackageReference Include="Humanizer" Version="2.14.1" />
     <PackageReference Include="MaxMind.GeoIP2" Version="5.1.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0-beta1.23420.2">
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0-beta1.23472.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.8.0-2.final" />
     <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="4.8.0-2.final" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
+    <PackageReference Include="MongoDB.Driver" Version="2.22.0" />
     <PackageReference Include="Mono.Cecil" Version="0.11.5" />
+    <PackageReference Include="MySql.Data" Version="8.1.0" />
     <PackageReference Include="SmartFormat.NET" Version="3.3.0" />
-    <PackageReference Include="System.Management" Version="7.0.2" />
-    <PackageReference Include="Tabulate.NET" Version="1.0.5" />
+    <PackageReference Include="System.Management" Version="8.0.0-rc.2.23479.6" />
     <PackageReference Include="TimeSpanParserUtil" Version="1.2.0" />
   </ItemGroup>
 

@@ -1,15 +1,13 @@
 using BBRAPIModules;
 using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Common;
 using System.Reflection;
-using System.Text.Json;
 using System.Threading.Tasks;
-using MariaDB.Data.MySqlClient;
+using MySql.Data.MySqlClient;
+using BattleBitAPI.Common;
 
 namespace MariaDBLogging
 {
+    [Module("","")]
     public class MariaDBLogging : BattleBitModule
     {
         public MariaDBLoggingConfiguration Configuration { get; set; }
@@ -173,7 +171,7 @@ namespace MariaDBLogging
             }
         }
 
-        public override void OnUnloaded()
+        public override void OnModuleUnloading()
         {
             DbConnection.Close();
         }

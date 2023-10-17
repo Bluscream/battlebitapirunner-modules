@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using SteamWebApi;
 
-namespace VacLimiter;
+namespace Bluscream;
 [RequireModule(typeof(Bluscream.SteamApi))]
 [Module("Kick users with VAC bans", "1.1.0")]
 public class VacLimiter : BattleBitModule

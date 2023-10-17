@@ -2,18 +2,17 @@ using BattleBitAPI.Common;
 using BattleBitAPI.Server;
 using BBRAPIModules;
 using Bluscream;
-using Commands;
 using Discord;
 using Discord.Webhook;
 using Humanizer;
 using log4net;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing.Printing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -21,6 +20,7 @@ using System.Management;
 using System.Net;
 using System.Net.Http;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
@@ -936,9 +936,32 @@ namespace Bluscream {
             process.Exit();
         }
         public static string GetCommandLine(this Process process) {
-            using (ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT CommandLine FROM Win32_Process WHERE ProcessId = " + process.Id))
-            using (ManagementObjectCollection objects = searcher.Get()) {
-                return objects.Cast<ManagementBaseObject>().SingleOrDefault()?["CommandLine"]?.ToString();
+            Console.WriteLine($"Getting command line for process: {process.Id}");
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+                Console.WriteLine("Platform is Windows");
+                using (var searcher = new ManagementObjectSearcher("SELECT CommandLine FROM Win32_Process WHERE ProcessId = " + process.Id))
+                using (var objects = searcher.Get()) {
+                    Debug.WriteLine($"got searcher & objects");
+                    var obj = objects.Cast<ManagementBaseObject>().SingleOrDefault();
+                    Debug.WriteLine($"got obj");
+                    string commandLine = obj?["CommandLine"]?.ToString();
+                    Debug.WriteLine($"Command line: {commandLine}");
+                    return commandLine;
+                }
+            } else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) {
+                Console.WriteLine("Platform is Linux");
+                try {
+                    string commandLine = File.ReadAllText($"/proc/{process.Id}/cmdline");
+                    Console.WriteLine($"Command line: {commandLine}");
+                    return commandLine;
+                } catch (Exception ex) {
+                    Console.WriteLine($"Failed to get command line: {ex}");
+                    return "";
+                }
+            } else {
+                Debug.WriteLine("Platform is not supported");
+                throw new PlatformNotSupportedException();
             }
         }
         public static List<string> GetCommandLineList(this Process process) => Regex.Matches(GetCommandLine(process), @"[\""].+?[\""]|[^ ]+").Cast<Match>().Select(m => m.Value).ToList();
@@ -1136,14 +1159,28 @@ namespace Bluscream {
             Process.Restart();
         }
         public static Dictionary<Process, List<string>> GetRunningGameServers() {
-            var processes = Process.GetProcessesByName("BattleBit.exe").Intersect(Process.GetProcessesByName("BattleBitEAC.exe"));
+            Console.WriteLine("GetRunningGameServers");
+            var processes = Process.GetProcessesByName("BattleBit").Concat(Process.GetProcessesByName("BattleBitEAC")).ToList();
+            Console.WriteLine($"Got {processes.Count} processes");
             Dictionary<Process, List<string>> servers = new();
             foreach (var process in processes) {
-                servers[process] = process.GetCommandLineList();
+                Console.WriteLine(process.MainModule.FileName);
+                Console.WriteLine(process.MainModule.ModuleName);
+                Console.WriteLine("test0");
+                Console.WriteLine(process.GetCommandLine());
+                Console.WriteLine("test1.5");
+                Console.WriteLine(process.GetCommandLineList().ToJson());
+                Console.WriteLine("test1");
+                var cmdLine = process.GetCommandLineList();
+                Console.WriteLine("test3");
+                if (cmdLine.Contains("-batchmode"))
+                    servers[process] = process.GetCommandLineList();
             }
+            Console.WriteLine("test2");
             return servers;
         }
         public static Dictionary<Process, List<string>> GetRunningGameServersByApiPort(int? apiPort = null) {
+            Console.WriteLine($"GetRunningGameServersByApiPort({apiPort})");
             apiPort = apiPort ?? AppSettings.Port;
             var allServers = GetRunningGameServers();
             Dictionary<Process, List<string>> servers = new();
@@ -1156,10 +1193,15 @@ namespace Bluscream {
             return servers;
         }
         public static Dictionary<Process, List<string>> GetRunningGameServersByName(string name) {
+            Console.WriteLine("GetRunningGameServersByName");
             var allServers = GetRunningGameServers();
             Dictionary<Process, List<string>> servers = new();
             foreach (var (process, commandline) in allServers) {
+                Console.WriteLine(process.MainModule.FileName);
+                Console.WriteLine(process.MainModule.ModuleName);
+                Console.WriteLine(process.MainWindowTitle);
                 foreach (var arg in commandline) {
+                    Console.WriteLine(arg);
                     if (arg.Contains("-Name=") && arg.Contains($":{name}"))
                         servers[process] = commandline;
                 }
@@ -1241,7 +1283,7 @@ namespace Bluscream {
         public bool? Enabled { get; set; }
         public string? Name { get; set; }
         public string? Description { get; set; }
-        public Version Version { get; set; }
+        public Version? Version { get; set; }
         public string? _Version { get; set; }
         public string? Author { get; set; }
         public Uri? WebsiteUrl { get; set; }

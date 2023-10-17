@@ -57,9 +57,6 @@ namespace Bluscream {
 
         [Commands.CommandCallback("votemap", Description = "Starts a vote for a map")]
         public void StartMapVoteCommand(RunnerPlayer commandSource, string mapName) {
-            var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}votemap\""; var cmdConfig = CommandsConfiguration.votemap;
-            if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
-            if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
             var map = mapName.ToMap();
             if (map is null) {
                 commandSource.Message($"\"{mapName}\" is not a valid map!");
@@ -73,9 +70,6 @@ namespace Bluscream {
 
         [Commands.CommandCallback("votegamemode", Description = "Starts a vote for a gamemode")]
         public void StartGameModeVoteCommand(RunnerPlayer commandSource, string gameModeName) {
-            var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}votegamemode\""; var cmdConfig = CommandsConfiguration.votegamemode;
-            if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
-            if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
             var mode = gameModeName.ToGameMode();
             if (mode is null) {
                 commandSource.Message($"\"{gameModeName}\" is not a valid game mode!");
@@ -89,11 +83,8 @@ namespace Bluscream {
 
         [Commands.CommandCallback("votemaptime", Description = "Starts a vote for map time")]
         public void StartMapTimeVoteCommand(RunnerPlayer commandSource, string dayTime) {
-            var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}votemaptime\""; var cmdConfig = CommandsConfiguration.votemaptime;
-            if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
-            if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
-            MapDayNight time = GetDayNightFromString(dayTime);
-            if (time == MapDayNight.None) {
+            MapDayNight? time = GetDayNightFromString(dayTime);
+            if (time is null) {
                 commandSource.Message($"\"{dayTime}\" is not a valid time!");
                 return;
             }
@@ -105,9 +96,6 @@ namespace Bluscream {
 
         [Commands.CommandCallback("voterestart", Description = "Starts a vote for map restart")]
         public void StartMapRestartVoteCommand(RunnerPlayer commandSource) {
-            var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}voterestart\""; var cmdConfig = CommandsConfiguration.voterestart;
-            if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
-            if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
             StartVote(commandSource, "Vote for map restart", "Yes|No", (int totalVotes, int winnerVotes, string won) => {
                 if (Extensions.EvalToBool(CommandsConfiguration.voterestart.WinningCondition) == false) return;
                 this.Server.ChangeMap();
@@ -116,9 +104,6 @@ namespace Bluscream {
 
         [Commands.CommandCallback("voteban", Description = "Starts a voteban for a player")]
         public void StartVoteBanCommand(RunnerPlayer commandSource, RunnerPlayer target, string reason) {
-            var cmdName = $"\"{Commands.CommandHandler.CommandConfiguration.CommandPrefix}voteban\""; var cmdConfig = CommandsConfiguration.voteban;
-            if (!cmdConfig.Enabled) { commandSource.Message($"Command {cmdName} is not enabled on this server!"); return; }
-            if (PlayerPermissions is not null && !Extensions.HasAnyRoleOf(commandSource, PlayerPermissions, Extensions.ParseRoles(cmdConfig.AllowedRoles))) { commandSource.Message($"You do not have permissions to run {cmdName} on this server!"); return; }
             if (target is null) {
                 commandSource.Message($"Player \"{target}\" could not be found!");
                 return;
@@ -244,16 +229,16 @@ namespace Bluscream {
         #endregion
     }
 
-    public class VoteCommandConfiguration : CommandConfiguration {
+    public class VoteCommandConfiguration {
         public string Description { get; set; }
         public string WinningCondition { get; set; }
     }
     public class AdvancedVotingCommandsConfiguration : ModuleConfiguration {
-        public VoteCommandConfiguration votemap { get; set; } = new VoteCommandConfiguration() { Description = "Voting for map", WinningCondition = "{winnerVotes} > ({allPlayers} / 2)", AllowedRoles = Extensions.ToRoleStringList(MoreRoles.Staff) };
-        public VoteCommandConfiguration votegamemode { get; set; } = new VoteCommandConfiguration() { Description = "Voting for game mode", WinningCondition = "{winnerVotes} > ({allPlayers} / 2)", AllowedRoles = Extensions.ToRoleStringList(MoreRoles.Staff) };
-        public VoteCommandConfiguration votemaptime { get; set; } = new VoteCommandConfiguration() { Description = "Voting for map time", WinningCondition = "{winnerVotes} > ({allPlayers} / 2)", AllowedRoles = Extensions.ToRoleStringList(MoreRoles.Staff) };
-        public VoteCommandConfiguration voterestart { get; set; } = new VoteCommandConfiguration() { Description = "Voting for map restart", WinningCondition = "{winnerVotes} > ({allPlayers} / 2)", AllowedRoles = Extensions.ToRoleStringList(MoreRoles.Staff) };
-        public VoteCommandConfiguration voteban { get; set; } = new VoteCommandConfiguration() { Description = "Voting for tempban", WinningCondition = "{winnerVotes} > ({allPlayers} / 2)", AllowedRoles = Extensions.ToRoleStringList(MoreRoles.Staff) };
+        public VoteCommandConfiguration votemap { get; set; } = new VoteCommandConfiguration() { Description = "Voting for map", WinningCondition = "{winnerVotes} > ({allPlayers} / 2)" };
+        public VoteCommandConfiguration votegamemode { get; set; } = new VoteCommandConfiguration() { Description = "Voting for game mode", WinningCondition = "{winnerVotes} > ({allPlayers} / 2)" };
+        public VoteCommandConfiguration votemaptime { get; set; } = new VoteCommandConfiguration() { Description = "Voting for map time", WinningCondition = "{winnerVotes} > ({allPlayers} / 2)" };
+        public VoteCommandConfiguration voterestart { get; set; } = new VoteCommandConfiguration() { Description = "Voting for map restart", WinningCondition = "{winnerVotes} > ({allPlayers} / 2)" };
+        public VoteCommandConfiguration voteban { get; set; } = new VoteCommandConfiguration() { Description = "Voting for tempban", WinningCondition = "{winnerVotes} > ({allPlayers} / 2)" };
     }
     public class AdvancedVotingConfiguration : ModuleConfiguration {
     public int VoteDuration { get; set; } = 60;
