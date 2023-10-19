@@ -1,26 +1,22 @@
 using BattleBitAPI.Common;
 using BBRAPIModules;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Linq;
+using System.Threading.Tasks;
 
-namespace Modules
-{
+namespace Modules {
     [Module("Advertise your discord, patreon, etc at the end of a round.", "1.0.0")]
-    public class RoundEndAdvertise : BattleBitModule
-    {
+    public class RoundEndAdvertise : BattleBitModule {
         public REAConfig Configuration { get; set; } = null!;
         private int index = 0;
 
-        public override async Task OnGameStateChanged(GameState oldState, GameState newState)
-        {
+        public override async Task OnGameStateChanged(GameState oldState, GameState newState) {
             if (newState != GameState.EndingGame)
                 return;
 
             string message = GetNextMessage();
 
-            switch (Configuration.MessageType)
-            {
+            switch (Configuration.MessageType) {
                 case "AnnounceLong":
                     Server.AnnounceLong(message);
                     break;
@@ -34,8 +30,7 @@ namespace Modules
                     int index = 0;
                     List<RunnerPlayer> players = new(Server.AllPlayers);
 
-                    do
-                    {
+                    do {
                         RunnerPlayer player = players.ElementAt(index);
                         player.Message(message, Configuration.TimedMessageDuration);
                         index++;
@@ -44,8 +39,7 @@ namespace Modules
             }
         }
 
-        private string GetNextMessage()
-        {
+        private string GetNextMessage() {
             if (!Configuration.UseDifferentMessages)
                 return Configuration.Message;
 
@@ -59,8 +53,7 @@ namespace Modules
         }
     }
 
-    public class REAConfig : ModuleConfiguration
-    {
+    public class REAConfig : ModuleConfiguration {
         public string MessageType { get; set; } = "AnnounceLong";
         public string Message { get; set; } = "Join our discord at discord.website.com!";
 

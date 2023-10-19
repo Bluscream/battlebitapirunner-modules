@@ -1,17 +1,13 @@
-﻿using System;
+﻿using BBRAPIModules;
+using Bluscream;
+using System;
 using System.Collections.Generic;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
-
-using BBRAPIModules;
-using Bluscream;
 using System.Net.Http.Json;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Humanizer;
-using System.Linq;
-using static System.Net.WebRequestMethods;
+using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 
 namespace Bluscream {
     [RequireModule(typeof(BluscreamLib))]
@@ -56,7 +52,7 @@ namespace Bluscream {
             return Cache[ip];
         }
 
-        private static async Task AddData(RunnerServer server) => await AddData((List<IPAddress>)new List<IPAddress>() { server.GameIP }.Concat(server.AllPlayers.Select(p=>p.IP)));
+        private static async Task AddData(RunnerServer server) => await AddData((List<IPAddress>)new List<IPAddress>() { server.GameIP }.Concat(server.AllPlayers.Select(p => p.IP)));
         private static async Task AddData(RunnerPlayer player) => await AddData(player.IP);
         private static async Task AddData(IPAddress ip) => await AddData(new List<IPAddress>() { ip });
         private static async Task AddData(List<IPAddress> ips) {
@@ -116,7 +112,7 @@ namespace Bluscream {
             return response;
         }
 
-        private static async Task<List<IpApi.Response>> _GetBatchData(List<RunnerPlayer> players) => await _GetBatchData(players.Select(p=>p.IP));
+        private static async Task<List<IpApi.Response>> _GetBatchData(List<RunnerPlayer> players) => await _GetBatchData(players.Select(p => p.IP));
         private static async Task<List<IpApi.Response>> _GetBatchData(IEnumerable<IPAddress> ips) {
             List<IpApi.Response> responses = new();
             var url = GetApiUrl(string.IsNullOrWhiteSpace(Config.IpApiProKey), true);
@@ -290,7 +286,7 @@ namespace IpApi {
 #region MaxMindDB
 namespace MaxMindDB {
     public class DataBase {
-        
+
     }
 }
 #endregion

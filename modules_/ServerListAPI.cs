@@ -1,10 +1,8 @@
-﻿using System;
+﻿using BBRAPIModules;
+using System;
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-
-using BBRAPIModules;
-using static Bluscream.Response;
 using static Bluscream.ServerListAPI.Response;
 
 namespace Bluscream {

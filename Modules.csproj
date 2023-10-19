@@ -25,6 +25,7 @@
     <Compile Remove="dependencies\**" />
     <Compile Remove="flyingkarii-CustomModules\**" />
     <Compile Remove="modules_\**" />
+    <Compile Remove="RainOrigami-BattleBitBaseModules\**" />
     <EmbeddedResource Remove="battlebit-rcon\**" />
     <EmbeddedResource Remove="BattleBitBaseModules\**" />
     <EmbeddedResource Remove="BattleBitExamples\**" />
@@ -35,6 +36,7 @@
     <EmbeddedResource Remove="dependencies\**" />
     <EmbeddedResource Remove="flyingkarii-CustomModules\**" />
     <EmbeddedResource Remove="modules_\**" />
+    <EmbeddedResource Remove="RainOrigami-BattleBitBaseModules\**" />
     <None Remove="battlebit-rcon\**" />
     <None Remove="BattleBitBaseModules\**" />
     <None Remove="BattleBitExamples\**" />
@@ -45,6 +47,7 @@
     <None Remove="dependencies\**" />
     <None Remove="flyingkarii-CustomModules\**" />
     <None Remove="modules_\**" />
+    <None Remove="RainOrigami-BattleBitBaseModules\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -54,11 +57,6 @@
   <ItemGroup>
     <Compile Include="modules_\DocumentationGenerator.cs" />
     <Compile Include="modules_\ServerListAPI.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="RainOrigami-BattleBitBaseModules\BattleBitBaseModules.csproj" />
-    <None Include="RainOrigami-BattleBitBaseModules\BattleBitBaseModules.sln" />
   </ItemGroup>
 
   <ItemGroup>
@@ -82,7 +80,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="BattleBitBaseModules\BattleBitBaseModules.csproj" />
+    <ProjectReference Include="RainOrigami-BattleBitBaseModules\BattleBitBaseModules.csproj" />
   </ItemGroup>
 
 </Project>

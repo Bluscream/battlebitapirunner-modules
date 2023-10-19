@@ -1,20 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Reflection.Metadata;
-using System.Text.Json;
-using System.Text.Json.Serialization;
+﻿using BBRAPIModules;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.MSBuild;
-
-using BBRAPIModules;
+using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Net;
-using Mono.Cecil;
 using System.Reflection;
+using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace Bluscream {
     [Module("Description", "2.0.2")]
@@ -96,9 +91,9 @@ namespace Bluscream {
                         .SelectMany(a => a.Attributes)
                         .FirstOrDefault(a => a.Name.ToString() == "ModuleAttribute");
 
-                        var attributeArguments = moduleAttribute?.ArgumentList?.Arguments;
+                    var attributeArguments = moduleAttribute?.ArgumentList?.Arguments;
 
-                        var moduleInfo = new ModuleMetaData {
+                    var moduleInfo = new ModuleMetaData {
                         Name = classDeclaration.Identifier.Text,
                         Description = attributeArguments.GetValueOrDefault()[0].ToString(),
                         Version = attributeArguments.GetValueOrDefault()[1].ToString(),

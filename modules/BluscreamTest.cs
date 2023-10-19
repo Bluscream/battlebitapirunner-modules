@@ -1,7 +1,5 @@
 ﻿using BattleBitAPI.Common;
 using BBRAPIModules;
-using Bluscream;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Bluscream {

@@ -1,15 +1,11 @@
-﻿using System;
+﻿using BattleBitAPI.Common;
+using BBRAPIModules;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
-using BattleBitAPI.Common;
-using BBRAPIModules;
-
 using static Bluscream.BluscreamLib;
-using static Bluscream.Extensions;
-using static Bluscream.MoreCommands;
 
 namespace Bluscream {
     [Module("More chat voting commands", "2.0.0")]
@@ -19,7 +15,7 @@ namespace Bluscream {
         public static ModuleInfo ModuleInfo = new() {
             Name = "Bluscream's Library",
             Description = "Generic library for common code used by multiple modules.",
-            Version = new Version(2,0,0),
+            Version = new Version(2, 0, 0),
             Author = "Bluscream",
             WebsiteUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/"),
             UpdateUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/raw/master/modules/BluscreamLib.cs"),
@@ -38,7 +34,7 @@ namespace Bluscream {
         [ModuleReference]
         public TempBans TempBans { get; set; }
         [ModuleReference]
-    #if DEBUG
+#if DEBUG
         public Permissions.PlayerPermissions? PlayerPermissions { get; set; }
 #else
         public dynamic? PlayerPermissions { get; set; }
@@ -241,8 +237,8 @@ namespace Bluscream {
         public VoteCommandConfiguration voteban { get; set; } = new VoteCommandConfiguration() { Description = "Voting for tempban", WinningCondition = "{winnerVotes} > ({allPlayers} / 2)" };
     }
     public class AdvancedVotingConfiguration : ModuleConfiguration {
-    public int VoteDuration { get; set; } = 60;
-    public TimeSpan VoteBanDuration { get; set; } = TimeSpan.FromMinutes(30);
+        public int VoteDuration { get; set; } = 60;
+        public TimeSpan VoteBanDuration { get; set; } = TimeSpan.FromMinutes(30);
 
     }
 }

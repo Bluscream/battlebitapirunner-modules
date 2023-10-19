@@ -2,38 +2,31 @@ using BBRAPIModules;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace BattleBitAPI.Features
-{
+namespace BattleBitAPI.Features {
     [Module("A library for placeholders using {placeholder}. Supports color hexes color endings. ({#hex}, {/})", "1.1.0")]
-    public class PlaceholderLib : BattleBitModule
-    {
+    public class PlaceholderLib : BattleBitModule {
 
         private readonly Regex re = new Regex(@"\{([^\}]+)\}", RegexOptions.Compiled);
 
         public string text { get; set; }
         public Dictionary<string, object> parameters;
 
-        public PlaceholderLib()
-        {
+        public PlaceholderLib() {
             text = "";
             parameters = new();
         }
 
-        public PlaceholderLib(string text)
-        {
+        public PlaceholderLib(string text) {
             this.text = text;
             parameters = new Dictionary<string, object>();
         }
 
-        public PlaceholderLib(string text, params object[] values)
-        {
+        public PlaceholderLib(string text, params object[] values) {
             this.text = text;
             parameters = new();
 
-            if (values.Length > 1)
-            {
-                for (int i = 0; i < values.Length; i++)
-                {
+            if (values.Length > 1) {
+                for (int i = 0; i < values.Length; i++) {
                     if ((i + 1) % 2 != 0)
                         continue;
 
@@ -45,10 +38,8 @@ namespace BattleBitAPI.Features
             }
         }
 
-        public PlaceholderLib AddParam(string key, object value)
-        {
-            if (key == null || value == null)
-            {
+        public PlaceholderLib AddParam(string key, object value) {
+            if (key == null || value == null) {
                 return this;
             }
 
@@ -56,8 +47,7 @@ namespace BattleBitAPI.Features
             return this;
         }
 
-        public string ReplaceColorCodes()
-        {
+        public string ReplaceColorCodes() {
             return re.Replace(text, delegate (Match match) {
                 if (match.Groups[1].Value.StartsWith("#"))
                     return "<color=" + match.Groups[1].Value + ">";
@@ -67,8 +57,7 @@ namespace BattleBitAPI.Features
             });
         }
 
-        public string Run()
-        {
+        public string Run() {
             text = re.Replace(ReplaceColorCodes(), delegate (Match match) {
                 if (parameters.ContainsKey(match.Groups[1].Value))
                     return parameters[match.Groups[1].Value].ToString();

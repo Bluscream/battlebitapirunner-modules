@@ -1,16 +1,15 @@
-﻿using System;
-using System.Reflection.Metadata;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using System.Net.Http;
-
-using BBRAPIModules;
-using BattleBitAPI.Common;
-using System.Linq;
+﻿using BattleBitAPI.Common;
 using BattleBitAPI.Server;
-using System.Text.Json.Serialization;
+using BBRAPIModules;
 using Discord.Webhook;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
+using System.Net.Http;
+using System.Reflection.Metadata;
+using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 
 namespace Bluscream {
     #region Requires
@@ -25,7 +24,7 @@ namespace Bluscream {
         public static ModuleInfo ModuleInfo = new() {
             Name = "Logger",
             Description = "Extensive customizable logging for the BattleBit Modular API",
-            Version = new Version(2,0,1),
+            Version = new Version(2, 0, 1),
             Author = "Bluscream",
             WebsiteUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/"),
             UpdateUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/raw/master/modules/Logger.cs"),
@@ -40,18 +39,18 @@ namespace Bluscream {
         public BluscreamLib BluscreamLib { get; set; } = null!;
 
         [ModuleReference]
-//#if DEBUG
+        //#if DEBUG
         public GeoApi GeoApi { get; set; } = null!;
-//#else
-//        public dynamic? GeoApi { get; set; }
-//#endif
+        //#else
+        //        public dynamic? GeoApi { get; set; }
+        //#endif
 
         [ModuleReference]
-//#if DEBUG
+        //#if DEBUG
         public SteamApi SteamApi { get; set; } = null!;
-//#else
-//        public dynamic SteamApi { get; set; }
-//#endif
+        //#else
+        //        public dynamic SteamApi { get; set; }
+        //#endif
 
         [ModuleReference]
 #if DEBUG
@@ -271,9 +270,9 @@ namespace Bluscream {
                     chatChannel: chatChannel, msg: _msg, oldSessionId: oldSessionId, newSessionId: newSessionId, oldState: oldState, newState: newState, playerJoinArgs: playerJoiningArguments);
                 if (this.GranularPermissions is not null && config.Chat.Permissions.Count > 0) {
                     //try {
-                        foreach (var __player in this.Server.AllPlayers) {
-                            if (!Extensions.HasAnyPermissionOf(__player, this.GranularPermissions, config.Chat.Permissions)) SayToPlayer(msg, player: __player);
-                        }
+                    foreach (var __player in this.Server.AllPlayers) {
+                        if (!Extensions.HasAnyPermissionOf(__player, this.GranularPermissions, config.Chat.Permissions)) SayToPlayer(msg, player: __player);
+                    }
                     //} catch (Exception ex) {
                     //    Console.WriteLine($"Got exception {ex.Message} while trying to send message to players");
                     //}
@@ -283,7 +282,7 @@ namespace Bluscream {
                 var msg = FormatString(config.Modal.Message, server: server, player: player, target: target, reportReason: reportReason,
                     chatChannel: chatChannel, msg: _msg, oldSessionId: oldSessionId, newSessionId: newSessionId, oldState: oldState, newState: newState, playerJoinArgs: playerJoiningArguments);
                 foreach (var __player in server.Server.AllPlayers) {
-                    if(this.GranularPermissions is not null && config.Modal.Permissions.Count > 0) {
+                    if (this.GranularPermissions is not null && config.Modal.Permissions.Count > 0) {
                         if (!Extensions.HasAnyPermissionOf(__player, this.GranularPermissions, config.Modal.Permissions)) continue;
                     }
                     ModalMessage(msg, player: __player);

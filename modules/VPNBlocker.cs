@@ -1,9 +1,8 @@
-﻿using System;
+﻿using BBRAPIModules;
+using Commands;
+using System;
 using System.Collections.Generic;
 using System.Net;
-using BBRAPIModules;
-using Commands;
-using Permissions;
 
 namespace Bluscream {
     [RequireModule(typeof(Bluscream.BluscreamLib))]

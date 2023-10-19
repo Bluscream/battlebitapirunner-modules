@@ -6,7 +6,6 @@ using Discord;
 using Discord.Webhook;
 using Humanizer;
 using log4net;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using MongoDB.Driver.Linq;
 using System;
 using System.Collections.Generic;
@@ -14,7 +13,6 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Drawing.Printing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -1196,7 +1194,7 @@ namespace Bluscream {
             Dictionary<Process, List<string>> servers = new();
             foreach (var (process, commandline) in allServers) {
                 foreach (var arg in commandline) {
-                   if (arg.Contains("-ApiEndPoint=") && arg.Contains($":{apiPort}"))
+                    if (arg.Contains("-ApiEndPoint=") && arg.Contains($":{apiPort}"))
                         servers[process] = commandline;
                 }
             }

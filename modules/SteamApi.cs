@@ -1,14 +1,11 @@
-﻿using System;
+﻿using BBRAPIModules;
+using SteamWebApi;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using System.Text.Json;
-using System.Net.Http;
-
-using BBRAPIModules;
-using Bluscream;
-using System.Linq;
-using SteamWebApi;
 
 namespace Bluscream {
     [RequireModule(typeof(BluscreamLib))]

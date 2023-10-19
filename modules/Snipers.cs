@@ -1,5 +1,4 @@
-﻿using BattleBitAPI;
-using BattleBitAPI.Common;
+﻿using BattleBitAPI.Common;
 using BattleBitAPI.Server;
 using BBRAPIModules;
 using System.Threading.Tasks;
@@ -12,13 +11,11 @@ using System.Threading.Tasks;
 
 namespace mocfunky {
     [Module("Snipers", "1.1.0")]
-    public class Snipers : BattleBitModule
-    {
+    public class Snipers : BattleBitModule {
         //
         // V - This allows users to select Recon even while not in a squad. - V
         //
-        public override Task OnPlayerConnected(RunnerPlayer player)
-        {
+        public override Task OnPlayerConnected(RunnerPlayer player) {
             this.Server.ServerSettings.SquadRequiredToChangeRole = false;
             player.SetNewRole(GameRole.Recon);
             return Task.CompletedTask;
@@ -26,32 +23,28 @@ namespace mocfunky {
         //
         // V - This denies player from changing roles to anything but Recon. - V
         //
-        public override async Task<bool> OnPlayerRequestingToChangeRole(RunnerPlayer player, GameRole requestedRole)
-        {
+        public override async Task<bool> OnPlayerRequestingToChangeRole(RunnerPlayer player, GameRole requestedRole) {
             return GameRole.Recon == requestedRole;
         }
         //
         // V - Switch the player's role to Recon when they leave or are kicked from a squad - V
         //
-        public override Task OnPlayerLeftSquad(RunnerPlayer player, Squad<RunnerPlayer> squad)
-        {
+        public override Task OnPlayerLeftSquad(RunnerPlayer player, Squad<RunnerPlayer> squad) {
             player.SetNewRole(GameRole.Recon);
             return Task.CompletedTask;
         }
         //
         // V - Switch the player's role to Recon when they join or create a squad. V
         //
-        public override Task OnPlayerJoinedSquad(RunnerPlayer player, Squad<RunnerPlayer> squad)
-        {
+        public override Task OnPlayerJoinedSquad(RunnerPlayer player, Squad<RunnerPlayer> squad) {
             player.SetNewRole(GameRole.Recon);
             return Task.CompletedTask;
         }
-        
+
         //
         // V - Gives ability to disable Day or Night maps (Night disabled by default, feel free to comment out or delete if you do not need these) - V
         //
-        public override Task OnConnected()
-        {
+        public override Task OnConnected() {
             this.Server.ServerSettings.CanVoteDay = true;
             this.Server.ServerSettings.CanVoteNight = false;
             return Task.CompletedTask;

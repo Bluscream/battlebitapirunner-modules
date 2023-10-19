@@ -1,9 +1,7 @@
-﻿using System;
-using System.Net;
-using BBRAPIModules;
-
+﻿using BBRAPIModules;
 using Commands;
-using static Bluscream.GeoApi;
+using System;
+using System.Net;
 
 namespace Bluscream {
     [RequireModule(typeof(Bluscream.BluscreamLib))]

@@ -1,16 +1,13 @@
+using BattleBitAPI.Common;
+using BBRAPIModules;
+using BBRModules;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Collections.Generic;
-
-using BattleBitAPI.Common;
-using BBRAPIModules;
 using System.Text;
-using BBRModules;
-using BattleBitAPI.Features;
 using System.Threading.Tasks;
-using System.Diagnostics;
 
 namespace Bluscream {
     [RequireModule(typeof(PaginatorLib))]
@@ -44,8 +41,7 @@ namespace Bluscream {
         }
         #region commands
         [Commands.CommandCallback("map", Description = "Changes the map", ConsoleCommand = true, Permissions = new[] { "commands.map" })]
-        public void SetMapCommand(RunnerPlayer? commandSource, string? mapName = null, string? dayNight = null, string? gameMode = null, string? mapSize = null)
-        {
+        public void SetMapCommand(RunnerPlayer? commandSource, string? mapName = null, string? dayNight = null, string? gameMode = null, string? mapSize = null) {
             if (mapName is null) {
                 this.Reply(GetCurrentMapInfoString(), commandSource); return;
             }
@@ -82,7 +78,7 @@ namespace Bluscream {
         [Commands.CommandCallback("time", Description = "Changes the map time", ConsoleCommand = true, Permissions = new[] { "commands.time" })]
         public void SetMapTimeCommand(RunnerPlayer commandSource, string? dayNight = null, string? gameMode = null, string? mapSize = null) {
             if (dayNight is null) {
-                    this.Reply(GetCurrentMapInfoString(), commandSource); return;
+                this.Reply(GetCurrentMapInfoString(), commandSource); return;
             }
             SetMapCommand(commandSource, this.Server.Map, dayNight, gameMode, mapSize: mapSize);
         }
@@ -94,7 +90,7 @@ namespace Bluscream {
 
         [Commands.CommandCallback("allowvotetime", Description = "Changes the allowed map times for votes", ConsoleCommand = true, Permissions = new[] { "commands.allowvotetime" })]
         public void SetMapVoteTimeCommand(RunnerPlayer commandSource, string dayNightAll) {
-        var DayNight = dayNightAll.ParseDayNight();
+            var DayNight = dayNightAll.ParseDayNight();
             var msg = $"Players can now vote for ";
             switch (DayNight) {
                 case MapDayNight.Day:
@@ -122,11 +118,11 @@ namespace Bluscream {
         }
         [Commands.CommandCallback("list modes", Description = "Lists all gamemodes", ConsoleCommand = true, Permissions = new[] { "commands.listmodes" })]
         public void ListGameModsCommand(RunnerPlayer commandSource) {
-        this.Reply("<b>Available Game Modes:</b>\n\n" + string.Join(", ", BluscreamLib.GameModes.Select(m => m.ToString())), commandSource);
+            this.Reply("<b>Available Game Modes:</b>\n\n" + string.Join(", ", BluscreamLib.GameModes.Select(m => m.ToString())), commandSource);
         }
         [Commands.CommandCallback("list sizes", Description = "Lists all game sizes", ConsoleCommand = true, Permissions = new[] { "commands.listsizes" })]
         public void ListGameSizesCommand(RunnerPlayer commandSource) {
-        this.Reply("<b>Available Sizes:</b>\n\n" + string.Join("\n", BluscreamLib.MapSizeNames), commandSource);
+            this.Reply("<b>Available Sizes:</b>\n\n" + string.Join("\n", BluscreamLib.MapSizeNames), commandSource);
         }
         [Commands.CommandCallback("list squads", Description = "Lists all available squad names", ConsoleCommand = true, Permissions = new[] { "commands.listsquads" })]
         public void ListGameSquadsCommand(RunnerPlayer commandSource, int pageNum = 1) {
@@ -144,32 +140,32 @@ namespace Bluscream {
 
         [Commands.CommandCallback("start", Description = "Force starts the round", ConsoleCommand = true, Permissions = new[] { "commands.start" })]
         public void ForceStartRoundCommand(RunnerPlayer commandSource) {
-        this.Reply("Forcing round to start...", commandSource);
+            this.Reply("Forcing round to start...", commandSource);
             this.Server.ForceStartGame();
         }
         [Commands.CommandCallback("end", Description = "Force ends the round", ConsoleCommand = true, Permissions = new[] { "commands.end" })]
         public void ForceEndRoundCommand(RunnerPlayer commandSource) {
-        this.Reply("Forcing round to end...", commandSource);
+            this.Reply("Forcing round to end...", commandSource);
             this.Server.ForceEndGame();
         }
         [Commands.CommandCallback("exec", Description = "Executes a command on the server", ConsoleCommand = true, Permissions = new[] { "commands.exec" })]
         public void ExecServerCommandCommand(RunnerPlayer commandSource, string command) {
-        this.Server.ExecuteCommand(command);
+            this.Server.ExecuteCommand(command);
             this.Reply($"Executed {command}", commandSource);
         }
         [Commands.CommandCallback("bots", Description = "Spawns bots", ConsoleCommand = true, Permissions = new[] { "commands.bots" })]
         public void SpawnBotCommandCommand(RunnerPlayer commandSource, int amount = 1) {
-        this.Server.ExecuteCommand($"join bot {amount}");
+            this.Server.ExecuteCommand($"join bot {amount}");
             this.Reply($"Spawned {amount} bots, use !nobots to remove them", commandSource);
         }
         [Commands.CommandCallback("nobots", Description = "Kicks all bots", ConsoleCommand = true, Permissions = new[] { "commands.nobots" })]
         public void KickBotsCommandCommand(RunnerPlayer commandSource, int amount = 999) {
-        this.Server.ExecuteCommand($"remove bot {amount}");
+            this.Server.ExecuteCommand($"remove bot {amount}");
             this.Reply($"Kicked {amount} bots", commandSource);
         }
         [Commands.CommandCallback("fire", Description = "Toggles bots firing", ConsoleCommand = true, Permissions = new[] { "commands.fire" })]
         public void BotsFireCommandCommand(RunnerPlayer commandSource) {
-        this.Server.ExecuteCommand($"bot fire");
+            this.Server.ExecuteCommand($"bot fire");
             this.Reply($"Toggled bots firing", commandSource);
         }
         [Commands.CommandCallback("pw get", Description = "Gets or sets current server password", ConsoleCommand = true, Permissions = new[] { "commands.pw.get" })]
@@ -185,7 +181,7 @@ namespace Bluscream {
         [Commands.CommandCallback("server list", Description = "Lists running game server process", ConsoleCommand = true, Permissions = new[] { "commands.server.list" })]
         public void ListServersCommand(RunnerPlayer commandSource) {
             var servers = Runner.GetRunningGameServersByName(this.Server.ServerName);
-            this.Reply(servers.Select(s=>(s.Key.MainWindowTitle)).Join("\n"), commandSource);
+            this.Reply(servers.Select(s => (s.Key.MainWindowTitle)).Join("\n"), commandSource);
         }
         [Commands.CommandCallback("server stop", Description = "Stops the game server process", ConsoleCommand = true, Permissions = new[] { "commands.server.stop" })]
         public void StopServerCommand(RunnerPlayer commandSource) {
@@ -258,10 +254,10 @@ namespace Bluscream {
         //}
 
         [Commands.CommandCallback("pos", Description = "Current position (logs to file)", ConsoleCommand = true, Permissions = new[] { "commands.pos" })]
-            public void PosCommandCommand(RunnerPlayer commandSource) {
-                this.Reply($"Position: {commandSource.Position}", commandSource);
-                File.AppendAllLines(Configuration.SavedPositionsFile, new[] { $"{this.Server.Map},{this.Server.MapSize},{commandSource.Position.X}|{commandSource.Position.Y}|{commandSource.Position.Z}" });
-            }
+        public void PosCommandCommand(RunnerPlayer commandSource) {
+            this.Reply($"Position: {commandSource.Position}", commandSource);
+            File.AppendAllLines(Configuration.SavedPositionsFile, new[] { $"{this.Server.Map},{this.Server.MapSize},{commandSource.Position.X}|{commandSource.Position.Y}|{commandSource.Position.Z}" });
+        }
         #endregion
         public class MoreCommandsConfiguration : ModuleConfiguration {
             public string SavedPositionsFile { get; set; } = ".data/SavedPositions.txt";

@@ -2,10 +2,8 @@
 using BBRAPIModules;
 using Bluscream;
 using Commands;
-using Microsoft.VisualBasic;
 using System;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace BattleBitBaseModules;
@@ -17,8 +15,7 @@ namespace BattleBitBaseModules;
 [RequireModule(typeof(GameModeRotation))]
 [RequireModule(typeof(CommandHandler))]
 [Module("Adds a small tweak to the map rotation so that maps that were just played take more time to appear again, this works by counting how many matches happened since the maps were last played and before getting to the voting screen, the n least played ones are picked to appear on the voting screen . It also adds a command so that any player can know what maps are in the rotation.", "1.4.3")]
-public class MapRotation : BattleBitModule
-{
+public class MapRotation : BattleBitModule {
     [ModuleReference]
     public CommandHandler CommandHandler { get; set; } = null!;
     [ModuleReference]
@@ -28,18 +25,13 @@ public class MapRotation : BattleBitModule
 
     public MapRotationConfiguration Configuration { get; set; } = null!;
 
-    public override async Task OnConnected()
-    {
+    public override async Task OnConnected() {
         await Task.Delay(100);
-        for (int i = Configuration.Maps.Length - 1; i >= 0; i--)
-        {
+        for (int i = Configuration.Maps.Length - 1; i >= 0; i--) {
             var map = FindMap(Configuration.Maps[i]);
-            if (map == null)
-            {
+            if (map == null) {
                 Configuration.Maps = Configuration.Maps.Except(new string[] { Configuration.Maps[i] }).ToArray();
-            }
-            else
-            {
+            } else {
                 Configuration.Maps[i] = map.Name;
             }
         }
@@ -48,18 +40,15 @@ public class MapRotation : BattleBitModule
 
         var currentMapNames = Configuration.Maps.ToList();
         var currentMaps = BluscreamLib.Maps.ToList().FindAll(map => currentMapNames.Contains(map.Name));
-        var unsuportedMaps = currentMaps.FindAll(map =>
-        {
+        var unsuportedMaps = currentMaps.FindAll(map => {
             var gamemodes = map.SupportedGamemodes?.FindAll(gm => currentRotation.Contains(gm.GameMode.ToLower()));
             if (gamemodes?.Count == 0) return true;
             return gamemodes.FindIndex(gm => gm.SupportedMapSizes.Contains(Server.MapSize)) == -1;
         }).ConvertAll(map => map.Name);
 
-        if (unsuportedMaps.Count > 0)
-        {
+        if (unsuportedMaps.Count > 0) {
             string outputString = "";
-            foreach (var map in unsuportedMaps)
-            {
+            foreach (var map in unsuportedMaps) {
 
                 outputString += map + ", ";
             }
@@ -67,8 +56,7 @@ public class MapRotation : BattleBitModule
 {outputString}, please, change the gamemodes or run the command !MapCleanup ingame to remove them");
         }
 
-        if (Configuration.MatchesSinceSelection.Length != Configuration.Maps.Length)
-        {
+        if (Configuration.MatchesSinceSelection.Length != Configuration.Maps.Length) {
             ReinicializeCounters();
         }
 
@@ -76,21 +64,15 @@ public class MapRotation : BattleBitModule
         return;
     }
 
-    public override Task OnGameStateChanged(GameState oldState, GameState newState)
-    {
-        if (newState == GameState.CountingDown)
-        {
-            if (Configuration.MatchesSinceSelection.Length != Configuration.Maps.Length)
-            {
+    public override Task OnGameStateChanged(GameState oldState, GameState newState) {
+        if (newState == GameState.CountingDown) {
+            if (Configuration.MatchesSinceSelection.Length != Configuration.Maps.Length) {
                 ReinicializeCounters();
             }
             var currentMapIndex = Array.IndexOf(Configuration.Maps, Server.Map);
-            if (currentMapIndex == -1)
-            {
+            if (currentMapIndex == -1) {
                 this.Logger.Info($"{Server.ServerName} MapRotation: Current map({Server.Map}) not found in MapRotation ConfigList while reseting the counter(Did you type the name correctly?)");
-            }
-            else
-            {
+            } else {
                 this.Logger.Info($"{Server.ServerName} MapRotation: Starting new match in {Server.Map}");
                 Configuration.MatchesSinceSelection[currentMapIndex] = 0;
             }
@@ -104,8 +86,7 @@ public class MapRotation : BattleBitModule
                 .GetRange(0, Math.Min(Configuration.MapCountInRotation, mapsWithCurrentModeSupport.Count)).ConvertAll(m => m.First).ToArray();
 
             this.Server.MapRotation.SetRotation(mapsThisRound);
-            for (int i = 0; i < Configuration.MatchesSinceSelection.Length; i++)
-            {
+            for (int i = 0; i < Configuration.MatchesSinceSelection.Length; i++) {
                 Configuration.MatchesSinceSelection[i]++;
             }
             Configuration.Save();
@@ -113,31 +94,26 @@ public class MapRotation : BattleBitModule
         return Task.CompletedTask;
     }
 
-    public override void OnModulesLoaded()
-    {
+    public override void OnModulesLoaded() {
         this.CommandHandler.Register(this);
     }
 
     [CommandCallback("Maps", Description = "Shows the current map rotation", ConsoleCommand = true)]
-    public void Maps(RunnerPlayer commandSource)
-    {
+    public void Maps(RunnerPlayer commandSource) {
         string maps = "";
-        foreach (var map in Configuration.Maps)
-        {
+        foreach (var map in Configuration.Maps) {
             maps += map + ", ";
         }
         Server.MessageToPlayer(commandSource, $"The current map rotation is: {maps}");
     }
 
     [CommandCallback("AddMap", Description = "Adds a map in the current rotation", ConsoleCommand = true, Permissions = new[] { "command.addmap" })]
-    public void AddMap(RunnerPlayer commandSource, string map)
-    {
+    public void AddMap(RunnerPlayer commandSource, string map) {
         var matchingName = FindMapName(commandSource, map);
         if (matchingName == null) return;
 
         var mapIndex = Array.IndexOf(Configuration.Maps, matchingName);
-        if (mapIndex != -1)
-        {
+        if (mapIndex != -1) {
             Server.SayToChat($"{matchingName} is already in rotation", commandSource);
             return;
         }
@@ -145,8 +121,7 @@ public class MapRotation : BattleBitModule
         var supportedGamemodes = (currentMap != null) ? currentMap.SupportedGamemodes.ToList().
             FindAll(gm => gm.SupportedMapSizes.Contains(Server.MapSize)).ConvertAll(sgm => sgm.GameMode).ToArray() : new[] { "" };
         var gamemodesIntersection = GameModeRotation.ActiveGamemodes.Intersect(supportedGamemodes).ToArray();
-        if (gamemodesIntersection.Length == 0)
-        {
+        if (gamemodesIntersection.Length == 0) {
             Server.SayToChat($"<color=yellow>Warning {matchingName} does not support any gamemode in current rotation", commandSource);
         }
 
@@ -157,14 +132,12 @@ public class MapRotation : BattleBitModule
     }
 
     [CommandCallback("RemoveMap", Description = "Removes a map from the current rotation", ConsoleCommand = true, Permissions = new[] { "command.removemap" })]
-    public void RemoveMap(RunnerPlayer commandSource, string map)
-    {
+    public void RemoveMap(RunnerPlayer commandSource, string map) {
         var matchingName = FindMapName(commandSource, map);
         if (matchingName == null) return;
 
         var mapIndex = Array.IndexOf(Configuration.Maps, matchingName);
-        if (mapIndex == -1)
-        {
+        if (mapIndex == -1) {
             Server.SayToChat($"{matchingName} is already off rotation or doesn't exist", commandSource);
             return;
         }
@@ -175,34 +148,28 @@ public class MapRotation : BattleBitModule
     }
 
     [CommandCallback("AddGMMaps", Description = "Adds every map that supports the selected gamemode at the current map size to the rotation", ConsoleCommand = true, Permissions = new[] { "command.addgmmaps" })]
-    public void AddGMMaps(RunnerPlayer commandSource, string gamemode)
-    {
+    public void AddGMMaps(RunnerPlayer commandSource, string gamemode) {
         var gamemodeName = GameModeRotation.FindGameMode(gamemode);
-        if (gamemodeName == null)
-        {
+        if (gamemodeName == null) {
             Server.SayToChat($"Gamemode {gamemodeName} not found", commandSource);
             return;
         }
-        if (!GameModeRotation.ActiveGamemodes.ConvertAll(name => name.ToLower()).Contains(gamemodeName.ToLower()))
-        {
+        if (!GameModeRotation.ActiveGamemodes.ConvertAll(name => name.ToLower()).Contains(gamemodeName.ToLower())) {
             Server.SayToChat($"{gamemodeName} is not currently in rotation, try activating it before using this command", commandSource);
             return;
         }
-        var mapsToAdd = BluscreamLib.Maps.ToList().FindAll(map =>
-        {
+        var mapsToAdd = BluscreamLib.Maps.ToList().FindAll(map => {
             var index = map.SupportedGamemodes.ToList().FindIndex(gm => gm.GameMode.ToLower() == gamemodeName.ToLower());
             if (index == -1) return false;
             return map.SupportedGamemodes[index].SupportedMapSizes.Contains(Server.MapSize);
         }).ConvertAll(map => map.Name);
 
-        if (mapsToAdd.Count == 0)
-        {
+        if (mapsToAdd.Count == 0) {
             Server.SayToChat($"There are no maps that support {gamemodeName} at current server size({Server.MapSize})", commandSource);
         }
 
         string outputString = "";
-        foreach (var map in mapsToAdd)
-        {
+        foreach (var map in mapsToAdd) {
             outputString += map + ", ";
         }
 
@@ -213,13 +180,11 @@ public class MapRotation : BattleBitModule
     }
 
     [CommandCallback("MapCleanup", Description = "Removes a maps that don't support current gamemodes at current map size", ConsoleCommand = true, Permissions = new[] { "command.mapcleanup" })]
-    public void MapCleanup(RunnerPlayer commandSource)
-    {
+    public void MapCleanup(RunnerPlayer commandSource) {
         var currentRotation = GameModeRotation.ActiveGamemodes.ConvertAll(name => name.ToLower());
         var currentMapNames = Configuration.Maps.ToList();
         var currentMaps = BluscreamLib.Maps.ToList().FindAll(map => currentMapNames.Contains(map.Name));
-        var unsuportedMaps = currentMaps.FindAll(map =>
-        {
+        var unsuportedMaps = currentMaps.FindAll(map => {
             var gamemodes = map.SupportedGamemodes.ToList().FindAll(gm => currentRotation.Contains(gm.GameMode.ToLower()));
             if (gamemodes.Count == 0) return true;
             return gamemodes.FindIndex(gm => gm.SupportedMapSizes.Contains(Server.MapSize)) == -1;
@@ -227,14 +192,12 @@ public class MapRotation : BattleBitModule
 
 
 
-        if (unsuportedMaps.Count == 0)
-        {
+        if (unsuportedMaps.Count == 0) {
             Server.SayToChat($"All current maps support the current gamemodes", commandSource);
         }
 
         string outputString = "";
-        foreach (var map in unsuportedMaps)
-        {
+        foreach (var map in unsuportedMaps) {
 
             outputString += map + ", ";
         }
@@ -245,20 +208,17 @@ public class MapRotation : BattleBitModule
         Server.SayToChat($"Successfuly removed {outputString} from rotation", commandSource);
     }
 
-    private string? FindMapName(RunnerPlayer commandSource, string mapName)
-    {
+    private string? FindMapName(RunnerPlayer commandSource, string mapName) {
         return mapName.ParseMap()?.First()?.Name;
     }
     private static MapInfo? FindMap(string mapName) {
         return mapName.ParseMap()?.FirstOrDefault();
     }
-    private void ReinicializeCounters()
-    {
+    private void ReinicializeCounters() {
         this.Logger.Info($"{Server.ServerName} MapRotation: reinicializing maps counter");
         Configuration.MatchesSinceSelection = new int[Configuration.Maps.Length];
         Random r = new();
-        for (int i = 0; i < Configuration.Maps.Length; i++)
-        {
+        for (int i = 0; i < Configuration.Maps.Length; i++) {
             Configuration.MatchesSinceSelection[i] = r.Next(5);
         }
         Configuration.Save();
@@ -284,8 +244,7 @@ public class MapRotation : BattleBitModule
     }*/
 }
 
-public class MapRotationConfiguration : ModuleConfiguration
-{
+public class MapRotationConfiguration : ModuleConfiguration {
     public int MapCountInRotation { get; set; } = 8;
     public int[] MatchesSinceSelection { get; set; } = new int[1];
     public string[] Maps { get; set; } = new[]

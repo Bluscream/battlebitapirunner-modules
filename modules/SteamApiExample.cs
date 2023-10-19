@@ -1,9 +1,8 @@
-﻿using System;
-using System.Text;
-
-using BBRAPIModules;
-using Humanizer;
+﻿using BBRAPIModules;
 using Commands;
+using Humanizer;
+using System;
+using System.Text;
 
 namespace Bluscream {
     [RequireModule(typeof(Bluscream.BluscreamLib))]

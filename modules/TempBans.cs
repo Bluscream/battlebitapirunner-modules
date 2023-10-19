@@ -1,23 +1,17 @@
-﻿using System;
+﻿using Bans;
+using BattleBitBaseModules;
+using BBRAPIModules;
+using Bluscream;
+using Humanizer;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using System.Text.Json;
-using System.IO;
-using System.Text;
-using System.Net;
-
 using TimeSpanParserUtil;
-using Humanizer;
-
-using BBRAPIModules;
-
-using Bluscream;
-using static Bluscream.BluscreamLib;
-using Bans;
-using BattleBitBaseModules;
-using System.CodeDom.Compiler;
 
 namespace Bluscream {
     [RequireModule(typeof(BluscreamLib))]
@@ -28,7 +22,7 @@ namespace Bluscream {
         public static ModuleInfo ModuleInfo = new() {
             Name = "Temporary Bans",
             Description = "Rudimentary support for temporary bans stored in a json file",
-            Version = new Version(2,0,0),
+            Version = new Version(2, 0, 0),
             Author = "Bluscream",
             WebsiteUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/"),
             UpdateUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/raw/master/modules/TempBans.cs"),
@@ -139,7 +133,7 @@ namespace Bluscream {
 
         [Commands.CommandCallback("listtempbans", Description = "Lists players that are temporarily banned", ConsoleCommand = true, Permissions = new[] { "command.listtempbans" })]
         public void ListTempBannedCommand(RunnerPlayer commandSource) {
-            commandSource.Message($"{Bans.Get().Count} Bans\n\n" + string.Join("\n", Bans.Get().Select(b=>$"{b.Target.DisplayName} by {b.Invoker?.DisplayName}: {b.Remaining.Humanize()}")));
+            commandSource.Message($"{Bans.Get().Count} Bans\n\n" + string.Join("\n", Bans.Get().Select(b => $"{b.Target.DisplayName} by {b.Invoker?.DisplayName}: {b.Remaining.Humanize()}")));
         }
         #endregion
         #region Methods
@@ -193,7 +187,7 @@ namespace Bluscream {
                 );
                 foreach (var player in this.Server.AllPlayers) {
                     if (banEntry.Target.SteamId64 == player.SteamID || banEntry.Target.IpAddress == player.IP)
-                    Server.Kick(player.SteamID, kickMsg);
+                        Server.Kick(player.SteamID, kickMsg);
                     TempBans.Log($"Kicked tempbanned player {player.fullstr()}: Banned until {banEntry.BannedUntilUtc} UTC");
                 }
             }
@@ -287,7 +281,7 @@ namespace Bans {
         public TimeSpan Remaining { get { return BannedUntilUtc.Value - DateTime.UtcNow; } }
     }
 
-        public class BanList {
+    public class BanList {
         public static FileInfo File { get; set; }
         public static List<BanEntry> Entries { get; set; } = new List<BanEntry>();
 
@@ -322,7 +316,7 @@ namespace Bans {
             entry.BannedAt = DateTime.UtcNow;
             entry.Id = entry.GetMd5Hash();
             var exists = Entries.FirstOrDefault(b => (b?.Target != null) && (b?.Target?.SteamId64 == entry.Target?.SteamId64), null);
-            if (exists != null ) {
+            if (exists != null) {
                 if (!overwrite) {
                     var msg = "Tried to add duplicate ban but overwrite was not enabled!";
                     return new(msg, null);
@@ -351,7 +345,7 @@ namespace Bans {
                 TempBans.Log($"Loaded {Entries.Count} bans from \"{File.Name}\" ({purged} purged)");
             } catch (Exception ex) {
                 TempBans.Log($"Failed to load banlist from {File}: \"{ex.Message}\" Backing up and creating a new one...");
-                if(File.Exists) File.MoveTo(File.Name + ".bak", true);
+                if (File.Exists) File.MoveTo(File.Name + ".bak", true);
                 Save();
             }
         }

@@ -13,32 +13,27 @@ namespace BattleBitBaseModules;
 /// </summary>
 [RequireModule(typeof(CommandHandler))]
 [Module("This version of gamemode rotation allows you to set up a different set of gamemodes each match, forcing a diversity of gamemodes of the server.", "1.1")]
-public class GameModeRotation : BattleBitModule
-{
+public class GameModeRotation : BattleBitModule {
     public GameModeRotationConfiguration Configuration { get; set; }
     public List<string> ActiveGamemodes { get; set; } = new();
     private int currentGamemodesIndex = 0;
 
-    public override void OnModulesLoaded()
-    {
+    public override void OnModulesLoaded() {
         this.CommandHandler.Register(this);
-        foreach (var rotation in Configuration.GameModes)
-        {
+        foreach (var rotation in Configuration.GameModes) {
             ActiveGamemodes.AddRange(rotation);
         }
         ActiveGamemodes = ActiveGamemodes.Distinct().ToList()
-            .ConvertAll(gm => { 
+            .ConvertAll(gm => {
                 var name = FindGameMode(gm);
                 if (name == null) Console.WriteLine($"{Server.ServerName} GameModeRotation: {gm} not found, did you type correctly?");
-                return name??"";
+                return name ?? "";
             });
     }
 
-    public override Task OnConnected()
-    {
+    public override Task OnConnected() {
         var gamemodesText = "";
-        foreach (var gamemode in ActiveGamemodes)
-        {
+        foreach (var gamemode in ActiveGamemodes) {
             gamemodesText += gamemode + ", ";
         }
         Console.WriteLine($"{Server.ServerName} GameModeRotation: Loaded {gamemodesText} gamemodes");
@@ -49,13 +44,10 @@ public class GameModeRotation : BattleBitModule
         return Task.CompletedTask;
     }
 
-    public override Task OnGameStateChanged(GameState oldState, GameState newState)
-    {
-        if (newState == GameState.WaitingForPlayers)
-        {
+    public override Task OnGameStateChanged(GameState oldState, GameState newState) {
+        if (newState == GameState.WaitingForPlayers) {
             string debugText = "";
-            foreach (var gm in Configuration.GameModes[currentGamemodesIndex])
-            {
+            foreach (var gm in Configuration.GameModes[currentGamemodesIndex]) {
                 debugText += gm + ", ";
             }
             Console.WriteLine($"{Server.ServerName} GameModeRotation: New Match starting, next gamemodes will be: {debugText}");
@@ -69,20 +61,16 @@ public class GameModeRotation : BattleBitModule
     public CommandHandler CommandHandler { get; set; }
 
     [CommandCallback("GameModes", Description = "Shows the current gamemode rotation", ConsoleCommand = true)]
-    public void GameModes(RunnerPlayer commandSource)
-    {
+    public void GameModes(RunnerPlayer commandSource) {
         string modes = "";
-        foreach (var mode in ActiveGamemodes)
-        {
+        foreach (var mode in ActiveGamemodes) {
             modes += mode + ", ";
         }
         Server.MessageToPlayer(commandSource, $"The current Gamemode rotation is: {modes}");
     }
 
-    public static string? FindGameMode(string Gamemode)
-    {
-        switch (Gamemode.Trim().ToLower())
-        {
+    public static string? FindGameMode(string Gamemode) {
+        switch (Gamemode.Trim().ToLower()) {
             case "teamdeathmatch":
             case "tdm":
                 return "TDM";
@@ -142,8 +130,7 @@ public class GameModeRotation : BattleBitModule
     }
 }
 
-public class GameModeRotationConfiguration : ModuleConfiguration
-{
+public class GameModeRotationConfiguration : ModuleConfiguration {
     //This works a bit differently from the default rotation module. You can have every mode enabled all the time
     //like the default rotation module OR you can separate this in multiple lists,
     //where each one will appear in a separate match. 
