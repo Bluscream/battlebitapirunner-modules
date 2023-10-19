@@ -14,10 +14,13 @@ namespace BattleBitBaseModules;
 [RequireModule(typeof(CommandHandler))]
 [Module("Adds a small tweak to the map rotation so that maps that were just played take more time to appear again, this works by counting how many matches happened since the maps were last played and before getting to the voting screen, the n least played ones are picked to appear on the voting screen . It also adds a command so that any player can know what maps are in the rotation.", "1.4.3")]
 public class MapRotation : BattleBitModule {
+
     [ModuleReference]
     public CommandHandler CommandHandler { get; set; }
+
     [ModuleReference]
     public GameModeRotation GameModeRotation { get; set; }
+
     public MapRotationConfiguration Configuration { get; set; }
 
     public override async Task OnConnected() {
@@ -44,10 +47,9 @@ public class MapRotation : BattleBitModule {
         if (unsuportedMaps.Count > 0) {
             string outputString = "";
             foreach (var map in unsuportedMaps) {
-
                 outputString += map + ", ";
             }
-            this.Logger.Info(@$"{Server.ServerName}[WARNING]MapRotation: The following maps do not support the current gamemode rotation at the current mapsize: 
+            this.Logger.Info(@$"{Server.ServerName}[WARNING]MapRotation: The following maps do not support the current gamemode rotation at the current mapsize:
 {outputString}, please, change the gamemodes or run the command !MapCleanup ingame to remove them");
         }
 
@@ -203,7 +205,6 @@ public class MapRotation : BattleBitModule {
 
         string outputString = "";
         foreach (var map in unsuportedMaps) {
-
             outputString += map + ", ";
         }
 
@@ -225,6 +226,7 @@ public class MapRotation : BattleBitModule {
         }
         return matchingNames[0].Name;
     }
+
     private static MapInfo? FindMap(string mapName) {
         var matchingNames = Array.FindAll(MapInfo.maps, m => m.Name.ToLower().StartsWith(mapName.ToLower()));
         if (!matchingNames.Any()) {
@@ -237,6 +239,7 @@ public class MapRotation : BattleBitModule {
         }
         return matchingNames[0];
     }
+
     private void ReinicializeCounters() {
         this.Logger.Info($"{Server.ServerName} MapRotation: reinicializing maps counter");
         Configuration.MatchesSinceSelection = new int[Configuration.Maps.Length];
@@ -498,6 +501,7 @@ public class MapRotation : BattleBitModule {
 public class MapRotationConfiguration : ModuleConfiguration {
     public int MapCountInRotation { get; set; } = 8;
     public int[] MatchesSinceSelection { get; set; } = new int[1];
+
     public string[] Maps { get; set; } = new[]
     {
         "Azagor",
