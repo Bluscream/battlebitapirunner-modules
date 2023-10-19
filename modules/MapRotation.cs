@@ -1,6 +1,7 @@
 using BattleBitAPI.Common;
 using BBRAPIModules;
 using Commands;
+using log4net.Core;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -47,7 +48,7 @@ public class MapRotation : BattleBitModule {
 
                 outputString += map + ", ";
             }
-            Console.WriteLine(@$"{Server.ServerName}[WARNING]MapRotation: The following maps do not support the current gamemode rotation at the current mapsize: 
+            this.Logger.Info(@$"{Server.ServerName}[WARNING]MapRotation: The following maps do not support the current gamemode rotation at the current mapsize: 
 {outputString}, please, change the gamemodes or run the command !MapCleanup ingame to remove them");
         }
 
@@ -66,9 +67,9 @@ public class MapRotation : BattleBitModule {
             }
             var currentMapIndex = Array.IndexOf(Configuration.Maps, Server.Map);
             if (currentMapIndex == -1) {
-                Console.WriteLine($"{Server.ServerName} MapRotation: Current map({Server.Map}) not found in MapRotation ConfigList while reseting the counter(Did you type the name correctly?)");
+                this.Logger.Info($"{Server.ServerName} MapRotation: Current map({Server.Map}) not found in MapRotation ConfigList while reseting the counter(Did you type the name correctly?)");
             } else {
-                Console.WriteLine($"{Server.ServerName} MapRotation: Starting new match in {Server.Map}");
+                this.Logger.Info($"{Server.ServerName} MapRotation: Starting new match in {Server.Map}");
                 Configuration.MatchesSinceSelection[currentMapIndex] = 0;
             }
             var currentGamemodes = Array.ConvertAll(Server.GamemodeRotation.GetGamemodeRotation().ToArray(), gm => GameModeRotation.FindGameMode(gm) ?? "") ?? Array.Empty<string>();
@@ -93,23 +94,35 @@ public class MapRotation : BattleBitModule {
         this.CommandHandler.Register(this);
     }
 
-    [CommandCallback("Maps", Description = "Shows the current map rotation", ConsoleCommand = true, Permissions = new[] { "MapRotation.maps" })]
-    public void Maps(RunnerPlayer commandSource) {
-        string maps = "";
-        foreach (var map in Configuration.Maps) {
-            maps += map + ", ";
+    [CommandCallback("rotation map", Description = "Shows or edits the current map rotation", ConsoleCommand = true, Permissions = new[] { "command.rotation.maps" })]
+    public void Maps(Context ctx, params string[] anything) {
+        var command = ctx.RawParameters.FirstOrDefault()?.ToLowerInvariant();
+        if (command is not null) {
+            switch (command) {
+                case "list": break;
+                case "add":
+                    AddMap(ctx, ctx.RawParameters[1] ?? null); return;
+                case "remove":
+                    RemoveMap(ctx, ctx.RawParameters[1] ?? null); return;
+                case "addgm":
+                    AddGMMaps(ctx, ctx.RawParameters[1] ?? null); return;
+                case "cleanup":
+                    MapCleanup(ctx); return;
+                default:
+                    ctx.Reply("Available subcommands: list, add, addgm, remove, cleanup"); return;
+            }
         }
-        Server.MessageToPlayer(commandSource, $"The current map rotation is: {maps}");
+        ctx.Reply($"The current map rotation is:\n\n{string.Join(", ", Configuration.Maps)}");
     }
 
-    [CommandCallback("AddMap", Description = "Adds a map in the current rotation", ConsoleCommand = true, Permissions = new[] { "MapRotation.addmap" })]
-    public void AddMap(RunnerPlayer commandSource, string map) {
-        var matchingName = FindMapName(commandSource, map);
+    // [CommandCallback("AddMap", Description = "Adds a map in the current rotation", ConsoleCommand = true, Permissions = new[] { "MapRotation.addmap" })]
+    public void AddMap(Context ctx, string map) {
+        var matchingName = FindMapName(ctx, map);
         if (matchingName == null) return;
 
         var mapIndex = Array.IndexOf(Configuration.Maps, matchingName);
         if (mapIndex != -1) {
-            Server.SayToChat($"{matchingName} is already in rotation", commandSource);
+            ctx.Reply($"{matchingName} is already in rotation");
             return;
         }
         var currentMap = MapInfo.maps.ToList().Find(map => map.Name == matchingName);
@@ -117,40 +130,40 @@ public class MapRotation : BattleBitModule {
             FindAll(gm => gm.Sizes.Contains(Server.MapSize)).ConvertAll(sgm => sgm.Name).ToArray() : new[] { "" };
         var gamemodesIntersection = GameModeRotation.ActiveGamemodes.Intersect(supportedGamemodes).ToArray();
         if (gamemodesIntersection.Length == 0) {
-            Server.SayToChat($"<color=yellow>Warning {matchingName} does not support any gamemode in current rotation", commandSource);
+            ctx.Reply($"<color=yellow>Warning {matchingName} does not support any gamemode in current rotation");
         }
 
         Configuration.Maps = Configuration.Maps.Append(matchingName).ToArray();
         Configuration.Save();
 
-        Server.SayToChat($"Successfuly added {matchingName} to rotation", commandSource);
+        ctx.Reply($"Successfuly added {matchingName} to rotation");
     }
 
-    [CommandCallback("RemoveMap", Description = "Removes a map from the current rotation", ConsoleCommand = true, Permissions = new[] { "MapRotation.removemap" })]
-    public void RemoveMap(RunnerPlayer commandSource, string map) {
-        var matchingName = FindMapName(commandSource, map);
+    // [CommandCallback("RemoveMap", Description = "Removes a map from the current rotation", ConsoleCommand = true, Permissions = new[] { "MapRotation.removemap" })]
+    public void RemoveMap(Context ctx, string map) {
+        var matchingName = FindMapName(ctx, map);
         if (matchingName == null) return;
 
         var mapIndex = Array.IndexOf(Configuration.Maps, matchingName);
         if (mapIndex == -1) {
-            Server.SayToChat($"{matchingName} is already off rotation or doesn't exist", commandSource);
+            ctx.Reply($"{matchingName} is already off rotation or doesn't exist");
             return;
         }
         Configuration.Maps = Configuration.Maps.Except(new string[] { matchingName }).ToArray();
         Configuration.Save();
 
-        Server.SayToChat($"Successfuly removed {matchingName} from rotation", commandSource);
+        ctx.Reply($"Successfuly removed {matchingName} from rotation");
     }
 
-    [CommandCallback("AddGMMaps", Description = "Adds every map that supports the selected gamemode at the current map size to the rotation", ConsoleCommand = true, Permissions = new[] { "MapRotation.addgmmaps" })]
-    public void AddGMMaps(RunnerPlayer commandSource, string gamemode) {
+    // [CommandCallback("AddGMMaps", Description = "Adds every map that supports the selected gamemode at the current map size to the rotation", ConsoleCommand = true, Permissions = new[] { "MapRotation.addgmmaps" })]
+    public void AddGMMaps(Context ctx, string gamemode) {
         var gamemodeName = GameModeRotation.FindGameMode(gamemode);
         if (gamemodeName == null) {
-            Server.SayToChat($"Gamemode {gamemodeName} not found", commandSource);
+            ctx.Reply($"Gamemode {gamemodeName} not found");
             return;
         }
         if (!GameModeRotation.ActiveGamemodes.ConvertAll(name => name.ToLower()).Contains(gamemodeName.ToLower())) {
-            Server.SayToChat($"{gamemodeName} is not currently in rotation, try activating it before using this command", commandSource);
+            ctx.Reply($"{gamemodeName} is not currently in rotation, try activating it before using this command");
             return;
         }
         var mapsToAdd = MapInfo.maps.ToList().FindAll(map => {
@@ -160,7 +173,7 @@ public class MapRotation : BattleBitModule {
         }).ConvertAll(map => map.Name);
 
         if (mapsToAdd.Count == 0) {
-            Server.SayToChat($"There are no maps that support {gamemodeName} at current server size({Server.MapSize})", commandSource);
+            ctx.Reply($"There are no maps that support {gamemodeName} at current server size({Server.MapSize})");
         }
 
         string outputString = "";
@@ -171,11 +184,11 @@ public class MapRotation : BattleBitModule {
         Configuration.Maps = Configuration.Maps.Union(mapsToAdd).ToArray();
         Configuration.Save();
 
-        Server.SayToChat($"Successfuly added {outputString} to rotation", commandSource);
+        ctx.Reply($"Successfuly added {outputString} to rotation");
     }
 
-    [CommandCallback("MapCleanup", Description = "Removes a maps that don't support current gamemodes at current map size", ConsoleCommand = true, Permissions = new[] { "MapRotation.mapcleanup" })]
-    public void MapCleanup(RunnerPlayer commandSource) {
+    // [CommandCallback("rotation map ", Description = "Removes a maps that don't support current gamemodes at current map size", ConsoleCommand = true, Permissions = new[] { "MapRotation.mapcleanup" })]
+    public void MapCleanup(Context ctx) {
         var currentRotation = GameModeRotation.ActiveGamemodes.ConvertAll(name => name.ToLower());
         var currentMapNames = Configuration.Maps.ToList();
         var currentMaps = MapInfo.maps.ToList().FindAll(map => currentMapNames.Contains(map.Name));
@@ -185,10 +198,8 @@ public class MapRotation : BattleBitModule {
             return gamemodes.FindIndex(gm => gm.Sizes.Contains(Server.MapSize)) == -1;
         }).ConvertAll(m => m.Name);
 
-
-
         if (unsuportedMaps.Count == 0) {
-            Server.SayToChat($"All current maps support the current gamemodes", commandSource);
+            ctx.Reply($"All current maps support the current gamemodes");
         }
 
         string outputString = "";
@@ -200,17 +211,17 @@ public class MapRotation : BattleBitModule {
         Configuration.Maps = Configuration.Maps.Except(unsuportedMaps).ToArray();
         Configuration.Save();
 
-        Server.SayToChat($"Successfuly removed {outputString} from rotation", commandSource);
+        ctx.Reply($"Successfuly removed {outputString} from rotation");
     }
 
-    private string? FindMapName(RunnerPlayer commandSource, string mapName) {
+    private string? FindMapName(Context ctx, string mapName) {
         var matchingNames = Array.FindAll(MapInfo.maps, m => m.Name.ToLower().StartsWith(mapName.ToLower()));
         if (!matchingNames.Any()) {
-            Server.SayToChat($"{mapName} does not exist, check your typing.", commandSource);
+            ctx.Reply($"{mapName} does not exist, check your typing.");
             return null;
         }
         if (matchingNames.Length > 1) {
-            Server.SayToChat($"Multiple maps starts with {mapName}, please try again.", commandSource);
+            ctx.Reply($"Multiple maps starts with {mapName}, please try again.");
             return null;
         }
         return matchingNames[0].Name;
@@ -228,7 +239,7 @@ public class MapRotation : BattleBitModule {
         return matchingNames[0];
     }
     private void ReinicializeCounters() {
-        Console.WriteLine($"{Server.ServerName} MapRotation: reinicializing maps counter");
+        this.Logger.Info($"{Server.ServerName} MapRotation: reinicializing maps counter");
         Configuration.MatchesSinceSelection = new int[Configuration.Maps.Length];
         Random r = new();
         for (int i = 0; i < Configuration.Maps.Length; i++) {
@@ -239,7 +250,7 @@ public class MapRotation : BattleBitModule {
 
     /*//use for debugging
     [CommandCallback("M", Description = "Shows how many matches since the last time a map was played", ConsoleCommand = true, Permissions = new[] { "command.m" })]
-    public void M(RunnerPlayer commandSource)
+    public void M(Context ctx)
     {
         string maps = "";
         int i = 0;
@@ -248,12 +259,12 @@ public class MapRotation : BattleBitModule {
             maps += map + " " + matchesSinceSelection[i] + ", ";
             i++;
         }
-        Server.SayToChat($"maps played and times since last played: {maps}", commandSource);
+        ctx.Reply($"maps played and times since last played: {maps}");
     }
     [CommandCallback("CM", Description = "Shows the Current Map name returned by Server.map", ConsoleCommand = true, Permissions = new[] { "command.cm" })]
-    public void CM(RunnerPlayer commandSource)
+    public void CM(Context ctx)
     {
-        Server.MessageToPlayer(commandSource, $"Current map {Server.Map}");
+        ctx.Reply($"Current map {Server.Map}");
     }*/
 
     public class MapInfo {
