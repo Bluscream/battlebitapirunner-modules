@@ -60,7 +60,7 @@ public class GameModeRotation : BattleBitModule {
     [ModuleReference]
     public CommandHandler CommandHandler { get; set; }
 
-    [CommandCallback("rotation mode", Description = "Shows the current gamemode rotation", ConsoleCommand = true)]
+    [CommandCallback("rotation modes", Description = "Shows the current gamemode rotation", ConsoleCommand = true)]
     public string GameModes(Context ctx) {
         string modes = "";
         foreach (var mode in ActiveGamemodes) {
