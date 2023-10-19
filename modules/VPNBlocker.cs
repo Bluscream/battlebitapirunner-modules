@@ -97,24 +97,24 @@ namespace Bluscream {
             return false;
         }
 
-        public void ToggleBoolEntry(BBRAPIModules.RunnerPlayer commandSource, BlockConfiguration config) {
+        public void ToggleBoolEntry(Context ctx, BlockConfiguration config) {
             config.Enabled = !config.Enabled;
-            commandSource.Message($"{config.Name} is now {config.Enabled}");
+            ctx.Reply($"{config.Name} is now {config.Enabled}");
             Config.Save();
         }
 
-        public void ToggleStringListEntry(BBRAPIModules.RunnerPlayer commandSource, BlockListConfiguration config, string? entry = null) {
+        public void ToggleStringListEntry(Context ctx, BlockListConfiguration config, string? entry = null) {
             if (string.IsNullOrWhiteSpace(entry)) {
-                commandSource.Message($"{config.List.Count} {config.BlockMode}ed {config.Name}:\n\n" + string.Join(", ", config.List));
+                ctx.Reply($"{config.List.Count} {config.BlockMode}ed {config.Name}:\n\n" + string.Join(", ", config.List));
                 return;
             }
 
             if (config.List.Contains(entry)) {
                 config.List.Remove(entry);
-                commandSource.Message($"Removed {entry.Quote()} from the list of {config.BlockMode}ed {config.Name}!");
+                ctx.Reply($"Removed {entry.Quote()} from the list of {config.BlockMode}ed {config.Name}!");
             } else {
                 config.List.Add(entry);
-                commandSource.Message($"Added {entry.Quote()} to the list of {config.BlockMode}ed {config.Name}!");
+                ctx.Reply($"Added {entry.Quote()} to the list of {config.BlockMode}ed {config.Name}!");
             }
             Config.Save();
         }
@@ -141,25 +141,25 @@ namespace Bluscream {
         #region Commands
 
         [CommandCallback("blockplayer", Description = "Toggles blocking for a specific player's item", ConsoleCommand = true, Permissions = new[] { "commands.blockplayer" })]
-        public void ToggleBlockPlayerCommand(BBRAPIModules.RunnerPlayer commandSource, RunnerPlayer target, string list = "") {
+        public void ToggleBlockPlayerCommand(Context ctx, RunnerPlayer target, string list = "") {
             var geoData = target.GetGeoData()?.Result;
-            if (geoData is null) { commandSource.Message($"Could not fetch geoData for {target.str()}"); return; }
+            if (geoData is null) { ctx.Reply($"Could not fetch geoData for {target.str()}"); return; }
             switch (list.ToLowerInvariant()) {
                 case "isp":
-                    ToggleStringListEntry(commandSource, Config.ISPs, geoData.Isp); break;
+                    ToggleStringListEntry(ctx.Source, Config.ISPs, geoData.Isp); break;
                 case "continent":
-                    ToggleStringListEntry(commandSource, Config.Continents, geoData.Continent); break;
+                    ToggleStringListEntry(ctx.Source, Config.Continents, geoData.Continent); break;
                 case "country":
-                    ToggleStringListEntry(commandSource, Config.Countries, geoData.Country); break;
+                    ToggleStringListEntry(ctx.Source, Config.Countries, geoData.Country); break;
                 default:
-                    commandSource.Message("Available options:\n\nisp, continent, country"); break;
+                    ctx.Reply("Available options:\n\nisp, continent, country"); break;
             }
         }
 
         [CommandCallback("block", Description = "Toggles blocking for a specific item", ConsoleCommand = true, Permissions = new[] { "commands.block" })]
-        public void ToggleBlockCommand(BBRAPIModules.RunnerPlayer commandSource, string? list = null, string? entry = null) {
+        public void ToggleBlockCommand(Context ctx, string? list = null, string? entry = null) {
             if (list is null) {
-                commandSource.Message($"VPNBlocker Config:\n" +
+                ctx.Reply($"VPNBlocker Config:\n" +
                     $"\nBlockProxies: {Config.BlockProxies.Enabled.ToEnabledDisabled()}" +
                     $"\nBlockServers: {Config.BlockServers.Enabled.ToEnabledDisabled()}" +
                     $"\nBlockMobile: {Config.BlockMobile.Enabled.ToEnabledDisabled()}" +
@@ -172,21 +172,21 @@ namespace Bluscream {
             }
             switch (list.ToLowerInvariant()) {
                 case "proxy":
-                    ToggleBoolEntry(commandSource, Config.BlockProxies); break;
+                    ToggleBoolEntry(ctx.Source, Config.BlockProxies); break;
                 case "server":
-                    ToggleBoolEntry(commandSource, Config.BlockServers); break;
+                    ToggleBoolEntry(ctx.Source, Config.BlockServers); break;
                 case "mobile":
-                    ToggleBoolEntry(commandSource, Config.BlockMobile); break;
+                    ToggleBoolEntry(ctx.Source, Config.BlockMobile); break;
                 case "failed":
-                    ToggleBoolEntry(commandSource, Config.BlockFailed); break;
+                    ToggleBoolEntry(ctx.Source, Config.BlockFailed); break;
                 case "isp":
-                    ToggleStringListEntry(commandSource, Config.ISPs, entry); break;
+                    ToggleStringListEntry(ctx.Source, Config.ISPs, entry); break;
                 case "continent":
-                    ToggleStringListEntry(commandSource, Config.Continents, entry); break;
+                    ToggleStringListEntry(ctx.Source, Config.Continents, entry); break;
                 case "country":
-                    ToggleStringListEntry(commandSource, Config.Countries, entry); break;
+                    ToggleStringListEntry(ctx.Source, Config.Countries, entry); break;
                 default:
-                    commandSource.Message("Available options:\n\nproxy, server, mobile, failed, isp, continent, country"); break;
+                    ctx.Reply("Available options:\n\nproxy, server, mobile, failed, isp, continent, country"); break;
             }
         }
 

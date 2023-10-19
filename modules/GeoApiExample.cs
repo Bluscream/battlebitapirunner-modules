@@ -27,13 +27,6 @@ namespace Bluscream {
         public Commands.CommandHandler CommandHandler { get; set; }
 
         [ModuleReference]
-        public Permissions.PlayerPermissions? PlayerPermissions { get; set; }
-
-#else
-        public dynamic? PlayerPermissions { get; set; }
-#endif
-
-        [ModuleReference]
         public Bluscream.GeoApi? GeoApi { get; set; }
 
         #endregion References
@@ -89,11 +82,11 @@ namespace Bluscream {
         #region Commands
 
         [CommandCallback("playerinfo", Description = "Displays info about a player", ConsoleCommand = true, Permissions = new[] { "commands.playerinfo" })]
-        public void GetPlayerInfoChatCommand(BBRAPIModules.RunnerPlayer commandSource, BBRAPIModules.RunnerPlayer? player = null) {
-            if (GeoApi is null) { commandSource.Message("GeoApi not found, do you have it installed?"); return; }
-            player = player ?? commandSource;
-            var geoResponse = GeoApi?.GetData(player)?.Result;
-            if (geoResponse is null) { commandSource.Message($"Failed to get Geo Data for player \"{player.Name}\""); return; }
+        public void GetPlayerInfoChatCommand(Context ctx, BBRAPIModules.RunnerPlayer? player = null) {
+            if (GeoApi is null) { ctx.Reply("GeoApi not found, do you have it installed?"); return; }
+            player = player ?? (ctx.Source as ChatSource).Invoker;
+            var geoResponse = player.GetGeoData()?.Result;
+            if (geoResponse is null) { ctx.Reply($"Failed to get Geo Data for player \"{player.Name}\""); return; }
             var response = new System.Text.StringBuilder();
             response.AppendLine($"Name: \"{player.Name}\" ({player.Name.Length} chars)");
             if (!string.IsNullOrEmpty(player.IP.ToString())) response.Append($"IP: {player.IP}");
@@ -106,7 +99,7 @@ namespace Bluscream {
                 if (!string.IsNullOrEmpty(geoResponse.City)) response.AppendLine($"City: {geoResponse.City} ({geoResponse.Zip})");
                 if (!string.IsNullOrEmpty(geoResponse.Timezone)) response.AppendLine($"Time: {System.TimeZoneInfo.ConvertTimeBySystemTimeZoneId(System.DateTime.UtcNow, geoResponse.Timezone).ToString("HH:mm")} ({geoResponse.Timezone})");
             }
-            commandSource.Message(response.ToString());
+            ctx.Reply(response.ToString());
         }
 
         #endregion Commands

@@ -5,7 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Bluscream;
 using static Bluscream.BluscreamLib;
+using Commands;
 
 namespace Bluscream {
 
@@ -40,12 +42,6 @@ namespace Bluscream {
         [ModuleReference]
         public TempBans TempBans { get; set; }
 
-        [ModuleReference]
-        public Permissions.PlayerPermissions? PlayerPermissions { get; set; }
-
-#else
-        public dynamic? PlayerPermissions { get; set; }
-#endif
         public AdvancedVotingCommandsConfiguration CommandsConfiguration { get; set; }
 
         #region Events
@@ -59,66 +55,66 @@ namespace Bluscream {
         #region Commands
 
         //[Commands.CommandCallback("vote", Description = "Votes for an option", AllowedRoles = Roles.Moderator)]
-        //public void StartVoteCommand(RunnerPlayer commandSource, string text, string options) {
-        //    StartVote(commandSource, text, options, (int totalVotes, int winnerVotes, string won) => {});
+        //public void StartVoteCommand(Context ctx, string text, string options) {
+        //    StartVote(ctx.Source, text, options, (int totalVotes, int winnerVotes, string won) => {});
         //}
 
         [Commands.CommandCallback("votemap", Description = "Starts a vote for a map")]
-        public void StartMapVoteCommand(RunnerPlayer commandSource, string mapName) {
+        public void StartMapVoteCommand(Context ctx, string mapName) {
             var map = mapName.ToMap();
             if (map is null) {
-                commandSource.Message($"\"{mapName}\" is not a valid map!");
+                ctx.Reply($"\"{mapName}\" is not a valid map!");
                 return;
             }
-            StartVote(commandSource, $"Vote to change map to {map}", string.Join("|", MapDisplayNames), (int totalVotes, int winnerVotes, string won) => {
+            StartVote(ctx, $"Vote to change map to {map}", string.Join("|", MapDisplayNames), (int totalVotes, int winnerVotes, string won) => {
                 if (Extensions.EvalToBool(CommandsConfiguration.votemap.WinningCondition) == false) return;
                 this.Server.ChangeMap(map);
             });
         }
 
         [Commands.CommandCallback("votegamemode", Description = "Starts a vote for a gamemode")]
-        public void StartGameModeVoteCommand(RunnerPlayer commandSource, string gameModeName) {
+        public void StartGameModeVoteCommand(Context ctx, string gameModeName) {
             var mode = gameModeName.ToGameMode();
             if (mode is null) {
-                commandSource.Message($"\"{gameModeName}\" is not a valid game mode!");
+                ctx.Reply($"\"{gameModeName}\" is not a valid game mode!");
                 return;
             }
-            StartVote(commandSource, "Vote for game mode change", string.Join("|", GameModeDisplayNames), (int totalVotes, int winnerVotes, string won) => {
+            StartVote(ctx, "Vote for game mode change", string.Join("|", GameModeDisplayNames), (int totalVotes, int winnerVotes, string won) => {
                 if (Extensions.EvalToBool(CommandsConfiguration.votegamemode.WinningCondition) == false) return;
                 this.Server.ChangeGameMode(mode);
             });
         }
 
         [Commands.CommandCallback("votemaptime", Description = "Starts a vote for map time")]
-        public void StartMapTimeVoteCommand(RunnerPlayer commandSource, string dayTime) {
+        public void StartMapTimeVoteCommand(Context ctx, string dayTime) {
             MapDayNight? time = GetDayNightFromString(dayTime);
             if (time is null) {
-                commandSource.Message($"\"{dayTime}\" is not a valid time!");
+                ctx.Reply($"\"{dayTime}\" is not a valid time!");
                 return;
             }
-            StartVote(commandSource, "Vote for time change", "Day|Night", (int totalVotes, int winnerVotes, string won) => {
+            StartVote(ctx, "Vote for time change", "Day|Night", (int totalVotes, int winnerVotes, string won) => {
                 if (Extensions.EvalToBool(CommandsConfiguration.votemaptime.WinningCondition) == false) return;
                 this.Server.ChangeTime(time);
             });
         }
 
         [Commands.CommandCallback("voterestart", Description = "Starts a vote for map restart")]
-        public void StartMapRestartVoteCommand(RunnerPlayer commandSource) {
-            StartVote(commandSource, "Vote for map restart", "Yes|No", (int totalVotes, int winnerVotes, string won) => {
+        public void StartMapRestartVoteCommand(Context ctx) {
+            StartVote(ctx, "Vote for map restart", "Yes|No", (int totalVotes, int winnerVotes, string won) => {
                 if (Extensions.EvalToBool(CommandsConfiguration.voterestart.WinningCondition) == false) return;
                 this.Server.ChangeMap();
             });
         }
 
         [Commands.CommandCallback("voteban", Description = "Starts a voteban for a player")]
-        public void StartVoteBanCommand(RunnerPlayer commandSource, RunnerPlayer target, string reason) {
+        public void StartVoteBanCommand(Context ctx, RunnerPlayer target, string reason) {
             if (target is null) {
-                commandSource.Message($"Player \"{target}\" could not be found!");
+                ctx.Reply($"Player \"{target}\" could not be found!");
                 return;
             }
-            StartVote(commandSource, $"Vote to ban {target.Name.Quote()}", "Yes|No", (int totalVotes, int winnerVotes, string won) => {
+            StartVote(ctx, $"Vote to ban {target.Name.Quote()}", "Yes|No", (int totalVotes, int winnerVotes, string won) => {
                 if (Extensions.EvalToBool(CommandsConfiguration.voteban.WinningCondition) == false) return;
-                TempBans.TempBanPlayer(target, TimeSpan.FromMinutes(30), $"Votebanned by {winnerVotes} votes (reason: {reason})", "voteban", invoker: commandSource);
+                TempBans.TempBanPlayer(target, TimeSpan.FromMinutes(30), $"Votebanned by {winnerVotes} votes (reason: {reason})", "voteban", invoker: (ctx.Source as ChatSource).Invoker);
             });
         }
 
@@ -133,9 +129,9 @@ namespace Bluscream {
             return input;
         }
 
-        public void StartVote(RunnerPlayer commandSource, string text, string options, Action<int, int, string> voteEndedCallback) {
+        public void StartVote(Context ctx, string text, string options, Action<int, int, string> voteEndedCallback) {
             if (this.activeVote) {
-                commandSource.Message("There is already an active vote.");
+                ctx.Reply("There is already an active vote.");
                 return;
             }
 
@@ -144,7 +140,7 @@ namespace Bluscream {
             this.voteOptions = options.Split('|');
 
             if (this.voteOptions.Length >= 10) {
-                commandSource.Message("You can only have up to 9 options.");
+                ctx.Reply("You can only have up to 9 options.");
                 this.activeVote = false;
                 return;
             }

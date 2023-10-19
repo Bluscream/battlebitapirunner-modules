@@ -58,14 +58,14 @@ namespace Bluscream {
         #region Commands
 
         [CommandCallback("steam bans", Description = "Lists steam bans of a player", ConsoleCommand = true, Permissions = new[] { "command.steambans" })]
-        public async void GetPlayerSteamBans(RunnerPlayer commandSource, RunnerPlayer? _player = null) {
-            _player = _player ?? commandSource;
+        public async void GetPlayerSteamBans(Context ctx, RunnerPlayer? _player = null) {
+            _player = _player ?? (ctx.Source as ChatSource).Invoker;
             var response = new StringBuilder();
             if (!string.IsNullOrEmpty(_player.Name)) response.AppendLine($"Name: {_player.str()} ({_player.Name.Length} chars)");
             if (!string.IsNullOrEmpty(_player.SteamID.ToString())) {
                 var steam = await SteamApi?.GetData(_player);
                 if (steam.Bans is null) {
-                    commandSource.Message("Steam bans request failed, check connection and config!");
+                    ctx.Reply("Steam bans request failed, check connection and config!");
                     return;
                 }
                 response.AppendLine($"VAC Banned: {steam.Bans.VacBanned?.ToYesNo()} ({steam.Bans.NumberOfVacBans} times)");
@@ -74,19 +74,19 @@ namespace Bluscream {
                 response.AppendLine($"Trade Banned: {(steam.Bans.EconomyBan != "none").ToYesNo()}");
                 response.AppendLine($"Game Banned: {(steam.Bans.NumberOfGameBans > 0).ToYesNo()} ({steam.Bans.NumberOfGameBans} times)");
             }
-            commandSource.Message(response.ToString());
+            ctx.Reply(response.ToString());
         }
 
         [CommandCallback("steam player", Description = "Lists steam summary of a player", ConsoleCommand = true, Permissions = new[] { "command.steamplayer" })]
-        public async void GetPlayerSteamSummary(RunnerPlayer commandSource, RunnerPlayer? _player = null) {
-            _player = _player ?? commandSource;
+        public async void GetPlayerSteamSummary(Context ctx, RunnerPlayer? _player = null) {
+            _player = _player ?? (ctx.Source as ChatSource).Invoker;
             var response = new StringBuilder();
             if (!string.IsNullOrEmpty(_player.Name)) response.AppendLine($"BattleBit Name: {_player.str()} ({_player.Name.Length} chars)");
             if (!string.IsNullOrEmpty(_player.SteamID.ToString())) {
                 var steam = await SteamApi?.GetData(_player);
                 response.AppendLine($"Steam ID 64: {_player.SteamID}\n");
                 if (steam.Summary is null) {
-                    commandSource.Message("Steam summary request failed, check connection and config!");
+                    ctx.Reply("Steam summary request failed, check connection and config!");
                     return;
                 }
                 if (!string.IsNullOrEmpty(steam.Summary.RealName)) response.AppendLine($"Real Name: {steam.Summary.RealName?.Quote()} ({steam.Summary.RealName?.Length} chars)");
@@ -96,7 +96,7 @@ namespace Bluscream {
                 if (steam.Summary.PrimaryClanId is not null) response.AppendLine($"Primary Clan ID: {steam.Summary.PrimaryClanId}");
                 if (!string.IsNullOrEmpty(steam.Summary.AvatarHash)) response.AppendLine($"Avatar Hash: {steam.Summary.AvatarHash}");
             }
-            commandSource.Message(response.ToString());
+            ctx.Reply(response.ToString());
         }
 
         #endregion Commands

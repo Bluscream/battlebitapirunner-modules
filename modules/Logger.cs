@@ -61,10 +61,6 @@ namespace Bluscream {
         [ModuleReference]
         public Permissions.GranularPermissions? GranularPermissions { get; set; } = null!;
 
-#else
-        public dynamic? GranularPermissions { get; set; }
-#endif
-
         #endregion References
 
         #region Fields

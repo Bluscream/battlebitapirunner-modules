@@ -60,13 +60,13 @@ public class GameModeRotation : BattleBitModule {
     [ModuleReference]
     public CommandHandler CommandHandler { get; set; }
 
-    [CommandCallback("GameModes", Description = "Shows the current gamemode rotation", ConsoleCommand = true)]
-    public void GameModes(RunnerPlayer commandSource) {
+    [CommandCallback("rotation mode", Description = "Shows the current gamemode rotation", ConsoleCommand = true)]
+    public string GameModes(Context ctx) {
         string modes = "";
         foreach (var mode in ActiveGamemodes) {
             modes += mode + ", ";
         }
-        Server.MessageToPlayer(commandSource, $"The current Gamemode rotation is: {modes}");
+        return $"The current Gamemode rotation is: {modes}";
     }
 
     public static string? FindGameMode(string Gamemode) {

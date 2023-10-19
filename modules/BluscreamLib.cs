@@ -319,11 +319,11 @@ namespace Bluscream {
         //public static bool HasOnlyTheseRoles(this RunnerPlayer player, Permissions.PlayerPermissions permissionsModule, Roles roles) => player.HasOnlyTheseRoles(permissionsModule, roles);
         public static List<string> GetPlayerPermissions(this RunnerPlayer player, Permissions.GranularPermissions permissionsModule) => permissionsModule.GetPlayerPermissions(player.SteamID).ToList();
         public static List<string> GetAllPlayerPermissions(this RunnerPlayer player, Permissions.GranularPermissions permissionsModule) => permissionsModule.GetAllPlayerPermissions(player.SteamID).ToList();
-        public static bool HasAnyPermissionOf(this RunnerPlayer player, Permissions.GranularPermissions permissionsModule, List<string> needsAnyPermission) => player.GetAllPlayerPermissions(permissionsModule).ContainsAny(values: needsAnyPermission.ToArray());
-        public static bool HasAllPermissionsOf(this RunnerPlayer player, Permissions.GranularPermissions permissionsModule, List<string> needsAllPermissions) => player.GetAllPlayerPermissions(permissionsModule).ContainsAll(values: needsAllPermissions.ToArray());
+        public static bool HasAnyPermissionOf(this RunnerPlayer player, Permissions.GranularPermissions permissionsModule, List<string> needsAnyPermission) => player.GetAllPlayerPermissions(permissionsModule).ContainsAny(needsAnyPermission.ToArray());
+        public static bool HasAllPermissionsOf(this RunnerPlayer player, Permissions.GranularPermissions permissionsModule, List<string> needsAllPermissions) => player.GetAllPlayerPermissions(permissionsModule).ContainsAll(needsAllPermissions.ToArray());
         public static List<string> GetPlayerGroups(this RunnerPlayer player, Permissions.GranularPermissions permissionsModule) => permissionsModule.GetPlayerGroups(player.SteamID).ToList();
-        public static bool HasAnyGroupOf(this RunnerPlayer player, Permissions.GranularPermissions permissionsModule, List<string> needsAnyGroup) => player.GetPlayerGroups(permissionsModule).ContainsAny(values: needsAnyGroup.ToArray());
-        public static bool HasAllGroupsOf(this RunnerPlayer player, Permissions.GranularPermissions permissionsModule, List<string> needsAllGroups) => player.GetPlayerGroups(permissionsModule).ContainsAll(values: needsAllGroups.ToArray());
+        public static bool HasAnyGroupOf(this RunnerPlayer player, Permissions.GranularPermissions permissionsModule, List<string> needsAnyGroup) => player.GetPlayerGroups(permissionsModule).ContainsAny(needsAnyGroup.ToArray());
+        public static bool HasAllGroupsOf(this RunnerPlayer player, Permissions.GranularPermissions permissionsModule, List<string> needsAllGroups) => player.GetPlayerGroups(permissionsModule).ContainsAll(needsAllGroups.ToArray());
         #endregion
         public static void SayToTeamChat(this RunnerPlayer player, RunnerServer server, string message) => server.SayToTeamChat(player.Team, message);
         public static void SayToSquadChat(this RunnerPlayer player, RunnerServer server, string message) => server.SayToSquadChat(player.Team, player.SquadName, message);
@@ -353,7 +353,7 @@ namespace Bluscream {
         #region Map
         public static void ChangeTime(this RunnerServer Server, MapDayNight? dayNight = null) => ChangeMap(Server, dayNight: dayNight);
         public static void ChangeGameMode(this RunnerServer Server, GameModeInfo? gameMode = null, MapDayNight? dayNight = null, MapSize mapSize = MapSize.None) => ChangeMap(Server, gameMode: gameMode, dayNight: dayNight, mapSize: mapSize);
-        public static void ChangeMap(this RunnerServer Server, MapInfo? map = null, GameModeInfo? gameMode = null, string? dayNight = null, MapSize mapSize = MapSize.None) => ChangeMap(Server, map, gameMode, dayNight?.ParseDayNight(), mapSize: mapSize);
+        //public static void ChangeMap(this RunnerServer Server, MapInfo? map = null, GameModeInfo? gameMode = null, string? dayNight = null, MapSize mapSize = MapSize.None) => ChangeMap(Server, map, gameMode, dayNight?.ParseDayNight(), mapSize: mapSize);
         public static void ChangeMap(this RunnerServer Server, MapInfo? map = null, GameModeInfo? gameMode = null, MapDayNight? dayNight = null, MapSize mapSize = MapSize.None) {
             map = map ?? MapInfo.FromName(Server.Map);
             gameMode = gameMode ?? GameModeInfo.FromName(Server.Gamemode);
@@ -1286,7 +1286,7 @@ namespace Bluscream {
             public virtual long? WarningThreshold { get; set; }
         }
     }
-    public struct ModuleInfo {
+    public class ModuleInfo {
         public bool? Loaded { get; set; }
         public bool? Enabled { get; set; }
         public string? Name { get; set; }
@@ -1344,7 +1344,7 @@ namespace Bluscream {
             }
         }
     }
-    public struct DiscordEmbed {
+    public class DiscordEmbed {
         public string Title { get; set; }
         public string Description { get; set; }
         public List<EmbedField> Fields { get; set; }
