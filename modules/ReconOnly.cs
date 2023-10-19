@@ -9,8 +9,10 @@ using System.Threading.Tasks;
 // Module for BattleBit Modular API
 //
 namespace ReconOnly {
+
     [Module("This module forces players to become the Recon (Sniper) role.", "1.2")]
     public class ReconOnly : BattleBitModule {
+
         // Allow players to select Recon even without being in a squad.
         public override Task OnPlayerConnected(RunnerPlayer player) {
             player.SetNewRole(GameRole.Recon);
@@ -46,7 +48,6 @@ namespace ReconOnly {
             return request;
         }
 
-
         // Customize server settings.
         public override Task OnConnected() {
             this.Server.ServerSettings.SquadRequiredToChangeRole = false;
@@ -54,10 +55,11 @@ namespace ReconOnly {
             this.Server.ServerSettings.CanVoteNight = false;
             return Task.CompletedTask;
         }
+
         //
         // Sets tickets to 2000 on round start. (Since recons are slow at killing)
         //
-        public async override Task OnRoundStarted() {
+        public override async Task OnRoundStarted() {
             this.Server.RoundSettings.MaxTickets = 2000;
             await base.OnRoundStarted();
         }

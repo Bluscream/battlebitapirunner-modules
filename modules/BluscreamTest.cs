@@ -3,10 +3,12 @@ using BBRAPIModules;
 using System.Threading.Tasks;
 
 namespace Bluscream {
+
     [RequireModule(typeof(Bluscream.BluscreamLib))]
     [RequireModule(typeof(BattleBitBaseModules.RichText))]
     [Module("Configure the loading screen text of your server", "1.0.0")]
     public class BluscreamTest : BattleBitModule {
+
         [ModuleReference]
         public ConfigurationInstance Configuration { get; set; } = null!;
 
@@ -19,8 +21,8 @@ namespace Bluscream {
         public override Task OnPlayerJoiningToServer(ulong steamID, PlayerJoiningArguments args) {
             return Task.CompletedTask;
         }
+
         public class ConfigurationInstance : ModuleConfiguration {
         }
     }
-
 }

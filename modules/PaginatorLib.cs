@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace BBRModules {
+
     [Module("A library to simplify paginating strings, lists, and parameters with a specifiable page size.", "1.0.0")]
     public class PaginatorLib : BattleBitModule {
         public int PageNum { get; set; } = 0;

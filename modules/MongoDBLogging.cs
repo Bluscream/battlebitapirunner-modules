@@ -12,11 +12,11 @@ using System.Threading.Tasks;
 /// <summary>
 /// Author: @Axiom
 /// Dependencies: MongoDB.Driver.Core, MongoDB.Driver, MongoDB.Bson, MongoDB.Libmongocrypt, DnsClient
-/// 1.1.4 Changes: 
+/// 1.1.4 Changes:
 ///- {"server_ip", this.Server.GameIP.ToString()} & {"server", this.Server.ServerName} removed from all queries as you are storing at server level anyway. Use following to drop from your tables (if you want to)
-///- Refactored the OnConnected, OnDisconnected, OnPlayerConnected, OnPlayerDisconnected because it was just repeating itself. 
-///- OnPlayerReported: "status" has been changed to "pending_action" true/false, it should have been a bool in the first place. "Resolution_approach" is now string.Empty instead of "". 
-///- [optional addition] If you want to log every action your staff are taking in-game through chat commands, see additional example below. If using with ModeratorTools, just import it into the module using the usual [RequireModule(typeof(MongoDBLogging.MongoDBLogging))] && public MongoDBLogging.MongoDBLogging? MongoDBLogging { get; set; }  
+///- Refactored the OnConnected, OnDisconnected, OnPlayerConnected, OnPlayerDisconnected because it was just repeating itself.
+///- OnPlayerReported: "status" has been changed to "pending_action" true/false, it should have been a bool in the first place. "Resolution_approach" is now string.Empty instead of "".
+///- [optional addition] If you want to log every action your staff are taking in-game through chat commands, see additional example below. If using with ModeratorTools, just import it into the module using the usual [RequireModule(typeof(MongoDBLogging.MongoDBLogging))] && public MongoDBLogging.MongoDBLogging? MongoDBLogging { get; set; }
 /// 1.1.3 changes: Removed newtonsoft dependency
 /// 1.1.2 changes: Added the ability to turn on and off Discord Webhooks for Reported players, by default, is disabled. If you enable it, IT WILL make sure you have a webhookURL. ALso added a queue system for both Discord and Mongo.
 /// 1.0.3 changes: Added Server IP Address to Logs, added a "pending action" tack onto the PlayerReported state so that server owners can intergrate means of updating it to "actioned" with "resolution_approach".
@@ -24,6 +24,7 @@ using System.Threading.Tasks;
 /// </summary>
 
 namespace MongoDBLogging {
+
     [Module("Provides the means for users to leverage MongoDB for Logging certain actions within their BattleBit Server. The module has out-of-the-box for ChatLogs, ConnectionLogs, PlayerReportLogs, ServerAPI logs", "1.1.4")]
     public class MongoDBLogging : BattleBitModule {
         public MongoDBLoggingConfiguration Configuration { get; set; }
@@ -31,12 +32,11 @@ namespace MongoDBLogging {
         private IMongoCollection<BsonDocument> PlayerConnectionLogs;
         private IMongoCollection<BsonDocument> ChatLogs;
         private IMongoCollection<BsonDocument> PlayerReportLogs;
-        HttpClient client = new HttpClient();
+        private HttpClient client = new HttpClient();
         private string DiscordWebhook;
         private bool DiscordWebhookEnabled;
         private Queue<BsonDocument> FailedLogQueue = new Queue<BsonDocument>();
         private Queue<string> FailedDiscordMessagesQueue = new Queue<string>();
-
 
         public override void OnModulesLoaded() {
             // Configuration Validation
@@ -111,6 +111,7 @@ namespace MongoDBLogging {
         }
 
         #region Server API Connection Logs
+
         public override async Task OnConnected() {
             await LogConnectionTypeAsync("Connected");
         }
@@ -127,9 +128,11 @@ namespace MongoDBLogging {
             };
             await InsertLogAsync(ServerAPILogs, doc);
         }
-        #endregion
+
+        #endregion Server API Connection Logs
 
         #region Player Connection Logs
+
         public override async Task OnPlayerConnected(RunnerPlayer player) {
             await LogPlayerConnectionAsync(player, "Connected");
         }
@@ -150,7 +153,8 @@ namespace MongoDBLogging {
             };
             await InsertLogAsync(PlayerConnectionLogs, doc);
         }
-        #endregion
+
+        #endregion Player Connection Logs
 
         public override async Task<bool> OnPlayerTypedMessage(RunnerPlayer player, ChatChannel channel, string msg) {
             if (msg.Length > 0) {
@@ -182,7 +186,6 @@ namespace MongoDBLogging {
                 {"timestamp", DateTime.UtcNow}
             };
             await InsertLogAsync(PlayerReportLogs, doc);
-
 
             if (DiscordWebhookEnabled) {
                 var ReportID = doc["_id"].ToString();
@@ -222,13 +225,13 @@ namespace MongoDBLogging {
                 }
             }
         }
+
         public async Task PeriodicDiscordRetry() {
             while (true) {
                 await RetryFailedDiscordMessages();
                 await Task.Delay(5 * 60 * 1000);
             }
         }
-
     }
 
     public class MongoDBLoggingConfiguration : ModuleConfiguration {

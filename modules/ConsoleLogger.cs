@@ -40,6 +40,4 @@ public class ConsoleLogger : BattleBitModule {
         Console.WriteLine($"[Report] {from.fullstr()} reported {to.fullstr()} for {reason}: ({additional})");
         return Task.CompletedTask;
     }
-
-
 }

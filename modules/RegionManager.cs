@@ -1,4 +1,3 @@
-
 using BattleBitAPI.Common;
 using BBRAPIModules;
 using RegionManager;
@@ -28,17 +27,16 @@ namespace RegionManager {
     }
 
     public class Region {
-
         public RegionFlags Flags { get; set; } = new RegionFlags();
-
 
         // Square
         public Vector3 Start { get; set; }
-        public Vector3 End { get; set; }
 
+        public Vector3 End { get; set; }
 
         // Circle
         public Vector3 Center { get; set; }
+
         public double Radius { get; set; }
         public RegionShape Shape { get; set; }
     }
@@ -51,7 +49,6 @@ namespace RegionManager {
     [Module("RegionManager", "1.0.0")]
     public class RegionManager : BattleBitModule {
         public RegionManagerConfiguration ServerConfig { get; set; }
-
 
         public override void OnModulesLoaded() {
             InitializeRegions();
@@ -114,7 +111,6 @@ namespace RegionManager {
             return new List<RunnerPlayer>(); // No players in the region
         }
 
-
         public int GetPlayerCountInRegion(Region region) {
             var playersInRegion = GetPlayersInRegion(region);
             return playersInRegion.Count;
@@ -158,14 +154,15 @@ namespace RegionManager {
             switch (region.Shape) {
                 case RegionShape.Square:
                     return IsInsideSquareRegion(region, position);
+
                 case RegionShape.Circle:
                     return IsInsideCircleRegion(region, position);
+
                 default:
                     return false;
             }
-
-
         }
+
         private bool IsInsideSquareRegion(Region region, Vector3 position) {
             return position.X >= region.Start.X && position.X <= region.End.X &&
                    position.Y >= region.Start.Y && position.Y <= region.End.Y &&
@@ -201,9 +198,7 @@ namespace RegionManager {
                     CanBleed = true
                 }
             });
-
         }
-
     }
 }
 

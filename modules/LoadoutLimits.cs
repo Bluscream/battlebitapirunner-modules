@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 
 namespace BBRModules {
+
     [Module("A module that disallows spawning with certain weapons/gadget, also sending all items they cannot use when they try.", "1.0.0")]
     [RequireModule(typeof(PlaceholderLib))]
     public class LoadoutLimits : BattleBitModule {
@@ -71,7 +72,6 @@ namespace BBRModules {
 
             Configuration.AllowedItems.Add("G3", true);
             ServerConfiguration.AllowedItems.Add("G3", null);
-
 
             foreach (var memberInfo in gadgets) {
                 if (memberInfo.MemberType == MemberTypes.Field) {

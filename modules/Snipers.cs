@@ -10,8 +10,10 @@ using System.Threading.Tasks;
 //
 
 namespace mocfunky {
+
     [Module("Snipers", "1.1.0")]
     public class Snipers : BattleBitModule {
+
         //
         // V - This allows users to select Recon even while not in a squad. - V
         //
@@ -20,12 +22,14 @@ namespace mocfunky {
             player.SetNewRole(GameRole.Recon);
             return Task.CompletedTask;
         }
+
         //
         // V - This denies player from changing roles to anything but Recon. - V
         //
         public override async Task<bool> OnPlayerRequestingToChangeRole(RunnerPlayer player, GameRole requestedRole) {
             return GameRole.Recon == requestedRole;
         }
+
         //
         // V - Switch the player's role to Recon when they leave or are kicked from a squad - V
         //
@@ -33,6 +37,7 @@ namespace mocfunky {
             player.SetNewRole(GameRole.Recon);
             return Task.CompletedTask;
         }
+
         //
         // V - Switch the player's role to Recon when they join or create a squad. V
         //

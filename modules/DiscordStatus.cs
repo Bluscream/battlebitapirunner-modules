@@ -7,6 +7,7 @@ using System;
 using System.Threading.Tasks;
 
 namespace DiscordStatus;
+
 [Module("Connects each server to a Discord Bot, and updates the Discord Bot's status with the server's player-count and map information.", "1.3")]
 public class DiscordStatus : BattleBitModule {
     public DiscordConfiguration Configuration { get; set; }
@@ -22,6 +23,7 @@ public class DiscordStatus : BattleBitModule {
         Task.Run(UpdateTimer).ContinueWith(t => Console.WriteLine($"Error during Discord Status update {t.Exception}"), TaskContinuationOptions.OnlyOnFaulted);
         return Task.CompletedTask;
     }
+
     private async void UpdateTimer() {
         while (this.IsLoaded && this.Server.IsConnected) {
             if (discordReady)
@@ -54,7 +56,6 @@ public class DiscordStatus : BattleBitModule {
         try {
             await discordClient.StopAsync();
         } catch (Exception) {
-
         }
     }
 
@@ -71,7 +72,6 @@ public class DiscordStatus : BattleBitModule {
         try {
             await discordClient.SetGameAsync(status);
         } catch (Exception) {
-
         }
     }
 }

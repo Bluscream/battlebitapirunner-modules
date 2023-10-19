@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace Bluscream;
+
 [RequireModule(typeof(Bluscream.SteamApi))]
 [Module("Kick users with VAC bans", "1.1.0")]
 public class VacLimiter : BattleBitModule {
@@ -12,6 +13,7 @@ public class VacLimiter : BattleBitModule {
 
     [ModuleReference]
     public dynamic? GranularPermissions { get; set; }
+
     [ModuleReference]
     public Bluscream.SteamApi SteamApi { get; set; } = null!;
 

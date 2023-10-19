@@ -4,11 +4,13 @@ using System;
 using System.Net;
 
 namespace Bluscream {
+
     [RequireModule(typeof(Bluscream.BluscreamLib))]
     [RequireModule(typeof(Bluscream.GeoApi))]
     [RequireModule(typeof(Commands.CommandHandler))]
     [Module("Example of using the GeoApi", "2.0.2")]
     public class GeoApiExample : BattleBitModule {
+
         public static ModuleInfo ModuleInfo = new() {
             Name = "GeoApiExample",
             Description = "Example usage of the GeoApi module",
@@ -20,25 +22,30 @@ namespace Bluscream {
         };
 
         #region References
+
         [ModuleReference]
         public Commands.CommandHandler CommandHandler { get; set; }
 
         [ModuleReference]
-#if DEBUG
         public Permissions.PlayerPermissions? PlayerPermissions { get; set; }
+
 #else
         public dynamic? PlayerPermissions { get; set; }
 #endif
 
         [ModuleReference]
         public Bluscream.GeoApi? GeoApi { get; set; }
-        #endregion
+
+        #endregion References
 
         #region Methods
+
         private static void Log(object _msg, string source = "GeoApiExample") => BluscreamLib.Log(_msg, source);
-        #endregion
+
+        #endregion Methods
 
         #region Events
+
         public override void OnModulesLoaded() {
             if (GeoApi is null) {
                 Log($"GeoApi could not be found! Is it installed?");
@@ -59,6 +66,7 @@ namespace Bluscream {
             }
             return System.Threading.Tasks.Task.CompletedTask;
         }
+
         public override System.Threading.Tasks.Task OnPlayerConnected(BBRAPIModules.RunnerPlayer player) {
             if (GeoApi is not null) {
                 System.Threading.Tasks.Task.Delay(System.TimeSpan.FromSeconds(1)).Wait();
@@ -67,6 +75,7 @@ namespace Bluscream {
             }
             return System.Threading.Tasks.Task.CompletedTask;
         }
+
         public override System.Threading.Tasks.Task OnPlayerDisconnected(BBRAPIModules.RunnerPlayer player) {
             if (GeoApi is not null) {
                 var geoData = player.GetGeoData()?.Result;
@@ -74,9 +83,11 @@ namespace Bluscream {
             }
             return System.Threading.Tasks.Task.CompletedTask;
         }
-        #endregion
+
+        #endregion Events
 
         #region Commands
+
         [CommandCallback("playerinfo", Description = "Displays info about a player", ConsoleCommand = true, Permissions = new[] { "commands.playerinfo" })]
         public void GetPlayerInfoChatCommand(BBRAPIModules.RunnerPlayer commandSource, BBRAPIModules.RunnerPlayer? player = null) {
             if (GeoApi is null) { commandSource.Message("GeoApi not found, do you have it installed?"); return; }
@@ -97,7 +108,7 @@ namespace Bluscream {
             }
             commandSource.Message(response.ToString());
         }
-        #endregion
 
+        #endregion Commands
     }
 }

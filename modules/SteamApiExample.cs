@@ -5,11 +5,13 @@ using System;
 using System.Text;
 
 namespace Bluscream {
+
     [RequireModule(typeof(Bluscream.BluscreamLib))]
     [RequireModule(typeof(Bluscream.SteamApi))]
     [RequireModule(typeof(Commands.CommandHandler))]
     [Module("Example usage of the SteamApi module", "2.0.0")]
     public class SteamApiExample : BattleBitModule {
+
         public static ModuleInfo ModuleInfo = new() {
             Name = "SteamApiExample",
             Description = "Example usage of the SteamApi module",
@@ -21,17 +23,23 @@ namespace Bluscream {
         };
 
         #region References
+
         [ModuleReference]
         public CommandHandler CommandHandler { get; set; } = null!;
+
         [ModuleReference]
         public Bluscream.SteamApi SteamApi { get; set; } = null!;
-        #endregion
+
+        #endregion References
 
         #region Methods
+
         // private static void Log(object _msg, string source = "SteamApiExample") => BluscreamLib.Log(_msg, source);
-        #endregion
+
+        #endregion Methods
 
         #region Events
+
         public override void OnModulesLoaded() {
             if (SteamApi is null) {
                 this.Logger.Error($"SteamApi could not be found! Is it installed?");
@@ -44,9 +52,11 @@ namespace Bluscream {
         private void SteamApi_OnDataReceived(RunnerPlayer player, SteamWebApi.Response steamData) {
             this.Logger.Debug($"Recieved Steam Data for {player.fullstr()}: {steamData.ToJson(false)}");
         }
-        #endregion
+
+        #endregion Events
 
         #region Commands
+
         [CommandCallback("steam bans", Description = "Lists steam bans of a player", ConsoleCommand = true, Permissions = new[] { "command.steambans" })]
         public async void GetPlayerSteamBans(RunnerPlayer commandSource, RunnerPlayer? _player = null) {
             _player = _player ?? commandSource;
@@ -88,6 +98,7 @@ namespace Bluscream {
             }
             commandSource.Message(response.ToString());
         }
-        #endregion
+
+        #endregion Commands
     }
 }

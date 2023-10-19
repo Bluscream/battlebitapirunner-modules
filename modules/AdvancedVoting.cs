@@ -8,10 +8,12 @@ using System.Threading.Tasks;
 using static Bluscream.BluscreamLib;
 
 namespace Bluscream {
+
     [Module("More chat voting commands", "2.0.0")]
     [RequireModule(typeof(BluscreamLib))]
     [RequireModule(typeof(Commands.CommandHandler))]
     public class AdvancedVoting : BattleBitModule {
+
         public static ModuleInfo ModuleInfo = new() {
             Name = "Bluscream's Library",
             Description = "Generic library for common code used by multiple modules.",
@@ -21,31 +23,41 @@ namespace Bluscream {
             UpdateUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/raw/master/modules/BluscreamLib.cs"),
             SupportUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/issues/new?title=BluscreamLib")
         };
+
         private bool activeVote = false;
         private string voteText = "";
         private string[] voteOptions = new string[0];
         private Dictionary<ulong, int> votes = new();
         private DateTime endOfVote = DateTime.MinValue;
         public AdvancedVotingConfiguration Configuration { get; set; }
+
         [ModuleReference]
         public dynamic? RichText { get; set; }
+
         [ModuleReference]
         public Commands.CommandHandler CommandHandler { get; set; }
+
         [ModuleReference]
         public TempBans TempBans { get; set; }
+
         [ModuleReference]
-#if DEBUG
         public Permissions.PlayerPermissions? PlayerPermissions { get; set; }
+
 #else
         public dynamic? PlayerPermissions { get; set; }
 #endif
         public AdvancedVotingCommandsConfiguration CommandsConfiguration { get; set; }
+
         #region Events
+
         public override void OnModulesLoaded() {
             this.CommandHandler.Register(this);
         }
-        #endregion
+
+        #endregion Events
+
         #region Commands
+
         //[Commands.CommandCallback("vote", Description = "Votes for an option", AllowedRoles = Roles.Moderator)]
         //public void StartVoteCommand(RunnerPlayer commandSource, string text, string options) {
         //    StartVote(commandSource, text, options, (int totalVotes, int winnerVotes, string won) => {});
@@ -109,14 +121,18 @@ namespace Bluscream {
                 TempBans.TempBanPlayer(target, TimeSpan.FromMinutes(30), $"Votebanned by {winnerVotes} votes (reason: {reason})", "voteban", invoker: commandSource);
             });
         }
-        #endregion
+
+        #endregion Commands
+
         #region Internals
+
         public static string ParseVoteCondition(string input, int winnerVotes, int totalVotes, RunnerServer server) {
             input = input.Replace("{winnerVotes}", winnerVotes.ToString());
             input = input.Replace("{totalVotes}", totalVotes.ToString());
             input = input.Replace("{allPlayers}", server.AllPlayers.Count().ToString());
             return input;
         }
+
         public void StartVote(RunnerPlayer commandSource, string text, string options, Action<int, int, string> voteEndedCallback) {
             if (this.activeVote) {
                 commandSource.Message("There is already an active vote.");
@@ -153,6 +169,7 @@ namespace Bluscream {
 
             Task.Run(() => voteStartedHandler(voteEndedCallback));
         }
+
         private void voteStartedHandler(Action<int, int, string> voteEndedCallback) {
             while (this.IsLoaded && this.Server.IsConnected && this.activeVote) {
                 if (DateTime.Now > this.endOfVote) {
@@ -184,9 +201,9 @@ namespace Bluscream {
             var sum = voteCounts.Sum();
             this.Server.SayToAllChat($"{this.RichText?.Size(125)}The vote has ended!{Environment.NewLine}{this.RichText?.FromColorName("yellow")}{won}{this.RichText?.Color()} won with {maxVotes} votes.");
 
-
             Task.Run(() => voteEndedCallback(sum, maxVotes, won));
         }
+
         public override async Task<bool> OnPlayerTypedMessage(RunnerPlayer player, ChatChannel channel, string msg) {
             if (!this.activeVote) {
                 return true;
@@ -222,13 +239,15 @@ namespace Bluscream {
 
             return true;
         }
-        #endregion
+
+        #endregion Internals
     }
 
     public class VoteCommandConfiguration {
         public string Description { get; set; }
         public string WinningCondition { get; set; }
     }
+
     public class AdvancedVotingCommandsConfiguration : ModuleConfiguration {
         public VoteCommandConfiguration votemap { get; set; } = new VoteCommandConfiguration() { Description = "Voting for map", WinningCondition = "{winnerVotes} > ({allPlayers} / 2)" };
         public VoteCommandConfiguration votegamemode { get; set; } = new VoteCommandConfiguration() { Description = "Voting for game mode", WinningCondition = "{winnerVotes} > ({allPlayers} / 2)" };
@@ -236,9 +255,9 @@ namespace Bluscream {
         public VoteCommandConfiguration voterestart { get; set; } = new VoteCommandConfiguration() { Description = "Voting for map restart", WinningCondition = "{winnerVotes} > ({allPlayers} / 2)" };
         public VoteCommandConfiguration voteban { get; set; } = new VoteCommandConfiguration() { Description = "Voting for tempban", WinningCondition = "{winnerVotes} > ({allPlayers} / 2)" };
     }
+
     public class AdvancedVotingConfiguration : ModuleConfiguration {
         public int VoteDuration { get; set; } = 60;
         public TimeSpan VoteBanDuration { get; set; } = TimeSpan.FromMinutes(30);
-
     }
 }

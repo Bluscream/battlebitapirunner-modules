@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 
 namespace MariaDBLogging {
+
     [Module("", "")]
     public class MariaDBLogging : BattleBitModule {
         public MariaDBLoggingConfiguration Configuration { get; set; }

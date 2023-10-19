@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace BattleBitAPI.Features {
+
     [Module("A library for placeholders using {placeholder}. Supports color hexes color endings. ({#hex}, {/})", "1.1.0")]
     public class PlaceholderLib : BattleBitModule {
-
         private readonly Regex re = new Regex(@"\{([^\}]+)\}", RegexOptions.Compiled);
 
         public string text { get; set; }

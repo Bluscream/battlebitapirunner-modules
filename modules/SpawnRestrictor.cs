@@ -9,11 +9,10 @@ using System.Threading.Tasks;
 namespace Restrictor;
 
 [Module("This module will restrict the spawning and entering of certain assets based on the number of players in the server. It will reevaluate the spawning rules every time a player connects or disconnects.", "1.0.0")]
-
 public class SpawnRestrictor : BattleBitModule {
     public SpawnRestrictorConfiguration Configuration { get; set; } = null!;
 
-    readonly Dictionary<string, object> SpawningRuleMap = new Dictionary<string, object>
+    private readonly Dictionary<string, object> SpawningRuleMap = new Dictionary<string, object>
     {
         { "Flags", SpawningRule.Flags },
         { "SquadMates", SpawningRule.SquadMates },
@@ -26,7 +25,7 @@ public class SpawnRestrictor : BattleBitModule {
         { "RallyPoints", SpawningRule.RallyPoints }
     };
 
-    readonly Dictionary<string, object> VehicleRuleMap = new Dictionary<string, object>
+    private readonly Dictionary<string, object> VehicleRuleMap = new Dictionary<string, object>
     {
         { "Tanks", VehicleType.Tank },
         { "Transports", VehicleType.Transport },

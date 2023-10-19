@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace Modules {
+
     [Module("Advertise your discord, patreon, etc at the end of a round.", "1.0.0")]
     public class RoundEndAdvertise : BattleBitModule {
         public REAConfig Configuration { get; set; } = null!;
@@ -20,12 +21,15 @@ namespace Modules {
                 case "AnnounceLong":
                     Server.AnnounceLong(message);
                     break;
+
                 case "AnnounceShort":
                     Server.AnnounceShort(message);
                     break;
+
                 case "Chat":
                     Server.SayToAllChat(message);
                     break;
+
                 case "Timed":
                     int index = 0;
                     List<RunnerPlayer> players = new(Server.AllPlayers);

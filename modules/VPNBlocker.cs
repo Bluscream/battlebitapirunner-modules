@@ -5,12 +5,14 @@ using System.Collections.Generic;
 using System.Net;
 
 namespace Bluscream {
+
     [RequireModule(typeof(Bluscream.BluscreamLib))]
     [RequireModule(typeof(Bluscream.GeoApi))]
     [RequireModule(typeof(Commands.CommandHandler))]
     [RequireModule(typeof(Permissions.GranularPermissions))]
     [Module("Using the GeoApi to block certain players from joining", "2.0.2")]
     public class VPNBlocker : BattleBitModule {
+
         public static ModuleInfo ModuleInfo = new() {
             Name = "VPNBlocker",
             Description = "Using the GeoApi to block certain players from joining",
@@ -22,6 +24,7 @@ namespace Bluscream {
         };
 
         #region References
+
         [ModuleReference]
         public Commands.CommandHandler CommandHandler { get; set; } = null!;
 
@@ -30,16 +33,20 @@ namespace Bluscream {
 
         [ModuleReference]
         public Bluscream.GeoApi GeoApi { get; set; } = null!;
-        #endregion
+
+        #endregion References
 
         #region Enums
+
         public enum BlockMode {
             Blacklist,
             Whitelist,
         }
-        #endregion
+
+        #endregion Enums
 
         #region Methods
+
         public string FormatString(string format, RunnerPlayer player, IpApi.Response geoData) {
             return format.
                 Replace("{geoData.Isp}", geoData.Isp).
@@ -49,15 +56,18 @@ namespace Bluscream {
                 Replace("{player.SteamID}", player.SteamID.ToString()).
                 Replace("{player.IP}", player.IP.ToString());
         }
+
         public bool? CheckStringListEntry(BlockListConfiguration config, string entry) {
             switch (Enum.Parse(typeof(BlockMode), config.BlockMode)) {
                 case BlockMode.Blacklist:
                     return config.List.Contains(entry);
+
                 case BlockMode.Whitelist:
                     return !config.List.Contains(entry);
             }
             return null;
         }
+
         public bool CheckWhitelistPermissions(RunnerPlayer player, BlockConfiguration config) {
             //Log($"CheckWhitelistRoles({player.fullstr()}, {config.ToJson()})");
             if (GranularPermissions is not null && player.HasAnyPermissionOf(GranularPermissions, config.WhitelistedPermissions)) {
@@ -66,6 +76,7 @@ namespace Bluscream {
             }
             return false;
         }
+
         public bool CheckPlayers(IEnumerable<RunnerPlayer> players, IpApi.Response geoData) {
             foreach (var player in players) {
                 //Log($"CheckPlayer({player.fullstr()}, {geoData.ToJson()})");
@@ -85,11 +96,13 @@ namespace Bluscream {
             }
             return false;
         }
+
         public void ToggleBoolEntry(BBRAPIModules.RunnerPlayer commandSource, BlockConfiguration config) {
             config.Enabled = !config.Enabled;
             commandSource.Message($"{config.Name} is now {config.Enabled}");
             Config.Save();
         }
+
         public void ToggleStringListEntry(BBRAPIModules.RunnerPlayer commandSource, BlockListConfiguration config, string? entry = null) {
             if (string.IsNullOrWhiteSpace(entry)) {
                 commandSource.Message($"{config.List.Count} {config.BlockMode}ed {config.Name}:\n\n" + string.Join(", ", config.List));
@@ -105,9 +118,11 @@ namespace Bluscream {
             }
             Config.Save();
         }
-        #endregion
+
+        #endregion Methods
 
         #region Events
+
         public override void OnModulesLoaded() {
             if (GeoApi is null) {
                 this.Logger.Info($"GeoApi could not be found! Is it installed?");
@@ -120,9 +135,11 @@ namespace Bluscream {
         private void GeoApi_OnDataReceived(IPAddress ip, IpApi.Response geoData) {
             CheckPlayers(this.Server.GetPlayersByIp(ip), geoData);
         }
-        #endregion
+
+        #endregion Events
 
         #region Commands
+
         [CommandCallback("blockplayer", Description = "Toggles blocking for a specific player's item", ConsoleCommand = true, Permissions = new[] { "commands.blockplayer" })]
         public void ToggleBlockPlayerCommand(BBRAPIModules.RunnerPlayer commandSource, RunnerPlayer target, string list = "") {
             var geoData = target.GetGeoData()?.Result;
@@ -138,6 +155,7 @@ namespace Bluscream {
                     commandSource.Message("Available options:\n\nisp, continent, country"); break;
             }
         }
+
         [CommandCallback("block", Description = "Toggles blocking for a specific item", ConsoleCommand = true, Permissions = new[] { "commands.block" })]
         public void ToggleBlockCommand(BBRAPIModules.RunnerPlayer commandSource, string? list = null, string? entry = null) {
             if (list is null) {
@@ -171,21 +189,25 @@ namespace Bluscream {
                     commandSource.Message("Available options:\n\nproxy, server, mobile, failed, isp, continent, country"); break;
             }
         }
-        #endregion
 
+        #endregion Commands
 
         #region Configuration
+
         public class BlockListConfiguration : BlockConfiguration {
             public string BlockMode { get; set; } = "Blacklist";
             public List<string> List { get; set; } = new List<string>();
         }
+
         public class BlockConfiguration {
             public string Name = string.Empty;
             public bool Enabled { get; set; } = false;
             public string KickMessage { get; set; } = "Kicked by VPNBlocker!";
             public List<string> WhitelistedPermissions { get; set; } = new() { "vpnblocker.bypass" };
         }
+
         public Configuration Config { get; set; } = null!;
+
         public class Configuration : ModuleConfiguration {
             public TimeSpan FailTimeout { get; set; } = TimeSpan.FromMinutes(1);
             public BlockConfiguration BlockProxies { get; set; } = new BlockConfiguration() { Name = "BlockProxies", Enabled = true, WhitelistedPermissions = new() { "vpnblocker.bypass", "vpnblocker.bypass.proxy" }, KickMessage = "Proxies and VPNs are not allowed on this server, disable your VPN and try again!" };
@@ -196,6 +218,7 @@ namespace Bluscream {
             public BlockListConfiguration Continents { get; set; } = new BlockListConfiguration() { Name = "Continents", Enabled = true, WhitelistedPermissions = new() { "vpnblocker.bypass", "vpnblocker.bypass.continent" }, KickMessage = "Sorry, your continent \"{geoData.Continent}\" is not allowed on this server!" };
             public BlockListConfiguration Countries { get; set; } = new BlockListConfiguration() { Name = "Countries", Enabled = true, WhitelistedPermissions = new() { "vpnblocker.bypass", "vpnblocker.bypass.country" }, KickMessage = "Sorry, your country \"{geoData.Country}\" is not allowed on this server!" };
         }
-        #endregion
+
+        #endregion Configuration
     }
 }
