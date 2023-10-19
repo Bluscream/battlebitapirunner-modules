@@ -1,7 +1,6 @@
 using BattleBitAPI.Common;
 using BBRAPIModules;
 using Commands;
-using log4net.Core;
 using System;
 using System.Linq;
 using System.Threading.Tasks;

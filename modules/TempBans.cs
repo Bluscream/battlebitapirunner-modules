@@ -2,6 +2,7 @@
 using BattleBitBaseModules;
 using BBRAPIModules;
 using Bluscream;
+using Commands;
 using Humanizer;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,6 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using TimeSpanParserUtil;
-using Commands;
 
 namespace Bluscream {
     [RequireModule(typeof(BluscreamLib))]

@@ -537,7 +537,7 @@ namespace Bluscream {
             [Obsolete]
             public string TimeZone { get; set; } = System.TimeZone.CurrentTimeZone.StandardName;
 
-            public Dictionary<string, List<string>> randomReplacements = new() {
+            public Dictionary<string, List<string>> randomReplacements { get; set; } = new() {
                 { "joined", new() { "joined", "connected", "hailed" } },
             };
 

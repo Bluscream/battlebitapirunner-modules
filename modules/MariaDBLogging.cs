@@ -158,6 +158,7 @@ namespace MariaDBLogging {
         public string DiscordWebhook { get; set; } = string.Empty;
         public bool DiscordWebhookEnabled { get; set; } = false;
 
+        [JsonIgnore]
         public string GetConnectionString() {
             return $"Server={Host};Port={Port};Database={DatabaseName};User={Username};Password={Password};";
         }
