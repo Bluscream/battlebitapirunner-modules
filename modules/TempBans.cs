@@ -64,7 +64,7 @@ namespace Bluscream {
         [Commands.CommandCallback("tempban", Description = "Bans a player for a specified time period", ConsoleCommand = true, Permissions = new[] { "command.tempban" })]
         public void TempBanCommand(Context ctx, RunnerPlayer target, string duration, string? reason = null, string? note = null) {
             var span = TimeSpanParser.Parse(duration);
-            var ban = TempBanPlayer(target, span, reason, note, Configuration.DefaultServers, invoker: ctx.Source);
+            var ban = TempBanPlayer(target, span, reason, note, Configuration.DefaultServers, invoker: (ctx.Source as ChatSource)?.Invoker);
             if (ban is null) {
                 ctx.Reply($"Failed to ban {target.str()}"); return;
             }
@@ -87,7 +87,8 @@ namespace Bluscream {
                 return;
             }
             var bannedUntil = DateTime.UtcNow + span;
-            var ban = TempBanPlayer(targetSteamId64: result, dateTime: bannedUntil, reason: reason, note: note, servers: Configuration.DefaultServers, invokerName: ctx.Source.Name, invokerSteamId64: ctx.Source.SteamID, invokerIp: ctx.Source.IP);
+            var ctxSource = (ctx.Source as ChatSource)?.Invoker;
+            var ban = TempBanPlayer(targetSteamId64: result, dateTime: bannedUntil, reason: reason, note: note, servers: Configuration.DefaultServers, invokerName: ctxSource?.Name ?? "Console", invokerSteamId64: ctxSource?.SteamID, invokerIp: ctxSource?.IP);
             if (ban is null) {
                 ctx.Reply($"Failed to ban {targetSteamId64}"); return;
             }
@@ -116,7 +117,8 @@ namespace Bluscream {
             }
             var span = TimeSpanParser.Parse(duration);
             var bannedUntil = DateTime.UtcNow + span;
-            var ban = TempBanPlayer(targetIp: result, dateTime: bannedUntil, reason: reason, note: note, servers: Configuration.DefaultServers, invokerName: ctx.Source.Name, invokerSteamId64: ctx.Source.SteamID, invokerIp: ctx.Source.IP);
+            var ctxSource = (ctx.Source as ChatSource)?.Invoker;
+            var ban = TempBanPlayer(targetIp: result, dateTime: bannedUntil, reason: reason, note: note, servers: Configuration.DefaultServers, invokerName: ctxSource?.Name ?? "Console", invokerSteamId64: ctxSource?.SteamID, invokerIp: ctxSource?.IP);
             if (ban is null) {
                 ctx.Reply($"Failed to ban {targetIp}"); return;
             }

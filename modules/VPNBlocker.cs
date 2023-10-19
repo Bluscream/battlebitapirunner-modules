@@ -146,11 +146,11 @@ namespace Bluscream {
             if (geoData is null) { ctx.Reply($"Could not fetch geoData for {target.str()}"); return; }
             switch (list.ToLowerInvariant()) {
                 case "isp":
-                    ToggleStringListEntry(ctx.Source, Config.ISPs, geoData.Isp); break;
+                    ToggleStringListEntry(ctx, Config.ISPs, geoData.Isp); break;
                 case "continent":
-                    ToggleStringListEntry(ctx.Source, Config.Continents, geoData.Continent); break;
+                    ToggleStringListEntry(ctx, Config.Continents, geoData.Continent); break;
                 case "country":
-                    ToggleStringListEntry(ctx.Source, Config.Countries, geoData.Country); break;
+                    ToggleStringListEntry(ctx, Config.Countries, geoData.Country); break;
                 default:
                     ctx.Reply("Available options:\n\nisp, continent, country"); break;
             }
@@ -172,19 +172,19 @@ namespace Bluscream {
             }
             switch (list.ToLowerInvariant()) {
                 case "proxy":
-                    ToggleBoolEntry(ctx.Source, Config.BlockProxies); break;
+                    ToggleBoolEntry(ctx, Config.BlockProxies); break;
                 case "server":
-                    ToggleBoolEntry(ctx.Source, Config.BlockServers); break;
+                    ToggleBoolEntry(ctx, Config.BlockServers); break;
                 case "mobile":
-                    ToggleBoolEntry(ctx.Source, Config.BlockMobile); break;
+                    ToggleBoolEntry(ctx, Config.BlockMobile); break;
                 case "failed":
-                    ToggleBoolEntry(ctx.Source, Config.BlockFailed); break;
+                    ToggleBoolEntry(ctx, Config.BlockFailed); break;
                 case "isp":
-                    ToggleStringListEntry(ctx.Source, Config.ISPs, entry); break;
+                    ToggleStringListEntry(ctx, Config.ISPs, entry); break;
                 case "continent":
-                    ToggleStringListEntry(ctx.Source, Config.Continents, entry); break;
+                    ToggleStringListEntry(ctx, Config.Continents, entry); break;
                 case "country":
-                    ToggleStringListEntry(ctx.Source, Config.Countries, entry); break;
+                    ToggleStringListEntry(ctx, Config.Countries, entry); break;
                 default:
                     ctx.Reply("Available options:\n\nproxy, server, mobile, failed, isp, continent, country"); break;
             }
