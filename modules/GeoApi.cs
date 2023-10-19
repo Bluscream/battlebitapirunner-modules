@@ -36,7 +36,7 @@ namespace Bluscream {
         public static event DataReceivedHandler OnDataReceived;
 
         public static IReadOnlyDictionary<IPAddress, IpApi.Response> Cache { get { return _Cache; } }
-        private static Dictionary<IPAddress, IpApi.Response> _Cache { get; set; } = new Dictionary<IPAddress, IpApi.Response>();
+        private static Dictionary<IPAddress, IpApi.Response> _Cache { get; set; } = new();
         #region Methods
         private static void Log(object _msg, string source = "GeoApi") => BluscreamLib.Log(_msg, source);
         #endregion

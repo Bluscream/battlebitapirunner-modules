@@ -71,7 +71,7 @@ namespace Bluscream {
                 } else mode = modes.FirstOrDefault();
             }
             MapSize size = BluscreamLib.GetMapSizeFromString(mapSize);
-            this.Server.ChangeMap(map, mode, dayNight, size);
+            this.Server.ChangeMap(map, mode, dayNight?.ParseDayNight(), size);
         }
 
         [Commands.CommandCallback("gamemode", Description = "Changes the gamemode", ConsoleCommand = true, Permissions = new[] { "commands.gamemode" })]

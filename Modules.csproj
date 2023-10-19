@@ -19,42 +19,52 @@
     <Compile Remove="BattleBitBaseModules\**" />
     <Compile Remove="BattleBitExamples\**" />
     <Compile Remove="BattleBitZombies\**" />
-    <Compile Remove="BattleMetrics-battlebit-rcon\**" />
     <Compile Remove="bb-modules\**" />
     <Compile Remove="configurations\**" />
     <Compile Remove="configurations_\**" />
     <Compile Remove="dependencies\**" />
-    <Compile Remove="flyingkarii-CustomModules\**" />
     <Compile Remove="modules_\**" />
     <Compile Remove="RainOrigami-BattleBitBaseModules\**" />
     <EmbeddedResource Remove="battlebit-rcon\**" />
     <EmbeddedResource Remove="BattleBitBaseModules\**" />
     <EmbeddedResource Remove="BattleBitExamples\**" />
     <EmbeddedResource Remove="BattleBitZombies\**" />
-    <EmbeddedResource Remove="BattleMetrics-battlebit-rcon\**" />
     <EmbeddedResource Remove="bb-modules\**" />
     <EmbeddedResource Remove="configurations\**" />
     <EmbeddedResource Remove="configurations_\**" />
     <EmbeddedResource Remove="dependencies\**" />
-    <EmbeddedResource Remove="flyingkarii-CustomModules\**" />
     <EmbeddedResource Remove="modules_\**" />
     <EmbeddedResource Remove="RainOrigami-BattleBitBaseModules\**" />
     <None Remove="battlebit-rcon\**" />
     <None Remove="BattleBitBaseModules\**" />
     <None Remove="BattleBitExamples\**" />
     <None Remove="BattleBitZombies\**" />
-    <None Remove="BattleMetrics-battlebit-rcon\**" />
     <None Remove="bb-modules\**" />
     <None Remove="configurations\**" />
     <None Remove="configurations_\**" />
     <None Remove="dependencies\**" />
-    <None Remove="flyingkarii-CustomModules\**" />
     <None Remove="modules_\**" />
     <None Remove="RainOrigami-BattleBitBaseModules\**" />
   </ItemGroup>
 
   <ItemGroup>
     <None Remove="modules\ChatLogger.cs.disable" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="RainOrigami-BattleBitBaseModules\ChatOverwrite.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="BattleMetrics-battlebit-rcon\.config\dotnet-tools.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="BattleMetrics-battlebit-rcon\Common\Common.csproj" />
+    <None Include="BattleMetrics-battlebit-rcon\RCONModule\RCONModule.csproj" />
+    <None Include="BattleMetrics-battlebit-rcon\RCONServer\RCONServer.csproj" />
+    <None Include="flyingkarii-CustomModules\BBRModules.csproj" />
+    <None Include="flyingkarii-CustomModules\BBRModules.sln" />
   </ItemGroup>
 
   <ItemGroup>
@@ -68,6 +78,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.8.0-2.final" />
     <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="4.8.0-2.final" />
+    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="7.0.12" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
     <PackageReference Include="MongoDB.Driver" Version="2.22.0" />
     <PackageReference Include="Mono.Cecil" Version="0.11.5" />

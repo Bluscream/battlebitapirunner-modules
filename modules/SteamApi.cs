@@ -1,11 +1,15 @@
-﻿using BBRAPIModules;
+﻿using Amazon.Runtime.Internal.Util;
+using BBRAPIModules;
+using Bluscream;
 using SteamWebApi;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using static Org.BouncyCastle.Math.EC.ECCurve;
 
 namespace Bluscream {
     [RequireModule(typeof(BluscreamLib))]
@@ -21,41 +25,17 @@ namespace Bluscream {
             SupportUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/issues/new?title=SteamApi")
         };
 
-        public Configuration Configuration { get; set; }
-        internal static HttpClient httpClient = new HttpClient();
-        public delegate void DataReceivedHandler(RunnerPlayer player, SteamWebApi.Response steamData);
-        public event DataReceivedHandler OnPlayerDataReceived;
+        public static Configuration Configuration { get; set; }
 
-        public IReadOnlyDictionary<RunnerPlayer, SteamWebApi.Response> Players { get { return _Players; } }
-        private Dictionary<RunnerPlayer, SteamWebApi.Response> _Players { get; set; } = new Dictionary<RunnerPlayer, SteamWebApi.Response>();
+        public delegate void DataReceivedHandler(Response steamData);
+        public static event DataReceivedHandler OnDataReceived;
+
+        internal static HttpClient httpClient = new HttpClient();
+        public static IReadOnlyDictionary<ulong, Response> Cache { get { return _Cache; } }
+        private static Dictionary<ulong, Response> _Cache { get; set; } = new();
 
         #region Methods
         private static void Log(object _msg, string source = "SteamApi") => BluscreamLib.Log(_msg, source);
-        private async Task AddAllData(RunnerServer? server = null) {
-            server = server ?? this.Server;
-            foreach (var player in server.AllPlayers) {
-                await AddData(player);
-            }
-        }
-        private async Task RemoveAllData(RunnerServer? server = null, TimeSpan? delay = null) {
-            server = server ?? this.Server;
-            if (delay is not null && delay != TimeSpan.Zero) await Task.Delay(delay.Value);
-            foreach (var player in server.AllPlayers) {
-                await RemoveData(player);
-            }
-        }
-        private async Task AddData(RunnerPlayer player) {
-            if (Players.ContainsKey(player)) return;
-            SteamWebApi.Response? steamData = await _GetData(player);
-            if (steamData is null || Players.ContainsKey(player)) return;
-            _Players.Add(player, steamData);
-            OnPlayerDataReceived?.Invoke(player, steamData);
-        }
-        private async Task RemoveData(RunnerPlayer player, TimeSpan? delay = null) {
-            if (delay is not null && delay != TimeSpan.Zero) await Task.Delay(delay.Value); // Todo: Make configurable
-            if (_Players.ContainsKey(player))
-                _Players.Remove(player);
-        }
         #endregion
 
         #region Api
@@ -67,19 +47,90 @@ namespace Bluscream {
             if (bans.EconomyBan != "none") banCount++;
             return banCount;
         }
-        public async Task<SteamWebApi.Response>? GetData(RunnerPlayer player) {
+
+        public static async Task<Response>? GetData(RunnerServer server) => await GetData(server.AllPlayers.Select(p => p.SteamID));
+        public static async Task<Response>? GetData(RunnerPlayer player) => await GetData(player.SteamID);
+        public static async Task<Response>? GetData(ulong steamId64) => await GetData(IPAddress.Parse(ip));
+        public async Task<Response>? GetData(RunnerPlayer player) {
             if (!Players.ContainsKey(player)) {
                 Log($"For some reason we dont have data for \"{player.Name}\", getting it now...");
                 await AddData(player);
             }
             return Players[player];
         }
-        public async Task<SteamWebApi.Response?> _GetData(RunnerPlayer player) => await _GetData(player.SteamID);
-        public async Task<SteamWebApi.Response?> _GetData(ulong steamId64) {
-            if (string.IsNullOrWhiteSpace(Configuration.SteamWebApiKey)) {
-                Console.WriteLine("Steam Web API Key is not set up in config, can't continue!");
-                return null!;
+
+        private static async Task AddData(RunnerServer server) => await AddData(server.AllPlayers.Select(p => p.SteamID));
+        private static async Task AddData(RunnerPlayer player) => await AddData(player.SteamID);
+        private static async Task AddData(ulong SteamId64) => await AddData(new List<ulong>() { SteamId64 });
+        private static async Task AddData(List<ulong> SteamId64s) {
+            if (Cache.Keys.ContainsAll(SteamId64s)) return;
+            var steamDataResponse = await _GetData(SteamId64s);
+            if (steamDataResponse is null) return;
+            foreach (var steamData in steamDataResponse) {
+                _Cache[steamData.Key] = steamData.Value;
+                OnDataReceived?.Invoke(geoData.Query, geoData);
             }
+        }
+        public static async Task<Response> RemoveData(RunnerPlayer player, TimeSpan? delay = null) => await RemoveData(player.SteamID, delay);
+        public static async Task<Response> RemoveData(ulong steamId64, TimeSpan? delay = null) {
+            if (delay is not null && delay != TimeSpan.Zero) await Task.Delay(delay.Value);
+            var steamData = Cache[steamId64];
+            _Cache.Remove(steamId64);
+            return steamData;
+        }
+        public static async Task<List<Response>> PurgeCache(bool force = false, bool refresh = false, TimeSpan? delay = null) {
+            if (delay is not null && delay != TimeSpan.Zero) await Task.Delay(delay.Value);
+            List<Response> oldEntries = new();
+            var oldTime = DateTime.Now - Configuration.RemoveEntriesFromCacheDelay;
+            foreach (var entry in _Cache) {
+                if (force || entry.Value.CacheTime < oldTime) {
+                    var removed = await RemoveData(entry.Key);
+                    oldEntries.Add(removed);
+                }
+            }
+            if (refresh) await AddData(oldEntries.Select(e => e.SteamId64).ToList());
+            Log($"Found and removed {oldEntries.Count} entries older than {oldTime} from cache.");
+            return oldEntries;
+        }
+
+        private static async Task<Dictionary<ulong, Response>> _GetData(List<RunnerPlayer> players) => await _GetData(players.Select(p => p.SteamID));
+        public static async Task<Dictionary<ulong, Response>> _GetData(RunnerPlayer player) => await _GetData(new[] { player.SteamID });
+        private static async Task<Dictionary<ulong, Response>> _GetData(IEnumerable<ulong> SteamId64s) {
+            if (string.IsNullOrWhiteSpace(Configuration.SteamWebApiKey)) {
+                throw new("Steam Web API Key is not set up in config, can't continue!");
+            }
+            var steamIdList = string.Join(",", SteamId64s);
+            var apiKey = Configuration.SteamWebApiKey;
+            Dictionary<ulong, Response> responses = new();
+            var summariesUrl = Configuration.GetPlayerSummaryUrl.Replace("{steamId64}", steamIdList).Replace("{apikey}", apiKey);
+            var bansUrl = Configuration.GetPlayerBansUrl.Replace("{steamId64}", steamIdList).Replace("{apikey}", apiKey);
+            foreach (var chunk in SteamId64s.Chunk(100)) {
+                SummaryResponse? summariesResponse = null!;
+                try { summariesResponse = await httpClient.GetFromJsonAsync<SummaryResponse>(summariesUrl); } catch (Exception ex) {
+                    Log($"Failed to get steam summary for {string.Join(", ", chunk.ToList())}: {ex.Message}");
+                }
+                foreach (var player in summariesResponse?.Response?.Players) {
+                    _AddData(ref responses, player.SteamId64, player);
+                }
+                BansResponse? bansResponse = null!;
+                try { bansResponse = await httpClient.GetFromJsonAsync<BansResponse>(bansUrl); } catch (Exception ex) {
+                    Log($"Failed to get steam bans for {string.Join(", ", chunk.ToList())}: {ex.Message}");
+                }
+                foreach (var player in bansResponse?.Players) {
+                    _AddData(ref responses, player.SteamId64, player);
+                }
+            }
+            return responses;
+        }
+
+        private static void _AddData(ref Dictionary<ulong, Response> dict, ulong steamId64, object data) {
+            if (!dict.ContainsKey(steamId64)) dict[steamId64] = new Response();
+            if (data is BansResponse bans) dict[steamId64].Bans = bans.Players.FirstOrDefault();
+            if (data is SummaryResponse summaries) dict[steamId64].Summary = summaries.Response.Players.FirstOrDefault();
+        }
+
+        public async Task<Response?> _GetData(RunnerPlayer player) => await _GetData(player.SteamID);
+        public async Task<Response?> _GetData(ulong steamId64) {
             BansResponse bansResponse;
             try {
                 var url = Configuration.GetPlayerBansUrl.Replace("{steamId64}", steamId64.ToString()).Replace("{Configuration.SteamWebApiKey}", Configuration.SteamWebApiKey);
@@ -94,7 +145,7 @@ namespace Bluscream {
 
             SummaryResponse summaryResponse;
             try {
-                var url = Configuration.GetPlayerSummaryUrl.Replace("{steamId64}", steamId64.ToString()).Replace("{Configuration.SteamWebApiKey}", Configuration.SteamWebApiKey);
+                var url = ;
                 this.Logger.Debug($"GET {url}");
                 var httpResponse = await SteamApi.httpClient.GetAsync(url);
                 var json = await httpResponse.Content.ReadAsStringAsync();
@@ -138,14 +189,25 @@ namespace Bluscream {
         public string SteamWebApiKey { get; set; } = string.Empty;
         public string GetPlayerBansUrl { get; set; } = "http://api.steampowered.com/ISteamUser/GetPlayerBans/v1/?steamids={steamId64}&key={Configuration.SteamWebApiKey}";
         public string GetPlayerSummaryUrl { get; set; } = "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?steamids={steamId64}&key={Configuration.SteamWebApiKey}";
-        public TimeSpan RemoveDelay { get; set; } = TimeSpan.FromMinutes(1);
+        public TimeSpan RemovePlayersAfterLeaveDelay { get; set; } = TimeSpan.FromMinutes(30);
+        public TimeSpan RemoveEntriesFromCacheDelay { get; set; } = TimeSpan.FromHours(12);
     }
 }
+#region Extensions
+public static partial class Extensions {
+    public static async Task<Response?> GetSteamData(this RunnerServer server) => await SteamApi.GetData(server);
+    public static async Task<Response?> GetSteamData(this RunnerPlayer player) => await SteamApi.GetData(player);
+}
+#endregion
 #region json
 namespace SteamWebApi {
     public class Response {
         public SteamWebApi.BansPlayer? Bans { get; set; }
         public SteamWebApi.SummaryPlayer? Summary { get; set; }
+        public ulong SteamId64 => Bans?.SteamId64 ?? Summary?.SteamId64 ?? 0;
+
+        [JsonIgnore]
+        public DateTime CacheTime { get; private set; } = DateTime.Now;
     }
 
     public partial class BansResponse {
@@ -157,7 +219,9 @@ namespace SteamWebApi {
     public partial class BansPlayer {
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("SteamId")]
-        public string? SteamId { get; set; } = null!;
+        public virtual string _SteamId64 { get; set; } = null!;
+        [JsonIgnore]
+        public virtual ulong SteamId64 { get { return ulong.Parse(_SteamId64); } }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("CommunityBanned")]
@@ -200,9 +264,9 @@ namespace SteamWebApi {
     public partial class SummaryPlayer {
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("steamid")]
-        public virtual string? _SteamId64 { get; set; }
+        public virtual string _SteamId64 { get; set; } = null!;
         [JsonIgnore]
-        public virtual long? SteamId64 { get { return long.Parse(_SteamId64); } }
+        public virtual ulong SteamId64 { get { return ulong.Parse(_SteamId64); } }
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("communityvisibilitystate")]
