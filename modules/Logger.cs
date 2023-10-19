@@ -10,7 +10,6 @@ using System.Linq;
 using BattleBitAPI.Server;
 using System.Text.Json.Serialization;
 using Discord.Webhook;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Net;
 
 namespace Bluscream {
@@ -514,7 +513,7 @@ namespace Bluscream {
                 Discord = new DiscordWebhookLogConfigurationEntrySettings() { Message = "[{now}] {BannedOrP}layer [{playerJoiningArguments.Stats.Roles.ToRoleString()}] {player.str()} is connecting to the server from {CountryFlagEmoji} (Prestige: {playerJoiningArguments.Progress.Progress.Prestige} | Rank: {playerJoiningArguments.Stats.Progress.Rank})" }
             };
             public LogConfigurationEntry OnPlayerConnected { get; set; } = new() {
-                Chat = new LogConfigurationEntrySettings() { Message = "[+] {player.Name} {random.joined} from {player.geoData.Country}", Permissions = { "logger.OnPlayerConnected" } },
+                Chat = new LogConfigurationEntrySettings() { Message = "[+] {player.Name} {random.joined}", Permissions = { "logger.OnPlayerConnected" } },
                 Console = new LogConfigurationEntrySettings() { Message = "[{now}] [+] {player.Name} ({player.SteamID})) [{player.IP},{player.geoData.Country},{player.geoData.Continent}]" },
                 UILog = new LogConfigurationEntrySettings() { Message = "{player.Name} [+]" },
                 Discord = new DiscordWebhookLogConfigurationEntrySettings() { Message = "[{now}] `{player.str()}`connected from {player.geoData.Country}, {player.geoData.Continent} {player.CountryFlagEmoji}" },
