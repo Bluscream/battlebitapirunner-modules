@@ -19,6 +19,7 @@
     <Compile Remove="BattleBitBaseModules\**" />
     <Compile Remove="BattleBitExamples\**" />
     <Compile Remove="BattleBitZombies\**" />
+    <Compile Remove="BattleMetrics-battlebit-rcon\**" />
     <Compile Remove="bb-modules\**" />
     <Compile Remove="configurations\**" />
     <Compile Remove="configurations_\**" />
@@ -30,6 +31,7 @@
     <EmbeddedResource Remove="BattleBitBaseModules\**" />
     <EmbeddedResource Remove="BattleBitExamples\**" />
     <EmbeddedResource Remove="BattleBitZombies\**" />
+    <EmbeddedResource Remove="BattleMetrics-battlebit-rcon\**" />
     <EmbeddedResource Remove="bb-modules\**" />
     <EmbeddedResource Remove="configurations\**" />
     <EmbeddedResource Remove="configurations_\**" />
@@ -41,6 +43,7 @@
     <None Remove="BattleBitBaseModules\**" />
     <None Remove="BattleBitExamples\**" />
     <None Remove="BattleBitZombies\**" />
+    <None Remove="BattleMetrics-battlebit-rcon\**" />
     <None Remove="bb-modules\**" />
     <None Remove="configurations\**" />
     <None Remove="configurations_\**" />
@@ -52,11 +55,6 @@
 
   <ItemGroup>
     <None Remove="modules\ChatLogger.cs.disable" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="modules_\DocumentationGenerator.cs" />
-    <Compile Include="modules_\ServerListAPI.cs" />
   </ItemGroup>
 
   <ItemGroup>
