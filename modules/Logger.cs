@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Reflection.Metadata;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -10,6 +10,8 @@ using System.Linq;
 using BattleBitAPI.Server;
 using System.Text.Json.Serialization;
 using Discord.Webhook;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System.Net;
 
 namespace Bluscream {
     #region Requires
@@ -131,66 +133,106 @@ namespace Bluscream {
                 Console.WriteLine($"Got exception {ex.Message} while trying to announce to players");
             }
         }
+        internal class LoggerBase {
+            public string ParamName { get; set; }
+            public IpApi.Response? GeoData { get; set; }
+            public string ReplaceDiscord(string input) {
+                if (GeoData is not null) {
+                    input = input
+                        .ReplaceDiscord($"{ParamName}.geoData.City", GeoData?.City)
+                        .ReplaceDiscord($"{ParamName}.geoData.RegionName", GeoData?.RegionName)
+                        .ReplaceDiscord($"{ParamName}.geoData.Country", GeoData?.Country)
+                        .ReplaceDiscord($"{ParamName}.geoData.CountryCode", GeoData?.CountryCode)
+                        .ReplaceDiscord($"{ParamName}.geoData.CountryFlagEmoji", GeoData?.CountryFlagEmoji)
+                        .ReplaceDiscord($"{ParamName}.geoData.Continent", GeoData?.Continent)
+                        .ReplaceDiscord($"{ParamName}.geoData.Isp", GeoData?.Isp)
+                        .ReplaceDiscord($"{ParamName}.geoData.Timezone", GeoData?.Timezone)
+                        .ReplaceDiscord($"{ParamName}.geoData.Reverse", GeoData?.Reverse)
+                        .ReplaceDiscord($"{ParamName}.geoData.ToJson()", GeoData?.ToJson())
+                        .ReplaceDiscord($"{ParamName}.geoData.ToJson(true)", GeoData?.ToJson(true));
+                }
+                return input;
+            }
+        }
+        internal class LoggerServer : LoggerBase {
+            public RunnerServer Server { get; set; }
+            public LoggerServer(RunnerServer server, string paramName) {
+                ParamName = paramName; Server = server;
+                GeoData = server.GetGeoData()?.Result;
+                // SteamData = SteamApi?._GetData((ulong)SteamId64).Result;
+            }
+            public string ReplaceDiscord(string input) {
+                base.ReplaceDiscord(input);
+                if (Server is not null) {
+                    input = input
+                        .ReplaceDiscord($"{ParamName}.Name", Server?.ServerName)
+                        .ReplaceDiscord($"{ParamName}.AllPlayers.Count()", Server?.AllPlayers.Count())
+                        .ReplaceDiscord($"{ParamName}.str()", Server?.str());
+                }
+                return input;
+            }
+        }
+        internal class LoggerPlayer : LoggerBase {
+            public RunnerPlayer? Player { get; set; }
+            public ulong? SteamId64 { get; set; }
+            public string CountryCode => GeoData?.CountryCode?.ToLowerInvariant() ?? SteamData?.Summary?.CountryCode?.ToLowerInvariant();
+            public string CountryFlagEmoji => GeoData?.CountryFlagEmoji ?? SteamData?.Summary?.CountryFlagEmoji ?? "🌎";
+            public SteamWebApi.Response? SteamData { get; set; }
+            public LoggerPlayer(string paramName, RunnerPlayer player = null) {
+                ParamName = paramName; Player = player; SteamId64 = player.SteamID;
+                GeoData = player.GetGeoData()?.Result;
+                // SteamData = SteamApi?._GetData((ulong)SteamId64).Result;
+            }
+            public string ReplaceDiscord(string input) {
+                base.ReplaceDiscord(input);
+                if (Player is not null) {
+                    input = input
+                        .ReplaceDiscord($"{ParamName}.SteamID", SteamId64)
+                        .ReplaceDiscord($"{ParamName}.Name", Player?.Name)
+                        .ReplaceDiscord($"{ParamName}.SteamID", Player?.SteamID)
+                        .ReplaceDiscord($"{ParamName}.str()", Player?.str())
+                        .ReplaceDiscord($"{ParamName}.fullstr()", Player?.fullstr())
+                        .ReplaceDiscord($"{ParamName}.IP", Player?.IP);
+                }
+                if (SteamData is not null) {
+                    input = input
+                        .ReplaceDiscord($"{ParamName}.steamData.CountryCode", SteamData.Summary?.CountryCode?.ToLowerInvariant())
+                        .ReplaceDiscord($"{ParamName}.steamData.ToJson()", SteamData.ToJson())
+                        .ReplaceDiscord($"{ParamName}.steamData.ToJson(true)", SteamData.ToJson(true));
+                }
+                input = input
+                    .ReplaceDiscord($"{ParamName}.CountryCode", CountryCode)
+                    .ReplaceDiscord($"{ParamName}.CountryFlagEmoji", CountryFlagEmoji);
+                return input;
+            }
+        }
 
-        internal string FormatString(string input, RunnerServer? server = null, RunnerPlayer? player = null, RunnerPlayer? target = null, IpApi.Response? geoData = null,
-            SteamWebApi.Response? steamData = null, ReportReason? reportReason = null, ChatChannel? chatChannel = null, string? msg = null, long? oldSessionId = null, long? newSessionId = null,
-            GameState? oldState = null, GameState? newState = null, PlayerJoiningArguments? playerJoiningArguments = null, ulong? steamId64 = null, PlayerStats? playerStats = null) {
+        internal string FormatString(string input, LoggerServer? server = null, LoggerPlayer? player = null, LoggerPlayer? target = null, ReportReason? reportReason = null, ChatChannel? chatChannel = null,
+            string? msg = null, long? oldSessionId = null, long? newSessionId = null, GameState? oldState = null, GameState? newState = null, PlayerJoiningArguments? playerJoinArgs = null,
+            PlayerStats? playerStats = null) {
             var now = string.IsNullOrWhiteSpace(Config.TimeStampFormat) ? "" : new DateTimeWithZone(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById(Config.TimeZone)).LocalTime.ToString(Config.TimeStampFormat);
             input = input.Replace("{now}", now);
-            if (steamId64 is not null) input = input.ReplaceDiscord("player.SteamID", steamId64);
-            if (player is not null) {
-                input = input.ReplaceDiscord("player.Name", player?.Name);
-                input = input.ReplaceDiscord("player.SteamID", player?.SteamID);
-                input = input.ReplaceDiscord("player.str()", player?.str());
-                input = input.ReplaceDiscord("player.fullstr()", player?.fullstr());
-                input = input.ReplaceDiscord("player.IP", player?.IP);
-            }
-            if (target is not null) {
-                input = input.ReplaceDiscord("target.Name", target.Name);
-                input = input.ReplaceDiscord("target.SteamID", target.SteamID);
-                input = input.ReplaceDiscord("target.str()", target.str());
-                input = input.ReplaceDiscord("target.fullstr()", target.fullstr());
-                input = input.ReplaceDiscord("target.IP", target.IP);
-            }
+
             if (server is not null) {
-                try { input = input.ReplaceDiscord("server.Name", server?.ServerName); } catch { }
-                try { input = input.ReplaceDiscord("server.AllPlayers.Count()", server?.AllPlayers.Count()); } catch { }
-                try { input = input.ReplaceDiscord("server.str()", server?.str()); } catch { }
+                input = server.ReplaceDiscord(input);
             }
-            if (geoData is not null) {
-                input = input.ReplaceDiscord("geoData.City", geoData.City);
-                input = input.ReplaceDiscord("geoData.RegionName", geoData.RegionName);
-                input = input.ReplaceDiscord("geoData.Country", geoData.Country);
-                input = input.ReplaceDiscord("geoData.CountryCode", geoData.CountryCode?.ToLowerInvariant());
-                input = input.ReplaceDiscord("geoData.Continent", geoData.Continent);
-                input = input.ReplaceDiscord("geoData.Isp", geoData.Isp);
-                input = input.ReplaceDiscord("geoData.Timezone", geoData.Timezone);
-                input = input.ReplaceDiscord("geoData.Reverse", geoData.Reverse);
-                input = input.ReplaceDiscord("geoData.ToJson()", geoData.ToJson());
-                input = input.ReplaceDiscord("geoData.ToJson(true)", geoData.ToJson(true));
-            }
-            if (steamData is not null) {
-                input = input.ReplaceDiscord("steamData.CountryCode", steamData.Summary?.CountryCode?.ToLowerInvariant());
-                input = input.ReplaceDiscord("steamData.ToJson()", steamData.ToJson());
-                input = input.ReplaceDiscord("steamData.ToJson(true)", steamData.ToJson(true));
-            }
-            if (playerJoiningArguments is not null && steamId64 is not null) {
-                var steam = SteamApi?._GetData((ulong)steamId64).Result;
-                if (steam is not null) {
-                    if (geoData?.CountryCode is null) input = input.ReplaceDiscord("geoData.CountryCode", steam.Summary?.CountryCode?.ToLowerInvariant());
-                    if (player?.Name is null) {
-                        input = input.ReplaceDiscord("player.Name", steam.Summary?.PersonaName);
-                        input = input.ReplaceDiscord("player.str()", $"\"{steam.Summary?.PersonaName}\" ({steam.Summary?.SteamId64})");
-                    }
+
+            if (player is not null) {
+                input = player.ReplaceDiscord(input);
+                if (playerJoinArgs is not null && player.SteamId64 is not null) {
+                    var bannedStr = playerJoinArgs.Stats.IsBanned ? "Banned" : "Player";
+                    input = input.ReplaceDiscord("playerJoinArgs.Stats.IsBanned", bannedStr);
+                    input = input.ReplaceDiscord("playerJoinArgs.Stats.IsBanned.ToYesNo()", playerJoinArgs.Stats.IsBanned.ToYesNo());
+                    input = input.ReplaceDiscord("playerJoinArgs.Stats.Progress.Rank", playerJoinArgs.Stats.Progress.Rank);
+                    input = input.ReplaceDiscord("playerJoinArgs.Stats.Progress.Prestige", playerJoinArgs.Stats.Progress.Prestige);
+                    input = input.ReplaceDiscord("playerJoinArgs.Stats.Roles", playerJoinArgs.Stats.Roles == Roles.None ? bannedStr : playerJoinArgs.Stats.Roles.ToRoleString());
                 }
-                input = input.ReplaceDiscord("BannedOrP", playerJoiningArguments.Stats.IsBanned ? "Banned p" : "P");
-                input = input.ReplaceDiscord("playerJoiningArguments.Stats.IsBanned.ToYesNo()", playerJoiningArguments.Stats.IsBanned.ToYesNo());
-                input = input.ReplaceDiscord("playerJoiningArguments.Stats.Progress.Rank", playerJoiningArguments.Stats.Progress.Rank);
-                input = input.ReplaceDiscord("playerJoiningArguments.Progress.Progress.Prestige", playerJoiningArguments.Stats.Progress.Prestige);
-                input = input.ReplaceDiscord("playerJoiningArguments.Stats.Roles.ToRoleString()", playerJoiningArguments.Stats.Roles.ToRoleString());
-                input = input.ReplaceDiscord("playerJoiningArguments.Progress.Progress.Rank", playerJoiningArguments.Stats.Progress.Rank);
-            };
-            input = input.ReplaceDiscord("geoData.CountryFlagEmoji", geoData?.CountryFlagEmoji);
+            }
+
+            if (target is not null) {
+                input = target.ReplaceDiscord(input);
+            }
+
             input = input.ReplaceDiscord("reason", reportReason);
             input = input.ReplaceDiscord("msg", msg);
             input = input.ReplaceDiscord("oldState", oldState);
@@ -198,8 +240,8 @@ namespace Bluscream {
             input = input.ReplaceDiscord("oldSessionId", oldSessionId);
             input = input.ReplaceDiscord("newSessionId", newSessionId);
             switch (chatChannel) {
-                case ChatChannel.SquadChat: input = input.ReplaceDiscord("chatChannel", $"{player?.Team.ToCountryCode()}-{player?.SquadName} > "); break;
-                case ChatChannel.TeamChat: input = input.ReplaceDiscord("chatChannel", $"{player?.Team.ToCountryCode()} > "); break;
+                case ChatChannel.SquadChat: input = input.ReplaceDiscord("chatChannel", $"{player?.Player?.Team.ToCountryCode()}-{player?.Player?.SquadName} > "); break;
+                case ChatChannel.TeamChat: input = input.ReplaceDiscord("chatChannel", $"{player?.Player?.Team.ToCountryCode()} > "); break;
                 default: input = input.ReplaceDiscord("chatChannel", string.Empty); break;
             }
             foreach (var replacement in Config.randomReplacements) {
@@ -208,58 +250,54 @@ namespace Bluscream {
             return input; // Smart.Format(input, now=now, parms);
         }
 
-        internal async void HandleEvent(LogConfigurationEntry config, RunnerPlayer? player = null, RunnerPlayer? target = null, IpApi.Response? geoData = null, SteamWebApi.Response? steamData = null,
+        internal async void HandleEvent(LogConfigurationEntry config, RunnerPlayer? _player = null, RunnerPlayer? _target = null, IpApi.Response? geoData = null, SteamWebApi.Response? steamData = null,
             ReportReason? reportReason = null, ChatChannel? chatChannel = null, string? _msg = null, long? oldSessionId = null, long? newSessionId = null, GameState? oldState = null,
             GameState? newState = null, PlayerJoiningArguments? playerJoiningArguments = null, ulong? steamId64 = null, PlayerStats? playerStats = null) {
-            if (player is not null && geoData is null) geoData = await GeoApi.GetData(player);
+            var server = new LoggerServer(this.Server, "server");
+            LoggerPlayer player = new LoggerPlayer("player", _player);
+            LoggerPlayer target = new LoggerPlayer("target", _target);
             if (config.Console is not null && config.Console.Enabled && !string.IsNullOrWhiteSpace(config.Console.Message)) {
-                LogToConsole(FormatString(config.Console.Message, server: this.Server, player: player, target: target, geoData: geoData, steamData: steamData, reportReason: reportReason,
-                    chatChannel: chatChannel, msg: _msg, oldSessionId: oldSessionId, newSessionId: newSessionId, oldState: oldState, newState: newState, playerJoiningArguments: playerJoiningArguments,
-                    steamId64: steamId64)) ;
+                LogToConsole(FormatString(config.Console.Message, server: server, player: player, target: target, reportReason: reportReason,
+                    chatChannel: chatChannel, msg: _msg, oldSessionId: oldSessionId, newSessionId: newSessionId, oldState: oldState, newState: newState, playerJoinArgs: playerJoiningArguments));
             }
             if (config.Discord is not null && config.Discord.Enabled && !string.IsNullOrWhiteSpace(config.Discord.WebhookUrl) && !string.IsNullOrWhiteSpace(config.Discord.Message)) {
-                var msg = FormatString(config.Discord.Message, server: this.Server, player: player, target: target, geoData: geoData, steamData: steamData, reportReason: reportReason,
-                    chatChannel: chatChannel, msg: _msg, oldSessionId: oldSessionId, newSessionId: newSessionId, oldState: oldState, newState: newState, playerJoiningArguments: playerJoiningArguments,
-                    steamId64: steamId64);
+                var msg = FormatString(config.Discord.Message, server: server, player: player, target: target, reportReason: reportReason,
+                    chatChannel: chatChannel, msg: _msg, oldSessionId: oldSessionId, newSessionId: newSessionId, oldState: oldState, newState: newState, playerJoinArgs: playerJoiningArguments);
                 await SendToWebhook(config.Discord.WebhookUrl, msg);
             }
             try { var a = this.Server.IsConnected; } catch { return; }
             if (this.Server is null || !this.Server.IsConnected) return;
             if (config.Chat is not null && config.Chat.Enabled && !string.IsNullOrWhiteSpace(config.Chat.Message)) {
-                var msg = FormatString(config.Chat.Message, server: this.Server, player: player, target: target, geoData: geoData, steamData: steamData, reportReason: reportReason,
-                    chatChannel: chatChannel, msg: _msg, oldSessionId: oldSessionId, newSessionId: newSessionId, oldState: oldState, newState: newState, playerJoiningArguments: playerJoiningArguments
-                    , steamId64: steamId64);
+                var msg = FormatString(config.Chat.Message, server: server, player: player, target: target, reportReason: reportReason,
+                    chatChannel: chatChannel, msg: _msg, oldSessionId: oldSessionId, newSessionId: newSessionId, oldState: oldState, newState: newState, playerJoinArgs: playerJoiningArguments);
                 if (this.GranularPermissions is not null && config.Chat.Permissions.Count > 0) {
-                    try {
-                        foreach (var _player in this.Server.AllPlayers) {
-                            if (!Extensions.HasAnyPermissionOf(_player, this.GranularPermissions, config.Chat.Permissions)) SayToPlayer(msg, player: _player);
+                    //try {
+                        foreach (var __player in this.Server.AllPlayers) {
+                            if (!Extensions.HasAnyPermissionOf(__player, this.GranularPermissions, config.Chat.Permissions)) SayToPlayer(msg, player: __player);
                         }
-                    } catch (Exception ex) {
-                        Console.WriteLine($"Got exception {ex.Message} while trying to send message to players");
-                    }
+                    //} catch (Exception ex) {
+                    //    Console.WriteLine($"Got exception {ex.Message} while trying to send message to players");
+                    //}
                 } else SayToAll(msg);
             }
             if (config.Modal is not null && config.Modal.Enabled && !string.IsNullOrWhiteSpace(config.Modal.Message)) {
-                var msg = FormatString(config.Modal.Message, server: this.Server, player: player, target: target, geoData: geoData, steamData: steamData, reportReason: reportReason,
-                    chatChannel: chatChannel, msg: _msg, oldSessionId: oldSessionId, newSessionId: newSessionId, oldState: oldState, newState: newState, playerJoiningArguments: playerJoiningArguments
-                    , steamId64: steamId64);
-                foreach (var _player in this.Server.AllPlayers) {
+                var msg = FormatString(config.Modal.Message, server: server, player: player, target: target, reportReason: reportReason,
+                    chatChannel: chatChannel, msg: _msg, oldSessionId: oldSessionId, newSessionId: newSessionId, oldState: oldState, newState: newState, playerJoinArgs: playerJoiningArguments);
+                foreach (var __player in server.Server.AllPlayers) {
                     if(this.GranularPermissions is not null && config.Modal.Permissions.Count > 0) {
-                        if (!Extensions.HasAnyPermissionOf(_player, this.GranularPermissions, config.Modal.Permissions)) continue;
+                        if (!Extensions.HasAnyPermissionOf(__player, this.GranularPermissions, config.Modal.Permissions)) continue;
                     }
-                    ModalMessage(msg, player: _player);
+                    ModalMessage(msg, player: __player);
                 }
             }
             if (config.UILog is not null && config.UILog.Enabled && !string.IsNullOrWhiteSpace(config.UILog.Message)) {
-                var msg = FormatString(config.UILog.Message, server: this.Server, player: player, target: target, geoData: geoData, steamData: steamData, reportReason: reportReason,
-                    chatChannel: chatChannel, msg: _msg, oldSessionId: oldSessionId, newSessionId: newSessionId, oldState: oldState, newState: newState, playerJoiningArguments: playerJoiningArguments
-                    , steamId64: steamId64);
+                var msg = FormatString(config.UILog.Message, server: server, player: player, target: target, reportReason: reportReason,
+                    chatChannel: chatChannel, msg: _msg, oldSessionId: oldSessionId, newSessionId: newSessionId, oldState: oldState, newState: newState, playerJoinArgs: playerJoiningArguments);
                 UILogOnServer(msg, config.UILog.Duration);
             }
             if (config.Announce is not null && config.Announce.Enabled && !string.IsNullOrWhiteSpace(config.Announce.Message)) {
-                var msg = FormatString(config.Announce.Message, server: this.Server, player: player, target: target, geoData: geoData, steamData: steamData, reportReason: reportReason,
-                    chatChannel: chatChannel, msg: _msg, oldSessionId: oldSessionId, newSessionId: newSessionId, oldState: oldState, newState: newState, playerJoiningArguments: playerJoiningArguments
-                    , steamId64: steamId64);
+                var msg = FormatString(config.Announce.Message, server: server, player: player, target: target, reportReason: reportReason,
+                    chatChannel: chatChannel, msg: _msg, oldSessionId: oldSessionId, newSessionId: newSessionId, oldState: oldState, newState: newState, playerJoinArgs: playerJoiningArguments);
                 Announce(msg, config.Announce.Duration);
             }
         }
@@ -268,17 +306,17 @@ namespace Bluscream {
         #region Events
         public override void OnModulesLoaded() {
             Extensions.OnPlayerKicked += OnPlayerKicked;
-            GeoApi.OnPlayerDataReceived += GeoApi_OnPlayerDataReceived;
+            GeoApi.OnDataReceived += GeoApi_OnDataReceived;
             SteamApi.OnPlayerDataReceived += SteamApi_OnPlayerDataReceived;
             HandleEvent(Config.OnApiModulesLoaded);
         }
 
         private void SteamApi_OnPlayerDataReceived(RunnerPlayer player, SteamWebApi.Response steamData) {
-            HandleEvent(Config.OnSteamDataReceived, player: player, steamData: steamData);
+            HandleEvent(Config.OnSteamDataReceived, _player: player, steamData: steamData);
         }
 
-        private void GeoApi_OnPlayerDataReceived(RunnerPlayer player, IpApi.Response geoData) {
-            HandleEvent(Config.OnGeoDataReceived, player: player, geoData: geoData);
+        private void GeoApi_OnDataReceived(IPAddress ip, IpApi.Response geoData) {
+            HandleEvent(Config.OnGeoDataReceived, _player: this.Server.GetPlayersByIp(ip).First(), geoData: geoData);
         }
 
         public override Task OnConnected() {
@@ -292,7 +330,7 @@ namespace Bluscream {
         }
         public override async Task OnPlayerConnected(RunnerPlayer player) {
             Task.Delay(TimeSpan.FromSeconds(1)).Wait();
-            HandleEvent(Config.OnPlayerConnected, player: player);
+            HandleEvent(Config.OnPlayerConnected, _player: player);
         }
         public override Task OnSavePlayerStats(ulong steamID, PlayerStats stats) {
             HandleEvent(Config.OnSavePlayerStats, steamId64: steamID, playerStats: stats);
@@ -300,62 +338,62 @@ namespace Bluscream {
         }
 
         public override async Task<bool> OnPlayerRequestingToChangeRole(RunnerPlayer player, GameRole requestedRole) {
-            HandleEvent(Config.OnPlayerRequestingToChangeRole, player: player, _msg: requestedRole.ToString());
+            HandleEvent(Config.OnPlayerRequestingToChangeRole, _player: player, _msg: requestedRole.ToString());
             return true;
         }
         public override async Task OnPlayerChangedRole(RunnerPlayer player, GameRole role) {
-            HandleEvent(Config.OnPlayerChangedRole, player: player, _msg: role.ToString());
+            HandleEvent(Config.OnPlayerChangedRole, _player: player, _msg: role.ToString());
         }
 
         public override async Task<bool> OnPlayerRequestingToChangeTeam(RunnerPlayer player, Team requestedTeam) {
-            HandleEvent(Config.OnPlayerRequestingToChangeTeam, player: player, _msg: requestedTeam.ToString());
+            HandleEvent(Config.OnPlayerRequestingToChangeTeam, _player: player, _msg: requestedTeam.ToString());
             return true;
         }
         public override async Task OnPlayerChangeTeam(RunnerPlayer player, Team team) {
-            HandleEvent(Config.OnPlayerChangeTeam, player: player, _msg: team.ToString());
+            HandleEvent(Config.OnPlayerChangeTeam, _player: player, _msg: team.ToString());
         }
 
         public override async Task OnPlayerJoinedSquad(RunnerPlayer player, Squad<RunnerPlayer> squad) {
-            HandleEvent(Config.OnPlayerJoinedSquad, player: player, _msg: squad.Name.ToString());
+            HandleEvent(Config.OnPlayerJoinedSquad, _player: player, _msg: squad.Name.ToString());
         }
         public override async Task OnPlayerLeftSquad(RunnerPlayer player, Squad<RunnerPlayer> squad) {
-            HandleEvent(Config.OnPlayerLeftSquad, player: player, _msg: squad.Name.ToString());
+            HandleEvent(Config.OnPlayerLeftSquad, _player: player, _msg: squad.Name.ToString());
         }
 
         public override async Task OnSquadLeaderChanged(Squad<RunnerPlayer> squad, RunnerPlayer newLeader) {
-            HandleEvent(Config.OnSquadLeaderChanged, player: newLeader, _msg: squad.Name.ToString());
+            HandleEvent(Config.OnSquadLeaderChanged, _player: newLeader, _msg: squad.Name.ToString());
         }
 
         public override async Task<OnPlayerSpawnArguments?> OnPlayerSpawning(RunnerPlayer player, OnPlayerSpawnArguments request) {
-            HandleEvent(Config.OnPlayerSpawning, player: player, _msg: request.RequestedPoint.ToString());
+            HandleEvent(Config.OnPlayerSpawning, _player: player, _msg: request.RequestedPoint.ToString());
             return request;
         }
 
         public override async Task OnPlayerSpawned(RunnerPlayer player) {
-            HandleEvent(Config.OnPlayerSpawned, player: player);
+            HandleEvent(Config.OnPlayerSpawned, _player: player);
         }
 
         public override async Task OnPlayerDied(RunnerPlayer player) {
-            HandleEvent(Config.OnPlayerDied, player: player);
+            HandleEvent(Config.OnPlayerDied, _player: player);
         }
 
         public override async Task OnPlayerGivenUp(RunnerPlayer player) {
-            HandleEvent(Config.OnPlayerGivenUp, player: player);
+            HandleEvent(Config.OnPlayerGivenUp, _player: player);
         }
 
         public override async Task OnAPlayerDownedAnotherPlayer(OnPlayerKillArguments<RunnerPlayer> args) {
-            HandleEvent(Config.OnAPlayerDownedAnotherPlayer, player: args.Killer, target: args.Victim);
+            HandleEvent(Config.OnAPlayerDownedAnotherPlayer, _player: args.Killer, _target: args.Victim);
         }
 
         public override async Task OnAPlayerRevivedAnotherPlayer(RunnerPlayer from, RunnerPlayer to) {
-            HandleEvent(Config.OnAPlayerRevivedAnotherPlayer, player: from, target: to);
+            HandleEvent(Config.OnAPlayerRevivedAnotherPlayer, _player: from, _target: to);
         }
 
         public override Task<bool> OnPlayerTypedMessage(RunnerPlayer player, ChatChannel channel, string msg) {
             if (this.CommandHandler.IsCommand(msg)) {
-                HandleEvent(Config.OnPlayerChatCommand, player: player, chatChannel: channel, _msg: msg);
+                HandleEvent(Config.OnPlayerChatCommand, _player: player, chatChannel: channel, _msg: msg);
             } else {
-                HandleEvent(Config.OnPlayerChatMessage, player: player, chatChannel: channel, _msg: msg);
+                HandleEvent(Config.OnPlayerChatMessage, _player: player, chatChannel: channel, _msg: msg);
             }
             return Task.FromResult(true);
         }
@@ -367,14 +405,15 @@ namespace Bluscream {
             }
         }
         public override Task OnPlayerReported(RunnerPlayer from, RunnerPlayer to, ReportReason reason, string additional) {
-            HandleEvent(Config.OnPlayerReported, player: from, target: to, reportReason: reason, _msg: additional);
+            HandleEvent(Config.OnPlayerReported, _player: from, _target: to, reportReason: reason, _msg: additional);
             return Task.CompletedTask;
         }
-        private void OnPlayerKicked(object targetPlayer, string? reason) {
-            HandleEvent(Config.OnPlayerKicked, player: targetPlayer as RunnerPlayer ?? null, steamId64: targetPlayer as ulong? ?? null, _msg: reason!);
+
+        public void OnPlayerKicked(object targetPlayer, string? reason) {
+            HandleEvent(Config.OnPlayerKicked, _player: targetPlayer as RunnerPlayer ?? null, steamId64: targetPlayer as ulong? ?? null, _msg: reason!);
         }
         public override Task OnPlayerDisconnected(RunnerPlayer player) {
-            HandleEvent(Config.OnPlayerDisconnected, player: player);
+            HandleEvent(Config.OnPlayerDisconnected, _player: player);
             return Task.CompletedTask;
         }
 
@@ -475,16 +514,16 @@ namespace Bluscream {
                 Discord = new DiscordWebhookLogConfigurationEntrySettings() { Message = "[{now}] {BannedOrP}layer [{playerJoiningArguments.Stats.Roles.ToRoleString()}] {player.str()} is connecting to the server from {CountryFlagEmoji} (Prestige: {playerJoiningArguments.Progress.Progress.Prestige} | Rank: {playerJoiningArguments.Stats.Progress.Rank})" }
             };
             public LogConfigurationEntry OnPlayerConnected { get; set; } = new() {
-                Chat = new LogConfigurationEntrySettings() { Message = "[+] {player.Name} {random.joined} from {geoData.Country}", Permissions = { "logger.OnPlayerConnected" } },
-                Console = new LogConfigurationEntrySettings() { Message = "[{now}] [+] {player.Name} ({player.SteamID})) [{player.IP},{geoData.Country},{geoData.Continent}]" },
+                Chat = new LogConfigurationEntrySettings() { Message = "[+] {player.Name} {random.joined} from {player.geoData.Country}", Permissions = { "logger.OnPlayerConnected" } },
+                Console = new LogConfigurationEntrySettings() { Message = "[{now}] [+] {player.Name} ({player.SteamID})) [{player.IP},{player.geoData.Country},{player.geoData.Continent}]" },
                 UILog = new LogConfigurationEntrySettings() { Message = "{player.Name} [+]" },
-                Discord = new DiscordWebhookLogConfigurationEntrySettings() { Message = "[{now}] `{player.str()}`connected from {geoData.Country}, {geoData.Continent} {CountryFlagEmoji}" },
+                Discord = new DiscordWebhookLogConfigurationEntrySettings() { Message = "[{now}] `{player.str()}`connected from {player.geoData.Country}, {player.geoData.Continent} {player.CountryFlagEmoji}" },
             };
             public LogConfigurationEntry OnPlayerDisconnected { get; set; } = new() {
                 Chat = new LogConfigurationEntrySettings() { Message = "[-] {player.Name} left", Permissions = { "logger.OnPlayerDisconnected" } },
-                Console = new LogConfigurationEntrySettings() { Message = "[{now}] [-] {player.Name} ({player.SteamID})) [{player.IP} {geoData.Country}]" },
+                Console = new LogConfigurationEntrySettings() { Message = "[{now}] [-] {player.Name} ({player.SteamID})) [{player.IP} {player.geoData.Country}]" },
                 UILog = new LogConfigurationEntrySettings() { Message = "{player.Name} [-]" },
-                Discord = new DiscordWebhookLogConfigurationEntrySettings() { Message = "[{now}] `{player.str()}`from {geoData.Country} {CountryFlagEmoji} disconnected :arrow_left:" },
+                Discord = new DiscordWebhookLogConfigurationEntrySettings() { Message = "[{now}] {player.CountryFlagEmoji} `{player.str()}` disconnected :arrow_left:" },
             };
             public LogConfigurationEntry OnPlayerKicked { get; set; } = new() {
                 Chat = new LogConfigurationEntrySettings() { Message = "[-] {player.Name} was kicked for {msg}", Permissions = { "logger.OnPlayerKicked" } },
@@ -504,6 +543,7 @@ namespace Bluscream {
                 Discord = new DiscordWebhookLogConfigurationEntrySettings() { Message = "[{now}] Console issued command \"{msg}\"" },
             };
             public LogConfigurationEntry OnConsoleChat { get; set; } = new() {
+                Chat = new LogConfigurationEntrySettings() { Message = "[{now}] Console : {msg}" },
                 Console = new LogConfigurationEntrySettings() { Message = "[{now}] Console wrote \"{msg}\"" },
                 Discord = new DiscordWebhookLogConfigurationEntrySettings() { Message = "[{now}] Console wrote \"{msg}\"" },
             };

@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.Net;
 using BBRAPIModules;
 
 using Commands;
@@ -46,31 +46,32 @@ namespace Bluscream {
                 Log($"GeoApi could not be found! Is it installed?");
             } else {
                 this.CommandHandler.Register(this);
-                GeoApi.OnPlayerDataReceived += GeoApi_OnPlayerDataReceived;
+                GeoApi.OnDataReceived += GeoApi_OnDataReceived;
             }
         }
 
-        private void GeoApi_OnPlayerDataReceived(RunnerPlayer player, IpApi.Response geoData) {
+        private void GeoApi_OnDataReceived(IPAddress ip, IpApi.Response geoData) {
         }
 
         public override System.Threading.Tasks.Task OnConnected() {
             if (GeoApi is not null) {
-                var geoData = GeoApi._GetData(this.Server.GameIP)?.Result;
-                Log($"Connected to \"{this.Server.ServerName}\" in {geoData?.Country ?? "Unknown Country"}");
+                var geoData = this.Server.GetGeoData()?.Result;
+                var str = geoData?.Country is null ? $" in {geoData?.Country}" : string.Empty;
+                Log($"Connected to \"{this.Server.ServerName}\"{str}");
             }
             return System.Threading.Tasks.Task.CompletedTask;
         }
         public override System.Threading.Tasks.Task OnPlayerConnected(BBRAPIModules.RunnerPlayer player) {
             if (GeoApi is not null) {
                 System.Threading.Tasks.Task.Delay(System.TimeSpan.FromSeconds(1)).Wait();
-                var geoData = GeoApi.GetData(player)?.Result;
+                var geoData = player.GetGeoData()?.Result;
                 Log($"\"{player.Name}\" is coming from {geoData?.Country ?? "Unknown Country"}");
             }
             return System.Threading.Tasks.Task.CompletedTask;
         }
         public override System.Threading.Tasks.Task OnPlayerDisconnected(BBRAPIModules.RunnerPlayer player) {
             if (GeoApi is not null) {
-                var geoData = GeoApi.GetData(player)?.Result;
+                var geoData = player.GetGeoData()?.Result;
                 Log($"\"{player.Name}\" is going back to {geoData?.Country ?? "Unknown Country"}");
             }
             return System.Threading.Tasks.Task.CompletedTask;

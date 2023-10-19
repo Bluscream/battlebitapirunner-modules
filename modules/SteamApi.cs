@@ -270,6 +270,8 @@ namespace SteamWebApi {
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("loccountrycode")]
         public virtual string? CountryCode { get; set; }
+        [JsonIgnore]
+        public string CountryFlagEmoji => string.IsNullOrWhiteSpace(CountryCode) ? "🌎" : $":flag_{CountryCode?.ToLowerInvariant()}:";
 
         [JsonIgnore]
         public virtual string DisplayName => RealName ?? PersonaName ?? "Unknown";

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using BBRAPIModules;
 using Commands;
 using Permissions;
@@ -66,22 +67,23 @@ namespace Bluscream {
             }
             return false;
         }
-        public bool CheckPlayer(RunnerPlayer player, IpApi.Response geoData) {
-            //Log($"CheckPlayer({player.fullstr()}, {geoData.ToJson()})");
-            if (CheckWhitelistPermissions(player, Config.BlockProxies)) return false;
-            if (Config.BlockProxies.Enabled && (geoData.Proxy) == true) { player.Kick(FormatString(Config.BlockProxies.KickMessage, player, geoData)); return true; }
-            if (CheckWhitelistPermissions(player, Config.BlockServers)) return false;
-            if (Config.BlockServers.Enabled && (geoData.Hosting) == true) { player.Kick(FormatString(Config.BlockServers.KickMessage, player, geoData)); return true; }
-            if (CheckWhitelistPermissions(player, Config.BlockMobile)) return false;
-            if (Config.BlockMobile.Enabled && (geoData.Mobile) == true) { player.Kick(FormatString(Config.BlockMobile.KickMessage, player, geoData)); return true; }
+        public bool CheckPlayers(IEnumerable<RunnerPlayer> players, IpApi.Response geoData) {
+            foreach (var player in players) {
+                //Log($"CheckPlayer({player.fullstr()}, {geoData.ToJson()})");
+                if (CheckWhitelistPermissions(player, Config.BlockProxies)) return false;
+                if (Config.BlockProxies.Enabled && (geoData.Proxy) == true) { player.Kick(FormatString(Config.BlockProxies.KickMessage, player, geoData)); return true; }
+                if (CheckWhitelistPermissions(player, Config.BlockServers)) return false;
+                if (Config.BlockServers.Enabled && (geoData.Hosting) == true) { player.Kick(FormatString(Config.BlockServers.KickMessage, player, geoData)); return true; }
+                if (CheckWhitelistPermissions(player, Config.BlockMobile)) return false;
+                if (Config.BlockMobile.Enabled && (geoData.Mobile) == true) { player.Kick(FormatString(Config.BlockMobile.KickMessage, player, geoData)); return true; }
 
-            if (CheckWhitelistPermissions(player, Config.ISPs)) return false;
-            if (Config.ISPs.Enabled && geoData.Isp is not null && (CheckStringListEntry(Config.ISPs, geoData.Isp) == true)) { player.Kick(FormatString(Config.ISPs.KickMessage, player, geoData)); return true; }
-            if (CheckWhitelistPermissions(player, Config.Continents)) return false;
-            if (Config.Continents.Enabled && geoData.Continent is not null && (CheckStringListEntry(Config.Continents, geoData.Continent) == true)) { player.Kick(FormatString(Config.Continents.KickMessage, player, geoData)); return true; }
-            if (CheckWhitelistPermissions(player, Config.Countries)) return false;
-            if (Config.Countries.Enabled && geoData.Country is not null && (CheckStringListEntry(Config.Countries, geoData.Country) == true)) { player.Kick(FormatString(Config.Countries.KickMessage, player, geoData)); return true; }
-
+                if (CheckWhitelistPermissions(player, Config.ISPs)) return false;
+                if (Config.ISPs.Enabled && geoData.Isp is not null && (CheckStringListEntry(Config.ISPs, geoData.Isp) == true)) { player.Kick(FormatString(Config.ISPs.KickMessage, player, geoData)); return true; }
+                if (CheckWhitelistPermissions(player, Config.Continents)) return false;
+                if (Config.Continents.Enabled && geoData.Continent is not null && (CheckStringListEntry(Config.Continents, geoData.Continent) == true)) { player.Kick(FormatString(Config.Continents.KickMessage, player, geoData)); return true; }
+                if (CheckWhitelistPermissions(player, Config.Countries)) return false;
+                if (Config.Countries.Enabled && geoData.Country is not null && (CheckStringListEntry(Config.Countries, geoData.Country) == true)) { player.Kick(FormatString(Config.Countries.KickMessage, player, geoData)); return true; }
+            }
             return false;
         }
         public void ToggleBoolEntry(BBRAPIModules.RunnerPlayer commandSource, BlockConfiguration config) {
@@ -112,19 +114,19 @@ namespace Bluscream {
                 this.Logger.Info($"GeoApi could not be found! Is it installed?");
             } else {
                 this.CommandHandler.Register(this);
-                GeoApi.OnPlayerDataReceived += GeoApi_OnPlayerDataReceived;
+                GeoApi.OnDataReceived += GeoApi_OnDataReceived;
             }
         }
 
-        private void GeoApi_OnPlayerDataReceived(RunnerPlayer player, IpApi.Response geoData) {
-            CheckPlayer(player, geoData);
+        private void GeoApi_OnDataReceived(IPAddress ip, IpApi.Response geoData) {
+            CheckPlayers(this.Server.GetPlayersByIp(ip), geoData);
         }
         #endregion
 
         #region Commands
         [CommandCallback("blockplayer", Description = "Toggles blocking for a specific player's item", ConsoleCommand = true, Permissions = new[] { "commands.blockplayer" })]
         public void ToggleBlockPlayerCommand(BBRAPIModules.RunnerPlayer commandSource, RunnerPlayer target, string list = "") {
-            var geoData = GeoApi?.GetData(target)?.Result;
+            var geoData = target.GetGeoData()?.Result;
             if (geoData is null) { commandSource.Message($"Could not fetch geoData for {target.str()}"); return; }
             switch (list.ToLowerInvariant()) {
                 case "isp":

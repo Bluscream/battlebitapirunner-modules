@@ -6,6 +6,8 @@ using Discord;
 using Discord.Webhook;
 using Humanizer;
 using log4net;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using MongoDB.Driver.Linq;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -289,11 +291,9 @@ namespace Bluscream {
                     player.SayToChat(message);
             }
         }
-        public static RunnerPlayer GetPlayerBySteamId64(this RunnerServer server, ulong steamId64) => server.AllPlayers.Where(p => p.SteamID == steamId64).First();
-        public static string GetPlayerNameBySteamId64(this RunnerServer server, ulong steamId64) {
-            var player = server.GetPlayerBySteamId64(steamId64);
-            return player?.Name ?? steamId64.ToString();
-        }
+        public static IEnumerable<string> GetPlayerNamesBySteamId64(this RunnerServer server, ulong steamId64) => GetPlayersBySteamId64(server, steamId64).Select(p => p.Name);
+        public static IEnumerable<RunnerPlayer> GetPlayersBySteamId64(this RunnerServer server, ulong steamId64) => server.AllPlayers.Where(p => p.SteamID == steamId64);
+        public static IEnumerable<RunnerPlayer> GetPlayersByIp(this RunnerServer server, IPAddress ip) => server.AllPlayers.Where(p => p.IP == ip);
         public static MapInfo GetCurrentMap(this RunnerServer server) => BluscreamLib.Maps.Where(p => p.Name == server.Map).First();
         public static GameModeInfo GetCurrentGameMode(this RunnerServer server) => BluscreamLib.GameModes.Where(p => p.Name == server.Gamemode).First();
         public static void Kick(this RunnerServer server, ulong steamId64, string? reason = null) {
@@ -788,29 +788,24 @@ namespace Bluscream {
         }
 
         public static T PopFirst<T>(this IEnumerable<T> list) => list.ToList().PopAt(0);
-
         public static T PopLast<T>(this IEnumerable<T> list) => list.ToList().PopAt(list.Count() - 1);
-
         public static T PopAt<T>(this List<T> list, int index) {
             T r = list.ElementAt<T>(index);
             list.RemoveAt(index);
             return r;
         }
 
-        public static bool ContainsAll(this IEnumerable<string> value, params string[] values) => ContainsAll(value.ToList(), values);
-        public static bool ContainsAll(this string[] value, params string[] values) => ContainsAll(value.ToList(), values);
-        public static bool ContainsAll(this List<string> value, params string[] values) {
-            foreach (string one in values) {
-                if (!value.Any(one.Contains)) {
+        public static bool ContainsAll<T>(this IEnumerable<T> values, List<T> value) => ContainsAll(values, value.ToArray());
+        public static bool ContainsAll<T>(this IEnumerable<T> values, T[] value) {
+            foreach (T one in value) {
+                if (!values.Contains(one)) {
                     return false;
                 }
             }
             return true;
         }
-
-        public static bool ContainsAny(this IEnumerable<string> value, params string[] values) => ContainsAll(value.ToList(), values);
-        public static bool ContainsAny(this string[] value, params string[] values) => ContainsAll(value.ToList(), values);
-        public static bool ContainsAny(this List<string> value, params string[] values) {
+        public static bool ContainsAny<T>(this IEnumerable<T> values, List<T> value) => ContainsAny(values, value.ToArray());
+        public static bool ContainsAny<T>(this IEnumerable<T> values, T[] value) {
             return value.Any(values.Contains);
         }
 
@@ -849,6 +844,21 @@ namespace Bluscream {
         }
         public static NameValueCollection ParseQueryString(this Uri uri) {
             return HttpUtility.ParseQueryString(uri.Query);
+        }
+        public static Uri AddQuery(this Uri uri, string name, string value) {
+            var httpValueCollection = uri.ParseQueryString();
+            httpValueCollection.Remove(name);
+            httpValueCollection.Add(name, value);
+            var ub = new UriBuilder(uri);
+            ub.Query = httpValueCollection.ToString();
+            return ub.Uri;
+        }
+        public static Uri RemoveQuery(this Uri uri, string name) {
+            var httpValueCollection = uri.ParseQueryString();
+            httpValueCollection.Remove(name);
+            var ub = new UriBuilder(uri);
+            ub.Query = httpValueCollection.ToString();
+            return ub.Uri;
         }
         public static FileInfo Download(this Uri url, DirectoryInfo destinationPath, string? fileName = null) {
             fileName = fileName ?? url.AbsolutePath.Split("/").Last();
