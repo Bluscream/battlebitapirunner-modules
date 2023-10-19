@@ -1,18 +1,18 @@
 {
 	"definitions": {},
-	"$schema": "http://json-schema.org/draft-07/schema#", 
-	"$id": "https://example.com/object1696543092.json", 
-	"title": "Root", 
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"$id": "https://example.com/object1696543092.json",
+	"title": "Root",
 	"type": "array",
 	"default": [],
-	"items":{
-		"$id": "#root/items", 
-		"title": "Items", 
+	"items": {
+		"$id": "#root/items",
+		"title": "Items",
 		"type": "object",
 		"properties": {
 			"Available": {
-				"$id": "#root/items/Available", 
-				"title": "Available", 
+				"$id": "#root/items/Available",
+				"title": "Available",
 				"type": "boolean",
 				"examples": [
 					true
@@ -20,8 +20,8 @@
 				"default": true
 			},
 			"Description": {
-				"$id": "#root/items/Description", 
-				"title": "Description", 
+				"$id": "#root/items/Description",
+				"title": "Description",
 				"type": "string",
 				"default": "",
 				"examples": [
@@ -30,13 +30,13 @@
 				"pattern": "^.*$"
 			},
 			"ImageUrls": {
-				"$id": "#root/items/ImageUrls", 
-				"title": "Imageurls", 
+				"$id": "#root/items/ImageUrls",
+				"title": "Imageurls",
 				"type": "object",
 				"properties": {
 					"DiscordIcon": {
-						"$id": "#root/items/ImageUrls/DiscordIcon", 
-						"title": "Discordicon", 
+						"$id": "#root/items/ImageUrls/DiscordIcon",
+						"title": "Discordicon",
 						"type": "string",
 						"default": "",
 						"examples": [
@@ -45,8 +45,8 @@
 						"pattern": "^.*$"
 					},
 					"EndGame": {
-						"$id": "#root/items/ImageUrls/EndGame", 
-						"title": "Endgame", 
+						"$id": "#root/items/ImageUrls/EndGame",
+						"title": "Endgame",
 						"type": "string",
 						"default": "",
 						"examples": [
@@ -55,8 +55,8 @@
 						"pattern": "^.*$"
 					},
 					"LoadingScreen": {
-						"$id": "#root/items/ImageUrls/LoadingScreen", 
-						"title": "Loadingscreen", 
+						"$id": "#root/items/ImageUrls/LoadingScreen",
+						"title": "Loadingscreen",
 						"type": "string",
 						"default": "",
 						"examples": [
@@ -65,8 +65,8 @@
 						"pattern": "^.*$"
 					},
 					"MainMap": {
-						"$id": "#root/items/ImageUrls/MainMap", 
-						"title": "Mainmap", 
+						"$id": "#root/items/ImageUrls/MainMap",
+						"title": "Mainmap",
 						"type": "string",
 						"default": "",
 						"examples": [
@@ -75,8 +75,8 @@
 						"pattern": "^.*$"
 					},
 					"ServerList": {
-						"$id": "#root/items/ImageUrls/ServerList", 
-						"title": "Serverlist", 
+						"$id": "#root/items/ImageUrls/ServerList",
+						"title": "Serverlist",
 						"type": "string",
 						"default": "",
 						"examples": [
@@ -85,11 +85,10 @@
 						"pattern": "^.*$"
 					}
 				}
-			}
-,
+			},
 			"Name": {
-				"$id": "#root/items/Name", 
-				"title": "Name", 
+				"$id": "#root/items/Name",
+				"title": "Name",
 				"type": "string",
 				"default": "",
 				"examples": [
@@ -98,18 +97,18 @@
 				"pattern": "^.*$"
 			},
 			"SupportedGamemodes": {
-				"$id": "#root/items/SupportedGamemodes", 
-				"title": "Supportedgamemodes", 
+				"$id": "#root/items/SupportedGamemodes",
+				"title": "Supportedgamemodes",
 				"type": "array",
 				"default": [],
-				"items":{
-					"$id": "#root/items/SupportedGamemodes/items", 
-					"title": "Items", 
+				"items": {
+					"$id": "#root/items/SupportedGamemodes/items",
+					"title": "Items",
 					"type": "object",
 					"properties": {
 						"GameMode": {
-							"$id": "#root/items/SupportedGamemodes/items/GameMode", 
-							"title": "Gamemode", 
+							"$id": "#root/items/SupportedGamemodes/items/GameMode",
+							"title": "Gamemode",
 							"type": "string",
 							"default": "",
 							"examples": [
@@ -118,13 +117,13 @@
 							"pattern": "^.*$"
 						},
 						"SupportedMapSizes": {
-							"$id": "#root/items/SupportedGamemodes/items/SupportedMapSizes", 
-							"title": "Supportedmapsizes", 
+							"$id": "#root/items/SupportedGamemodes/items/SupportedMapSizes",
+							"title": "Supportedmapsizes",
 							"type": "array",
 							"default": [],
-							"items":{
-								"$id": "#root/items/SupportedGamemodes/items/SupportedMapSizes/items", 
-								"title": "Items", 
+							"items": {
+								"$id": "#root/items/SupportedGamemodes/items/SupportedMapSizes/items",
+								"title": "Items",
 								"type": "integer",
 								"examples": [
 									8
@@ -134,9 +133,7 @@
 						}
 					}
 				}
-
 			}
 		}
 	}
-
 }

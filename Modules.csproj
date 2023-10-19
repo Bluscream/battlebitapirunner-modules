@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
@@ -19,26 +19,32 @@
     <Compile Remove="BattleBitBaseModules\**" />
     <Compile Remove="BattleBitExamples\**" />
     <Compile Remove="BattleBitZombies\**" />
+    <Compile Remove="bb-modules\**" />
     <Compile Remove="configurations\**" />
     <Compile Remove="configurations_\**" />
     <Compile Remove="dependencies\**" />
     <Compile Remove="modules_\**" />
+    <Compile Remove="RainOrigami-BattleBitBaseModules\**" />
     <EmbeddedResource Remove="battlebit-rcon\**" />
     <EmbeddedResource Remove="BattleBitBaseModules\**" />
     <EmbeddedResource Remove="BattleBitExamples\**" />
     <EmbeddedResource Remove="BattleBitZombies\**" />
+    <EmbeddedResource Remove="bb-modules\**" />
     <EmbeddedResource Remove="configurations\**" />
     <EmbeddedResource Remove="configurations_\**" />
     <EmbeddedResource Remove="dependencies\**" />
     <EmbeddedResource Remove="modules_\**" />
+    <EmbeddedResource Remove="RainOrigami-BattleBitBaseModules\**" />
     <None Remove="battlebit-rcon\**" />
     <None Remove="BattleBitBaseModules\**" />
     <None Remove="BattleBitExamples\**" />
     <None Remove="BattleBitZombies\**" />
+    <None Remove="bb-modules\**" />
     <None Remove="configurations\**" />
     <None Remove="configurations_\**" />
     <None Remove="dependencies\**" />
     <None Remove="modules_\**" />
+    <None Remove="RainOrigami-BattleBitBaseModules\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -46,10 +52,19 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="bb-modules\telemetry.sln" />
-    <None Include="bb-modules\telemetry\telemetry.csproj" />
-    <None Include="RainOrigami-BattleBitBaseModules\BattleBitBaseModules.csproj" />
-    <None Include="RainOrigami-BattleBitBaseModules\BattleBitBaseModules.sln" />
+    <Compile Include="RainOrigami-BattleBitBaseModules\ChatOverwrite.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="BattleMetrics-battlebit-rcon\.config\dotnet-tools.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="BattleMetrics-battlebit-rcon\Common\Common.csproj" />
+    <None Include="BattleMetrics-battlebit-rcon\RCONModule\RCONModule.csproj" />
+    <None Include="BattleMetrics-battlebit-rcon\RCONServer\RCONServer.csproj" />
+    <None Include="flyingkarii-CustomModules\BBRModules.csproj" />
+    <None Include="flyingkarii-CustomModules\BBRModules.sln" />
   </ItemGroup>
 
   <ItemGroup>
@@ -63,15 +78,18 @@
     </PackageReference>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.8.0-2.final" />
     <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="4.8.0-2.final" />
+    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="7.0.12" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
+    <PackageReference Include="MongoDB.Driver" Version="2.22.0" />
     <PackageReference Include="Mono.Cecil" Version="0.11.5" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="MySql.Data" Version="8.1.0" />
     <PackageReference Include="SmartFormat.NET" Version="3.3.0" />
-    <PackageReference Include="Tabulate.NET" Version="1.0.5" />
+    <PackageReference Include="System.Management" Version="8.0.0-rc.2.23479.6" />
     <PackageReference Include="TimeSpanParserUtil" Version="1.2.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="BattleBitBaseModules\BattleBitBaseModules.csproj" />
+    <ProjectReference Include="RainOrigami-BattleBitBaseModules\BattleBitBaseModules.csproj" />
   </ItemGroup>
 
 </Project>

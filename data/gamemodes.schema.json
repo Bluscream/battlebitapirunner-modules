@@ -1,18 +1,18 @@
 {
 	"definitions": {},
-	"$schema": "http://json-schema.org/draft-07/schema#", 
-	"$id": "https://example.com/object1696477213.json", 
-	"title": "Root", 
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"$id": "https://example.com/object1696477213.json",
+	"title": "Root",
 	"type": "array",
 	"default": [],
-	"items":{
-		"$id": "#root/items", 
-		"title": "Items", 
+	"items": {
+		"$id": "#root/items",
+		"title": "Items",
 		"type": "object",
 		"properties": {
 			"Available": {
-				"$id": "#root/items/Available", 
-				"title": "Available", 
+				"$id": "#root/items/Available",
+				"title": "Available",
 				"type": "boolean",
 				"examples": [
 					true
@@ -20,8 +20,8 @@
 				"default": true
 			},
 			"Name": {
-				"$id": "#root/items/Name", 
-				"title": "Name", 
+				"$id": "#root/items/Name",
+				"title": "Name",
 				"type": "string",
 				"default": "",
 				"examples": [
@@ -30,8 +30,8 @@
 				"pattern": "^.*$"
 			},
 			"DisplayName": {
-				"$id": "#root/items/DisplayName", 
-				"title": "Displayname", 
+				"$id": "#root/items/DisplayName",
+				"title": "Displayname",
 				"type": "string",
 				"default": "",
 				"examples": [
@@ -40,8 +40,8 @@
 				"pattern": "^.*$"
 			},
 			"Description": {
-				"$id": "#root/items/Description", 
-				"title": "Description", 
+				"$id": "#root/items/Description",
+				"title": "Description",
 				"type": "string",
 				"default": "",
 				"examples": [
@@ -51,5 +51,4 @@
 			}
 		}
 	}
-
 }

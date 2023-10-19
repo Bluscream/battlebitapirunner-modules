@@ -1,13 +1,7 @@
-using System;
-using System.Threading.Tasks;
-
-using BattleBitAPI;
 using BattleBitAPI.Common;
 using BBRAPIModules;
-
-using static Bluscream.BluscreamLib;
-using static Bluscream.Extensions;
-using Bluscream;
+using System;
+using System.Threading.Tasks;
 
 namespace Bluscream;
 
@@ -46,6 +40,4 @@ public class ConsoleLogger : BattleBitModule {
         Console.WriteLine($"[Report] {from.fullstr()} reported {to.fullstr()} for {reason}: ({additional})");
         return Task.CompletedTask;
     }
-
-
 }

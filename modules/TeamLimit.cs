@@ -5,19 +5,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BBRModules
-{
+namespace BBRModules {
+
     [Module("A module made to handle team limits and team swapping.", "1.0.0")]
     [RequireModule(typeof(PlaceholderLib))]
-    public class TeamLimit : BattleBitModule
-    {
+    public class TeamLimit : BattleBitModule {
         public static TeamLimitConfiguration Configuration { get; set; }
         public PlaceholderLib PlaceholderLib = null!;
 
-        public override async Task<bool> OnPlayerRequestingToChangeTeam(RunnerPlayer player, Team requestedTeam)
-        {
-            if (Configuration.DenyAllTeamSwapping)
-            {
+        public override async Task<bool> OnPlayerRequestingToChangeTeam(RunnerPlayer player, Team requestedTeam) {
+            if (Configuration.DenyAllTeamSwapping) {
                 string message = new PlaceholderLib(Configuration.NoSwappingMessage)
                     .Run();
                 player.SayToChat(message);
@@ -28,8 +25,7 @@ namespace BBRModules
             int playersOnline = GetPlayersOnline();
             int extraPlayers = GetExtraPlayerCount();
 
-            if (teamCount >= ((int)(playersOnline / 2) + extraPlayers))
-            {
+            if (teamCount >= ((int)(playersOnline / 2) + extraPlayers)) {
                 string message = new PlaceholderLib(Configuration.TeamFullMessage, "maxPlayers", teamCount + extraPlayers)
                     .Run();
 
@@ -40,8 +36,7 @@ namespace BBRModules
             return true;
         }
 
-        private int GetExtraPlayerCount()
-        {
+        private int GetExtraPlayerCount() {
             string mapSize = Server.MapSize.ToString().Substring(1);
 
             if (!Configuration.ForMapSizes.ContainsKey(mapSize) || Configuration.ForMapSizes[mapSize] == -1)
@@ -51,17 +46,21 @@ namespace BBRModules
         }
 
         private int GetTeamPlayerCount(Team team) => team == Team.TeamA ? Server.AllTeamAPlayers.Count() : Server.AllTeamBPlayers.Count();
+
         private int GetPlayersOnline() => Server.AllPlayers.Count();
     }
 
-    public class TeamLimitConfiguration : ModuleConfiguration
-    {
+    public class TeamLimitConfiguration : ModuleConfiguration {
+
         // Do not allow anyone to swap, whatsoever.
         public bool DenyAllTeamSwapping { get; set; } = false;
+
         // How many players over the limit (half the number of players online) would you allow? (e.g. player count is 32, limit is 2, so team limit is now 34)
         public int ExtraPlayerCount { get; set; } = 2;
+
         // The message to send when a player tries to swap to a team that is full (DenyAllTeamSwapping is false)
         public string TeamFullMessage { get; set; } = "{#ffaaaa}[SERVER]{/} You cannot swap teams as it is full! (Limit: {#ffaaaa}{maxPlayers}{/})";
+
         // The message to send when a player tries to change teams (DenyAllTeamSwapping is true)
         public string NoSwappingMessage { get; set; } = "{#ffaaaa}[SERVER]{/} Swapping teams is disabled on this server.";
 

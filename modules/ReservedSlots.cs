@@ -11,20 +11,16 @@ namespace BattleBitBaseModules;
 
 [RequireModule(typeof(GranularPermissions))]
 [Module("Reserved Slots", "1.0.0")]
-public class ReservedSlots : BattleBitModule
-{
+public class ReservedSlots : BattleBitModule {
     public ReservedSlotsConfiguration Configuration { get; set; } = null!;
     public GranularPermissions GranularPermissions { get; set; } = null!;
 
-    public override Task OnPlayerJoiningToServer(ulong steamID, PlayerJoiningArguments args)
-    {
-        if (this.Server.MaxPlayerCount - this.Server.CurrentPlayerCount > this.Configuration.ReservedSlots)
-        {
+    public override Task OnPlayerJoiningToServer(ulong steamID, PlayerJoiningArguments args) {
+        if (this.Server.MaxPlayerCount - this.Server.CurrentPlayerCount > this.Configuration.ReservedSlots) {
             return Task.CompletedTask;
         }
 
-        if (this.GranularPermissions.HasPermission(steamID, "reservedslots.use"))
-        {
+        if (this.GranularPermissions.HasPermission(steamID, "reservedslots.use")) {
             return Task.CompletedTask;
         }
 
@@ -36,7 +32,6 @@ public class ReservedSlots : BattleBitModule
     }
 }
 
-public class ReservedSlotsConfiguration : ModuleConfiguration
-{
+public class ReservedSlotsConfiguration : ModuleConfiguration {
     public int ReservedSlots { get; set; } = 2;
 }

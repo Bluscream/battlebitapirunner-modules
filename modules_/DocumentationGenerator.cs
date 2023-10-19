@@ -1,22 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Reflection.Metadata;
-using System.Text.Json;
-using System.Text.Json.Serialization;
+﻿using BBRAPIModules;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.MSBuild;
-
-using BBRAPIModules;
+using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Net;
-using Mono.Cecil;
 using System.Reflection;
+using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace Bluscream {
+
     [Module("Description", "2.0.2")]
     public class DocumentationGenerator : BattleBitModule {
 
@@ -27,6 +23,7 @@ namespace Bluscream {
             public bool? Abstract { get; set; }
             public bool? Virtual { get; set; }
         }
+
         public class ConfigStructure {
             public string? Name { get; set; }
             public FileInfo? Path { get; set; }
@@ -35,16 +32,19 @@ namespace Bluscream {
             public Dictionary<string, string> Properties { get; set; } = new();
             public Dictionary<string, object> Content { get; set; } = new();
         }
+
         public class CommandInfo {
             public string? Name { get; set; }
             public string? MethodName { get; set; }
             public string? Description { get; set; }
             public List<string> Permissions { get; set; } = new();
         }
+
         public class ModuleFileMetaData {
             public FileInfo? Path { get; set; }
             public List<ModuleMetaData> Modules { get; set; } = new();
         }
+
         public class ModuleMetaData {
             public string? Name { get; set; }
             public string? Description { get; set; }
@@ -71,6 +71,7 @@ namespace Bluscream {
                 }
                 return moduleInfos;
             }
+
             public List<ModuleFileMetaData> ParseModules(DirectoryInfo directory) {
                 var moduleInfos = new List<ModuleFileMetaData>();
                 foreach (var file in directory.GetFiles("*.cs")) {
@@ -91,14 +92,13 @@ namespace Bluscream {
                 var classes = root.DescendantNodes().OfType<ClassDeclarationSyntax>();
 
                 foreach (var classDeclaration in classes) {
-
                     var moduleAttribute = classDeclaration.AttributeLists
                         .SelectMany(a => a.Attributes)
                         .FirstOrDefault(a => a.Name.ToString() == "ModuleAttribute");
 
-                        var attributeArguments = moduleAttribute?.ArgumentList?.Arguments;
+                    var attributeArguments = moduleAttribute?.ArgumentList?.Arguments;
 
-                        var moduleInfo = new ModuleMetaData {
+                    var moduleInfo = new ModuleMetaData {
                         Name = classDeclaration.Identifier.Text,
                         Description = attributeArguments.GetValueOrDefault()[0].ToString(),
                         Version = attributeArguments.GetValueOrDefault()[1].ToString(),
@@ -111,7 +111,9 @@ namespace Bluscream {
 
                 return moduleInfos;
             }
+
             public List<ModuleMetaData> ParseModule(Type moduleType) => ParseModule(moduleType.GetType().Assembly);
+
             public List<ModuleMetaData> ParseModule(Assembly moduleAssembly) {
                 var assembly = Mono.Cecil.AssemblyDefinition.ReadAssembly(moduleAssembly.GetType().Assembly.Location);
                 var moduleInfos = new List<ModuleMetaData>();
@@ -156,6 +158,7 @@ namespace Bluscream {
 
                 return commandInfos;
             }
+
             public List<CommandInfo> GetCommands(Mono.Cecil.ModuleDefinition module) {
                 var commandInfos = new List<CommandInfo>();
 
@@ -214,6 +217,7 @@ namespace Bluscream {
 
                 return configStructures;
             }
+
             public List<ConfigStructure> GetConfigStructures(Mono.Cecil.ModuleDefinition module) {
                 var configStructures = new List<ConfigStructure>();
                 foreach (var type in module.Types) {
@@ -242,10 +246,12 @@ namespace Bluscream {
                 var regex = new Regex($"^{Regex.Escape(ip.ToString())}_{Regex.Escape(port.ToString())}$");
                 return FindServerConfigDirs(parentDirectory).FirstOrDefault(dir => regex.IsMatch(dir.Name));
             }
+
             public List<DirectoryInfo> FindServerConfigDirs(DirectoryInfo parentDirectory) {
                 var regex = new Regex($"^[\\w.]+_\\d+$");
                 return parentDirectory.GetDirectories().Where(dir => regex.IsMatch(dir.Name)).ToList();
             }
+
             public List<FileInfo> GetServerConfigs(DirectoryInfo parentDirectory, string configName) {
                 var ret = new List<FileInfo>();
                 var dirs = FindServerConfigDirs(parentDirectory);
@@ -260,9 +266,9 @@ namespace Bluscream {
     }
 
     public static partial class Extensions {
+
         public static bool IsStatic(this Mono.Cecil.TypeDefinition type) {
             return type.IsSealed && type.IsAbstract;
         }
     }
-
 }

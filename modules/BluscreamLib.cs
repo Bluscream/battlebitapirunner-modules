@@ -6,6 +6,7 @@ using Discord;
 using Discord.Webhook;
 using Humanizer;
 using log4net;
+using MongoDB.Driver.Linq;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -15,9 +16,11 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Management;
 using System.Net;
 using System.Net.Http;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
@@ -286,11 +289,9 @@ namespace Bluscream {
                     player.SayToChat(message);
             }
         }
-        public static RunnerPlayer GetPlayerBySteamId64(this RunnerServer server, ulong steamId64) => server.AllPlayers.Where(p => p.SteamID == steamId64).First();
-        public static string GetPlayerNameBySteamId64(this RunnerServer server, ulong steamId64) {
-            var player = server.GetPlayerBySteamId64(steamId64);
-            return player?.Name ?? steamId64.ToString();
-        }
+        public static IEnumerable<string> GetPlayerNamesBySteamId64(this RunnerServer server, ulong steamId64) => GetPlayersBySteamId64(server, steamId64).Select(p => p.Name);
+        public static IEnumerable<RunnerPlayer> GetPlayersBySteamId64(this RunnerServer server, ulong steamId64) => server.AllPlayers.Where(p => p.SteamID == steamId64);
+        public static IEnumerable<RunnerPlayer> GetPlayersByIp(this RunnerServer server, IPAddress ip) => server.AllPlayers.Where(p => p.IP == ip);
         public static MapInfo GetCurrentMap(this RunnerServer server) => BluscreamLib.Maps.Where(p => p.Name == server.Map).First();
         public static GameModeInfo GetCurrentGameMode(this RunnerServer server) => BluscreamLib.GameModes.Where(p => p.Name == server.Gamemode).First();
         public static void Kick(this RunnerServer server, ulong steamId64, string? reason = null) {
@@ -318,11 +319,11 @@ namespace Bluscream {
         //public static bool HasOnlyTheseRoles(this RunnerPlayer player, Permissions.PlayerPermissions permissionsModule, Roles roles) => player.HasOnlyTheseRoles(permissionsModule, roles);
         public static List<string> GetPlayerPermissions(this RunnerPlayer player, Permissions.GranularPermissions permissionsModule) => permissionsModule.GetPlayerPermissions(player.SteamID).ToList();
         public static List<string> GetAllPlayerPermissions(this RunnerPlayer player, Permissions.GranularPermissions permissionsModule) => permissionsModule.GetAllPlayerPermissions(player.SteamID).ToList();
-        public static bool HasAnyPermissionOf(this RunnerPlayer player, Permissions.GranularPermissions permissionsModule, List<string> needsAnyPermission) => player.GetAllPlayerPermissions(permissionsModule).ContainsAny(values: needsAnyPermission.ToArray());
-        public static bool HasAllPermissionsOf(this RunnerPlayer player, Permissions.GranularPermissions permissionsModule, List<string> needsAllPermissions) => player.GetAllPlayerPermissions(permissionsModule).ContainsAll(values: needsAllPermissions.ToArray());
+        public static bool HasAnyPermissionOf(this RunnerPlayer player, Permissions.GranularPermissions permissionsModule, List<string> needsAnyPermission) => player.GetAllPlayerPermissions(permissionsModule).ContainsAny(needsAnyPermission.ToArray());
+        public static bool HasAllPermissionsOf(this RunnerPlayer player, Permissions.GranularPermissions permissionsModule, List<string> needsAllPermissions) => player.GetAllPlayerPermissions(permissionsModule).ContainsAll(needsAllPermissions.ToArray());
         public static List<string> GetPlayerGroups(this RunnerPlayer player, Permissions.GranularPermissions permissionsModule) => permissionsModule.GetPlayerGroups(player.SteamID).ToList();
-        public static bool HasAnyGroupOf(this RunnerPlayer player, Permissions.GranularPermissions permissionsModule, List<string> needsAnyGroup) => player.GetPlayerGroups(permissionsModule).ContainsAny(values: needsAnyGroup.ToArray());
-        public static bool HasAllGroupsOf(this RunnerPlayer player, Permissions.GranularPermissions permissionsModule, List<string> needsAllGroups) => player.GetPlayerGroups(permissionsModule).ContainsAll(values: needsAllGroups.ToArray());
+        public static bool HasAnyGroupOf(this RunnerPlayer player, Permissions.GranularPermissions permissionsModule, List<string> needsAnyGroup) => player.GetPlayerGroups(permissionsModule).ContainsAny(needsAnyGroup.ToArray());
+        public static bool HasAllGroupsOf(this RunnerPlayer player, Permissions.GranularPermissions permissionsModule, List<string> needsAllGroups) => player.GetPlayerGroups(permissionsModule).ContainsAll(needsAllGroups.ToArray());
         #endregion
         public static void SayToTeamChat(this RunnerPlayer player, RunnerServer server, string message) => server.SayToTeamChat(player.Team, message);
         public static void SayToSquadChat(this RunnerPlayer player, RunnerServer server, string message) => server.SayToSquadChat(player.Team, player.SquadName, message);
@@ -352,7 +353,7 @@ namespace Bluscream {
         #region Map
         public static void ChangeTime(this RunnerServer Server, MapDayNight? dayNight = null) => ChangeMap(Server, dayNight: dayNight);
         public static void ChangeGameMode(this RunnerServer Server, GameModeInfo? gameMode = null, MapDayNight? dayNight = null, MapSize mapSize = MapSize.None) => ChangeMap(Server, gameMode: gameMode, dayNight: dayNight, mapSize: mapSize);
-        public static void ChangeMap(this RunnerServer Server, MapInfo? map = null, GameModeInfo? gameMode = null, string? dayNight = null, MapSize mapSize = MapSize.None) => ChangeMap(Server, map, gameMode, dayNight?.ParseDayNight(), mapSize: mapSize);
+        //public static void ChangeMap(this RunnerServer Server, MapInfo? map = null, GameModeInfo? gameMode = null, string? dayNight = null, MapSize mapSize = MapSize.None) => ChangeMap(Server, map, gameMode, dayNight?.ParseDayNight(), mapSize: mapSize);
         public static void ChangeMap(this RunnerServer Server, MapInfo? map = null, GameModeInfo? gameMode = null, MapDayNight? dayNight = null, MapSize mapSize = MapSize.None) {
             map = map ?? MapInfo.FromName(Server.Map);
             gameMode = gameMode ?? GameModeInfo.FromName(Server.Gamemode);
@@ -785,29 +786,24 @@ namespace Bluscream {
         }
 
         public static T PopFirst<T>(this IEnumerable<T> list) => list.ToList().PopAt(0);
-
         public static T PopLast<T>(this IEnumerable<T> list) => list.ToList().PopAt(list.Count() - 1);
-
         public static T PopAt<T>(this List<T> list, int index) {
             T r = list.ElementAt<T>(index);
             list.RemoveAt(index);
             return r;
         }
 
-        public static bool ContainsAll(this IEnumerable<string> value, params string[] values) => ContainsAll(value.ToList(), values);
-        public static bool ContainsAll(this string[] value, params string[] values) => ContainsAll(value.ToList(), values);
-        public static bool ContainsAll(this List<string> value, params string[] values) {
-            foreach (string one in values) {
-                if (!value.Any(one.Contains)) {
+        public static bool ContainsAll<T>(this IEnumerable<T> values, List<T> value) => ContainsAll(values, value.ToArray());
+        public static bool ContainsAll<T>(this IEnumerable<T> values, T[] value) {
+            foreach (T one in value) {
+                if (!values.Contains(one)) {
                     return false;
                 }
             }
             return true;
         }
-
-        public static bool ContainsAny(this IEnumerable<string> value, params string[] values) => ContainsAll(value.ToList(), values);
-        public static bool ContainsAny(this string[] value, params string[] values) => ContainsAll(value.ToList(), values);
-        public static bool ContainsAny(this List<string> value, params string[] values) {
+        public static bool ContainsAny<T>(this IEnumerable<T> values, List<T> value) => ContainsAny(values, value.ToArray());
+        public static bool ContainsAny<T>(this IEnumerable<T> values, T[] value) {
             return value.Any(values.Contains);
         }
 
@@ -846,6 +842,21 @@ namespace Bluscream {
         }
         public static NameValueCollection ParseQueryString(this Uri uri) {
             return HttpUtility.ParseQueryString(uri.Query);
+        }
+        public static Uri AddQuery(this Uri uri, string name, string value) {
+            var httpValueCollection = uri.ParseQueryString();
+            httpValueCollection.Remove(name);
+            httpValueCollection.Add(name, value);
+            var ub = new UriBuilder(uri);
+            ub.Query = httpValueCollection.ToString();
+            return ub.Uri;
+        }
+        public static Uri RemoveQuery(this Uri uri, string name) {
+            var httpValueCollection = uri.ParseQueryString();
+            httpValueCollection.Remove(name);
+            var ub = new UriBuilder(uri);
+            ub.Query = httpValueCollection.ToString();
+            return ub.Uri;
         }
         public static FileInfo Download(this Uri url, DirectoryInfo destinationPath, string? fileName = null) {
             fileName = fileName ?? url.AbsolutePath.Split("/").Last();
@@ -915,7 +926,55 @@ namespace Bluscream {
         #endregion
         #region Process
         public static Process? Start(this ProcessStartInfo processStartInfo) => Process.Start(processStartInfo);
+        public static void Exit(this Process process) {
+            process.CloseMainWindow();
+            process.Close();
+            process.Kill();
+        }
+        public static void Start(this Process process, string? args = null) {
+            var startInfo = new ProcessStartInfo() {
+                FileName = process.MainModule.FileName,
+                Arguments = args
+            };
+            startInfo.Start();
+        }
+        public static void Start(this Process process, IEnumerable<string>? args = null) => process.Start(args?.Join(" "));
+        public static void Restart(this Process process) {
+            process.Start(process.GetCommandLineList());
+            process.Exit();
+        }
+        public static string GetCommandLine(this Process process) {
+            Console.WriteLine($"Getting command line for process: {process.Id}");
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+                Console.WriteLine("Platform is Windows");
+                using (var searcher = new ManagementObjectSearcher("SELECT CommandLine FROM Win32_Process WHERE ProcessId = " + process.Id))
+                using (var objects = searcher.Get()) {
+                    Debug.WriteLine($"got searcher & objects");
+                    var obj = objects.Cast<ManagementBaseObject>().SingleOrDefault();
+                    Debug.WriteLine($"got obj");
+                    string commandLine = obj?["CommandLine"]?.ToString();
+                    Debug.WriteLine($"Command line: {commandLine}");
+                    return commandLine;
+                }
+            } else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) {
+                Console.WriteLine("Platform is Linux");
+                try {
+                    string commandLine = File.ReadAllText($"/proc/{process.Id}/cmdline");
+                    Console.WriteLine($"Command line: {commandLine}");
+                    return commandLine;
+                } catch (Exception ex) {
+                    Console.WriteLine($"Failed to get command line: {ex}");
+                    return "";
+                }
+            } else {
+                Debug.WriteLine("Platform is not supported");
+                throw new PlatformNotSupportedException();
+            }
+        }
+        public static List<string> GetCommandLineList(this Process process) => Regex.Matches(GetCommandLine(process), @"[\""].+?[\""]|[^ ]+").Cast<Match>().Select(m => m.Value).ToList();
     }
+    #endregion
     #endregion
     #region json
     public static class JsonUtils {
@@ -1098,21 +1157,92 @@ namespace Bluscream {
         public static bool IsAlreadyRunning() => BluscreamLib.IsAlreadyRunning(Process.ProcessName);
         public static void Exit() {
             OnApiRunnerStopping?.Invoke();
-            Environment.Exit(0);
-            Process.Kill();
+            Process.Exit();
         }
         public static void Start(IEnumerable<string>? args = null) {
-            var startInfo = new ProcessStartInfo() {
-                FileName = Path.FullName,
-                Arguments = args?.Join(" ") ?? Environment.CommandLine
-            };
-            startInfo.Start();
+            Process.Start(args?.Join(" ") ?? Environment.CommandLine);
         }
         public static void Restart() {
             OnApiRunnerRestarting?.Invoke(Path, CommandLine);
-            Start(CommandLine);
-            Environment.Exit(0);
-            Process.Kill();
+            Process.Restart();
+        }
+        public static Dictionary<Process, List<string>> GetRunningGameServers() {
+            Console.WriteLine("GetRunningGameServers");
+            var processes = Process.GetProcessesByName("BattleBit").Concat(Process.GetProcessesByName("BattleBitEAC")).ToList();
+            Console.WriteLine($"Got {processes.Count} processes");
+            Dictionary<Process, List<string>> servers = new();
+            foreach (var process in processes) {
+                Console.WriteLine(process.MainModule.FileName);
+                Console.WriteLine(process.MainModule.ModuleName);
+                Console.WriteLine("test0");
+                Console.WriteLine(process.GetCommandLine());
+                Console.WriteLine("test1.5");
+                Console.WriteLine(process.GetCommandLineList().ToJson());
+                Console.WriteLine("test1");
+                var cmdLine = process.GetCommandLineList();
+                Console.WriteLine("test3");
+                if (cmdLine.Contains("-batchmode"))
+                    servers[process] = process.GetCommandLineList();
+            }
+            Console.WriteLine("test2");
+            return servers;
+        }
+        public static Dictionary<Process, List<string>> GetRunningGameServersByApiPort(int? apiPort = null) {
+            Console.WriteLine($"GetRunningGameServersByApiPort({apiPort})");
+            apiPort = apiPort ?? AppSettings.Port;
+            var allServers = GetRunningGameServers();
+            Dictionary<Process, List<string>> servers = new();
+            foreach (var (process, commandline) in allServers) {
+                foreach (var arg in commandline) {
+                    if (arg.Contains("-ApiEndPoint=") && arg.Contains($":{apiPort}"))
+                        servers[process] = commandline;
+                }
+            }
+            return servers;
+        }
+        public static Dictionary<Process, List<string>> GetRunningGameServersByName(string name) {
+            Console.WriteLine("GetRunningGameServersByName");
+            var allServers = GetRunningGameServers();
+            Dictionary<Process, List<string>> servers = new();
+            foreach (var (process, commandline) in allServers) {
+                Console.WriteLine(process.MainModule.FileName);
+                Console.WriteLine(process.MainModule.ModuleName);
+                Console.WriteLine(process.MainWindowTitle);
+                foreach (var arg in commandline) {
+                    Console.WriteLine(arg);
+                    if (arg.Contains("-Name=") && arg.Contains($":{name}"))
+                        servers[process] = commandline;
+                }
+            }
+            return servers;
+        }
+
+        internal static IEnumerable<FileInfo> GetModuleFilesFromFolder(DirectoryInfo directory) => directory.GetFiles("*.cs", SearchOption.TopDirectoryOnly).ToList();
+        internal static IEnumerable<FileInfo> GetModuleFiles() {
+            var moduleFiles = new List<FileInfo>();
+            if (AppSettings?.ModulesPath != null)
+                moduleFiles.AddRange(GetModuleFilesFromFolder(AppSettings.ModulesPath));
+            if (AppSettings?.Modules == null) return moduleFiles;
+            moduleFiles.AddRange(AppSettings.Modules.Where(file => file.Exists));
+            return moduleFiles;
+        }
+        internal static KeyValuePair<string?, string?> GetVersionAndDescriptionFromFile(FileSystemInfo file) {
+            var text = File.ReadAllText(file.FullName);
+            var regex = new Regex(@"\[Module\(""(.*)"", ""(.*)""\)\]");
+            var matches = regex.Matches(text);
+            foreach (Match match in matches) return new(match.Groups[2].Value, match.Groups[1].Value);
+            return new(null, null);
+        }
+        internal static List<ModuleInfo> GetModuleInfoFromFiles(IEnumerable<FileInfo> files) {
+            List<ModuleInfo> modules = new();
+            foreach (var file in files) {
+                if (file.Extension.ToLowerInvariant() == ".cs") {
+                    var (version, description) = GetVersionAndDescriptionFromFile(file);
+                    modules.Add(ModuleInfo.FromFile(file, version, description));
+                }
+            }
+            BluscreamLib.Log($"Loaded {modules.Count} modules's infos...");
+            return modules;
         }
 
         public class AppSettingsContent {
@@ -1122,7 +1252,7 @@ namespace Bluscream {
 
             [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
             [JsonPropertyName("Port")]
-            public virtual long? Port { get; set; }
+            public virtual int? Port { get; set; }
 
             [JsonPropertyName("IPAddress")]
             public virtual object? IpAddress { get; set; }
@@ -1155,41 +1285,13 @@ namespace Bluscream {
             [JsonPropertyName("WarningThreshold")]
             public virtual long? WarningThreshold { get; set; }
         }
-
-        internal static IEnumerable<FileInfo> GetModuleFilesFromFolder(DirectoryInfo directory) => directory.GetFiles("*.cs", SearchOption.TopDirectoryOnly).ToList();
-        internal static IEnumerable<FileInfo> GetModuleFiles() {
-            var moduleFiles = new List<FileInfo>();
-            if (AppSettings?.ModulesPath != null)
-                moduleFiles.AddRange(GetModuleFilesFromFolder(AppSettings.ModulesPath));
-            if (AppSettings?.Modules == null) return moduleFiles;
-            moduleFiles.AddRange(AppSettings.Modules.Where(file => file.Exists));
-            return moduleFiles;
-        }
-        internal static KeyValuePair<string?, string?> GetVersionAndDescriptionFromFile(FileSystemInfo file) {
-            var text = File.ReadAllText(file.FullName);
-            var regex = new Regex(@"\[Module\(""(.*)"", ""(.*)""\)\]");
-            var matches = regex.Matches(text);
-            foreach (Match match in matches) return new(match.Groups[2].Value, match.Groups[1].Value);
-            return new(null, null);
-        }
-        internal static List<ModuleInfo> GetModuleInfoFromFiles(IEnumerable<FileInfo> files) {
-            List<ModuleInfo> modules = new();
-            foreach (var file in files) {
-                if (file.Extension.ToLowerInvariant() == ".cs") {
-                    var (version, description) = GetVersionAndDescriptionFromFile(file);
-                    modules.Add(ModuleInfo.FromFile(file, version, description));
-                }
-            }
-            BluscreamLib.Log($"Loaded {modules.Count} modules's infos...");
-            return modules;
-        }
     }
-    public struct ModuleInfo {
+    public class ModuleInfo {
         public bool? Loaded { get; set; }
         public bool? Enabled { get; set; }
         public string? Name { get; set; }
         public string? Description { get; set; }
-        public Version Version { get; set; }
+        public Version? Version { get; set; }
         public string? _Version { get; set; }
         public string? Author { get; set; }
         public Uri? WebsiteUrl { get; set; }
@@ -1242,7 +1344,7 @@ namespace Bluscream {
             }
         }
     }
-    public struct DiscordEmbed {
+    public class DiscordEmbed {
         public string Title { get; set; }
         public string Description { get; set; }
         public List<EmbedField> Fields { get; set; }
@@ -1507,7 +1609,6 @@ namespace Bluscream {
         public static List<SizeInfo>? FromJson(string json) => JsonSerializer.Deserialize<List<SizeInfo>>(json, Bluscream.Converter.Settings);
     }
 }
-#endregion
 #endregion
 #endregion
 #endregion

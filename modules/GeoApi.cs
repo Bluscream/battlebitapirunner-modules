@@ -1,12 +1,13 @@
-﻿using System;
+﻿using BBRAPIModules;
+using Bluscream;
+using System;
 using System.Collections.Generic;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
-
-using BBRAPIModules;
-using Bluscream;
+using System.Net.Http.Json;
+using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 
 namespace Bluscream {
     [RequireModule(typeof(BluscreamLib))]
@@ -22,73 +23,122 @@ namespace Bluscream {
             SupportUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/issues/new?title=GeoApi")
         };
 
-        public Configuration Config { get; set; }
+        public const string IpApiUrl = "http://ip-api.com";
+        public const string IpApiProUrl = "https://pro.ip-api.com";
+        public const string IpApiFields = "status,message,continent,continentCode,country,countryCode,region,regionName,city,district,zip,lat,lon,timezone,offset,currency,isp,org,as,asname,reverse,mobile,proxy,hosting,query";
+        public const string IpApiSingleUrl = "/{ip}?";
+        public const string IpApiBatchUrl = "/batch?";
+
+        public static Configuration Config { get; set; }
 
         internal static HttpClient httpClient = new HttpClient();
-        public delegate void DataReceivedHandler(RunnerPlayer player, IpApi.Response geoData);
-        public event DataReceivedHandler OnPlayerDataReceived;
+        public delegate void DataReceivedHandler(IPAddress ip, IpApi.Response geoData);
+        public static event DataReceivedHandler OnDataReceived;
 
-        public IReadOnlyDictionary<RunnerPlayer, IpApi.Response> Players { get { return _Players; } }
-        private Dictionary<RunnerPlayer, IpApi.Response> _Players { get; set; } = new Dictionary<RunnerPlayer, IpApi.Response>();
+        public static IReadOnlyDictionary<IPAddress, IpApi.Response> Cache { get { return _Cache; } }
+        private static Dictionary<IPAddress, IpApi.Response> _Cache { get; set; } = new();
         #region Methods
-        private static void Log(object _msg, string source = "SteamApi") => BluscreamLib.Log(_msg, source);
-        private async Task RemoveAllData(RunnerServer? server = null, TimeSpan? delay = null) {
-            server = server ?? this.Server;
-            if (delay is not null && delay != TimeSpan.Zero) await Task.Delay(delay.Value);
-            foreach (var player in server.AllPlayers) {
-                await RemoveData(player);
-            }
-        }
-        private async Task AddAllData(RunnerServer? server = null) {
-            server = server ?? this.Server;
-            foreach (var player in server.AllPlayers) {
-                await AddData(player);
-            }
-        }
-        private async Task AddData(RunnerPlayer player) {
-            if (Players.ContainsKey(player)) return;
-            IpApi.Response? geoData = await _GetData(player);
-            if (geoData is null || Players.ContainsKey(player)) return;
-            _Players.Add(player, geoData);
-            OnPlayerDataReceived?.Invoke(player, geoData);
-        }
-        private async Task RemoveData(RunnerPlayer player, TimeSpan? delay = null) {
-            if (delay is not null && delay != TimeSpan.Zero) await Task.Delay(delay.Value);
-            if (_Players.ContainsKey(player))
-                _Players.Remove(player);
-        }
+        private static void Log(object _msg, string source = "GeoApi") => BluscreamLib.Log(_msg, source);
         #endregion
         #region Api
-        public async Task<IpApi.Response>? GetData(RunnerPlayer player) {
-            if (!Players.ContainsKey(player)) {
-                Log($"For some reason we dont have Data for \"{player.Name}\", getting it now...");
-                await AddData(player);
+        public static async Task<IpApi.Response>? GetData(RunnerServer server) => await GetData(server.GameIP);
+        public static async Task<IpApi.Response>? GetData(RunnerPlayer player) => await GetData(player.IP);
+        public static async Task<IpApi.Response>? GetData(string ip) => await GetData(IPAddress.Parse(ip));
+        public static async Task<IpApi.Response>? GetData(IPAddress ip) {
+            if (!Cache.ContainsKey(ip)) {
+                Log($"For some reason we dont have Data for \"{ip}\", getting it now...");
+                await AddData(ip);
             }
-            return Players[player];
+            return Cache[ip];
         }
-        public async Task<IpApi.Response?> _GetData(RunnerPlayer player) => await _GetData(player.IP);
-        public async Task<IpApi.Response?> _GetData(IPAddress ip) {
-            var url = Config.IpApiUrl.Replace("{ip}", ip.ToString());
-            HttpResponseMessage httpResponse;
-            try { httpResponse = await GeoApi.httpClient.GetAsync(url); } catch (Exception ex) {
+
+        private static async Task AddData(RunnerServer server) => await AddData((List<IPAddress>)new List<IPAddress>() { server.GameIP }.Concat(server.AllPlayers.Select(p => p.IP)));
+        private static async Task AddData(RunnerPlayer player) => await AddData(player.IP);
+        private static async Task AddData(IPAddress ip) => await AddData(new List<IPAddress>() { ip });
+        private static async Task AddData(List<IPAddress> ips) {
+            if (Cache.Keys.ContainsAll(ips)) return;
+            if (ips.Count > 1) {
+                var geoDataResponse = await _GetBatchData(ips);
+                if (geoDataResponse is null) return;
+                foreach (var geoData in geoDataResponse) {
+                    _Cache[geoData.Query] = geoData;
+                    OnDataReceived?.Invoke(geoData.Query, geoData);
+                }
+            } else if (ips.Count == 1) {
+                var ip = ips.First();
+                var geoDataResponse = await _GetData(ips.First());
+                if (geoDataResponse is null) return;
+                _Cache.Add(ip, geoDataResponse);
+                OnDataReceived?.Invoke(ip, geoDataResponse);
+            }
+        }
+        public static async Task<IpApi.Response> RemoveData(RunnerPlayer player, TimeSpan? delay = null) => await RemoveData(player.IP, delay);
+        public static async Task<IpApi.Response> RemoveData(IPAddress ip, TimeSpan? delay = null) {
+            if (delay is not null && delay != TimeSpan.Zero) await Task.Delay(delay.Value);
+            var geoData = Cache[ip];
+            _Cache.Remove(ip);
+            return geoData;
+        }
+        public static async Task<List<IpApi.Response>> PurgeCache(bool force = false, bool refresh = false, TimeSpan? delay = null) {
+            if (delay is not null && delay != TimeSpan.Zero) await Task.Delay(delay.Value);
+            var oldEntries = new List<IpApi.Response>();
+            //lock(_Cache) {
+            var oldTime = DateTime.Now - Config.RemoveEntriesFromCacheDelay;
+            foreach (var entry in _Cache) {
+                if (force || entry.Value.CacheTime < oldTime) {
+                    oldEntries.Add(RemoveData(entry.Key).Result);
+                }
+            }
+            //}
+            if (refresh) await AddData(oldEntries.Select(e => e.Query).ToList());
+            Log($"Found and removed {oldEntries.Count} entries older than {oldTime} from cache.");
+            return oldEntries;
+        }
+
+        private static Uri GetApiUrl(bool pro = false, bool batch = false) {
+            var url = new Uri($"{(pro ? IpApiProUrl : IpApiUrl)}{(batch ? IpApiBatchUrl : IpApiSingleUrl)}");
+            url.AddQuery("fields", IpApiFields);
+            if (pro) url = url.AddQuery("key", Config.IpApiProKey);
+            return url;
+        }
+        private static async Task<IpApi.Response?> _GetData(RunnerPlayer player) => await _GetData(player.IP);
+        private static async Task<IpApi.Response?> _GetData(IPAddress ip) {
+            var url = GetApiUrl(string.IsNullOrWhiteSpace(Config.IpApiProKey), false).ToString().Replace("{ip}", ip.ToString());
+            IpApi.Response? response;
+            try { response = await GeoApi.httpClient.GetFromJsonAsync<IpApi.Response>(url, Converter.Settings); } catch (Exception ex) {
                 Log($"Failed to get geo data for {ip}: {ex.Message}");
                 return null;
             }
-            var json = await httpResponse.Content.ReadAsStringAsync();
-            var response = IpApi.Response.FromJson(json);
             return response;
         }
+
+        private static async Task<List<IpApi.Response>> _GetBatchData(List<RunnerPlayer> players) => await _GetBatchData(players.Select(p => p.IP));
+        private static async Task<List<IpApi.Response>> _GetBatchData(IEnumerable<IPAddress> ips) {
+            List<IpApi.Response> responses = new();
+            var url = GetApiUrl(string.IsNullOrWhiteSpace(Config.IpApiProKey), true);
+            foreach (var chunk in ips.Chunk(100)) {
+                HttpResponseMessage httpResponse;
+                try { httpResponse = await GeoApi.httpClient.PostAsJsonAsync(url, chunk); } catch (Exception ex) {
+                    Log($"Failed to get geo data for {string.Join(", ", chunk.ToList())}: {ex.Message}");
+                    continue;
+                }
+                var json = await httpResponse.Content.ReadAsStringAsync();
+                responses.AddRange(JsonUtils.FromJson<List<IpApi.Response>>(json));
+            }
+            return responses;
+        }
+
         #endregion
         #region Events
         public override Task OnConnected() {
             Task.Run(() => {
-                AddAllData(this.Server).Wait();
+                AddData(this.Server).Wait();
             });
             return Task.CompletedTask;
         }
         public override Task OnDisconnected() {
             Task.Run(() => {
-                RemoveAllData(this.Server, Config.RemoveDelay).Wait();
+                PurgeCache(delay: Config.RemovePlayersAfterLeaveDelay).Wait();
             });
             return Task.CompletedTask;
         }
@@ -100,19 +150,26 @@ namespace Bluscream {
         }
         public override Task OnPlayerDisconnected(RunnerPlayer player) {
             Task.Run(() => {
-                RemoveData(player, Config.RemoveDelay).Wait();
+                RemoveData(player, Config.RemovePlayersAfterLeaveDelay).Wait();
             });
             return Task.CompletedTask;
         }
         #endregion
         #region Configuration
         public class Configuration : ModuleConfiguration {
-            public string IpApiUrl { get; set; } = "http://ip-api.com/json/{ip}?fields=status,message,continent,continentCode,country,countryCode,region,regionName,city,district,zip,lat,lon,timezone,offset,currency,isp,org,as,asname,reverse,mobile,proxy,hosting,query";
-            public TimeSpan RemoveDelay { get; set; } = TimeSpan.FromMinutes(1);
+            public string IpApiProKey { get; set; } = string.Empty;
+            public TimeSpan RemovePlayersAfterLeaveDelay { get; set; } = TimeSpan.FromMinutes(30);
+            public TimeSpan RemoveEntriesFromCacheDelay { get; set; } = TimeSpan.FromHours(12);
         }
         #endregion
     }
 }
+#region Extensions
+public static partial class Extensions {
+    public static async Task<IpApi.Response> GetGeoData(this RunnerServer server) => await GeoApi.GetData(server);
+    public static async Task<IpApi.Response> GetGeoData(this RunnerPlayer player) => await GeoApi.GetData(player);
+}
+#endregion
 #region json
 namespace IpApi {
     public partial class Response {
@@ -135,6 +192,7 @@ namespace IpApi {
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("countryCode")]
         public string? CountryCode { get; set; }
+        [JsonIgnore]
         public string CountryFlagEmoji => string.IsNullOrWhiteSpace(CountryCode) ? "🌎" : $":flag_{CountryCode?.ToLowerInvariant()}:";
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
@@ -211,7 +269,12 @@ namespace IpApi {
 
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         [JsonPropertyName("query")]
-        public string? Query { get; set; }
+        public string _Query { get; set; } = null!;
+        [JsonIgnore]
+        public IPAddress Query => IPAddress.Parse(_Query);
+
+        [JsonIgnore]
+        public DateTime CacheTime { get; private set; } = DateTime.Now;
 
         public static Response FromJson(string json) => JsonUtils.FromJson<Response>(json);
     }
@@ -223,7 +286,7 @@ namespace IpApi {
 #region MaxMindDB
 namespace MaxMindDB {
     public class DataBase {
-        
+
     }
 }
 #endregion
