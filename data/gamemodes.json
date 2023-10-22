@@ -1,105 +1,91 @@
-[
-	{
-		"Available": true,
-		"Name": "TDM",
-		"DisplayName": "Team Deathmatch",
-		"Description": "Kill the enemy team"
-	},
-	{
-		"Available": true,
-		"Name": "AAS",
-		"DisplayName": "Advance and Secure"
-	},
-	{
-		"Available": true,
-		"Name": "RUSH",
-		"DisplayName": "Rush",
-		"Description": "Plant or defuse bombs"
-	},
-	{
-		"Available": true,
-		"Name": "CONQ",
-		"DisplayName": "Conquest",
-		"Description": "Capture and hold positions"
-	},
-	{
-		"Available": true,
-		"Name": "DOMI",
-		"DisplayName": "Domination"
-	},
-	{
-		"Available": true,
-		"Name": "ELI",
-		"DisplayName": "Elimination"
-	},
-	{
-		"Available": true,
-		"Name": "INFCONQ",
-		"DisplayName": "Infantry Conquest",
-		"Description": "Conquest without strong vehicles"
-	},
-	{
-		"Available": true,
-		"Name": "FRONTLINE",
-		"DisplayName": "Frontline"
-	},
-	{
-		"Available": true,
-		"Name": "GunGameFFA",
-		"DisplayName": "Gun Game (Free For All)",
-		"Description": "Get through the loadouts as fast as possible"
-	},
-	{
-		"Available": true,
-		"Name": "FFA",
-		"DisplayName": "Free For All",
-		"Description": "Team Deathmatch without teams"
-	},
-	{
-		"Available": true,
-		"Name": "GunGameTeam",
-		"DisplayName": "Gun Game (Team)",
-		"Description": "Get through the loadouts as fast as possible"
-	},
-	{
-		"Available": true,
-		"Name": "SuicideRush",
-		"DisplayName": "Suicide Rush"
-	},
-	{
-		"Available": true,
-		"Name": "CatchGame",
-		"DisplayName": "Catch Game"
-	},
-	{
-		"Available": true,
-		"Name": "Infected",
-		"DisplayName": "Infected",
-		"Description": "Zombies"
-	},
-	{
-		"Available": true,
-		"Name": "CashRun",
-		"DisplayName": "Cash Run"
-	},
-	{
-		"Available": true,
-		"Name": "VoxelFortify",
-		"DisplayName": "Voxel Fortify"
-	},
-	{
-		"Available": true,
-		"Name": "VoxelTrench",
-		"DisplayName": "Voxel Trench"
-	},
-	{
-		"Available": true,
-		"Name": "CaptureTheFlag",
-		"DisplayName": "Capture The Flag"
-	},
-	{
-		"Available": true,
-		"Name": "CTF",
-		"DisplayName": "Capture The Flag"
-	}
-]
+[{
+	"Available": true,
+	"Name": "TDM",
+	"DisplayName": "Team Deathmatch",
+	"Description": "Two teams compete against each other with the objective of eliminating as many players from the opposing team as possible. The team with the highest number of kills at the end of the match wins"
+  }, {
+	"Available": true,
+	"Name": "AAS",
+	"DisplayName": "Teams must work together to capture and secure specific objectives on the map. The team that successfully captures all objectives or has the most captured objectives at the end of the match wins"
+  }, {
+	"Available": true,
+	"Name": "RUSH",
+	"DisplayName": "Rush",
+	"Description": "One team takes on the role of attackers while the other team defends. The attackers must plant and detonate bombs at specific objectives, while the defenders must prevent them from doing so. The objective for the attackers is to destroy all objectives, while the defenders aim to defend them until the time runs out"
+  }, {
+	"Available": true,
+	"Name": "CONQ",
+	"DisplayName": "Conquest",
+	"Description": "A large-scale gamemode where teams fight to capture and control key points on the map. The objective is to hold the majority of these points for an extended period of time or until the enemy team's tickets are depleted"
+  }, {
+	"Available": true,
+	"Name": "DOMI",
+	"DisplayName": "Domination",
+	"Description": "A fast-paced gamemode where teams fight to control and capture multiple smaller objectives scattered across the map. The team that holds the most objectives accumulates points over time, and the team with the highest score at the end of the match wins"
+  }, {
+	"Available": true,
+	"Name": "ELI",
+	"DisplayName": "Elimination",
+	"Description": "Players compete individually or in teams, and the objective is to eliminate all opponents. The last player or team standing is declared the winner"
+  }, {
+	"Available": true,
+	"Name": "INFCONQ",
+	"DisplayName": "Infantry Conquest",
+	"Description": "Similar to the Conquest gamemode, Infantry Conquest focuses on infantry combat and does not involve the use of heavy vehicles or aircraft. It provides a more focused and intense experience for players who prefer infantry-based gameplay"
+  }, {
+	"Available": true,
+	"Name": "FRONTLINE",
+	"DisplayName": "Frontline",
+	"Description": "A gamemode that combines elements of Conquest and Rush. Teams fight for control of a linear series of objectives, advancing or defending along a front line. The objective is to push the enemy team back and capture all objectives or hold the majority of them when the time runs out"
+  }, {
+	"Available": true,
+	"Name": "GunGameFFA",
+	"DisplayName": "Gun Game (Free For All)",
+	"Description": "A free-for-all gamemode where players start with a basic weapon and progress through a predetermined sequence of weapons with each kill. The objective is to be the first player to reach the final weapon and get a kill with it"
+  }, {
+	"Available": true,
+	"Name": "FFA",
+	"DisplayName": "Free For All",
+	"Description": "A gamemode where every player competes individually, without teams. The objective is to eliminate as many opponents as possible and achieve the highest score"
+  }, {
+	"Available": true,
+	"Name": "GunGameTeam",
+	"DisplayName": "Gun Game (Team)",
+	"Description": "Similar to Gun Game (Free For All), Gun Game (Team) is a team-based version of the gamemode. Players progress through a sequence of weapons by getting kills, but they do so as a team rather than individually"
+  }, {
+	"Available": true,
+	"Name": "SuicideRush",
+	"DisplayName": "Suicide Rush",
+	"Description": "Intense and fast-paced game mode where players must make quick decisions and take risks to achieve victory. The objective is to reach a specific goal or complete an objective within a limited time while facing numerous challenges and obstacles"
+  }, {
+	"Available": true,
+	"Name": "CatchGame",
+	"DisplayName": "Catch Game",
+  }, {
+	"Available": true,
+	"Name": "Infected",
+	"DisplayName": "Infected",
+	"Description": "One or more players start as infected, and their goal is to infect all the other players. The infected players can eliminate opponents by tagging them, and infected players respawn as infected when eliminated"
+  }, {
+	"Available": true,
+	"Name": "CashRun",
+	"DisplayName": "Cash Run",
+  }, {
+	"Available": true,
+	"Name": "VoxelFortify",
+	"DisplayName": "Voxel Fortify",
+  }, {
+	"Available": true,
+	"Name": "VoxelTrench",
+	"DisplayName": "Voxel Trench",
+  }, {
+	"Available": true,
+	"Name": "CaptureTheFlag",
+	"DisplayName": "Capture The Flag",
+	"Description": "A classic gamemode where teams compete to capture the enemy team's flag and bring it back to their own base while defending their own flag. The team with the most captures at the end of the match wins"
+  }, {
+	"Available": true,
+	"Name": "CTF",
+	"DisplayName": "Capture The Flag",
+	"Description": "A classic gamemode where teams compete to capture the enemy team's flag and bring it back to their own base while defending their own flag. The team with the most captures at the end of the match wins"
+  }]
