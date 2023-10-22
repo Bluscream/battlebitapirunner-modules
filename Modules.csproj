@@ -48,11 +48,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="modules\ChatLogger.cs.disable" />
+    <Compile Remove="flyingkarii-CustomModules\LoadingScreenText.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="RainOrigami-BattleBitBaseModules\ChatOverwrite.cs" />
+    <None Remove="modules\ChatLogger.cs.disable" />
   </ItemGroup>
 
   <ItemGroup>
@@ -90,6 +90,11 @@
 
   <ItemGroup>
     <ProjectReference Include="RainOrigami-BattleBitBaseModules\BattleBitBaseModules.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="modules_\" />
+    <Folder Include="RainOrigami-BattleBitBaseModules\" />
   </ItemGroup>
 
 </Project>

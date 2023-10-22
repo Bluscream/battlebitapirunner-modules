@@ -54,6 +54,7 @@ namespace Bluscream {
         private static async Task<Dictionary<ulong, Response>> Fetch(List<RunnerPlayer> players) => await Fetch(players.Select(p => p.SteamID));
         private static async Task<Dictionary<ulong, Response>> Fetch(IEnumerable<ulong> SteamId64s) {
             if (string.IsNullOrWhiteSpace(Config.SteamWebApiKey)) {
+                BluscreamLib.Logger.Error("Steam Web API Key is not set up in config, can't continue!");
                 throw new("Steam Web API Key is not set up in config, can't continue!");
             }
             SteamId64s = SteamId64s.Distinct();
@@ -62,28 +63,33 @@ namespace Bluscream {
             foreach (var chunk in SteamId64s.Chunk(100)) {
                 var steamIdChunk = string.Join(",", SteamId64s);
                 SummaryResponse? summariesResponse = null!;
-                var summariesUrl = Config.GetPlayerSummaryUrl.Replace("{steamId64}", steamIdChunk).Replace("{apikey}", apiKey);
+                var summariesUrl = Config.GetPlayerSummaryUrl.Replace("{steamids}", steamIdChunk).Replace("{apikey}", apiKey);
+                BluscreamLib.Logger.Debug(summariesUrl);
                 try { summariesResponse = await httpClient.GetFromJsonAsync<SummaryResponse>(summariesUrl); } catch (Exception ex) {
-                    Log($"Failed to get steam summary for {steamIdChunk}: {ex.Message}");
+                    BluscreamLib.Logger.Error($"Failed to get steam summary for {steamIdChunk}: {ex.Message}");
                 }
                 foreach (var player in summariesResponse?.Response?.Players) {
-                    _AddToDict(ref responses, player.SteamId64, player);
+                    if (responses.ContainsKey(player.SteamId64)) {
+                        responses[player.SteamId64].Summary = player;
+                    } else {
+                        responses[player.SteamId64] = new Response() { Summary = player };
+                    }
                 }
                 BansResponse? bansResponse = null!;
-                var bansUrl = Config.GetPlayerBansUrl.Replace("{steamId64}", steamIdChunk).Replace("{apikey}", apiKey);
+                var bansUrl = Config.GetPlayerBansUrl.Replace("{steamids}", steamIdChunk).Replace("{apikey}", apiKey);
+                BluscreamLib.Logger.Debug(bansUrl);
                 try { bansResponse = await httpClient.GetFromJsonAsync<BansResponse>(bansUrl); } catch (Exception ex) {
-                    Log($"Failed to get steam bans for {steamIdChunk}: {ex.Message}");
+                    BluscreamLib.Logger.Error($"Failed to get steam bans for {steamIdChunk}: {ex.Message}");
                 }
                 foreach (var player in bansResponse?.Players) {
-                    _AddToDict(ref responses, player.SteamId64, player);
+                    if (responses.ContainsKey(player.SteamId64)) {
+                        responses[player.SteamId64].Bans = player;
+                    } else {
+                        responses[player.SteamId64] = new Response() { Bans = player };
+                    }
                 }
             }
             return responses;
-        }
-        private static void _AddToDict(ref Dictionary<ulong, Response> dict, ulong steamId64, object data) {
-            if (!dict.ContainsKey(steamId64)) dict[steamId64] = new Response();
-            if (data is BansResponse bans) dict[steamId64].Bans = bans.Players.FirstOrDefault();
-            if (data is SummaryResponse summaries) dict[steamId64].Summary = summaries?.Response?.Players?.FirstOrDefault();
         }
 
         public static async Task<IEnumerable<Response>> Get(RunnerServer server) => (await Get(server.AllPlayers.Select(p => p.SteamID))).Values;
@@ -93,7 +99,9 @@ namespace Bluscream {
             var responses = new Dictionary<ulong, Response>();
             var needSteamId64s = SteamId64s.Where(s => !HasCacheData(s)).ToList();
             if (needSteamId64s.Count == 0) return Cache.Where(c => SteamId64s.Contains(c.Key)).ToDictionary(c => c.Key, c => c.Value);
+            Console.WriteLine("get1");
             var steamDataResponse = await Fetch(needSteamId64s);
+            Console.WriteLine("get2");
             if (steamDataResponse is null) return responses;
             foreach (var steamData in steamDataResponse) {
                 responses[steamData.Key] = steamData.Value;
@@ -151,8 +159,8 @@ namespace Bluscream {
     }
     public class Configuration : ModuleConfiguration {
         public string SteamWebApiKey { get; set; } = string.Empty;
-        public string GetPlayerBansUrl { get; set; } = "http://api.steampowered.com/ISteamUser/GetPlayerBans/v1/?steamids={steamId64}&key={Configuration.SteamWebApiKey}";
-        public string GetPlayerSummaryUrl { get; set; } = "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?steamids={steamId64}&key={Configuration.SteamWebApiKey}";
+        public string GetPlayerBansUrl { get; set; } = "http://api.steampowered.com/ISteamUser/GetPlayerBans/v1/?steamids={steamids}&key={apikey}";
+        public string GetPlayerSummaryUrl { get; set; } = "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?steamids={steamids}&key={apikey}";
         public TimeSpan RemovePlayersAfterLeaveDelay { get; set; } = TimeSpan.FromMinutes(30);
         public TimeSpan RemoveEntriesFromCacheDelay { get; set; } = TimeSpan.FromHours(12);
     }

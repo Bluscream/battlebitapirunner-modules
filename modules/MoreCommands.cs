@@ -39,8 +39,8 @@ namespace Bluscream {
 
         public string GetCurrentMapInfoString() {
             var sb = new StringBuilder("Current Map:\n\n");
-            sb.AppendLine($"Name: {this.Server.GetCurrentMap()?.DisplayName} ({this.Server.Map})");
-            sb.AppendLine($"Mode: {this.Server.GetCurrentGameMode()?.DisplayName} ({this.Server.Gamemode})");
+            sb.AppendLine($"Name: {this.Server.GetCurrentMap()?.DisplayName} ({this.Server.Map.ToUpperInvariant()})");
+            sb.AppendLine($"Mode: {this.Server.GetCurrentGameMode()?.DisplayName} ({this.Server.Gamemode.ToUpperInvariant()})");
             sb.AppendLine($"Size: {this.Server.MapSize}");
             return sb.ToString();
         }
@@ -70,8 +70,11 @@ namespace Bluscream {
                     ctx.Reply($"{modes.Count} GameModes are matching {gameMode}:\n\n{modes.Select(m => m.ToString()).Join("\n")}\n\nPlease specify one!"); return;
                 } else mode = modes.FirstOrDefault();
             }
-            MapSize size = BluscreamLib.GetMapSizeFromString(mapSize);
-            this.Server.ChangeMap(map, mode, dayNight?.ParseDayNight(), size);
+            Console.WriteLine("TEthuiteuriohterotheort\ndsfjnhskf");
+            MapSize? size = BluscreamLib.GetMapSizeFromString(mapSize);
+            Console.WriteLine("TEthuiteuriohterotheort\ndsfjnhskf");
+            this.Server.ChangeMap(map, mode, dayNight?.ParseDayNight(), size ?? MapSize.None);
+            Console.WriteLine("TEthuiteuriohterotheort\ndsfjnhskf");
         }
 
         [Commands.CommandCallback("gamemode", Description = "Changes the gamemode", ConsoleCommand = true, Permissions = new[] { "commands.gamemode" })]

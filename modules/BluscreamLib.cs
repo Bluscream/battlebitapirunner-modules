@@ -1,9 +1,9 @@
 using BattleBitAPI.Common;
 using BattleBitAPI.Server;
 using BBRAPIModules;
-using Bluscream;
 using Discord;
 using Discord.Webhook;
+using Bluscream;
 using Humanizer;
 using log4net;
 using System;
@@ -35,6 +35,7 @@ namespace Bluscream {
     //[RequireModule(typeof(Bluscream.SteamApi))]
     [RequireModule(typeof(DevMinersBBModules.ModuleUsageStats))]
     [RequireModule(typeof(Permissions.GranularPermissions))]
+    [RequireModule(typeof(PlayerFinder.PlayerFinder))]
     #endregion
     [Module("Bluscream's Library", "2.0.2")]
     public class BluscreamLib : BattleBitModule {
@@ -135,7 +136,8 @@ namespace Bluscream {
             else if (input.Contains("night")) return MapDayNight.Night;
             return null;
         }
-        public static MapSize GetMapSizeFromString(string input) {
+        public static MapSize GetMapSizeFromString(string? input) {
+            if (string.IsNullOrWhiteSpace(input)) return MapSize.None;
             switch (input.Trim().ToLowerInvariant()) {
                 case "tiny":
                 case "8":
@@ -299,6 +301,9 @@ namespace Bluscream {
             BluscreamLib.Logger.Warn($"Kicking Player {steamId64} for \"{reason}\"");
             server.Kick(steamId64, reason);
             OnPlayerKicked?.Invoke(steamId64, reason);
+        }
+        public static bool IsAvailable(this RunnerServer server) {
+            try { return server is not null && server.GameIP is not null && server.IsConnected; } catch { return false; }
         }
         #endregion
         #region Player
@@ -860,14 +865,23 @@ namespace Bluscream {
         public static NameValueCollection ParseQueryString(this Uri uri) {
             return HttpUtility.ParseQueryString(uri.Query);
         }
-        public static Uri AddQuery(this Uri uri, string name, string value) {
+        public static Uri AddQuery(this Uri uri, string name, string value, bool encode = true) {
             var httpValueCollection = uri.ParseQueryString();
             httpValueCollection.Remove(name);
             httpValueCollection.Add(name, value);
             var ub = new UriBuilder(uri);
-            ub.Query = httpValueCollection.ToString();
-            return ub.Uri;
+            if (encode) {
+                ub.Query = httpValueCollection.ToString();
+                return ub.Uri;
+            } else {
+                ub.Query = string.Empty;
+                string query = string.Join("&", httpValueCollection.AllKeys.Select(key => $"{key}={httpValueCollection[key]}"));
+                query = query.Replace("%2C", ",");
+                return new Uri(uri.AbsoluteUri.TrimEnd('?') + "?" + query);
+            }
         }
+
+
         public static Uri RemoveQuery(this Uri uri, string name) {
             var httpValueCollection = uri.ParseQueryString();
             httpValueCollection.Remove(name);

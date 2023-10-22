@@ -23,8 +23,8 @@ namespace Bluscream {
             SupportUrl = new Uri("https://github.com/Bluscream/battlebitapirunner-modules/issues/new?title=GeoApi")
         };
 
-        public const string IpApiUrl = "http://ip-api.com";
-        public const string IpApiProUrl = "https://pro.ip-api.com";
+        public const string IpApiUrl = "http://ip-api.com/json/";
+        public const string IpApiProUrl = "https://pro.ip-api.com/json/";
         public const string IpApiFields = "status,message,continent,continentCode,country,countryCode,region,regionName,city,district,zip,lat,lon,timezone,offset,currency,isp,org,as,asname,reverse,mobile,proxy,hosting,query";
         public const string IpApiSingleUrl = "/{ip}?";
         public const string IpApiBatchUrl = "/batch?";
@@ -41,10 +41,14 @@ namespace Bluscream {
         private static void Log(object _msg, string source = "GeoApi") => BluscreamLib.Log(_msg, source);
         #endregion
         #region Api
-        public static async Task<IpApi.Response>? GetData(RunnerServer server) => await GetData(server.GameIP);
-        public static async Task<IpApi.Response>? GetData(RunnerPlayer player) => await GetData(player.IP);
-        public static async Task<IpApi.Response>? GetData(string ip) => await GetData(IPAddress.Parse(ip));
-        public static async Task<IpApi.Response>? GetData(IPAddress ip) {
+        public static async Task<IpApi.Response?> GetData(RunnerServer? server) {
+            BluscreamLib.Logger.Warn("Getting server IP data is currently disabled due to a bug in the API!");
+            if (!server.IsAvailable()) return null!;
+            return await GetData(server?.GameIP);
+        }
+        public static async Task<IpApi.Response?> GetData(RunnerPlayer player) => await GetData(player.IP);
+        public static async Task<IpApi.Response?> GetData(string ip) => await GetData(IPAddress.Parse(ip));
+        public static async Task<IpApi.Response?> GetData(IPAddress ip) {
             if (!Cache.ContainsKey(ip)) {
                 Log($"For some reason we dont have Data for \"{ip}\", getting it now...");
                 await AddData(ip);
@@ -55,11 +59,13 @@ namespace Bluscream {
         private static async Task AddData(RunnerServer server) => await AddData((List<IPAddress>)new List<IPAddress>() { server.GameIP }.Concat(server.AllPlayers.Select(p => p.IP)));
         private static async Task AddData(RunnerPlayer player) => await AddData(player.IP);
         private static async Task AddData(IPAddress ip) => await AddData(new List<IPAddress>() { ip });
-        private static async Task AddData(List<IPAddress> ips) {
+        private static async Task? AddData(List<IPAddress> ips) {
             if (Cache.Keys.ContainsAll(ips)) return;
             if (ips.Count > 1) {
                 var geoDataResponse = await _GetBatchData(ips);
-                if (geoDataResponse is null) return;
+                if (geoDataResponse is null) {
+                    Log($"Failed to get batch geo data for {string.Join(", ", ips)}");
+                }
                 foreach (var geoData in geoDataResponse) {
                     _Cache[geoData.Query] = geoData;
                     OnDataReceived?.Invoke(geoData.Query, geoData);
@@ -67,7 +73,9 @@ namespace Bluscream {
             } else if (ips.Count == 1) {
                 var ip = ips.First();
                 var geoDataResponse = await _GetData(ips.First());
-                if (geoDataResponse is null) return;
+                if (geoDataResponse is null) {
+                    Log($"Failed to get geo data for {ip}");
+                }
                 _Cache.Add(ip, geoDataResponse);
                 OnDataReceived?.Invoke(ip, geoDataResponse);
             }
@@ -97,16 +105,20 @@ namespace Bluscream {
 
         private static Uri GetApiUrl(bool pro = false, bool batch = false) {
             var url = new Uri($"{(pro ? IpApiProUrl : IpApiUrl)}{(batch ? IpApiBatchUrl : IpApiSingleUrl)}");
-            url.AddQuery("fields", IpApiFields);
+            url = url.AddQuery("fields", IpApiFields, false);
             if (pro) url = url.AddQuery("key", Config.IpApiProKey);
+            BluscreamLib.Logger.Debug($"Assembled GeoApi URL: {url}");
             return url;
         }
         private static async Task<IpApi.Response?> _GetData(RunnerPlayer player) => await _GetData(player.IP);
         private static async Task<IpApi.Response?> _GetData(IPAddress ip) {
-            var url = GetApiUrl(string.IsNullOrWhiteSpace(Config.IpApiProKey), false).ToString().Replace("{ip}", ip.ToString());
+            var url = GetApiUrl(pro: !string.IsNullOrWhiteSpace(Config.IpApiProKey), false).ToString().Replace("{ip}", ip.ToString());
             IpApi.Response? response;
             try { response = await GeoApi.httpClient.GetFromJsonAsync<IpApi.Response>(url, Converter.Settings); } catch (Exception ex) {
                 Log($"Failed to get geo data for {ip}: {ex.Message}");
+                if (ex.Message.StartsWith("'<' is an invalid start of a value.")) {
+                    throw new($"Something went wrong with the GeoApi, did you forget to set the API Key?");
+                }
                 return null;
             }
             return response;
@@ -115,11 +127,15 @@ namespace Bluscream {
         private static async Task<List<IpApi.Response>> _GetBatchData(List<RunnerPlayer> players) => await _GetBatchData(players.Select(p => p.IP));
         private static async Task<List<IpApi.Response>> _GetBatchData(IEnumerable<IPAddress> ips) {
             List<IpApi.Response> responses = new();
-            var url = GetApiUrl(string.IsNullOrWhiteSpace(Config.IpApiProKey), true);
+            var url = GetApiUrl(pro: !string.IsNullOrWhiteSpace(Config.IpApiProKey), batch: true);
+            Log(url);
             foreach (var chunk in ips.Chunk(100)) {
                 HttpResponseMessage httpResponse;
                 try { httpResponse = await GeoApi.httpClient.PostAsJsonAsync(url, chunk); } catch (Exception ex) {
                     Log($"Failed to get geo data for {string.Join(", ", chunk.ToList())}: {ex.Message}");
+                    if (ex.Message.StartsWith("'<' is an invalid start of a value.")) {
+                        throw new($"Something went wrong with the GeoApi, did you forget to set the API Key?");
+                    }
                     continue;
                 }
                 var json = await httpResponse.Content.ReadAsStringAsync();
@@ -275,6 +291,10 @@ namespace IpApi {
 
         [JsonIgnore]
         public DateTime CacheTime { get; private set; } = DateTime.Now;
+
+        public bool IsValid(TimeSpan timeSpan) => CacheTime > (DateTime.Now - timeSpan);
+
+        public IEnumerable<RunnerPlayer> GetPlayers(RunnerServer server) => server.GetPlayersByIp(Query);
 
         public static Response FromJson(string json) => JsonUtils.FromJson<Response>(json);
     }
