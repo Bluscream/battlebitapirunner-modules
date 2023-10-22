@@ -2,6 +2,7 @@
 using Commands;
 using Humanizer;
 using System;
+using System.Linq;
 using System.Text;
 
 namespace Bluscream {
@@ -9,6 +10,7 @@ namespace Bluscream {
     [RequireModule(typeof(Bluscream.BluscreamLib))]
     [RequireModule(typeof(Bluscream.SteamApi))]
     [RequireModule(typeof(Commands.CommandHandler))]
+    [RequireModule(typeof(PlayerFinder.PlayerFinder))]
     [Module("Example usage of the SteamApi module", "2.0.0")]
     public class SteamApiExample : BattleBitModule {
 
@@ -30,6 +32,9 @@ namespace Bluscream {
         [ModuleReference]
         public Bluscream.SteamApi SteamApi { get; set; } = null!;
 
+        [ModuleReference]
+        public PlayerFinder.PlayerFinder PlayerFinder { get; set; } = null!;
+
         #endregion References
 
         #region Methods
@@ -45,12 +50,13 @@ namespace Bluscream {
                 this.Logger.Error($"SteamApi could not be found! Is it installed?");
             } else {
                 this.CommandHandler.Register(this);
-                SteamApi.OnPlayerDataReceived += SteamApi_OnDataReceived;
+                SteamApi.OnDataReceived += SteamApi_OnDataReceived;
             }
         }
 
-        private void SteamApi_OnDataReceived(RunnerPlayer player, SteamWebApi.Response steamData) {
-            this.Logger.Debug($"Recieved Steam Data for {player.fullstr()}: {steamData.ToJson(false)}");
+        private void SteamApi_OnDataReceived(SteamWebApi.Response steamData) {
+            var player = steamData.GetPlayers(this.Server).FirstOrDefault();
+            this.Logger.Debug($"Recieved Steam Data for {player?.fullstr() ?? steamData.Summary?.DisplayName}: {steamData.ToJson(false)}");
         }
 
         #endregion Events
@@ -58,43 +64,32 @@ namespace Bluscream {
         #region Commands
 
         [CommandCallback("steam bans", Description = "Lists steam bans of a player", ConsoleCommand = true, Permissions = new[] { "command.steambans" })]
-        public async void GetPlayerSteamBans(Context ctx, RunnerPlayer? _player = null) {
-            _player = _player ?? (ctx.Source as ChatSource).Invoker;
+        public async void GetPlayerSteamBans(Context ctx, string? _player = null) {
+            var player = _player?.ParsePlayer(this.PlayerFinder, this.Server) ?? new ParsedPlayer(player: (ctx.Source as ChatSource)?.Invoker, server: this.Server);
             var response = new StringBuilder();
-            if (!string.IsNullOrEmpty(_player.Name)) response.AppendLine($"Name: {_player.str()} ({_player.Name.Length} chars)");
-            if (!string.IsNullOrEmpty(_player.SteamID.ToString())) {
-                var steam = await SteamApi?.GetData(_player);
-                if (steam.Bans is null) {
-                    ctx.Reply("Steam bans request failed, check connection and config!");
-                    return;
-                }
-                response.AppendLine($"VAC Banned: {steam.Bans.VacBanned?.ToYesNo()} ({steam.Bans.NumberOfVacBans} times)");
-                if (steam.Bans.VacBanned == true) response.AppendLine($"Last VAC Ban: {steam.Bans.DaysSinceLastBan} days ago");
-                response.AppendLine($"Community Banned: {steam.Bans.CommunityBanned?.ToYesNo()}");
-                response.AppendLine($"Trade Banned: {(steam.Bans.EconomyBan != "none").ToYesNo()}");
-                response.AppendLine($"Game Banned: {(steam.Bans.NumberOfGameBans > 0).ToYesNo()} ({steam.Bans.NumberOfGameBans} times)");
+            if (!string.IsNullOrEmpty(player.Name)) response.AppendLine($"Name: {player.Name.Quote()} ({player.Name.Length} chars)");
+            if (!string.IsNullOrEmpty(player.SteamId64.ToString())) {
+                response.AppendLine($"VAC Banned: {player.SteamData?.Bans?.VacBanned?.ToYesNo()} ({player.SteamData?.Bans?.NumberOfVacBans} times)");
+                if (player.SteamData?.Bans?.VacBanned == true) response.AppendLine($"Last VAC Ban: {player.SteamData?.Bans.DaysSinceLastBan} days ago");
+                response.AppendLine($"Community Banned: {player.SteamData?.Bans?.CommunityBanned?.ToYesNo()}");
+                response.AppendLine($"Trade Banned: {(player.SteamData?.Bans?.EconomyBan != "none").ToYesNo()}");
+                response.AppendLine($"Game Banned: {(player.SteamData?.Bans?.NumberOfGameBans > 0).ToYesNo()} ({player.SteamData?.Bans?.NumberOfGameBans} times)");
             }
             ctx.Reply(response.ToString());
         }
 
         [CommandCallback("steam player", Description = "Lists steam summary of a player", ConsoleCommand = true, Permissions = new[] { "command.steamplayer" })]
-        public async void GetPlayerSteamSummary(Context ctx, RunnerPlayer? _player = null) {
-            _player = _player ?? (ctx.Source as ChatSource).Invoker;
+        public async void GetPlayerSteamSummary(Context ctx, string? _player = null) {
+            var player = _player?.ParsePlayer(this.PlayerFinder, this.Server) ?? new ParsedPlayer(player: (ctx.Source as ChatSource)?.Invoker, server: this.Server);
             var response = new StringBuilder();
-            if (!string.IsNullOrEmpty(_player.Name)) response.AppendLine($"BattleBit Name: {_player.str()} ({_player.Name.Length} chars)");
-            if (!string.IsNullOrEmpty(_player.SteamID.ToString())) {
-                var steam = await SteamApi?.GetData(_player);
-                response.AppendLine($"Steam ID 64: {_player.SteamID}\n");
-                if (steam.Summary is null) {
-                    ctx.Reply("Steam summary request failed, check connection and config!");
-                    return;
-                }
-                if (!string.IsNullOrEmpty(steam.Summary.RealName)) response.AppendLine($"Real Name: {steam.Summary.RealName?.Quote()} ({steam.Summary.RealName?.Length} chars)");
-                if (!string.IsNullOrEmpty(steam.Summary.PersonaName)) response.AppendLine($"Persona Name: {steam.Summary.PersonaName?.Quote()} ({steam.Summary.PersonaName?.Length} chars)");
-                if (!string.IsNullOrEmpty(steam.Summary.CountryCode)) response.AppendLine($"Country Code: {steam.Summary.CountryCode}");
-                if (steam.Summary.TimeCreated is not null) response.AppendLine($"Created: {steam.Summary.TimeCreated} ({steam.Summary.TimeCreated.Humanize()})");
-                if (steam.Summary.PrimaryClanId is not null) response.AppendLine($"Primary Clan ID: {steam.Summary.PrimaryClanId}");
-                if (!string.IsNullOrEmpty(steam.Summary.AvatarHash)) response.AppendLine($"Avatar Hash: {steam.Summary.AvatarHash}");
+            if (!string.IsNullOrEmpty(player.Name)) response.AppendLine($"BattleBit Name: {player.Name.Quote()} ({player.Name.Length} chars)");
+            if (!string.IsNullOrEmpty(player.SteamId64.ToString())) {
+                if (!string.IsNullOrEmpty(player.SteamData?.Summary?.RealName)) response.AppendLine($"Real Name: {player.SteamData?.Summary?.RealName?.Quote()} ({player.SteamData?.Summary.RealName?.Length} chars)");
+                if (!string.IsNullOrEmpty(player.SteamData?.Summary?.PersonaName)) response.AppendLine($"Persona Name: {player.SteamData?.Summary?.PersonaName?.Quote()} ({player.SteamData?.Summary.PersonaName?.Length} chars)");
+                if (!string.IsNullOrEmpty(player.SteamData?.Summary?.CountryCode)) response.AppendLine($"Country Code: {player.SteamData?.Summary?.CountryCode}");
+                if (player.SteamData?.Summary?.TimeCreated is not null) response.AppendLine($"Created: {player.SteamData?.Summary.TimeCreated} ({player.SteamData?.Summary.TimeCreated.Humanize()})");
+                if (player.SteamData?.Summary?.PrimaryClanId is not null) response.AppendLine($"Primary Clan ID: {player.SteamData?.Summary?.PrimaryClanId}");
+                if (!string.IsNullOrEmpty(player.SteamData?.Summary?.AvatarHash)) response.AppendLine($"Avatar Hash: {player.SteamData?.Summary?.AvatarHash}");
             }
             ctx.Reply(response.ToString());
         }

@@ -32,7 +32,9 @@ using System.Web;
 
 namespace Bluscream {
     #region Requires
-    //[RequireModule(typeof(DevMinersBBModules.ModuleUsageStats))]
+    [RequireModule(typeof(Bluscream.GeoApi))]
+    [RequireModule(typeof(Bluscream.SteamApi))]
+    [RequireModule(typeof(DevMinersBBModules.ModuleUsageStats))]
     [RequireModule(typeof(Permissions.GranularPermissions))]
     #endregion
     [Module("Bluscream's Library", "2.0.2")]
@@ -438,6 +440,22 @@ namespace Bluscream {
             table.Rows.Add(row);
             return int.Parse((string)row["expression"]);
         }
+
+        public static ParsedPlayer ParsePlayer(this string input, PlayerFinder.PlayerFinder playerFinder, RunnerServer? server = null) {
+            if (string.IsNullOrWhiteSpace(input)) return null!;
+            if (playerFinder.ByNamePart(input) is RunnerPlayer _player) return new ParsedPlayer(player: _player, server: server);
+            if (IPAddress.TryParse(input, out var ip)) return new ParsedPlayer(ip: ip, server: server);
+            if (ulong.TryParse(input, out var steamId64)) return new ParsedPlayer(steamId64: steamId64, server: server);
+            return null;
+        }
+
+        //public static object? ParsePlayer(this string input, PlayerFinder.PlayerFinder playerFinder) {
+        //    if (string.IsNullOrWhiteSpace(input)) return null!;
+        //    if (playerFinder.ByNamePart(input) is RunnerPlayer _player) return _player;
+        //    if (IPAddress.TryParse(input, out var ip)) return ip;
+        //    if (ulong.TryParse(input, out var steamId64)) return steamId64;
+        //    return null;
+        //}
 
         public static MapInfo? ToMap(this string mapName) => BluscreamLib.Maps.Where(m => m.Name.ToLowerInvariant() == mapName.ToLowerInvariant()).First();
         public static List<MapInfo> ParseMap(this string input) => BluscreamLib.ResolveGameModeMapNameMatch(input, BluscreamLib.Maps);
@@ -1284,6 +1302,37 @@ namespace Bluscream {
             [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
             [JsonPropertyName("WarningThreshold")]
             public virtual long? WarningThreshold { get; set; }
+        }
+    }
+    public class ParsedPlayer {
+        public string? Name { get; set; }
+        public ulong? SteamId64 { get; set; }
+        public IPAddress? IP { get; set; }
+        public RunnerPlayer? Player { get; set; }
+        public SteamWebApi.Response? SteamData { get; set; }
+        public IpApi.Response? GeoData { get; set; }
+        public ParsedPlayer(string? name = null, ulong? steamId64 = null, IPAddress? ip = null, RunnerPlayer? player = null, SteamWebApi.Response? steamData = null, IpApi.Response? geoData = null, RunnerServer? server = null) {
+            if (player is not null) {
+                Name = player.Name;
+                SteamId64 = player.SteamID;
+                IP = player.IP;
+                Player = player;
+            }
+            if (IP is not null && GeoData is null) GeoData = GeoApi.GetData(IP)?.Result;
+            if (GeoData is not null) {
+                IP = GeoData.Query;
+                GeoData = GeoData;
+            }
+            if (SteamId64 is not null && SteamData is null) SteamData = SteamApi.Get(SteamId64.Value)?.Result;
+            if (SteamData is not null) {
+                SteamId64 = SteamData.SteamId64;
+                Name = SteamData.Summary?.DisplayName;
+                SteamData = SteamData;
+            }
+            if (server is not null) {
+                if (Player is null && SteamId64 is not null) Player = server.GetPlayersBySteamId64(SteamId64.Value).FirstOrDefault();
+                if (Player is null && IP is not null) Player = server.GetPlayersByIp(IP).FirstOrDefault();
+            }
         }
     }
     public class ModuleInfo {
