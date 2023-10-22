@@ -18,7 +18,7 @@ public class VacLimiter : BattleBitModule {
     public Bluscream.SteamApi SteamApi { get; set; } = null!;
 
     public override void OnModulesLoaded() {
-        SteamApi.OnPlayerDataReceived += SteamApi_OnPlayerDataReceived;
+        SteamApi.OnDataReceived += SteamApi_OnDataReceived;
     }
 
     public override Task OnConnected() {
@@ -27,44 +27,46 @@ public class VacLimiter : BattleBitModule {
         return Task.CompletedTask;
     }
 
-    private void SteamApi_OnPlayerDataReceived(RunnerPlayer player, Response steamData) {
-        CheckBans(player, steamData);
+    private void SteamApi_OnDataReceived(Response steamData) {
+        CheckBans(steamData);
     }
 
-    private void CheckBans(RunnerPlayer player, Response steamData) {
-        if (!this.Server.IsConnected || !this.IsLoaded) {
-            this.Logger?.Info($"Server is not connected or module is not loaded anymore. Skipping VAC ban check for player {player.Name} ({player.SteamID}).");
-            return;
-        }
-        if (steamData is null || steamData.Bans is null) {
-            this.Logger?.Info($"Steam Data not available! Skipping VAC ban check for player {player.Name} ({player.SteamID}).");
-            return;
-        }
+    private void CheckBans(Response steamData) {
+        foreach (var player in steamData.GetPlayers(this.Server)) {
+            if (!this.Server.IsConnected || !this.IsLoaded) {
+                this.Logger?.Info($"Server is not connected or module is not loaded anymore. Skipping VAC ban check for player {player.Name} ({player.SteamID}).");
+                return;
+            }
+            if (steamData is null || steamData.Bans is null) {
+                this.Logger?.Info($"Steam Data not available! Skipping VAC ban check for player {player.Name} ({player.SteamID}).");
+                return;
+            }
 
-        if (steamData.Bans.VacBanned == false && steamData.Bans.NumberOfVacBans == 0) {
-            this.Logger.Info($"Player {player.Name} ({player.SteamID}) has no VAC bans on record.");
-            return;
-        }
+            if (steamData.Bans.VacBanned == false && steamData.Bans.NumberOfVacBans == 0) {
+                this.Logger.Info($"Player {player.Name} ({player.SteamID}) has no VAC bans on record.");
+                return;
+            }
 
-        if (this.GranularPermissions is not null && ServerConfiguration.IgnoredPermissions?.Any(p => this.GranularPermissions.HasPermission(player.SteamID, p)) == true) {
-            this.Logger.Info($"Player {player.Name} ({player.SteamID}) has an ignored permission, skipping...");
-            return;
-        }
+            if (this.GranularPermissions is not null && ServerConfiguration.IgnoredPermissions?.Any(p => this.GranularPermissions.HasPermission(player.SteamID, p)) == true) {
+                this.Logger.Info($"Player {player.Name} ({player.SteamID}) has an ignored permission, skipping...");
+                return;
+            }
 
-        if (steamData.Bans.DaysSinceLastBan >= this.ServerConfiguration.VACAgeThreshold) {
-            this.Logger.Info($"Player {player.Name} ({player.SteamID}) has a VAC ban from {steamData.Bans.DaysSinceLastBan} days ago on record, but it is older than the threshold of {this.ServerConfiguration.VACAgeThreshold} days.");
-            return;
-        }
+            if (steamData.Bans.DaysSinceLastBan >= this.ServerConfiguration.VACAgeThreshold) {
+                this.Logger.Info($"Player {player.Name} ({player.SteamID}) has a VAC ban from {steamData.Bans.DaysSinceLastBan} days ago on record, but it is older than the threshold of {this.ServerConfiguration.VACAgeThreshold} days.");
+                return;
+            }
 
-        this.Logger.Info($"Player {player.Name} ({player.SteamID}) has a VAC ban from {steamData.Bans.DaysSinceLastBan} days ago on record. {(this.ServerConfiguration.Kick ? "Kicking" : "")}{(this.ServerConfiguration.Kick && this.ServerConfiguration.Ban ? " and " : "")}{(this.ServerConfiguration.Ban ? "banning" : "")} player.");
+            this.Logger.Info($"Player {player.Name} ({player.SteamID}) has a VAC ban from {steamData.Bans.DaysSinceLastBan} days ago on record. {(this.ServerConfiguration.Kick ? "Kicking" : "")}{(this.ServerConfiguration.Kick && this.ServerConfiguration.Ban ? " and " : "")}{(this.ServerConfiguration.Ban ? "banning" : "")} player.");
 
-        if (this.ServerConfiguration.Kick) {
-            this.Server.Kick(player, string.Format(this.ServerConfiguration.KickMessage, steamData.Bans.DaysSinceLastBan, this.ServerConfiguration.VACAgeThreshold));
-        }
+            if (this.ServerConfiguration.Kick) {
+                this.Server.Kick(player, string.Format(this.ServerConfiguration.KickMessage, steamData.Bans.DaysSinceLastBan, this.ServerConfiguration.VACAgeThreshold));
+            }
 
-        if (this.ServerConfiguration.Ban) {
-            this.Server.ExecuteCommand($"ban {player.SteamID}");
-            player.Kick(string.Format(this.ServerConfiguration.KickMessage, steamData.Bans.DaysSinceLastBan, this.ServerConfiguration.VACAgeThreshold));
+            if (this.ServerConfiguration.Ban) {
+                this.Server.ExecuteCommand($"ban {player.SteamID}");
+                player.Kick(string.Format(this.ServerConfiguration.KickMessage, steamData.Bans.DaysSinceLastBan, this.ServerConfiguration.VACAgeThreshold));
+            }
         }
     }
 }

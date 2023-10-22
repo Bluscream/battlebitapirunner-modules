@@ -399,3 +399,4 @@ FodyWeavers.xsd
 /RainOrigami-BattleBitBaseModules
 /.gitignore
 /configurations_
+/modules_private/*.cs

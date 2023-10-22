@@ -195,10 +195,10 @@ namespace Bluscream {
             public string CountryFlagEmoji => GeoData?.CountryFlagEmoji ?? SteamData?.Summary?.CountryFlagEmoji ?? "🌎";
             public SteamWebApi.Response? SteamData { get; set; }
 
-            public LoggerPlayer(string paramName, RunnerPlayer player = null) {
-                ParamName = paramName; Player = player; SteamId64 = player.SteamID;
-                GeoData = player.GetGeoData()?.Result;
-                // SteamData = SteamApi?._GetData((ulong)SteamId64).Result;
+            public LoggerPlayer(string paramName, RunnerPlayer? player = null) {
+                ParamName = paramName; Player = player; SteamId64 = player?.SteamID;
+                GeoData = player?.GetGeoData()?.Result;
+                SteamData = player?.GetSteamData()?.Result;
             }
 
             public string ReplaceDiscord(string input) {
@@ -231,7 +231,7 @@ namespace Bluscream {
             var now = string.IsNullOrWhiteSpace(Config.TimeStampFormat) ? "" : new DateTimeWithZone(DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById(Config.TimeZone)).LocalTime.ToString(Config.TimeStampFormat);
             input = input.Replace("{now}", now);
 
-            if (server is not null) {
+            if (server?.Server.IsAvailable() == true) {
                 input = server.ReplaceDiscord(input);
             }
 
@@ -271,7 +271,7 @@ namespace Bluscream {
         internal async void HandleEvent(LogConfigurationEntry config, RunnerPlayer? _player = null, RunnerPlayer? _target = null, IpApi.Response? geoData = null, SteamWebApi.Response? steamData = null,
             ReportReason? reportReason = null, ChatChannel? chatChannel = null, string? _msg = null, long? oldSessionId = null, long? newSessionId = null, GameState? oldState = null,
             GameState? newState = null, PlayerJoiningArguments? playerJoiningArguments = null, ulong? steamId64 = null, PlayerStats? playerStats = null) {
-            var server = new LoggerServer(this.Server, "server");
+            var server = this.Server.IsAvailable() ? new LoggerServer(this.Server, "server") : null;
             LoggerPlayer player = new LoggerPlayer("player", _player);
             LoggerPlayer target = new LoggerPlayer("target", _target);
             if (config.Console is not null && config.Console.Enabled && !string.IsNullOrWhiteSpace(config.Console.Message)) {
@@ -283,8 +283,7 @@ namespace Bluscream {
                     chatChannel: chatChannel, msg: _msg, oldSessionId: oldSessionId, newSessionId: newSessionId, oldState: oldState, newState: newState, playerJoinArgs: playerJoiningArguments);
                 await SendToWebhook(config.Discord.WebhookUrl, msg);
             }
-            try { var a = this.Server.IsConnected; } catch { return; }
-            if (this.Server is null || !this.Server.IsConnected) return;
+            if (!this.Server.IsAvailable()) return;
             if (config.Chat is not null && config.Chat.Enabled && !string.IsNullOrWhiteSpace(config.Chat.Message)) {
                 var msg = FormatString(config.Chat.Message, server: server, player: player, target: target, reportReason: reportReason,
                     chatChannel: chatChannel, msg: _msg, oldSessionId: oldSessionId, newSessionId: newSessionId, oldState: oldState, newState: newState, playerJoinArgs: playerJoiningArguments);
@@ -327,16 +326,16 @@ namespace Bluscream {
         public override void OnModulesLoaded() {
             Extensions.OnPlayerKicked += OnPlayerKicked;
             GeoApi.OnDataReceived += GeoApi_OnDataReceived;
-            SteamApi.OnPlayerDataReceived += SteamApi_OnPlayerDataReceived;
+            SteamApi.OnDataReceived += SteamApi_OnPlayerDataReceived;
             HandleEvent(Config.OnApiModulesLoaded);
         }
 
-        private void SteamApi_OnPlayerDataReceived(RunnerPlayer player, SteamWebApi.Response steamData) {
-            HandleEvent(Config.OnSteamDataReceived, _player: player, steamData: steamData);
+        private void SteamApi_OnPlayerDataReceived(SteamWebApi.Response steamData) {
+            HandleEvent(Config.OnSteamDataReceived, _player: steamData.GetPlayers(this.Server).FirstOrDefault(), steamData: steamData);
         }
 
         private void GeoApi_OnDataReceived(IPAddress ip, IpApi.Response geoData) {
-            HandleEvent(Config.OnGeoDataReceived, _player: this.Server.GetPlayersByIp(ip).First(), geoData: geoData);
+            HandleEvent(Config.OnGeoDataReceived, _player: geoData.GetPlayers(this.Server).FirstOrDefault(), geoData: geoData);
         }
 
         public override Task OnConnected() {
