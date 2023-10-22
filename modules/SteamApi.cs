@@ -1,5 +1,4 @@
-﻿using Amazon.Runtime.Internal.Util;
-using BBRAPIModules;
+﻿using BBRAPIModules;
 using Bluscream;
 using SteamWebApi;
 using System;
