@@ -69,15 +69,15 @@
   }, {
 	"Available": true,
 	"Name": "CashRun",
-	"DisplayName": "Cash Run",
+	"DisplayName": "Cash Run"
   }, {
 	"Available": true,
 	"Name": "VoxelFortify",
-	"DisplayName": "Voxel Fortify",
+	"DisplayName": "Voxel Fortify"
   }, {
 	"Available": true,
 	"Name": "VoxelTrench",
-	"DisplayName": "Voxel Trench",
+	"DisplayName": "Voxel Trench"
   }, {
 	"Available": true,
 	"Name": "CaptureTheFlag",
