@@ -6,7 +6,7 @@
   }, {
 	"Available": true,
 	"Name": "AAS",
-	"DisplayName": "Teams must work together to capture and secure specific objectives on the map. The team that successfully captures all objectives or has the most captured objectives at the end of the match wins"
+	"Description": "Teams must work together to capture and secure specific objectives on the map. The team that successfully captures all objectives or has the most captured objectives at the end of the match wins"
   }, {
 	"Available": true,
 	"Name": "RUSH",
