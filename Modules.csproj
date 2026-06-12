@@ -82,7 +82,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
     <PackageReference Include="MongoDB.Driver" Version="2.27.0" />
     <PackageReference Include="Mono.Cecil" Version="0.11.5" />
-    <PackageReference Include="MySql.Data" Version="8.1.0" />
+    <PackageReference Include="MySql.Data" Version="8.4.0" />
     <PackageReference Include="SmartFormat.NET" Version="3.3.0" />
     <PackageReference Include="System.Management" Version="8.0.0-rc.2.23479.6" />
     <PackageReference Include="TimeSpanParserUtil" Version="1.2.0" />
